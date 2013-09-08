@@ -1,8 +1,0 @@
-ifndef NO_DWARF
-PERF_HAVE_DWARF_REGS := 1
-LIB_OBJS += $(OUTPUT)arch/$(ARCH)/util/dwarf-regs.o
-endif
-<<<<<<< HEAD
-LIB_OBJS += $(OUTPUT)arch/$(ARCH)/util/header.o
-=======
->>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

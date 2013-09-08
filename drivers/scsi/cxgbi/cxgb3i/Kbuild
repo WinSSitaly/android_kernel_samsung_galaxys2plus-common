@@ -1,7 +1,0 @@
-<<<<<<< HEAD
-EXTRA_CFLAGS += -I$(srctree)/drivers/net/ethernet/chelsio/cxgb3
-=======
-EXTRA_CFLAGS += -I$(srctree)/drivers/net/cxgb3
->>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
-
-obj-$(CONFIG_SCSI_CXGB3_ISCSI) += cxgb3i.o

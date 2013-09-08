@@ -1,8 +1,0 @@
-header-y += raw.h
-header-y += bcm.h
-<<<<<<< HEAD
-header-y += gw.h
-=======
->>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
-header-y += error.h
-header-y += netlink.h
