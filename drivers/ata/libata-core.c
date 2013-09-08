@@ -66,7 +66,10 @@
 #include <asm/byteorder.h>
 #include <linux/cdrom.h>
 #include <linux/ratelimit.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "libata.h"
 #include "libata-transport.h"
@@ -95,7 +98,11 @@ static unsigned int ata_dev_set_xfermode(struct ata_device *dev);
 static void ata_dev_xfermask(struct ata_device *dev);
 static unsigned long ata_dev_blacklisted(const struct ata_device *dev);
 
+<<<<<<< HEAD
 atomic_t ata_print_id = ATOMIC_INIT(0);
+=======
+unsigned int ata_print_id = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct ata_force_param {
 	const char	*name;
@@ -336,7 +343,12 @@ void ata_force_cbl(struct ata_port *ap)
 			continue;
 
 		ap->cbl = fe->param.cbl;
+<<<<<<< HEAD
 		ata_port_notice(ap, "FORCE: cable set to %s\n", fe->param.name);
+=======
+		ata_port_printk(ap, KERN_NOTICE,
+				"FORCE: cable set to %s\n", fe->param.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 }
@@ -378,7 +390,12 @@ static void ata_force_link_limits(struct ata_link *link)
 		/* only honor the first spd limit */
 		if (!did_spd && fe->param.spd_limit) {
 			link->hw_sata_spd_limit = (1 << fe->param.spd_limit) - 1;
+<<<<<<< HEAD
 			ata_link_notice(link, "FORCE: PHY spd limit set to %s\n",
+=======
+			ata_link_printk(link, KERN_NOTICE,
+					"FORCE: PHY spd limit set to %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					fe->param.name);
 			did_spd = true;
 		}
@@ -386,7 +403,11 @@ static void ata_force_link_limits(struct ata_link *link)
 		/* let lflags stack */
 		if (fe->param.lflags) {
 			link->flags |= fe->param.lflags;
+<<<<<<< HEAD
 			ata_link_notice(link,
+=======
+			ata_link_printk(link, KERN_NOTICE,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					"FORCE: link flag 0x%x forced -> 0x%x\n",
 					fe->param.lflags, link->flags);
 		}
@@ -441,8 +462,13 @@ static void ata_force_xfermask(struct ata_device *dev)
 			dev->pio_mask = pio_mask;
 		}
 
+<<<<<<< HEAD
 		ata_dev_notice(dev, "FORCE: xfer_mask set to %s\n",
 			       fe->param.name);
+=======
+		ata_dev_printk(dev, KERN_NOTICE,
+			"FORCE: xfer_mask set to %s\n", fe->param.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 }
@@ -485,8 +511,13 @@ static void ata_force_horkage(struct ata_device *dev)
 		dev->horkage |= fe->param.horkage_on;
 		dev->horkage &= ~fe->param.horkage_off;
 
+<<<<<<< HEAD
 		ata_dev_notice(dev, "FORCE: horkage modified (%s)\n",
 			       fe->param.name);
+=======
+		ata_dev_printk(dev, KERN_NOTICE,
+			"FORCE: horkage modified (%s)\n", fe->param.name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -710,8 +741,13 @@ u64 ata_tf_read_block(struct ata_taskfile *tf, struct ata_device *dev)
 		sect = tf->lbal;
 
 		if (!sect) {
+<<<<<<< HEAD
 			ata_dev_warn(dev,
 				     "device reported invalid CHS sector 0\n");
+=======
+			ata_dev_printk(dev, KERN_WARNING, "device reported "
+				       "invalid CHS sector 0\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			sect = 1; /* oh well */
 		}
 
@@ -1229,9 +1265,14 @@ static int ata_read_native_max_address(struct ata_device *dev, u64 *max_sectors)
 
 	err_mask = ata_exec_internal(dev, &tf, NULL, DMA_NONE, NULL, 0, 0);
 	if (err_mask) {
+<<<<<<< HEAD
 		ata_dev_warn(dev,
 			     "failed to read native max address (err_mask=0x%x)\n",
 			     err_mask);
+=======
+		ata_dev_printk(dev, KERN_WARNING, "failed to read native "
+			       "max address (err_mask=0x%x)\n", err_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err_mask == AC_ERR_DEV && (tf.feature & ATA_ABORTED))
 			return -EACCES;
 		return -EIO;
@@ -1292,9 +1333,14 @@ static int ata_set_max_sectors(struct ata_device *dev, u64 new_sectors)
 
 	err_mask = ata_exec_internal(dev, &tf, NULL, DMA_NONE, NULL, 0, 0);
 	if (err_mask) {
+<<<<<<< HEAD
 		ata_dev_warn(dev,
 			     "failed to set max address (err_mask=0x%x)\n",
 			     err_mask);
+=======
+		ata_dev_printk(dev, KERN_WARNING, "failed to set "
+			       "max address (err_mask=0x%x)\n", err_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err_mask == AC_ERR_DEV &&
 		    (tf.feature & (ATA_ABORTED | ATA_IDNF)))
 			return -EACCES;
@@ -1337,8 +1383,13 @@ static int ata_hpa_resize(struct ata_device *dev)
 		 * be unlocked, skip HPA resizing.
 		 */
 		if (rc == -EACCES || !unlock_hpa) {
+<<<<<<< HEAD
 			ata_dev_warn(dev,
 				     "HPA support seems broken, skipping HPA handling\n");
+=======
+			ata_dev_printk(dev, KERN_WARNING, "HPA support seems "
+				       "broken, skipping HPA handling\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev->horkage |= ATA_HORKAGE_BROKEN_HPA;
 
 			/* we can continue if device aborted the command */
@@ -1356,13 +1407,23 @@ static int ata_hpa_resize(struct ata_device *dev)
 			return 0;
 
 		if (native_sectors > sectors)
+<<<<<<< HEAD
 			ata_dev_info(dev,
+=======
+			ata_dev_printk(dev, KERN_INFO,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"HPA detected: current %llu, native %llu\n",
 				(unsigned long long)sectors,
 				(unsigned long long)native_sectors);
 		else if (native_sectors < sectors)
+<<<<<<< HEAD
 			ata_dev_warn(dev,
 				"native sectors (%llu) is smaller than sectors (%llu)\n",
+=======
+			ata_dev_printk(dev, KERN_WARNING,
+				"native sectors (%llu) is smaller than "
+				"sectors (%llu)\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				(unsigned long long)native_sectors,
 				(unsigned long long)sectors);
 		return 0;
@@ -1372,10 +1433,17 @@ static int ata_hpa_resize(struct ata_device *dev)
 	rc = ata_set_max_sectors(dev, native_sectors);
 	if (rc == -EACCES) {
 		/* if device aborted the command, skip HPA resizing */
+<<<<<<< HEAD
 		ata_dev_warn(dev,
 			     "device aborted resize (%llu -> %llu), skipping HPA handling\n",
 			     (unsigned long long)sectors,
 			     (unsigned long long)native_sectors);
+=======
+		ata_dev_printk(dev, KERN_WARNING, "device aborted resize "
+			       "(%llu -> %llu), skipping HPA handling\n",
+			       (unsigned long long)sectors,
+			       (unsigned long long)native_sectors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->horkage |= ATA_HORKAGE_BROKEN_HPA;
 		return 0;
 	} else if (rc)
@@ -1384,14 +1452,23 @@ static int ata_hpa_resize(struct ata_device *dev)
 	/* re-read IDENTIFY data */
 	rc = ata_dev_reread_id(dev, 0);
 	if (rc) {
+<<<<<<< HEAD
 		ata_dev_err(dev,
 			    "failed to re-read IDENTIFY data after HPA resizing\n");
+=======
+		ata_dev_printk(dev, KERN_ERR, "failed to re-read IDENTIFY "
+			       "data after HPA resizing\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return rc;
 	}
 
 	if (print_info) {
 		u64 new_sectors = ata_id_n_sectors(dev->id);
+<<<<<<< HEAD
 		ata_dev_info(dev,
+=======
+		ata_dev_printk(dev, KERN_INFO,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			"HPA unlocked: %llu -> %llu, native %llu\n",
 			(unsigned long long)sectors,
 			(unsigned long long)new_sectors,
@@ -1599,12 +1676,15 @@ unsigned ata_exec_internal_sg(struct ata_device *dev,
 	qc->tf = *tf;
 	if (cdb)
 		memcpy(qc->cdb, cdb, ATAPI_CDB_LEN);
+<<<<<<< HEAD
 
 	/* some SATA bridges need us to indicate data xfer direction */
 	if (tf->protocol == ATAPI_PROT_DMA && (dev->flags & ATA_DFLAG_DMADIR) &&
 	    dma_dir == DMA_FROM_DEVICE)
 		qc->tf.feature |= ATAPI_DMADIR;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	qc->flags |= ATA_QCFLAG_RESULT_TF;
 	qc->dma_dir = dma_dir;
 	if (dma_dir != DMA_NONE) {
@@ -1661,8 +1741,13 @@ unsigned ata_exec_internal_sg(struct ata_device *dev,
 				ata_qc_complete(qc);
 
 			if (ata_msg_warn(ap))
+<<<<<<< HEAD
 				ata_dev_warn(dev, "qc timeout (cmd 0x%x)\n",
 					     command);
+=======
+				ata_dev_printk(dev, KERN_WARNING,
+					"qc timeout (cmd 0x%x)\n", command);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		spin_unlock_irqrestore(ap->lock, flags);
@@ -1876,7 +1961,11 @@ int ata_dev_read_id(struct ata_device *dev, unsigned int *p_class,
 	int rc;
 
 	if (ata_msg_ctl(ap))
+<<<<<<< HEAD
 		ata_dev_dbg(dev, "%s: ENTER\n", __func__);
+=======
+		ata_dev_printk(dev, KERN_DEBUG, "%s: ENTER\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 retry:
 	ata_tf_init(dev, &tf);
@@ -1915,13 +2004,23 @@ retry:
 
 	if (err_mask) {
 		if (err_mask & AC_ERR_NODEV_HINT) {
+<<<<<<< HEAD
 			ata_dev_dbg(dev, "NODEV after polling detection\n");
+=======
+			ata_dev_printk(dev, KERN_DEBUG,
+				       "NODEV after polling detection\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOENT;
 		}
 
 		if (is_semb) {
+<<<<<<< HEAD
 			ata_dev_info(dev,
 		     "IDENTIFY failed on device w/ SEMB sig, disabled\n");
+=======
+			ata_dev_printk(dev, KERN_INFO, "IDENTIFY failed on "
+				       "device w/ SEMB sig, disabled\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* SEMB is not supported yet */
 			*p_class = ATA_DEV_SEMB_UNSUP;
 			return 0;
@@ -1947,8 +2046,13 @@ retry:
 			 * both flavors of IDENTIFYs which happens
 			 * sometimes with phantom devices.
 			 */
+<<<<<<< HEAD
 			ata_dev_dbg(dev,
 				    "both IDENTIFYs aborted, assuming NODEV\n");
+=======
+			ata_dev_printk(dev, KERN_DEBUG,
+				       "both IDENTIFYs aborted, assuming NODEV\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOENT;
 		}
 
@@ -1958,9 +2062,15 @@ retry:
 	}
 
 	if (dev->horkage & ATA_HORKAGE_DUMP_ID) {
+<<<<<<< HEAD
 		ata_dev_dbg(dev, "dumping IDENTIFY data, "
 			    "class=%d may_fallback=%d tried_spinup=%d\n",
 			    class, may_fallback, tried_spinup);
+=======
+		ata_dev_printk(dev, KERN_DEBUG, "dumping IDENTIFY data, "
+			       "class=%d may_fallback=%d tried_spinup=%d\n",
+			       class, may_fallback, tried_spinup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		print_hex_dump(KERN_DEBUG, "", DUMP_PREFIX_OFFSET,
 			       16, 2, id, ATA_ID_WORDS * sizeof(*id), true);
 	}
@@ -1979,12 +2089,15 @@ retry:
 	if (class == ATA_DEV_ATA) {
 		if (!ata_id_is_ata(id) && !ata_id_is_cfa(id))
 			goto err_out;
+<<<<<<< HEAD
 		if (ap->host->flags & ATA_HOST_IGNORE_ATA &&
 							ata_id_is_ata(id)) {
 			ata_dev_dbg(dev,
 				"host indicates ignore ATA devices, ignored\n");
 			return -ENOENT;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		if (ata_id_is_ata(id))
 			goto err_out;
@@ -2045,8 +2158,13 @@ retry:
 
  err_out:
 	if (ata_msg_warn(ap))
+<<<<<<< HEAD
 		ata_dev_warn(dev, "failed to IDENTIFY (%s, err_mask=0x%x)\n",
 			     reason, err_mask);
+=======
+		ata_dev_printk(dev, KERN_WARNING, "failed to IDENTIFY "
+			       "(%s, err_mask=0x%x)\n", reason, err_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -2076,8 +2194,14 @@ static int ata_do_link_spd_horkage(struct ata_device *dev)
 	 * guaranteed by setting sata_spd_limit to target_limit above.
 	 */
 	if (plink->sata_spd > target) {
+<<<<<<< HEAD
 		ata_dev_info(dev, "applying link speed limit horkage to %s\n",
 			     sata_spd_string(target));
+=======
+		ata_dev_printk(dev, KERN_INFO,
+			       "applying link speed limit horkage to %s\n",
+			       sata_spd_string(target));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EAGAIN;
 	}
 	return 0;
@@ -2120,9 +2244,14 @@ static int ata_dev_config_ncq(struct ata_device *dev,
 		err_mask = ata_dev_set_feature(dev, SETFEATURES_SATA_ENABLE,
 			SATA_FPDMA_AA);
 		if (err_mask) {
+<<<<<<< HEAD
 			ata_dev_err(dev,
 				    "failed to enable AA (error_mask=0x%x)\n",
 				    err_mask);
+=======
+			ata_dev_printk(dev, KERN_ERR, "failed to enable AA"
+				"(error_mask=0x%x)\n", err_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err_mask != AC_ERR_DEV) {
 				dev->horkage |= ATA_HORKAGE_BROKEN_FPDMA_AA;
 				return -EIO;
@@ -2165,28 +2294,49 @@ int ata_dev_configure(struct ata_device *dev)
 	int rc;
 
 	if (!ata_dev_enabled(dev) && ata_msg_info(ap)) {
+<<<<<<< HEAD
 		ata_dev_info(dev, "%s: ENTER/EXIT -- nodev\n", __func__);
+=======
+		ata_dev_printk(dev, KERN_INFO, "%s: ENTER/EXIT -- nodev\n",
+			       __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
 	if (ata_msg_probe(ap))
+<<<<<<< HEAD
 		ata_dev_dbg(dev, "%s: ENTER\n", __func__);
+=======
+		ata_dev_printk(dev, KERN_DEBUG, "%s: ENTER\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* set horkage */
 	dev->horkage |= ata_dev_blacklisted(dev);
 	ata_force_horkage(dev);
 
 	if (dev->horkage & ATA_HORKAGE_DISABLE) {
+<<<<<<< HEAD
 		ata_dev_info(dev, "unsupported device, disabling\n");
+=======
+		ata_dev_printk(dev, KERN_INFO,
+			       "unsupported device, disabling\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ata_dev_disable(dev);
 		return 0;
 	}
 
 	if ((!atapi_enabled || (ap->flags & ATA_FLAG_NO_ATAPI)) &&
 	    dev->class == ATA_DEV_ATAPI) {
+<<<<<<< HEAD
 		ata_dev_warn(dev, "WARNING: ATAPI is %s, device ignored\n",
 			     atapi_enabled ? "not supported with this driver"
 			     : "disabled");
+=======
+		ata_dev_printk(dev, KERN_WARNING,
+			"WARNING: ATAPI is %s, device ignored.\n",
+			atapi_enabled ? "not supported with this driver"
+				      : "disabled");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ata_dev_disable(dev);
 		return 0;
 	}
@@ -2207,12 +2357,21 @@ int ata_dev_configure(struct ata_device *dev)
 
 	/* print device capabilities */
 	if (ata_msg_probe(ap))
+<<<<<<< HEAD
 		ata_dev_dbg(dev,
 			    "%s: cfg 49:%04x 82:%04x 83:%04x 84:%04x "
 			    "85:%04x 86:%04x 87:%04x 88:%04x\n",
 			    __func__,
 			    id[49], id[82], id[83], id[84],
 			    id[85], id[86], id[87], id[88]);
+=======
+		ata_dev_printk(dev, KERN_DEBUG,
+			       "%s: cfg 49:%04x 82:%04x 83:%04x 84:%04x "
+			       "85:%04x 86:%04x 87:%04x 88:%04x\n",
+			       __func__,
+			       id[49], id[82], id[83], id[84],
+			       id[85], id[86], id[87], id[88]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* initialize to-be-configured parameters */
 	dev->flags &= ~ATA_DFLAG_CFG_MASK;
@@ -2246,15 +2405,27 @@ int ata_dev_configure(struct ata_device *dev)
 		if (ata_id_is_cfa(id)) {
 			/* CPRM may make this media unusable */
 			if (id[ATA_ID_CFA_KEY_MGMT] & 1)
+<<<<<<< HEAD
 				ata_dev_warn(dev,
 	"supports DRM functions and may not be fully accessible\n");
+=======
+				ata_dev_printk(dev, KERN_WARNING,
+					       "supports DRM functions and may "
+					       "not be fully accessible.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			snprintf(revbuf, 7, "CFA");
 		} else {
 			snprintf(revbuf, 7, "ATA-%d", ata_id_major_version(id));
 			/* Warn the user if the device has TPM extensions */
 			if (ata_id_has_tpm(id))
+<<<<<<< HEAD
 				ata_dev_warn(dev,
 	"supports DRM functions and may not be fully accessible\n");
+=======
+				ata_dev_printk(dev, KERN_WARNING,
+					       "supports DRM functions and may "
+					       "not be fully accessible.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		dev->n_sectors = ata_id_n_sectors(id);
@@ -2291,11 +2462,20 @@ int ata_dev_configure(struct ata_device *dev)
 
 			/* print device info to dmesg */
 			if (ata_msg_drv(ap) && print_info) {
+<<<<<<< HEAD
 				ata_dev_info(dev, "%s: %s, %s, max %s\n",
 					     revbuf, modelbuf, fwrevbuf,
 					     ata_mode_string(xfer_mask));
 				ata_dev_info(dev,
 					     "%llu sectors, multi %u: %s %s\n",
+=======
+				ata_dev_printk(dev, KERN_INFO,
+					"%s: %s, %s, max %s\n",
+					revbuf, modelbuf, fwrevbuf,
+					ata_mode_string(xfer_mask));
+				ata_dev_printk(dev, KERN_INFO,
+					"%Lu sectors, multi %u: %s %s\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					(unsigned long long)dev->n_sectors,
 					dev->multi_count, lba_desc, ncq_desc);
 			}
@@ -2316,6 +2496,7 @@ int ata_dev_configure(struct ata_device *dev)
 
 			/* print device info to dmesg */
 			if (ata_msg_drv(ap) && print_info) {
+<<<<<<< HEAD
 				ata_dev_info(dev, "%s: %s, %s, max %s\n",
 					     revbuf,	modelbuf, fwrevbuf,
 					     ata_mode_string(xfer_mask));
@@ -2324,6 +2505,17 @@ int ata_dev_configure(struct ata_device *dev)
 					     (unsigned long long)dev->n_sectors,
 					     dev->multi_count, dev->cylinders,
 					     dev->heads, dev->sectors);
+=======
+				ata_dev_printk(dev, KERN_INFO,
+					"%s: %s, %s, max %s\n",
+					revbuf,	modelbuf, fwrevbuf,
+					ata_mode_string(xfer_mask));
+				ata_dev_printk(dev, KERN_INFO,
+					"%Lu sectors, multi %u, CHS %u/%u/%u\n",
+					(unsigned long long)dev->n_sectors,
+					dev->multi_count, dev->cylinders,
+					dev->heads, dev->sectors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 		}
 
@@ -2340,7 +2532,12 @@ int ata_dev_configure(struct ata_device *dev)
 		rc = atapi_cdb_len(id);
 		if ((rc < 12) || (rc > ATAPI_CDB_LEN)) {
 			if (ata_msg_warn(ap))
+<<<<<<< HEAD
 				ata_dev_warn(dev, "unsupported CDB len\n");
+=======
+				ata_dev_printk(dev, KERN_WARNING,
+					       "unsupported CDB len\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = -EINVAL;
 			goto err_out_nosup;
 		}
@@ -2361,9 +2558,15 @@ int ata_dev_configure(struct ata_device *dev)
 			err_mask = ata_dev_set_feature(dev,
 					SETFEATURES_SATA_ENABLE, SATA_AN);
 			if (err_mask)
+<<<<<<< HEAD
 				ata_dev_err(dev,
 					    "failed to enable ATAPI AN (err_mask=0x%x)\n",
 					    err_mask);
+=======
+				ata_dev_printk(dev, KERN_ERR,
+					"failed to enable ATAPI AN "
+					"(err_mask=0x%x)\n", err_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			else {
 				dev->flags |= ATA_DFLAG_AN;
 				atapi_an_string = ", ATAPI AN";
@@ -2382,12 +2585,21 @@ int ata_dev_configure(struct ata_device *dev)
 
 		/* print device info to dmesg */
 		if (ata_msg_drv(ap) && print_info)
+<<<<<<< HEAD
 			ata_dev_info(dev,
 				     "ATAPI: %s, %s, max %s%s%s%s\n",
 				     modelbuf, fwrevbuf,
 				     ata_mode_string(xfer_mask),
 				     cdb_intr_string, atapi_an_string,
 				     dma_dir_string);
+=======
+			ata_dev_printk(dev, KERN_INFO,
+				       "ATAPI: %s, %s, max %s%s%s%s\n",
+				       modelbuf, fwrevbuf,
+				       ata_mode_string(xfer_mask),
+				       cdb_intr_string, atapi_an_string,
+				       dma_dir_string);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* determine max_sectors */
@@ -2399,7 +2611,12 @@ int ata_dev_configure(struct ata_device *dev)
 	   200 sectors */
 	if (ata_dev_knobble(dev)) {
 		if (ata_msg_drv(ap) && print_info)
+<<<<<<< HEAD
 			ata_dev_info(dev, "applying bridge limits\n");
+=======
+			ata_dev_printk(dev, KERN_INFO,
+				       "applying bridge limits\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->udma_mask &= ATA_UDMA5;
 		dev->max_sectors = ATA_MAX_SECTORS;
 	}
@@ -2414,9 +2631,12 @@ int ata_dev_configure(struct ata_device *dev)
 		dev->max_sectors = min_t(unsigned int, ATA_MAX_SECTORS_128,
 					 dev->max_sectors);
 
+<<<<<<< HEAD
 	if (dev->horkage & ATA_HORKAGE_MAX_SEC_LBA48)
 		dev->max_sectors = ATA_MAX_SECTORS_LBA48;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ap->ops->dev_config)
 		ap->ops->dev_config(dev);
 
@@ -2428,23 +2648,41 @@ int ata_dev_configure(struct ata_device *dev)
 		   bugs */
 
 		if (print_info) {
+<<<<<<< HEAD
 			ata_dev_warn(dev,
 "Drive reports diagnostics failure. This may indicate a drive\n");
 			ata_dev_warn(dev,
+=======
+			ata_dev_printk(dev, KERN_WARNING,
+"Drive reports diagnostics failure. This may indicate a drive\n");
+			ata_dev_printk(dev, KERN_WARNING,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 "fault or invalid emulation. Contact drive vendor for information.\n");
 		}
 	}
 
 	if ((dev->horkage & ATA_HORKAGE_FIRMWARE_WARN) && print_info) {
+<<<<<<< HEAD
 		ata_dev_warn(dev, "WARNING: device requires firmware update to be fully functional\n");
 		ata_dev_warn(dev, "         contact the vendor or visit http://ata.wiki.kernel.org\n");
+=======
+		ata_dev_printk(dev, KERN_WARNING, "WARNING: device requires "
+			       "firmware update to be fully functional.\n");
+		ata_dev_printk(dev, KERN_WARNING, "         contact the vendor "
+			       "or visit http://ata.wiki.kernel.org.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 
 err_out_nosup:
 	if (ata_msg_probe(ap))
+<<<<<<< HEAD
 		ata_dev_dbg(dev, "%s: EXIT, err\n", __func__);
+=======
+		ata_dev_printk(dev, KERN_DEBUG,
+			       "%s: EXIT, err\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -2545,7 +2783,10 @@ int ata_bus_probe(struct ata_port *ap)
 		 * bus as we may be talking too fast.
 		 */
 		dev->pio_mode = XFER_PIO_0;
+<<<<<<< HEAD
 		dev->dma_mode = 0xff;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* If the controller has a pio mode setup function
 		 * then use it to set the chipset to rights. Don't
@@ -2666,11 +2907,21 @@ static void sata_print_link_status(struct ata_link *link)
 
 	if (ata_phys_link_online(link)) {
 		tmp = (sstatus >> 4) & 0xf;
+<<<<<<< HEAD
 		ata_link_info(link, "SATA link up %s (SStatus %X SControl %X)\n",
 			      sata_spd_string(tmp), sstatus, scontrol);
 	} else {
 		ata_link_info(link, "SATA link down (SStatus %X SControl %X)\n",
 			      sstatus, scontrol);
+=======
+		ata_link_printk(link, KERN_INFO,
+				"SATA link up %s (SStatus %X SControl %X)\n",
+				sata_spd_string(tmp), sstatus, scontrol);
+	} else {
+		ata_link_printk(link, KERN_INFO,
+				"SATA link down (SStatus %X SControl %X)\n",
+				sstatus, scontrol);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -2759,8 +3010,13 @@ int sata_down_spd_limit(struct ata_link *link, u32 spd_limit)
 
 	link->sata_spd_limit = mask;
 
+<<<<<<< HEAD
 	ata_link_warn(link, "limiting SATA link speed to %s\n",
 		      sata_spd_string(fls(mask)));
+=======
+	ata_link_printk(link, KERN_WARNING, "limiting SATA link speed to %s\n",
+			sata_spd_string(fls(mask)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -2955,7 +3211,11 @@ int ata_timing_compute(struct ata_device *adev, unsigned short speed,
 	if (id[ATA_ID_FIELD_VALID] & 2) {	/* EIDE drive */
 		memset(&p, 0, sizeof(p));
 
+<<<<<<< HEAD
 		if (speed >= XFER_PIO_0 && speed < XFER_SW_DMA_0) {
+=======
+		if (speed >= XFER_PIO_0 && speed <= XFER_SW_DMA_0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (speed <= XFER_PIO_2)
 				p.cycle = p.cyc8b = id[ATA_ID_EIDE_PIO];
 			else if ((speed <= XFER_PIO_4) ||
@@ -3137,7 +3397,12 @@ int ata_down_xfermask_limit(struct ata_device *dev, unsigned int sel)
 			snprintf(buf, sizeof(buf), "%s",
 				 ata_mode_string(xfer_mask));
 
+<<<<<<< HEAD
 		ata_dev_warn(dev, "limiting speed to %s\n", buf);
+=======
+		ata_dev_printk(dev, KERN_WARNING,
+			       "limiting speed to %s\n", buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ata_unpack_xfermask(xfer_mask, &dev->pio_mask, &dev->mwdma_mask,
@@ -3164,9 +3429,15 @@ static int ata_dev_set_mode(struct ata_device *dev)
 		dev_err_whine = " (SET_XFERMODE skipped)";
 	else {
 		if (nosetxfer)
+<<<<<<< HEAD
 			ata_dev_warn(dev,
 				     "NOSETXFER but PATA detected - can't "
 				     "skip SETXFER, might malfunction\n");
+=======
+			ata_dev_printk(dev, KERN_WARNING,
+				       "NOSETXFER but PATA detected - can't "
+				       "skip SETXFER, might malfunction\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err_mask = ata_dev_set_xfermode(dev);
 	}
 
@@ -3216,14 +3487,25 @@ static int ata_dev_set_mode(struct ata_device *dev)
 	DPRINTK("xfer_shift=%u, xfer_mode=0x%x\n",
 		dev->xfer_shift, (int)dev->xfer_mode);
 
+<<<<<<< HEAD
 	ata_dev_info(dev, "configured for %s%s\n",
 		     ata_mode_string(ata_xfer_mode2mask(dev->xfer_mode)),
 		     dev_err_whine);
+=======
+	ata_dev_printk(dev, KERN_INFO, "configured for %s%s\n",
+		       ata_mode_string(ata_xfer_mode2mask(dev->xfer_mode)),
+		       dev_err_whine);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 
  fail:
+<<<<<<< HEAD
 	ata_dev_err(dev, "failed to set xfermode (err_mask=0x%x)\n", err_mask);
+=======
+	ata_dev_printk(dev, KERN_ERR, "failed to set xfermode "
+		       "(err_mask=0x%x)\n", err_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EIO;
 }
 
@@ -3265,10 +3547,17 @@ int ata_do_set_mode(struct ata_link *link, struct ata_device **r_failed_dev)
 		ata_force_xfermask(dev);
 
 		pio_mask = ata_pack_xfermask(dev->pio_mask, 0, 0);
+<<<<<<< HEAD
 
 		if (libata_dma_mask & mode_mask)
 			dma_mask = ata_pack_xfermask(0, dev->mwdma_mask,
 						     dev->udma_mask);
+=======
+		dma_mask = ata_pack_xfermask(0, dev->mwdma_mask, dev->udma_mask);
+
+		if (libata_dma_mask & mode_mask)
+			dma_mask = ata_pack_xfermask(0, dev->mwdma_mask, dev->udma_mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		else
 			dma_mask = 0;
 
@@ -3285,7 +3574,11 @@ int ata_do_set_mode(struct ata_link *link, struct ata_device **r_failed_dev)
 	/* step 2: always set host PIO timings */
 	ata_for_each_dev(dev, link, ENABLED) {
 		if (dev->pio_mode == 0xff) {
+<<<<<<< HEAD
 			ata_dev_warn(dev, "no PIO support\n");
+=======
+			ata_dev_printk(dev, KERN_WARNING, "no PIO support\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			rc = -EINVAL;
 			goto out;
 		}
@@ -3403,7 +3696,11 @@ int ata_wait_ready(struct ata_link *link, unsigned long deadline,
 
 		if (!warned && time_after(now, start + 5 * HZ) &&
 		    (deadline - now > 3 * HZ)) {
+<<<<<<< HEAD
 			ata_link_warn(link,
+=======
+			ata_link_printk(link, KERN_WARNING,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				"link is slow to respond, please be patient "
 				"(ready=%d)\n", tmp);
 			warned = 1;
@@ -3551,14 +3848,26 @@ int sata_link_resume(struct ata_link *link, const unsigned long *params,
 	} while ((scontrol & 0xf0f) != 0x300 && --tries);
 
 	if ((scontrol & 0xf0f) != 0x300) {
+<<<<<<< HEAD
 		ata_link_warn(link, "failed to resume link (SControl %X)\n",
 			     scontrol);
+=======
+		ata_link_printk(link, KERN_ERR,
+				"failed to resume link (SControl %X)\n",
+				scontrol);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
 	if (tries < ATA_LINK_RESUME_TRIES)
+<<<<<<< HEAD
 		ata_link_warn(link, "link resume succeeded after %d retries\n",
 			      ATA_LINK_RESUME_TRIES - tries);
+=======
+		ata_link_printk(link, KERN_WARNING,
+				"link resume succeeded after %d retries\n",
+				ATA_LINK_RESUME_TRIES - tries);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if ((rc = sata_link_debounce(link, params, deadline)))
 		return rc;
@@ -3675,9 +3984,14 @@ int ata_std_prereset(struct ata_link *link, unsigned long deadline)
 		rc = sata_link_resume(link, timing, deadline);
 		/* whine about phy resume failure but proceed */
 		if (rc && rc != -EOPNOTSUPP)
+<<<<<<< HEAD
 			ata_link_warn(link,
 				      "failed to resume link for reset (errno=%d)\n",
 				      rc);
+=======
+			ata_link_printk(link, KERN_WARNING, "failed to resume "
+					"link for reset (errno=%d)\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* no point in trying softreset on offline link */
@@ -3793,7 +4107,12 @@ int sata_link_hardreset(struct ata_link *link, const unsigned long *timing,
 		/* online is set iff link is online && reset succeeded */
 		if (online)
 			*online = false;
+<<<<<<< HEAD
 		ata_link_err(link, "COMRESET failed (errno=%d)\n", rc);
+=======
+		ata_link_printk(link, KERN_ERR,
+				"COMRESET failed (errno=%d)\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	DPRINTK("EXIT, rc=%d\n", rc);
 	return rc;
@@ -3877,8 +4196,13 @@ static int ata_dev_same_device(struct ata_device *dev, unsigned int new_class,
 	unsigned char serial[2][ATA_ID_SERNO_LEN + 1];
 
 	if (dev->class != new_class) {
+<<<<<<< HEAD
 		ata_dev_info(dev, "class mismatch %d != %d\n",
 			     dev->class, new_class);
+=======
+		ata_dev_printk(dev, KERN_INFO, "class mismatch %d != %d\n",
+			       dev->class, new_class);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -3888,14 +4212,24 @@ static int ata_dev_same_device(struct ata_device *dev, unsigned int new_class,
 	ata_id_c_string(new_id, serial[1], ATA_ID_SERNO, sizeof(serial[1]));
 
 	if (strcmp(model[0], model[1])) {
+<<<<<<< HEAD
 		ata_dev_info(dev, "model number mismatch '%s' != '%s'\n",
 			     model[0], model[1]);
+=======
+		ata_dev_printk(dev, KERN_INFO, "model number mismatch "
+			       "'%s' != '%s'\n", model[0], model[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
 	if (strcmp(serial[0], serial[1])) {
+<<<<<<< HEAD
 		ata_dev_info(dev, "serial number mismatch '%s' != '%s'\n",
 			     serial[0], serial[1]);
+=======
+		ata_dev_printk(dev, KERN_INFO, "serial number mismatch "
+			       "'%s' != '%s'\n", serial[0], serial[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -3965,8 +4299,13 @@ int ata_dev_revalidate(struct ata_device *dev, unsigned int new_class,
 	    new_class != ATA_DEV_ATA &&
 	    new_class != ATA_DEV_ATAPI &&
 	    new_class != ATA_DEV_SEMB) {
+<<<<<<< HEAD
 		ata_dev_info(dev, "class mismatch %u != %u\n",
 			     dev->class, new_class);
+=======
+		ata_dev_printk(dev, KERN_INFO, "class mismatch %u != %u\n",
+			       dev->class, new_class);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -ENODEV;
 		goto fail;
 	}
@@ -3987,9 +4326,15 @@ int ata_dev_revalidate(struct ata_device *dev, unsigned int new_class,
 		return 0;
 
 	/* n_sectors has changed */
+<<<<<<< HEAD
 	ata_dev_warn(dev, "n_sectors mismatch %llu != %llu\n",
 		     (unsigned long long)n_sectors,
 		     (unsigned long long)dev->n_sectors);
+=======
+	ata_dev_printk(dev, KERN_WARNING, "n_sectors mismatch %llu != %llu\n",
+		       (unsigned long long)n_sectors,
+		       (unsigned long long)dev->n_sectors);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Something could have caused HPA to be unlocked
@@ -3998,9 +4343,15 @@ int ata_dev_revalidate(struct ata_device *dev, unsigned int new_class,
 	 */
 	if (dev->n_native_sectors == n_native_sectors &&
 	    dev->n_sectors > n_sectors && dev->n_sectors == n_native_sectors) {
+<<<<<<< HEAD
 		ata_dev_warn(dev,
 			     "new n_sectors matches native, probably "
 			     "late HPA unlock, n_sectors updated\n");
+=======
+		ata_dev_printk(dev, KERN_WARNING,
+			       "new n_sectors matches native, probably "
+			       "late HPA unlock, n_sectors updated\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* use the larger n_sectors */
 		return 0;
 	}
@@ -4014,9 +4365,15 @@ int ata_dev_revalidate(struct ata_device *dev, unsigned int new_class,
 	if (dev->n_native_sectors == n_native_sectors &&
 	    dev->n_sectors < n_sectors && n_sectors == n_native_sectors &&
 	    !(dev->horkage & ATA_HORKAGE_BROKEN_HPA)) {
+<<<<<<< HEAD
 		ata_dev_warn(dev,
 			     "old n_sectors matches native, probably "
 			     "late HPA lock, will try to unlock HPA\n");
+=======
+		ata_dev_printk(dev, KERN_WARNING,
+			       "old n_sectors matches native, probably "
+			       "late HPA lock, will try to unlock HPA\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* try unlocking HPA */
 		dev->flags |= ATA_DFLAG_UNLOCK_HPA;
 		rc = -EIO;
@@ -4027,7 +4384,11 @@ int ata_dev_revalidate(struct ata_device *dev, unsigned int new_class,
 	dev->n_native_sectors = n_native_sectors;
 	dev->n_sectors = n_sectors;
  fail:
+<<<<<<< HEAD
 	ata_dev_err(dev, "revalidation failed (errno=%d)\n", rc);
+=======
+	ata_dev_printk(dev, KERN_ERR, "revalidation failed (errno=%d)\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -4073,7 +4434,10 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
 	/* Weird ATAPI devices */
 	{ "TORiSAN DVD-ROM DRD-N216", NULL,	ATA_HORKAGE_MAX_SEC_128 },
 	{ "QUANTUM DAT    DAT72-000", NULL,	ATA_HORKAGE_ATAPI_MOD16_DMA },
+<<<<<<< HEAD
 	{ "Slimtype DVD A  DS8A8SH", NULL,	ATA_HORKAGE_MAX_SEC_LBA48 },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Devices we expect to fail diagnostics */
 
@@ -4136,15 +4500,21 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
 
 	/* Devices which aren't very happy with higher link speeds */
 	{ "WD My Book",			NULL,	ATA_HORKAGE_1_5_GBPS, },
+<<<<<<< HEAD
 	{ "Seagate FreeAgent GoFlex",	NULL,	ATA_HORKAGE_1_5_GBPS, },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Devices which choke on SETXFER.  Applies only if both the
 	 * device and controller are SATA.
 	 */
 	{ "PIONEER DVD-RW  DVRTD08",	NULL,	ATA_HORKAGE_NOSETXFER },
+<<<<<<< HEAD
 	{ "PIONEER DVD-RW  DVRTD08A",	NULL,	ATA_HORKAGE_NOSETXFER },
 	{ "PIONEER DVD-RW  DVR-215",	NULL,	ATA_HORKAGE_NOSETXFER },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "PIONEER DVD-RW  DVR-212D",	NULL,	ATA_HORKAGE_NOSETXFER },
 	{ "PIONEER DVD-RW  DVR-216D",	NULL,	ATA_HORKAGE_NOSETXFER },
 
@@ -4359,15 +4729,25 @@ static void ata_dev_xfermask(struct ata_device *dev)
 
 	if (ata_dma_blacklisted(dev)) {
 		xfer_mask &= ~(ATA_MASK_MWDMA | ATA_MASK_UDMA);
+<<<<<<< HEAD
 		ata_dev_warn(dev,
 			     "device is on DMA blacklist, disabling DMA\n");
+=======
+		ata_dev_printk(dev, KERN_WARNING,
+			       "device is on DMA blacklist, disabling DMA\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if ((host->flags & ATA_HOST_SIMPLEX) &&
 	    host->simplex_claimed && host->simplex_claimed != ap) {
 		xfer_mask &= ~(ATA_MASK_MWDMA | ATA_MASK_UDMA);
+<<<<<<< HEAD
 		ata_dev_warn(dev,
 			     "simplex DMA is claimed by other device, disabling DMA\n");
+=======
+		ata_dev_printk(dev, KERN_WARNING, "simplex DMA is claimed by "
+			       "other device, disabling DMA\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (ap->flags & ATA_FLAG_NO_IORDY)
@@ -4387,8 +4767,13 @@ static void ata_dev_xfermask(struct ata_device *dev)
 	if (xfer_mask & (0xF8 << ATA_SHIFT_UDMA))
 		/* UDMA/44 or higher would be available */
 		if (cable_is_40wire(ap)) {
+<<<<<<< HEAD
 			ata_dev_warn(dev,
 				     "limited to UDMA/33 due to 40-wire cable\n");
+=======
+			ata_dev_printk(dev, KERN_WARNING,
+				 "limited to UDMA/33 due to 40-wire cable\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			xfer_mask &= ~(0xF8 << ATA_SHIFT_UDMA);
 		}
 
@@ -4955,8 +5340,13 @@ int ata_qc_complete_multiple(struct ata_port *ap, u32 qc_active)
 	done_mask = ap->qc_active ^ qc_active;
 
 	if (unlikely(done_mask & qc_active)) {
+<<<<<<< HEAD
 		ata_port_err(ap, "illegal qc_active transition (%08x->%08x)\n",
 			     ap->qc_active, qc_active);
+=======
+		ata_port_printk(ap, KERN_ERR, "illegal qc_active transition "
+				"(%08x->%08x)\n", ap->qc_active, qc_active);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -5255,6 +5645,7 @@ bool ata_link_offline(struct ata_link *link)
 }
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int ata_port_request_pm(struct ata_port *ap, pm_message_t mesg,
 			       unsigned int action, unsigned int ehi_flags,
 			       int wait)
@@ -5304,6 +5695,75 @@ static int ata_port_request_pm(struct ata_port *ap, pm_message_t mesg,
 static int ata_port_suspend_common(struct device *dev, pm_message_t mesg)
 {
 	struct ata_port *ap = to_ata_port(dev);
+=======
+static int ata_host_request_pm(struct ata_host *host, pm_message_t mesg,
+			       unsigned int action, unsigned int ehi_flags,
+			       int wait)
+{
+	unsigned long flags;
+	int i, rc;
+
+	for (i = 0; i < host->n_ports; i++) {
+		struct ata_port *ap = host->ports[i];
+		struct ata_link *link;
+
+		/* Previous resume operation might still be in
+		 * progress.  Wait for PM_PENDING to clear.
+		 */
+		if (ap->pflags & ATA_PFLAG_PM_PENDING) {
+			ata_port_wait_eh(ap);
+			WARN_ON(ap->pflags & ATA_PFLAG_PM_PENDING);
+		}
+
+		/* request PM ops to EH */
+		spin_lock_irqsave(ap->lock, flags);
+
+		ap->pm_mesg = mesg;
+		if (wait) {
+			rc = 0;
+			ap->pm_result = &rc;
+		}
+
+		ap->pflags |= ATA_PFLAG_PM_PENDING;
+		ata_for_each_link(link, ap, HOST_FIRST) {
+			link->eh_info.action |= action;
+			link->eh_info.flags |= ehi_flags;
+		}
+
+		ata_port_schedule_eh(ap);
+
+		spin_unlock_irqrestore(ap->lock, flags);
+
+		/* wait and check result */
+		if (wait) {
+			ata_port_wait_eh(ap);
+			WARN_ON(ap->pflags & ATA_PFLAG_PM_PENDING);
+			if (rc)
+				return rc;
+		}
+	}
+
+	return 0;
+}
+
+/**
+ *	ata_host_suspend - suspend host
+ *	@host: host to suspend
+ *	@mesg: PM message
+ *
+ *	Suspend @host.  Actual operation is performed by EH.  This
+ *	function requests EH to perform PM operations and waits for EH
+ *	to finish.
+ *
+ *	LOCKING:
+ *	Kernel thread context (may sleep).
+ *
+ *	RETURNS:
+ *	0 on success, -errno on failure.
+ */
+int ata_host_suspend(struct ata_host *host, pm_message_t mesg)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int ehi_flags = ATA_EHI_QUIET;
 	int rc;
 
@@ -5318,6 +5778,7 @@ static int ata_port_suspend_common(struct device *dev, pm_message_t mesg)
 	if (mesg.event == PM_EVENT_SUSPEND)
 		ehi_flags |= ATA_EHI_NO_AUTOPSY | ATA_EHI_NO_RECOVERY;
 
+<<<<<<< HEAD
 	rc = ata_port_request_pm(ap, mesg, 0, ehi_flags, 1);
 	return rc;
 }
@@ -5401,18 +5862,41 @@ int ata_host_suspend(struct ata_host *host, pm_message_t mesg)
 	return 0;
 }
 
+=======
+	rc = ata_host_request_pm(host, mesg, 0, ehi_flags, 1);
+	if (rc == 0)
+		host->dev->power.power_state = mesg;
+	return rc;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	ata_host_resume - resume host
  *	@host: host to resume
  *
+<<<<<<< HEAD
  *	Resume @host.  Actual operation is performed by port resume.
  */
 void ata_host_resume(struct ata_host *host)
 {
+=======
+ *	Resume @host.  Actual operation is performed by EH.  This
+ *	function requests EH to perform PM operations and returns.
+ *	Note that all resume operations are performed parallelly.
+ *
+ *	LOCKING:
+ *	Kernel thread context (may sleep).
+ */
+void ata_host_resume(struct ata_host *host)
+{
+	ata_host_request_pm(host, PMSG_ON, ATA_EH_RESET,
+			    ATA_EHI_NO_AUTOPSY | ATA_EHI_QUIET, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	host->dev->power.power_state = PMSG_ON;
 }
 #endif
 
+<<<<<<< HEAD
 struct device_type ata_port_type = {
 	.name = "ata_port",
 #ifdef CONFIG_PM
@@ -5420,6 +5904,8 @@ struct device_type ata_port_type = {
 #endif
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  *	ata_dev_init - Initialize an ata_device structure
  *	@dev: Device structure to initialize
@@ -5907,9 +6393,15 @@ int ata_host_start(struct ata_host *host)
 			rc = ap->ops->port_start(ap);
 			if (rc) {
 				if (rc != -ENODEV)
+<<<<<<< HEAD
 					dev_err(host->dev,
 						"failed to start port %d (errno=%d)\n",
 						i, rc);
+=======
+					dev_printk(KERN_ERR, host->dev,
+						"failed to start port %d "
+						"(errno=%d)\n", i, rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				goto err_out;
 			}
 		}
@@ -5954,6 +6446,7 @@ void ata_host_init(struct ata_host *host, struct device *dev,
 	host->ops = ops;
 }
 
+<<<<<<< HEAD
 void __ata_port_probe(struct ata_port *ap)
 {
 	struct ata_eh_info *ehi = &ap->link.eh_info;
@@ -5979,6 +6472,31 @@ int ata_port_probe(struct ata_port *ap)
 
 	if (ap->ops->error_handler) {
 		__ata_port_probe(ap);
+=======
+int ata_port_probe(struct ata_port *ap)
+{
+	int rc = 0;
+
+	/* probe */
+	if (ap->ops->error_handler) {
+		struct ata_eh_info *ehi = &ap->link.eh_info;
+		unsigned long flags;
+
+		/* kick EH for boot probing */
+		spin_lock_irqsave(ap->lock, flags);
+
+		ehi->probe_mask |= ATA_ALL_DEVICES;
+		ehi->action |= ATA_EH_RESET;
+		ehi->flags |= ATA_EHI_NO_AUTOPSY | ATA_EHI_QUIET;
+
+		ap->pflags &= ~ATA_PFLAG_INITIALIZING;
+		ap->pflags |= ATA_PFLAG_LOADING;
+		ata_port_schedule_eh(ap);
+
+		spin_unlock_irqrestore(ap->lock, flags);
+
+		/* wait for EH to finish */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ata_port_wait_eh(ap);
 	} else {
 		DPRINTK("ata%u: bus probe begin\n", ap->print_id);
@@ -6033,7 +6551,12 @@ int ata_host_register(struct ata_host *host, struct scsi_host_template *sht)
 
 	/* host must have been started */
 	if (!(host->flags & ATA_HOST_STARTED)) {
+<<<<<<< HEAD
 		dev_err(host->dev, "BUG: trying to register unstarted host\n");
+=======
+		dev_printk(KERN_ERR, host->dev,
+			   "BUG: trying to register unstarted host\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN_ON(1);
 		return -EINVAL;
 	}
@@ -6047,7 +6570,11 @@ int ata_host_register(struct ata_host *host, struct scsi_host_template *sht)
 
 	/* give ports names and add SCSI hosts */
 	for (i = 0; i < host->n_ports; i++)
+<<<<<<< HEAD
 		host->ports[i]->print_id = atomic_inc_return(&ata_print_id);
+=======
+		host->ports[i]->print_id = ata_print_id++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 	/* Create associated sysfs transport objects  */
@@ -6084,6 +6611,7 @@ int ata_host_register(struct ata_host *host, struct scsi_host_template *sht)
 					      ap->udma_mask);
 
 		if (!ata_port_is_dummy(ap)) {
+<<<<<<< HEAD
 			ata_port_info(ap, "%cATA max %s %s\n",
 				      (ap->flags & ATA_FLAG_SATA) ? 'S' : 'P',
 				      ata_mode_string(xfer_mask),
@@ -6091,6 +6619,16 @@ int ata_host_register(struct ata_host *host, struct scsi_host_template *sht)
 			ata_ehi_clear_desc(&ap->link.eh_info);
 		} else
 			ata_port_info(ap, "DUMMY\n");
+=======
+			ata_port_printk(ap, KERN_INFO,
+					"%cATA max %s %s\n",
+					(ap->flags & ATA_FLAG_SATA) ? 'S' : 'P',
+					ata_mode_string(xfer_mask),
+					ap->link.eh_info.desc);
+			ata_ehi_clear_desc(&ap->link.eh_info);
+		} else
+			ata_port_printk(ap, KERN_INFO, "DUMMY\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* perform each probe asynchronously */
@@ -6302,8 +6840,13 @@ int ata_pci_device_do_resume(struct pci_dev *pdev)
 
 	rc = pcim_enable_device(pdev);
 	if (rc) {
+<<<<<<< HEAD
 		dev_err(&pdev->dev,
 			"failed to enable device after resume (%d)\n", rc);
+=======
+		dev_printk(KERN_ERR, &pdev->dev,
+			   "failed to enable device after resume (%d)\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return rc;
 	}
 
@@ -6660,6 +7203,7 @@ const struct ata_port_info ata_dummy_port_info = {
 };
 
 /*
+<<<<<<< HEAD
  * Utility print functions
  */
 int ata_port_printk(const struct ata_port *ap, const char *level,
@@ -6736,6 +7280,8 @@ void ata_print_version(const struct device *dev, const char *version)
 EXPORT_SYMBOL(ata_print_version);
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * libata is essentially a library of internal helper functions for
  * low-level ATA host controller drivers.  As such, the API/ABI is
  * likely to change as new drivers are added and updated.
@@ -6795,7 +7341,10 @@ EXPORT_SYMBOL_GPL(ata_scsi_queuecmd);
 EXPORT_SYMBOL_GPL(ata_scsi_slave_config);
 EXPORT_SYMBOL_GPL(ata_scsi_slave_destroy);
 EXPORT_SYMBOL_GPL(ata_scsi_change_queue_depth);
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(__ata_change_queue_depth);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(sata_scr_valid);
 EXPORT_SYMBOL_GPL(sata_scr_read);
 EXPORT_SYMBOL_GPL(sata_scr_write);

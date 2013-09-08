@@ -19,10 +19,15 @@
 #include <linux/time.h>
 #include <linux/sysctl.h>
 #include <linux/delayacct.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 
 int delayacct_on __read_mostly = 1;	/* Delay accounting turned on/off */
 EXPORT_SYMBOL_GPL(delayacct_on);
+=======
+
+int delayacct_on __read_mostly = 1;	/* Delay accounting turned on/off */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct kmem_cache *delayacct_cache;
 
 static int __init delayacct_setup_disable(char *str)

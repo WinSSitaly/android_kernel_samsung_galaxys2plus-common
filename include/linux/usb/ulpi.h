@@ -181,12 +181,20 @@
 
 /*-------------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
+=======
+struct otg_transceiver *otg_ulpi_create(struct otg_io_access_ops *ops,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					unsigned int flags);
 
 #ifdef CONFIG_USB_ULPI_VIEWPORT
 /* access ops for controllers with a viewport register */
+<<<<<<< HEAD
 extern struct usb_phy_io_ops ulpi_viewport_access_ops;
+=======
+extern struct otg_io_access_ops ulpi_viewport_access_ops;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #endif /* __LINUX_USB_ULPI_H */

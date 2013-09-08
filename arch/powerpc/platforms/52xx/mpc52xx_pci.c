@@ -93,7 +93,11 @@ struct mpc52xx_pci {
 };
 
 /* MPC5200 device tree match tables */
+<<<<<<< HEAD
 const struct of_device_id mpc52xx_pci_ids[] __initconst = {
+=======
+const struct of_device_id mpc52xx_pci_ids[] __initdata = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ .type = "pci", .compatible = "fsl,mpc5200-pci", },
 	{ .type = "pci", .compatible = "mpc5200-pci", },
 	{}
@@ -264,7 +268,11 @@ mpc52xx_pci_setup(struct pci_controller *hose,
 			 (unsigned long long)res->flags);
 		out_be32(&pci_regs->iw0btar,
 		         MPC52xx_PCI_IWBTAR_TRANSLATION(res->start, res->start,
+<<<<<<< HEAD
 							resource_size(res)));
+=======
+		                  res->end - res->start + 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iwcr0 = MPC52xx_PCI_IWCR_ENABLE | MPC52xx_PCI_IWCR_MEM;
 		if (res->flags & IORESOURCE_PREFETCH)
 			iwcr0 |= MPC52xx_PCI_IWCR_READ_MULTI;
@@ -278,7 +286,11 @@ mpc52xx_pci_setup(struct pci_controller *hose,
 		         res->start, res->end, res->flags);
 		out_be32(&pci_regs->iw1btar,
 		         MPC52xx_PCI_IWBTAR_TRANSLATION(res->start, res->start,
+<<<<<<< HEAD
 							resource_size(res)));
+=======
+		                  res->end - res->start + 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		iwcr1 = MPC52xx_PCI_IWCR_ENABLE | MPC52xx_PCI_IWCR_MEM;
 		if (res->flags & IORESOURCE_PREFETCH)
 			iwcr1 |= MPC52xx_PCI_IWCR_READ_MULTI;
@@ -300,7 +312,11 @@ mpc52xx_pci_setup(struct pci_controller *hose,
 	out_be32(&pci_regs->iw2btar,
 	         MPC52xx_PCI_IWBTAR_TRANSLATION(hose->io_base_phys,
 	                                        res->start,
+<<<<<<< HEAD
 						resource_size(res)));
+=======
+	                                        res->end - res->start + 1));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iwcr2 = MPC52xx_PCI_IWCR_ENABLE | MPC52xx_PCI_IWCR_IO;
 
 	/* Set all the IWCR fields at once; they're in the same reg */
@@ -371,7 +387,11 @@ mpc52xx_add_bridge(struct device_node *node)
 
 	pr_debug("Adding MPC52xx PCI host bridge %s\n", node->full_name);
 
+<<<<<<< HEAD
 	pci_add_flags(PCI_REASSIGN_ALL_BUS);
+=======
+	ppc_pci_add_flags(PPC_PCI_REASSIGN_ALL_BUS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (of_address_to_resource(node, 0, &rsrc) != 0) {
 		printk(KERN_ERR "Can't get %s resources\n", node->full_name);
@@ -402,7 +422,11 @@ mpc52xx_add_bridge(struct device_node *node)
 
 	hose->ops = &mpc52xx_pci_ops;
 
+<<<<<<< HEAD
 	pci_regs = ioremap(rsrc.start, resource_size(&rsrc));
+=======
+	pci_regs = ioremap(rsrc.start, rsrc.end - rsrc.start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pci_regs)
 		return -ENOMEM;
 

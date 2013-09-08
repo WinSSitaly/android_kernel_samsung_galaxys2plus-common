@@ -40,6 +40,10 @@ struct winsize {
 };
 
 #ifdef __KERNEL__
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * c_cc characters in the termio structure.  Oh, how I love being

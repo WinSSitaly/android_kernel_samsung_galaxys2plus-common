@@ -12,7 +12,10 @@
 #undef DEBUG
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/sched.h>	/* for init_mm */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/io.h>
 #include <asm/machdep.h>

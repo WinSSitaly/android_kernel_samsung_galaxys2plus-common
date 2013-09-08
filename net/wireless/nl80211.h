@@ -92,8 +92,12 @@ void nl80211_send_sta_del_event(struct cfg80211_registered_device *rdev,
 				gfp_t gfp);
 
 int nl80211_send_mgmt(struct cfg80211_registered_device *rdev,
+<<<<<<< HEAD
 		      struct net_device *netdev, u32 nlpid,
 		      int freq, int sig_dbm,
+=======
+		      struct net_device *netdev, u32 nlpid, int freq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      const u8 *buf, size_t len, gfp_t gfp);
 void nl80211_send_mgmt_tx_status(struct cfg80211_registered_device *rdev,
 				 struct net_device *netdev, u64 cookie,
@@ -110,6 +114,7 @@ nl80211_send_cqm_pktloss_notify(struct cfg80211_registered_device *rdev,
 				struct net_device *netdev, const u8 *peer,
 				u32 num_packets, gfp_t gfp);
 
+<<<<<<< HEAD
 void nl80211_gtk_rekey_notify(struct cfg80211_registered_device *rdev,
 			      struct net_device *netdev, const u8 *bssid,
 			      const u8 *replay_ctr, gfp_t gfp);
@@ -123,4 +128,6 @@ bool nl80211_unexpected_frame(struct net_device *dev,
 bool nl80211_unexpected_4addr_frame(struct net_device *dev,
 				    const u8 *addr, gfp_t gfp);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __NET_WIRELESS_NL80211_H */

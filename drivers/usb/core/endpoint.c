@@ -56,7 +56,11 @@ static ssize_t show_ep_wMaxPacketSize(struct device *dev,
 {
 	struct ep_device *ep = to_ep_device(dev);
 	return sprintf(buf, "%04x\n",
+<<<<<<< HEAD
 		        usb_endpoint_maxp(ep->desc) & 0x07ff);
+=======
+			le16_to_cpu(ep->desc->wMaxPacketSize) & 0x07ff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 static DEVICE_ATTR(wMaxPacketSize, S_IRUGO, show_ep_wMaxPacketSize, NULL);
 

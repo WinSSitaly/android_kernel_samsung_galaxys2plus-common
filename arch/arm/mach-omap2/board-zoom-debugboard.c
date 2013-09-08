@@ -14,9 +14,12 @@
 #include <linux/smsc911x.h>
 #include <linux/interrupt.h>
 
+<<<<<<< HEAD
 #include <linux/regulator/fixed.h>
 #include <linux/regulator/machine.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <plat/gpmc.h>
 #include <plat/gpmc-smsc911x.h>
 
@@ -26,7 +29,10 @@
 #define ZOOM_SMSC911X_GPIO	158
 #define ZOOM_QUADUART_CS	3
 #define ZOOM_QUADUART_GPIO	102
+<<<<<<< HEAD
 #define ZOOM_QUADUART_RST_GPIO	152
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define QUART_CLK		1843200
 #define DEBUG_BASE		0x08000000
 #define ZOOM_ETHR_START	DEBUG_BASE
@@ -46,6 +52,10 @@ static inline void __init zoom_init_smsc911x(void)
 static struct plat_serial8250_port serial_platform_data[] = {
 	{
 		.mapbase	= ZOOM_UART_BASE,
+<<<<<<< HEAD
+=======
+		.irq		= OMAP_GPIO_IRQ(102),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags		= UPF_BOOT_AUTOCONF|UPF_IOREMAP|UPF_SHARE_IRQ,
 		.irqflags	= IRQF_SHARED | IRQF_TRIGGER_RISING,
 		.iotype		= UPIO_MEM,
@@ -70,6 +80,7 @@ static inline void __init zoom_init_quaduart(void)
 	unsigned long cs_mem_base;
 	int quart_gpio = 0;
 
+<<<<<<< HEAD
 	if (gpio_request_one(ZOOM_QUADUART_RST_GPIO,
 				GPIOF_OUT_INIT_LOW,
 				"TL16CP754C GPIO") < 0) {
@@ -78,6 +89,8 @@ static inline void __init zoom_init_quaduart(void)
 		return;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	quart_cs = ZOOM_QUADUART_CS;
 
 	if (gpmc_cs_request(quart_cs, SZ_1M, &cs_mem_base) < 0) {
@@ -91,8 +104,11 @@ static inline void __init zoom_init_quaduart(void)
 	if (gpio_request_one(quart_gpio, GPIOF_IN, "TL16CP754C GPIO") < 0)
 		printk(KERN_ERR "Failed to request GPIO%d for TL16CP754C\n",
 								quart_gpio);
+<<<<<<< HEAD
 
 	serial_platform_data[0].irq = gpio_to_irq(102);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int omap_zoom_debugboard_detect(void)
@@ -120,17 +136,23 @@ static struct platform_device *zoom_devices[] __initdata = {
 	&zoom_debugboard_serial_device,
 };
 
+<<<<<<< HEAD
 static struct regulator_consumer_supply dummy_supplies[] = {
 	REGULATOR_SUPPLY("vddvario", "smsc911x.0"),
 	REGULATOR_SUPPLY("vdd33a", "smsc911x.0"),
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init zoom_debugboard_init(void)
 {
 	if (!omap_zoom_debugboard_detect())
 		return 0;
 
+<<<<<<< HEAD
 	regulator_register_fixed(0, dummy_supplies, ARRAY_SIZE(dummy_supplies));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	zoom_init_smsc911x();
 	zoom_init_quaduart();
 	return platform_add_devices(zoom_devices, ARRAY_SIZE(zoom_devices));

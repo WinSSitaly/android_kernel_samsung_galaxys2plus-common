@@ -18,7 +18,11 @@
  *
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
+<<<<<<< HEAD
 #include "util.h"
+=======
+#define _GNU_SOURCE
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <dirent.h>
 #include <mntent.h>
 #include <stdio.h>
@@ -31,6 +35,10 @@
 #include <pthread.h>
 #include <fcntl.h>
 #include <unistd.h>
+<<<<<<< HEAD
+=======
+#include <ctype.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <errno.h>
 #include <stdbool.h>
 #include <linux/list.h>
@@ -43,6 +51,13 @@
 
 #define VERSION "0.5"
 
+<<<<<<< HEAD
+=======
+#define _STR(x) #x
+#define STR(x) _STR(x)
+#define MAX_PATH 256
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TRACE_CTRL	"tracing_on"
 #define TRACE		"trace"
 #define AVAILABLE	"available_tracers"
@@ -68,6 +83,29 @@ struct events {
 };
 
 
+<<<<<<< HEAD
+=======
+
+static void die(const char *fmt, ...)
+{
+	va_list ap;
+	int ret = errno;
+
+	if (errno)
+		perror("trace-cmd");
+	else
+		ret = -1;
+
+	va_start(ap, fmt);
+	fprintf(stderr, "  ");
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
+
+	fprintf(stderr, "\n");
+	exit(ret);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void *malloc_or_die(unsigned int size)
 {
 	void *data;
@@ -158,6 +196,7 @@ int bigendian(void)
 	return *ptr == 0x01020304;
 }
 
+<<<<<<< HEAD
 /* unfortunately, you can not stat debugfs or proc files for size */
 static void record_file(const char *file, size_t hdr_sz)
 {
@@ -165,10 +204,34 @@ static void record_file(const char *file, size_t hdr_sz)
 	char buf[BUFSIZ], *sizep;
 	off_t hdr_pos = lseek(output_fd, 0, SEEK_CUR);
 	int r, fd;
+=======
+static unsigned long long copy_file_fd(int fd)
+{
+	unsigned long long size = 0;
+	char buf[BUFSIZ];
+	int r;
+
+	do {
+		r = read(fd, buf, BUFSIZ);
+		if (r > 0) {
+			size += r;
+			write_or_die(buf, r);
+		}
+	} while (r > 0);
+
+	return size;
+}
+
+static unsigned long long copy_file(const char *file)
+{
+	unsigned long long size = 0;
+	int fd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
 		die("Can't read '%s'", file);
+<<<<<<< HEAD
 
 	/* put in zeros for file size, then fill true size later */
 	if (hdr_sz)
@@ -190,10 +253,48 @@ static void record_file(const char *file, size_t hdr_sz)
 
 	if (hdr_sz && pwrite(output_fd, sizep, hdr_sz, hdr_pos) < 0)
 		die("writing to %s", output_file);
+=======
+	size = copy_file_fd(fd);
+	close(fd);
+
+	return size;
+}
+
+static unsigned long get_size_fd(int fd)
+{
+	unsigned long long size = 0;
+	char buf[BUFSIZ];
+	int r;
+
+	do {
+		r = read(fd, buf, BUFSIZ);
+		if (r > 0)
+			size += r;
+	} while (r > 0);
+
+	lseek(fd, 0, SEEK_SET);
+
+	return size;
+}
+
+static unsigned long get_size(const char *file)
+{
+	unsigned long long size = 0;
+	int fd;
+
+	fd = open(file, O_RDONLY);
+	if (fd < 0)
+		die("Can't read '%s'", file);
+	size = get_size_fd(fd);
+	close(fd);
+
+	return size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void read_header_files(void)
 {
+<<<<<<< HEAD
 	char *path;
 	struct stat st;
 
@@ -212,6 +313,44 @@ static void read_header_files(void)
 	write_or_die("header_event", 13);
 	record_file(path, 8);
 	put_tracing_file(path);
+=======
+	unsigned long long size, check_size;
+	char *path;
+	int fd;
+
+	path = get_tracing_file("events/header_page");
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
+		die("can't read '%s'", path);
+
+	/* unfortunately, you can not stat debugfs files for size */
+	size = get_size_fd(fd);
+
+	write_or_die("header_page", 12);
+	write_or_die(&size, 8);
+	check_size = copy_file_fd(fd);
+	close(fd);
+
+	if (size != check_size)
+		die("wrong size for '%s' size=%lld read=%lld",
+		    path, size, check_size);
+	put_tracing_file(path);
+
+	path = get_tracing_file("events/header_event");
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
+		die("can't read '%s'", path);
+
+	size = get_size_fd(fd);
+
+	write_or_die("header_event", 13);
+	write_or_die(&size, 8);
+	check_size = copy_file_fd(fd);
+	if (size != check_size)
+		die("wrong size for '%s'", path);
+	put_tracing_file(path);
+	close(fd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static bool name_in_tp_list(char *sys, struct tracepoint_path *tps)
@@ -227,6 +366,10 @@ static bool name_in_tp_list(char *sys, struct tracepoint_path *tps)
 
 static void copy_event_system(const char *sys, struct tracepoint_path *tps)
 {
+<<<<<<< HEAD
+=======
+	unsigned long long size, check_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct dirent *dent;
 	struct stat st;
 	char *format;
@@ -266,8 +409,19 @@ static void copy_event_system(const char *sys, struct tracepoint_path *tps)
 		sprintf(format, "%s/%s/format", sys, dent->d_name);
 		ret = stat(format, &st);
 
+<<<<<<< HEAD
 		if (ret >= 0)
 			record_file(format, 8);
+=======
+		if (ret >= 0) {
+			/* unfortunately, you can not stat debugfs files for size */
+			size = get_size(format);
+			write_or_die(&size, 8);
+			check_size = copy_file(format);
+			if (size != check_size)
+				die("error in size of file '%s'", format);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		free(format);
 	}
@@ -348,7 +502,11 @@ static void read_event_files(struct tracepoint_path *tps)
 
 static void read_proc_kallsyms(void)
 {
+<<<<<<< HEAD
 	unsigned int size;
+=======
+	unsigned int size, check_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const char *path = "/proc/kallsyms";
 	struct stat st;
 	int ret;
@@ -360,12 +518,25 @@ static void read_proc_kallsyms(void)
 		write_or_die(&size, 4);
 		return;
 	}
+<<<<<<< HEAD
 	record_file(path, 4);
+=======
+	size = get_size(path);
+	write_or_die(&size, 4);
+	check_size = copy_file(path);
+	if (size != check_size)
+		die("error in size of file '%s'", path);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void read_ftrace_printk(void)
 {
+<<<<<<< HEAD
 	unsigned int size;
+=======
+	unsigned int size, check_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *path;
 	struct stat st;
 	int ret;
@@ -378,8 +549,16 @@ static void read_ftrace_printk(void)
 		write_or_die(&size, 4);
 		goto out;
 	}
+<<<<<<< HEAD
 	record_file(path, 4);
 
+=======
+	size = get_size(path);
+	write_or_die(&size, 4);
+	check_size = copy_file(path);
+	if (size != check_size)
+		die("error in size of file '%s'", path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	put_tracing_file(path);
 }
@@ -404,6 +583,7 @@ get_tracepoints_path(struct list_head *pattrs)
 	return nr_tracepoints > 0 ? path.next : NULL;
 }
 
+<<<<<<< HEAD
 static void
 put_tracepoints_path(struct tracepoint_path *tps)
 {
@@ -417,6 +597,8 @@ put_tracepoints_path(struct tracepoint_path *tps)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bool have_tracepoints(struct list_head *pattrs)
 {
 	struct perf_evsel *pos;
@@ -428,11 +610,27 @@ bool have_tracepoints(struct list_head *pattrs)
 	return false;
 }
 
+<<<<<<< HEAD
 static void tracing_data_header(void)
 {
 	char buf[20];
 
 	/* just guessing this is someone's birthday.. ;) */
+=======
+int read_tracing_data(int fd, struct list_head *pattrs)
+{
+	char buf[BUFSIZ];
+	struct tracepoint_path *tps = get_tracepoints_path(pattrs);
+
+	/*
+	 * What? No tracepoints? No sense writing anything here, bail out.
+	 */
+	if (tps == NULL)
+		return -1;
+
+	output_fd = fd;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	buf[0] = 23;
 	buf[1] = 8;
 	buf[2] = 68;
@@ -457,6 +655,7 @@ static void tracing_data_header(void)
 	/* save page_size */
 	page_size = sysconf(_SC_PAGESIZE);
 	write_or_die(&page_size, 4);
+<<<<<<< HEAD
 }
 
 struct tracing_data *tracing_data_get(struct list_head *pattrs,
@@ -495,12 +694,16 @@ struct tracing_data *tracing_data_get(struct list_head *pattrs,
 	}
 
 	tracing_data_header();
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	read_header_files();
 	read_ftrace_files(tps);
 	read_event_files(tps);
 	read_proc_kallsyms();
 	read_ftrace_printk();
 
+<<<<<<< HEAD
 	/*
 	 * All tracing data are stored by now, we can restore
 	 * the default output file in case we used temp file.
@@ -539,4 +742,23 @@ int read_tracing_data(int fd, struct list_head *pattrs)
 
 	tracing_data_put(tdata);
 	return 0;
+=======
+	return 0;
+}
+
+ssize_t read_tracing_data_size(int fd, struct list_head *pattrs)
+{
+	ssize_t size;
+	int err = 0;
+
+	calc_data_size = 1;
+	err = read_tracing_data(fd, pattrs);
+	size = calc_data_size - 1;
+	calc_data_size = 0;
+
+	if (err < 0)
+		return err;
+
+	return size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

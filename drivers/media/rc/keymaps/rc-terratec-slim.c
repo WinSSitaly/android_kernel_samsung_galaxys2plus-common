@@ -19,7 +19,10 @@
  */
 
 #include <media/rc-map.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* TerraTec slim remote, 7 rows, 4 columns. */
 /* Uses NEC extended 0x02bd. */

@@ -1,7 +1,11 @@
 /*
+<<<<<<< HEAD
  * Generic C implementation of atomic counter operations. Usable on
  * UP systems only. Do not include in machine independent code.
  *
+=======
+ * Generic C implementation of atomic counter operations
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Originally implemented for MN10300.
  *
  * Copyright (C) 2007 Red Hat, Inc. All Rights Reserved.
@@ -15,6 +19,7 @@
 #ifndef __ASM_GENERIC_ATOMIC_H
 #define __ASM_GENERIC_ATOMIC_H
 
+<<<<<<< HEAD
 #include <asm/cmpxchg.h>
 
 #ifdef CONFIG_SMP
@@ -23,6 +28,10 @@
      !defined(atomic_clear_mask) || !defined(atomic_set_mask)
 #  error "SMP requires a little arch-specific magic"
 # endif
+=======
+#ifdef CONFIG_SMP
+#error not SMP safe
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 /*
@@ -40,9 +49,13 @@
  *
  * Atomically reads the value of @v.
  */
+<<<<<<< HEAD
 #ifndef atomic_read
 #define atomic_read(v)	(*(volatile int *)&(v)->counter)
 #endif
+=======
+#define atomic_read(v)	(*(volatile int *)&(v)->counter)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * atomic_set - set atomic variable
@@ -54,6 +67,10 @@
 #define atomic_set(v, i) (((v)->counter) = (i))
 
 #include <linux/irqflags.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * atomic_add_return - add integer to atomic variable
@@ -62,7 +79,10 @@
  *
  * Atomically adds @i to @v and returns the result
  */
+<<<<<<< HEAD
 #ifndef atomic_add_return
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int atomic_add_return(int i, atomic_t *v)
 {
 	unsigned long flags;
@@ -76,7 +96,10 @@ static inline int atomic_add_return(int i, atomic_t *v)
 
 	return temp;
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * atomic_sub_return - subtract integer from atomic variable
@@ -85,7 +108,10 @@ static inline int atomic_add_return(int i, atomic_t *v)
  *
  * Atomically subtracts @i from @v and returns the result
  */
+<<<<<<< HEAD
 #ifndef atomic_sub_return
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline int atomic_sub_return(int i, atomic_t *v)
 {
 	unsigned long flags;
@@ -99,7 +125,10 @@ static inline int atomic_sub_return(int i, atomic_t *v)
 
 	return temp;
 }
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int atomic_add_negative(int i, atomic_t *v)
 {
@@ -130,8 +159,13 @@ static inline void atomic_dec(atomic_t *v)
 #define atomic_inc_return(v)		atomic_add_return(1, (v))
 
 #define atomic_sub_and_test(i, v)	(atomic_sub_return((i), (v)) == 0)
+<<<<<<< HEAD
 #define atomic_dec_and_test(v)		(atomic_dec_return(v) == 0)
 #define atomic_inc_and_test(v)		(atomic_inc_return(v) == 0)
+=======
+#define atomic_dec_and_test(v)		(atomic_sub_return(1, (v)) == 0)
+#define atomic_inc_and_test(v)		(atomic_add_return(1, (v)) == 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define atomic_xchg(ptr, v)		(xchg(&(ptr)->counter, (v)))
 #define atomic_cmpxchg(v, old, new)	(cmpxchg(&((v)->counter), (old), (new)))
@@ -142,12 +176,17 @@ static inline void atomic_dec(atomic_t *v)
 
 #define cmpxchg64_local(ptr, o, n) __cmpxchg64_local_generic((ptr), (o), (n))
 
+<<<<<<< HEAD
 static inline int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+static inline int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
   int c, old;
   c = atomic_read(v);
   while (c != u && (old = atomic_cmpxchg(v, c, c + a)) != c)
     c = old;
+<<<<<<< HEAD
   return c;
 }
 
@@ -187,6 +226,22 @@ static inline void atomic_set_mask(unsigned int mask, atomic_t *v)
 	raw_local_irq_restore(flags);
 }
 #endif
+=======
+  return c != u;
+}
+
+#define atomic_inc_not_zero(v) atomic_add_unless((v), 1, 0)
+
+static inline void atomic_clear_mask(unsigned long mask, unsigned long *addr)
+{
+	unsigned long flags;
+
+	mask = ~mask;
+	raw_local_irq_save(flags); /* Don't trace it in a irqsoff handler */
+	*addr &= mask;
+	raw_local_irq_restore(flags);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Assume that atomic operations are already serializing */
 #define smp_mb__before_atomic_dec()	barrier()
@@ -194,5 +249,10 @@ static inline void atomic_set_mask(unsigned int mask, atomic_t *v)
 #define smp_mb__before_atomic_inc()	barrier()
 #define smp_mb__after_atomic_inc()	barrier()
 
+<<<<<<< HEAD
+=======
+#include <asm-generic/atomic-long.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 #endif /* __ASM_GENERIC_ATOMIC_H */

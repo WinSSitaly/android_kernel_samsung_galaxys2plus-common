@@ -18,9 +18,13 @@
 
 #include <linux/highmem.h>
 #include <linux/mmc/tmio.h>
+<<<<<<< HEAD
 #include <linux/mutex.h>
 #include <linux/pagemap.h>
 #include <linux/scatterlist.h>
+=======
+#include <linux/pagemap.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/spinlock.h>
 
 /* Definitions for values the CTRL_SDIO_STATUS register can take. */
@@ -47,14 +51,23 @@ struct tmio_mmc_host {
 	struct mmc_request      *mrq;
 	struct mmc_data         *data;
 	struct mmc_host         *mmc;
+<<<<<<< HEAD
 
 	/* Controller power state */
 	bool			power;
+=======
+	unsigned int		sdio_irq_enabled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Callbacks for clock / power control */
 	void (*set_pwr)(struct platform_device *host, int state);
 	void (*set_clk_div)(struct platform_device *host, int state);
 
+<<<<<<< HEAD
+=======
+	int			pm_error;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* pio related stuff */
 	struct scatterlist      *sg_ptr;
 	struct scatterlist      *sg_orig;
@@ -75,6 +88,7 @@ struct tmio_mmc_host {
 
 	/* Track lost interrupts */
 	struct delayed_work	delayed_reset_work;
+<<<<<<< HEAD
 	struct work_struct	done;
 
 	/* Cache IRQ mask */
@@ -85,6 +99,10 @@ struct tmio_mmc_host {
 	unsigned long		last_req_ts;
 	struct mutex		ios_lock;	/* protect set_ios() context */
 	bool			native_hotplug;
+=======
+	spinlock_t		lock;
+	unsigned long		last_req_ts;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 int tmio_mmc_host_probe(struct tmio_mmc_host **host,
@@ -96,40 +114,59 @@ void tmio_mmc_do_data_irq(struct tmio_mmc_host *host);
 void tmio_mmc_enable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
 void tmio_mmc_disable_mmc_irqs(struct tmio_mmc_host *host, u32 i);
 irqreturn_t tmio_mmc_irq(int irq, void *devid);
+<<<<<<< HEAD
 irqreturn_t tmio_mmc_sdcard_irq(int irq, void *devid);
 irqreturn_t tmio_mmc_card_detect_irq(int irq, void *devid);
 irqreturn_t tmio_mmc_sdio_irq(int irq, void *devid);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline char *tmio_mmc_kmap_atomic(struct scatterlist *sg,
 					 unsigned long *flags)
 {
 	local_irq_save(*flags);
+<<<<<<< HEAD
 	return kmap_atomic(sg_page(sg)) + sg->offset;
+=======
+	return kmap_atomic(sg_page(sg), KM_BIO_SRC_IRQ) + sg->offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void tmio_mmc_kunmap_atomic(struct scatterlist *sg,
 					  unsigned long *flags, void *virt)
 {
+<<<<<<< HEAD
 	kunmap_atomic(virt - sg->offset);
+=======
+	kunmap_atomic(virt - sg->offset, KM_BIO_SRC_IRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_irq_restore(*flags);
 }
 
 #if defined(CONFIG_MMC_SDHI) || defined(CONFIG_MMC_SDHI_MODULE)
 void tmio_mmc_start_dma(struct tmio_mmc_host *host, struct mmc_data *data);
+<<<<<<< HEAD
 void tmio_mmc_enable_dma(struct tmio_mmc_host *host, bool enable);
 void tmio_mmc_request_dma(struct tmio_mmc_host *host, struct tmio_mmc_data *pdata);
 void tmio_mmc_release_dma(struct tmio_mmc_host *host);
 void tmio_mmc_abort_dma(struct tmio_mmc_host *host);
+=======
+void tmio_mmc_request_dma(struct tmio_mmc_host *host, struct tmio_mmc_data *pdata);
+void tmio_mmc_release_dma(struct tmio_mmc_host *host);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 static inline void tmio_mmc_start_dma(struct tmio_mmc_host *host,
 			       struct mmc_data *data)
 {
 }
 
+<<<<<<< HEAD
 static inline void tmio_mmc_enable_dma(struct tmio_mmc_host *host, bool enable)
 {
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void tmio_mmc_request_dma(struct tmio_mmc_host *host,
 				 struct tmio_mmc_data *pdata)
 {
@@ -140,10 +177,13 @@ static inline void tmio_mmc_request_dma(struct tmio_mmc_host *host,
 static inline void tmio_mmc_release_dma(struct tmio_mmc_host *host)
 {
 }
+<<<<<<< HEAD
 
 static inline void tmio_mmc_abort_dma(struct tmio_mmc_host *host)
 {
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef CONFIG_PM
@@ -157,6 +197,7 @@ int tmio_mmc_host_resume(struct device *dev);
 int tmio_mmc_host_runtime_suspend(struct device *dev);
 int tmio_mmc_host_runtime_resume(struct device *dev);
 
+<<<<<<< HEAD
 static inline u16 sd_ctrl_read16(struct tmio_mmc_host *host, int addr)
 {
 	return readw(host->ctl + (addr << host->bus_shift));
@@ -197,4 +238,6 @@ static inline void sd_ctrl_write32(struct tmio_mmc_host *host, int addr, u32 val
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

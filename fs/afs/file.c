@@ -251,7 +251,11 @@ static int afs_readpages(struct file *file, struct address_space *mapping,
 	ASSERT(key != NULL);
 
 	vnode = AFS_FS_I(mapping->host);
+<<<<<<< HEAD
 	if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
+=======
+	if (vnode->flags & AFS_VNODE_DELETED) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		_leave(" = -ESTALE");
 		return -ESTALE;
 	}

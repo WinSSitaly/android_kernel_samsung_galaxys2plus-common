@@ -17,8 +17,15 @@
 #include <linux/kref.h>
 #include <linux/workqueue.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <asm/ptrace.h>
+=======
+#include <asm/atomic.h>
+#include <asm/ptrace.h>
+#include <asm/system.h>
+#include <trace/events/irq.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * These correspond to the IORESOURCE_IRQ_* defines in
@@ -96,7 +103,10 @@ typedef irqreturn_t (*irq_handler_t)(int, void *);
  * @flags:	flags (see IRQF_* above)
  * @name:	name of the device
  * @dev_id:	cookie to identify the device
+<<<<<<< HEAD
  * @percpu_dev_id:	cookie to identify the device
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @next:	pointer to the next irqaction for shared interrupts
  * @irq:	interrupt number
  * @dir:	pointer to the proc/irq/NN/name entry
@@ -106,6 +116,7 @@ typedef irqreturn_t (*irq_handler_t)(int, void *);
  * @thread_mask:	bitmask for keeping track of @thread activity
  */
 struct irqaction {
+<<<<<<< HEAD
 	irq_handler_t		handler;
 	unsigned long		flags;
 	void			*dev_id;
@@ -118,6 +129,19 @@ struct irqaction {
 	unsigned long		thread_mask;
 	const char		*name;
 	struct proc_dir_entry	*dir;
+=======
+	irq_handler_t handler;
+	unsigned long flags;
+	void *dev_id;
+	struct irqaction *next;
+	int irq;
+	irq_handler_t thread_fn;
+	struct task_struct *thread;
+	unsigned long thread_flags;
+	unsigned long thread_mask;
+	const char *name;
+	struct proc_dir_entry *dir;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } ____cacheline_internodealigned_in_smp;
 
 extern irqreturn_t no_action(int cpl, void *dev_id);
@@ -139,10 +163,13 @@ extern int __must_check
 request_any_context_irq(unsigned int irq, irq_handler_t handler,
 			unsigned long flags, const char *name, void *dev_id);
 
+<<<<<<< HEAD
 extern int __must_check
 request_percpu_irq(unsigned int irq, irq_handler_t handler,
 		   const char *devname, void __percpu *percpu_dev_id);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void exit_irq_thread(void);
 #else
 
@@ -171,6 +198,7 @@ request_any_context_irq(unsigned int irq, irq_handler_t handler,
 	return request_irq(irq, handler, flags, name, dev_id);
 }
 
+<<<<<<< HEAD
 static inline int __must_check
 request_percpu_irq(unsigned int irq, irq_handler_t handler,
 		   const char *devname, void __percpu *percpu_dev_id)
@@ -178,11 +206,16 @@ request_percpu_irq(unsigned int irq, irq_handler_t handler,
 	return request_irq(irq, handler, 0, devname, percpu_dev_id);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void exit_irq_thread(void) { }
 #endif
 
 extern void free_irq(unsigned int, void *);
+<<<<<<< HEAD
 extern void free_percpu_irq(unsigned int, void __percpu *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct device;
 
@@ -222,9 +255,13 @@ extern void devm_free_irq(struct device *dev, unsigned int irq, void *dev_id);
 
 extern void disable_irq_nosync(unsigned int irq);
 extern void disable_irq(unsigned int irq);
+<<<<<<< HEAD
 extern void disable_percpu_irq(unsigned int irq);
 extern void enable_irq(unsigned int irq);
 extern void enable_percpu_irq(unsigned int irq, unsigned int type);
+=======
+extern void enable_irq(unsigned int irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* The following three functions are for the core kernel use only. */
 #ifdef CONFIG_GENERIC_HARDIRQS
@@ -454,7 +491,15 @@ asmlinkage void do_softirq(void);
 asmlinkage void __do_softirq(void);
 extern void open_softirq(int nr, void (*action)(struct softirq_action *));
 extern void softirq_init(void);
+<<<<<<< HEAD
 extern void __raise_softirq_irqoff(unsigned int nr);
+=======
+static inline void __raise_softirq_irqoff(unsigned int nr)
+{
+	trace_softirq_raise(nr);
+	or_softirq_pending(1UL << nr);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void raise_softirq_irqoff(unsigned int nr);
 extern void raise_softirq(unsigned int nr);

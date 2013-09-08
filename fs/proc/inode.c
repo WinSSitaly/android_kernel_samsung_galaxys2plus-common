@@ -7,7 +7,10 @@
 #include <linux/time.h>
 #include <linux/proc_fs.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/pid_namespace.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mm.h>
 #include <linux/string.h>
 #include <linux/stat.h>
@@ -18,10 +21,16 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/sysctl.h>
+<<<<<<< HEAD
 #include <linux/seq_file.h>
 #include <linux/slab.h>
 #include <linux/mount.h>
 
+=======
+#include <linux/slab.h>
+
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "internal.h"
@@ -79,6 +88,10 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
 static void proc_i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(proc_inode_cachep, PROC_I(inode));
 }
 
@@ -103,6 +116,7 @@ void __init proc_init_inodecache(void)
 					     init_once);
 }
 
+<<<<<<< HEAD
 static int proc_show_options(struct seq_file *seq, struct dentry *root)
 {
 	struct super_block *sb = root->d_sb;
@@ -116,14 +130,19 @@ static int proc_show_options(struct seq_file *seq, struct dentry *root)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct super_operations proc_sops = {
 	.alloc_inode	= proc_alloc_inode,
 	.destroy_inode	= proc_destroy_inode,
 	.drop_inode	= generic_delete_inode,
 	.evict_inode	= proc_evict_inode,
 	.statfs		= simple_statfs,
+<<<<<<< HEAD
 	.remount_fs	= proc_remount,
 	.show_options	= proc_show_options,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void __pde_users_dec(struct proc_dir_entry *pde)
@@ -335,7 +354,11 @@ static int proc_reg_open(struct inode *inode, struct file *file)
 	if (!pde->proc_fops) {
 		spin_unlock(&pde->pde_unload_lock);
 		kfree(pdeo);
+<<<<<<< HEAD
 		return -ENOENT;
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	pde->pde_users++;
 	open = pde->proc_fops->open;
@@ -461,7 +484,11 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
 		if (de->size)
 			inode->i_size = de->size;
 		if (de->nlink)
+<<<<<<< HEAD
 			set_nlink(inode, de->nlink);
+=======
+			inode->i_nlink = de->nlink;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (de->proc_iops)
 			inode->i_op = de->proc_iops;
 		if (de->proc_fops) {
@@ -485,6 +512,11 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
 
 int proc_fill_super(struct super_block *s)
 {
+<<<<<<< HEAD
+=======
+	struct inode * root_inode;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s->s_flags |= MS_NODIRATIME | MS_NOSUID | MS_NOEXEC;
 	s->s_blocksize = 1024;
 	s->s_blocksize_bits = 10;
@@ -493,11 +525,27 @@ int proc_fill_super(struct super_block *s)
 	s->s_time_gran = 1;
 	
 	pde_get(&proc_root);
+<<<<<<< HEAD
 	s->s_root = d_make_root(proc_get_inode(s, &proc_root));
 	if (s->s_root)
 		return 0;
 
 	printk("proc_read_super: get root inode failed\n");
+=======
+	root_inode = proc_get_inode(s, &proc_root);
+	if (!root_inode)
+		goto out_no_root;
+	root_inode->i_uid = 0;
+	root_inode->i_gid = 0;
+	s->s_root = d_alloc_root(root_inode);
+	if (!s->s_root)
+		goto out_no_root;
+	return 0;
+
+out_no_root:
+	printk("proc_read_super: get root inode failed\n");
+	iput(root_inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pde_put(&proc_root);
 	return -ENOMEM;
 }

@@ -60,9 +60,18 @@
 
 #include "compat_linux.h"
 
+<<<<<<< HEAD
 u32 psw32_user_bits = PSW32_MASK_DAT | PSW32_MASK_IO | PSW32_MASK_EXT |
 		      PSW32_DEFAULT_KEY | PSW32_MASK_BASE | PSW32_MASK_MCHECK |
 		      PSW32_MASK_PSTATE | PSW32_ASC_HOME;
+=======
+long psw_user32_bits	= (PSW_BASE32_BITS | PSW_MASK_DAT | PSW_ASC_HOME |
+			   PSW_MASK_IO | PSW_MASK_EXT | PSW_MASK_MCHECK |
+			   PSW_MASK_PSTATE | PSW_DEFAULT_KEY);
+long psw32_user_bits	= (PSW32_BASE_BITS | PSW32_MASK_DAT | PSW32_ASC_HOME |
+			   PSW32_MASK_IO | PSW32_MASK_EXT | PSW32_MASK_MCHECK |
+			   PSW32_MASK_PSTATE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  
 /* For this source file, we want overflow handling. */
 
@@ -278,6 +287,12 @@ asmlinkage long sys32_ipc(u32 call, int first, int second, int third, u32 ptr)
 {
 	if (call >> 16)		/* hack for backward compatibility */
 		return -EINVAL;
+<<<<<<< HEAD
+=======
+
+	call &= 0xffff;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (call) {
 	case SEMTIMEDOP:
 		return compat_sys_semtimedop(first, compat_ptr(ptr),
@@ -359,7 +374,16 @@ asmlinkage long sys32_rt_sigprocmask(int how, compat_sigset_t __user *set,
 	if (set) {
 		if (copy_from_user (&s32, set, sizeof(compat_sigset_t)))
 			return -EFAULT;
+<<<<<<< HEAD
 		s.sig[0] = s32.sig[0] | (((long)s32.sig[1]) << 32);
+=======
+		switch (_NSIG_WORDS) {
+		case 4: s.sig[3] = s32.sig[6] | (((long)s32.sig[7]) << 32);
+		case 3: s.sig[2] = s32.sig[4] | (((long)s32.sig[5]) << 32);
+		case 2: s.sig[1] = s32.sig[2] | (((long)s32.sig[3]) << 32);
+		case 1: s.sig[0] = s32.sig[0] | (((long)s32.sig[1]) << 32);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	set_fs (KERNEL_DS);
 	ret = sys_rt_sigprocmask(how,
@@ -369,8 +393,17 @@ asmlinkage long sys32_rt_sigprocmask(int how, compat_sigset_t __user *set,
 	set_fs (old_fs);
 	if (ret) return ret;
 	if (oset) {
+<<<<<<< HEAD
 		s32.sig[1] = (s.sig[0] >> 32);
 		s32.sig[0] = s.sig[0];
+=======
+		switch (_NSIG_WORDS) {
+		case 4: s32.sig[7] = (s.sig[3] >> 32); s32.sig[6] = s.sig[3];
+		case 3: s32.sig[5] = (s.sig[2] >> 32); s32.sig[4] = s.sig[2];
+		case 2: s32.sig[3] = (s.sig[1] >> 32); s32.sig[2] = s.sig[1];
+		case 1: s32.sig[1] = (s.sig[0] >> 32); s32.sig[0] = s.sig[0];
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (copy_to_user (oset, &s32, sizeof(compat_sigset_t)))
 			return -EFAULT;
 	}
@@ -389,8 +422,17 @@ asmlinkage long sys32_rt_sigpending(compat_sigset_t __user *set,
 	ret = sys_rt_sigpending((sigset_t __force __user *) &s, sigsetsize);
 	set_fs (old_fs);
 	if (!ret) {
+<<<<<<< HEAD
 		s32.sig[1] = (s.sig[0] >> 32);
 		s32.sig[0] = s.sig[0];
+=======
+		switch (_NSIG_WORDS) {
+		case 4: s32.sig[7] = (s.sig[3] >> 32); s32.sig[6] = s.sig[3];
+		case 3: s32.sig[5] = (s.sig[2] >> 32); s32.sig[4] = s.sig[2];
+		case 2: s32.sig[3] = (s.sig[1] >> 32); s32.sig[2] = s.sig[1];
+		case 1: s32.sig[1] = (s.sig[0] >> 32); s32.sig[0] = s.sig[0];
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (copy_to_user (set, &s32, sizeof(compat_sigset_t)))
 			return -EFAULT;
 	}
@@ -612,6 +654,10 @@ asmlinkage unsigned long old32_mmap(struct mmap_arg_struct_emu31 __user *arg)
 		return -EFAULT;
 	if (a.offset & ~PAGE_MASK)
 		return -EINVAL;
+<<<<<<< HEAD
+=======
+	a.addr = (unsigned long) compat_ptr(a.addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return sys_mmap_pgoff(a.addr, a.len, a.prot, a.flags, a.fd,
 			      a.offset >> PAGE_SHIFT);
 }
@@ -622,6 +668,10 @@ asmlinkage long sys32_mmap2(struct mmap_arg_struct_emu31 __user *arg)
 
 	if (copy_from_user(&a, arg, sizeof(a)))
 		return -EFAULT;
+<<<<<<< HEAD
+=======
+	a.addr = (unsigned long) compat_ptr(a.addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return sys_mmap_pgoff(a.addr, a.len, a.prot, a.flags, a.fd, a.offset);
 }
 

@@ -10,5 +10,8 @@ obj-$(CONFIG_MLX4_INFINIBAND)		+= hw/mlx4/
 obj-$(CONFIG_INFINIBAND_NES)		+= hw/nes/
 obj-$(CONFIG_INFINIBAND_IPOIB)		+= ulp/ipoib/
 obj-$(CONFIG_INFINIBAND_SRP)		+= ulp/srp/
+<<<<<<< HEAD
 obj-$(CONFIG_INFINIBAND_SRPT)		+= ulp/srpt/
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-$(CONFIG_INFINIBAND_ISER)		+= ulp/iser/

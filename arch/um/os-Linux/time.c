@@ -8,9 +8,17 @@
 #include <signal.h>
 #include <time.h>
 #include <sys/time.h>
+<<<<<<< HEAD
 #include "kern_util.h"
 #include "os.h"
 #include "internal.h"
+=======
+#include "kern_constants.h"
+#include "kern_util.h"
+#include "os.h"
+#include "process.h"
+#include "user.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int set_interval(void)
 {

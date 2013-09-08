@@ -44,8 +44,11 @@
 #include <linux/pagemap.h>
 #include <linux/proc_fs.h>
 #include <linux/kdev_t.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/utsname.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sunrpc/clnt.h>
 #include <linux/sunrpc/msg_prot.h>
 #include <linux/sunrpc/gss_api.h>
@@ -74,7 +77,11 @@ static int nfs4_stat_to_errno(int);
 /* lock,open owner id:
  * we currently use size 2 (u64) out of (NFS4_OPAQUE_LIMIT  >> 2)
  */
+<<<<<<< HEAD
 #define open_owner_id_maxsz	(1 + 2 + 1 + 1 + 2)
+=======
+#define open_owner_id_maxsz	(1 + 1 + 4)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define lock_owner_id_maxsz	(1 + 1 + 4)
 #define decode_lockowner_maxsz	(1 + XDR_QUADLEN(IDMAP_NAMESZ))
 #define compound_encode_hdr_maxsz	(3 + (NFS4_MAXTAGLEN >> 2))
@@ -115,11 +122,15 @@ static int nfs4_stat_to_errno(int);
 #define encode_restorefh_maxsz  (op_encode_hdr_maxsz)
 #define decode_restorefh_maxsz  (op_decode_hdr_maxsz)
 #define encode_fsinfo_maxsz	(encode_getattr_maxsz)
+<<<<<<< HEAD
 /* The 5 accounts for the PNFS attributes, and assumes that at most three
  * layout types will be returned.
  */
 #define decode_fsinfo_maxsz	(op_decode_hdr_maxsz + \
 				 nfs4_fattr_bitmap_maxsz + 4 + 8 + 5)
+=======
+#define decode_fsinfo_maxsz	(op_decode_hdr_maxsz + 15)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define encode_renew_maxsz	(op_encode_hdr_maxsz + 3)
 #define decode_renew_maxsz	(op_decode_hdr_maxsz)
 #define encode_setclientid_maxsz \
@@ -273,12 +284,16 @@ static int nfs4_stat_to_errno(int);
 				1 /* flags */ + \
 				1 /* spa_how */ + \
 				0 /* SP4_NONE (for now) */ + \
+<<<<<<< HEAD
 				1 /* implementation id array of size 1 */ + \
 				1 /* nii_domain */ + \
 				XDR_QUADLEN(NFS4_OPAQUE_LIMIT) + \
 				1 /* nii_name */ + \
 				XDR_QUADLEN(NFS4_OPAQUE_LIMIT) + \
 				3 /* nii_date */)
+=======
+				1 /* zero implemetation id array */)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define decode_exchange_id_maxsz (op_decode_hdr_maxsz + \
 				2 /* eir_clientid */ + \
 				1 /* eir_sequenceid */ + \
@@ -291,11 +306,15 @@ static int nfs4_stat_to_errno(int);
 				/* eir_server_scope<> */ \
 				XDR_QUADLEN(NFS4_OPAQUE_LIMIT) + 1 + \
 				1 /* eir_server_impl_id array length */ + \
+<<<<<<< HEAD
 				1 /* nii_domain */ + \
 				XDR_QUADLEN(NFS4_OPAQUE_LIMIT) + \
 				1 /* nii_name */ + \
 				XDR_QUADLEN(NFS4_OPAQUE_LIMIT) + \
 				3 /* nii_date */)
+=======
+				0 /* ignored eir_server_impl_id contents */)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define encode_channel_attrs_maxsz  (6 + 1 /* ca_rdma_ird.len (0) */)
 #define decode_channel_attrs_maxsz  (6 + \
 				     1 /* ca_rdma_ird.len */ + \
@@ -329,6 +348,7 @@ static int nfs4_stat_to_errno(int);
 				XDR_QUADLEN(NFS4_MAX_SESSIONID_LEN) + 5)
 #define encode_reclaim_complete_maxsz	(op_encode_hdr_maxsz + 4)
 #define decode_reclaim_complete_maxsz	(op_decode_hdr_maxsz + 4)
+<<<<<<< HEAD
 #define encode_getdevicelist_maxsz (op_encode_hdr_maxsz + 4 + \
 				encode_verifier_maxsz)
 #define decode_getdevicelist_maxsz (op_decode_hdr_maxsz + \
@@ -340,6 +360,8 @@ static int nfs4_stat_to_errno(int);
 					    NFS4_DEVICEID4_SIZE) \
 				  /* gdlr_deviceid_list */ + \
 				1 /* bool gdlr_eof */)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define encode_getdeviceinfo_maxsz (op_encode_hdr_maxsz + 4 + \
 				XDR_QUADLEN(NFS4_DEVICEID4_SIZE))
 #define decode_getdeviceinfo_maxsz (op_decode_hdr_maxsz + \
@@ -369,6 +391,7 @@ static int nfs4_stat_to_errno(int);
 				1 /* FIXME: opaque lrf_body always empty at the moment */)
 #define decode_layoutreturn_maxsz (op_decode_hdr_maxsz + \
 				1 + decode_stateid_maxsz)
+<<<<<<< HEAD
 #define encode_secinfo_no_name_maxsz (op_encode_hdr_maxsz + 1)
 #define decode_secinfo_no_name_maxsz decode_secinfo_maxsz
 #define encode_test_stateid_maxsz	(op_encode_hdr_maxsz + 2 + \
@@ -377,6 +400,8 @@ static int nfs4_stat_to_errno(int);
 #define encode_free_stateid_maxsz	(op_encode_hdr_maxsz + 1 + \
 					 XDR_QUADLEN(NFS4_STATEID_SIZE))
 #define decode_free_stateid_maxsz	(op_decode_hdr_maxsz + 1)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else /* CONFIG_NFS_V4_1 */
 #define encode_sequence_maxsz	0
 #define decode_sequence_maxsz	0
@@ -774,6 +799,7 @@ static int nfs4_stat_to_errno(int);
 #define NFS4_dec_reclaim_complete_sz	(compound_decode_hdr_maxsz + \
 					 decode_sequence_maxsz + \
 					 decode_reclaim_complete_maxsz)
+<<<<<<< HEAD
 #define NFS4_enc_getdevicelist_sz (compound_encode_hdr_maxsz + \
 				encode_sequence_maxsz + \
 				encode_putfh_maxsz + \
@@ -782,6 +808,8 @@ static int nfs4_stat_to_errno(int);
 				decode_sequence_maxsz + \
 				decode_putfh_maxsz + \
 				decode_getdevicelist_maxsz)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NFS4_enc_getdeviceinfo_sz (compound_encode_hdr_maxsz +    \
 				encode_sequence_maxsz +\
 				encode_getdeviceinfo_maxsz)
@@ -814,6 +842,7 @@ static int nfs4_stat_to_errno(int);
 				decode_sequence_maxsz + \
 				decode_putfh_maxsz + \
 				decode_layoutreturn_maxsz)
+<<<<<<< HEAD
 #define NFS4_enc_secinfo_no_name_sz	(compound_encode_hdr_maxsz + \
 					encode_sequence_maxsz + \
 					encode_putrootfh_maxsz +\
@@ -834,6 +863,8 @@ static int nfs4_stat_to_errno(int);
 #define NFS4_dec_free_stateid_sz	(compound_decode_hdr_maxsz + \
 					 decode_sequence_maxsz + \
 					 decode_free_stateid_maxsz)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 const u32 nfs41_maxwrite_overhead = ((RPC_MAX_HEADER_WITH_AUTH +
 				      compound_encode_hdr_maxsz +
@@ -849,12 +880,15 @@ const u32 nfs41_maxread_overhead = ((RPC_MAX_HEADER_WITH_AUTH +
 				    XDR_UNIT);
 #endif /* CONFIG_NFS_V4_1 */
 
+<<<<<<< HEAD
 static unsigned short send_implementation_id = 1;
 
 module_param(send_implementation_id, ushort, 0644);
 MODULE_PARM_DESC(send_implementation_id,
 		"Send implementation ID with NFSv4.1 exchange_id");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const umode_t nfs_type2fmt[] = {
 	[NF4BAD] = 0,
 	[NF4REG] = S_IFREG,
@@ -885,6 +919,7 @@ static __be32 *reserve_space(struct xdr_stream *xdr, size_t nbytes)
 	return p;
 }
 
+<<<<<<< HEAD
 static void encode_opaque_fixed(struct xdr_stream *xdr, const void *buf, size_t len)
 {
 	__be32 *p;
@@ -893,10 +928,13 @@ static void encode_opaque_fixed(struct xdr_stream *xdr, const void *buf, size_t 
 	xdr_encode_opaque_fixed(p, buf, len);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void encode_string(struct xdr_stream *xdr, unsigned int len, const char *str)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	p = reserve_space(xdr, 4 + len);
 	xdr_encode_opaque(p, str, len);
 }
@@ -923,6 +961,13 @@ static void encode_nfs4_seqid(struct xdr_stream *xdr,
 	encode_uint32(xdr, seqid->sequence->counter);
 }
 
+=======
+	p = xdr_reserve_space(xdr, 4 + len);
+	BUG_ON(p == NULL);
+	xdr_encode_opaque(p, str, len);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void encode_compound_hdr(struct xdr_stream *xdr,
 				struct rpc_rqst *req,
 				struct compound_hdr *hdr)
@@ -935,14 +980,22 @@ static void encode_compound_hdr(struct xdr_stream *xdr,
 	 * but this is not required as a MUST for the server to do so. */
 	hdr->replen = RPC_REPHDRSIZE + auth->au_rslack + 3 + hdr->taglen;
 
+<<<<<<< HEAD
 	BUG_ON(hdr->taglen > NFS4_MAXTAGLEN);
 	encode_string(xdr, hdr->taglen, hdr->tag);
 	p = reserve_space(xdr, 8);
+=======
+	dprintk("encode_compound: tag=%.*s\n", (int)hdr->taglen, hdr->tag);
+	BUG_ON(hdr->taglen > NFS4_MAXTAGLEN);
+	p = reserve_space(xdr, 4 + hdr->taglen + 8);
+	p = xdr_encode_opaque(p, hdr->tag, hdr->taglen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*p++ = cpu_to_be32(hdr->minorversion);
 	hdr->nops_p = p;
 	*p = cpu_to_be32(hdr->nops);
 }
 
+<<<<<<< HEAD
 static void encode_op_hdr(struct xdr_stream *xdr, enum nfs_opnum4 op,
 		uint32_t replen,
 		struct compound_hdr *hdr)
@@ -952,12 +1005,15 @@ static void encode_op_hdr(struct xdr_stream *xdr, enum nfs_opnum4 op,
 	hdr->replen += replen;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void encode_nops(struct compound_hdr *hdr)
 {
 	BUG_ON(hdr->nops > NFS4_MAX_OPS);
 	*hdr->nops_p = htonl(hdr->nops);
 }
 
+<<<<<<< HEAD
 static void encode_nfs4_stateid(struct xdr_stream *xdr, const nfs4_stateid *stateid)
 {
 	encode_opaque_fixed(xdr, stateid, NFS4_STATEID_SIZE);
@@ -966,6 +1022,15 @@ static void encode_nfs4_stateid(struct xdr_stream *xdr, const nfs4_stateid *stat
 static void encode_nfs4_verifier(struct xdr_stream *xdr, const nfs4_verifier *verf)
 {
 	encode_opaque_fixed(xdr, verf->data, NFS4_VERIFIER_SIZE);
+=======
+static void encode_nfs4_verifier(struct xdr_stream *xdr, const nfs4_verifier *verf)
+{
+	__be32 *p;
+
+	p = xdr_reserve_space(xdr, NFS4_VERIFIER_SIZE);
+	BUG_ON(p == NULL);
+	xdr_encode_opaque_fixed(p, verf->data, NFS4_VERIFIER_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_attrs(struct xdr_stream *xdr, const struct iattr *iap, const struct nfs_server *server)
@@ -1078,7 +1143,11 @@ static void encode_attrs(struct xdr_stream *xdr, const struct iattr *iap, const 
 	 * Now we backfill the bitmap and the attribute buffer length.
 	 */
 	if (len != ((char *)p - (char *)q) + 4) {
+<<<<<<< HEAD
 		printk(KERN_ERR "NFS: Attr length error, %u != %Zu\n",
+=======
+		printk(KERN_ERR "nfs: Attr length error, %u != %Zu\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				len, ((char *)p - (char *)q) + 4);
 		BUG();
 	}
@@ -1092,33 +1161,69 @@ static void encode_attrs(struct xdr_stream *xdr, const struct iattr *iap, const 
 
 static void encode_access(struct xdr_stream *xdr, u32 access, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_ACCESS, decode_access_maxsz, hdr);
 	encode_uint32(xdr, access);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 8);
+	*p++ = cpu_to_be32(OP_ACCESS);
+	*p = cpu_to_be32(access);
+	hdr->nops++;
+	hdr->replen += decode_access_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_close(struct xdr_stream *xdr, const struct nfs_closeargs *arg, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_CLOSE, decode_close_maxsz, hdr);
 	encode_nfs4_seqid(xdr, arg->seqid);
 	encode_nfs4_stateid(xdr, arg->stateid);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 8+NFS4_STATEID_SIZE);
+	*p++ = cpu_to_be32(OP_CLOSE);
+	*p++ = cpu_to_be32(arg->seqid->sequence->counter);
+	xdr_encode_opaque_fixed(p, arg->stateid->data, NFS4_STATEID_SIZE);
+	hdr->nops++;
+	hdr->replen += decode_close_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_commit(struct xdr_stream *xdr, const struct nfs_writeargs *args, struct compound_hdr *hdr)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_COMMIT, decode_commit_maxsz, hdr);
 	p = reserve_space(xdr, 12);
 	p = xdr_encode_hyper(p, args->offset);
 	*p = cpu_to_be32(args->count);
+=======
+	p = reserve_space(xdr, 16);
+	*p++ = cpu_to_be32(OP_COMMIT);
+	p = xdr_encode_hyper(p, args->offset);
+	*p = cpu_to_be32(args->count);
+	hdr->nops++;
+	hdr->replen += decode_commit_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_create(struct xdr_stream *xdr, const struct nfs4_create_arg *create, struct compound_hdr *hdr)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_CREATE, decode_create_maxsz, hdr);
 	encode_uint32(xdr, create->ftype);
+=======
+	p = reserve_space(xdr, 8);
+	*p++ = cpu_to_be32(OP_CREATE);
+	*p = cpu_to_be32(create->ftype);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (create->ftype) {
 	case NF4LNK:
@@ -1138,6 +1243,12 @@ static void encode_create(struct xdr_stream *xdr, const struct nfs4_create_arg *
 	}
 
 	encode_string(xdr, create->name->len, create->name->name);
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_create_maxsz;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encode_attrs(xdr, create->attrs, create->server);
 }
 
@@ -1145,16 +1256,26 @@ static void encode_getattr_one(struct xdr_stream *xdr, uint32_t bitmap, struct c
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_GETATTR, decode_getattr_maxsz, hdr);
 	p = reserve_space(xdr, 8);
 	*p++ = cpu_to_be32(1);
 	*p = cpu_to_be32(bitmap);
+=======
+	p = reserve_space(xdr, 12);
+	*p++ = cpu_to_be32(OP_GETATTR);
+	*p++ = cpu_to_be32(1);
+	*p = cpu_to_be32(bitmap);
+	hdr->nops++;
+	hdr->replen += decode_getattr_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_getattr_two(struct xdr_stream *xdr, uint32_t bm0, uint32_t bm1, struct compound_hdr *hdr)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_GETATTR, decode_getattr_maxsz, hdr);
 	p = reserve_space(xdr, 12);
 	*p++ = cpu_to_be32(2);
@@ -1186,6 +1307,15 @@ encode_getattr_three(struct xdr_stream *xdr,
 		*p++ = cpu_to_be32(1);
 		*p = cpu_to_be32(bm0);
 	}
+=======
+	p = reserve_space(xdr, 16);
+	*p++ = cpu_to_be32(OP_GETATTR);
+	*p++ = cpu_to_be32(2);
+	*p++ = cpu_to_be32(bm0);
+	*p = cpu_to_be32(bm1);
+	hdr->nops++;
+	hdr->replen += decode_getattr_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_getfattr(struct xdr_stream *xdr, const u32* bitmask, struct compound_hdr *hdr)
@@ -1196,11 +1326,16 @@ static void encode_getfattr(struct xdr_stream *xdr, const u32* bitmask, struct c
 
 static void encode_fsinfo(struct xdr_stream *xdr, const u32* bitmask, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_getattr_three(xdr,
 			     bitmask[0] & nfs4_fsinfo_bitmap[0],
 			     bitmask[1] & nfs4_fsinfo_bitmap[1],
 			     bitmask[2] & nfs4_fsinfo_bitmap[2],
 			     hdr);
+=======
+	encode_getattr_two(xdr, bitmask[0] & nfs4_fsinfo_bitmap[0],
+			   bitmask[1] & nfs4_fsinfo_bitmap[1], hdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_fs_locations(struct xdr_stream *xdr, const u32* bitmask, struct compound_hdr *hdr)
@@ -1211,13 +1346,32 @@ static void encode_fs_locations(struct xdr_stream *xdr, const u32* bitmask, stru
 
 static void encode_getfh(struct xdr_stream *xdr, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_GETFH, decode_getfh_maxsz, hdr);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_GETFH);
+	hdr->nops++;
+	hdr->replen += decode_getfh_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_link(struct xdr_stream *xdr, const struct qstr *name, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_LINK, decode_link_maxsz, hdr);
 	encode_string(xdr, name->len, name->name);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 8 + name->len);
+	*p++ = cpu_to_be32(OP_LINK);
+	xdr_encode_opaque(p, name->name, name->len);
+	hdr->nops++;
+	hdr->replen += decode_link_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline int nfs4_lock_type(struct file_lock *fl, int block)
@@ -1254,14 +1408,20 @@ static void encode_lock(struct xdr_stream *xdr, const struct nfs_lock_args *args
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_LOCK, decode_lock_maxsz, hdr);
 	p = reserve_space(xdr, 28);
+=======
+	p = reserve_space(xdr, 32);
+	*p++ = cpu_to_be32(OP_LOCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*p++ = cpu_to_be32(nfs4_lock_type(args->fl, args->block));
 	*p++ = cpu_to_be32(args->reclaim);
 	p = xdr_encode_hyper(p, args->fl->fl_start);
 	p = xdr_encode_hyper(p, nfs4_lock_length(args->fl));
 	*p = cpu_to_be32(args->new_lock_owner);
 	if (args->new_lock_owner){
+<<<<<<< HEAD
 		encode_nfs4_seqid(xdr, args->open_seqid);
 		encode_nfs4_stateid(xdr, args->open_stateid);
 		encode_nfs4_seqid(xdr, args->lock_seqid);
@@ -1271,24 +1431,50 @@ static void encode_lock(struct xdr_stream *xdr, const struct nfs_lock_args *args
 		encode_nfs4_stateid(xdr, args->lock_stateid);
 		encode_nfs4_seqid(xdr, args->lock_seqid);
 	}
+=======
+		p = reserve_space(xdr, 4+NFS4_STATEID_SIZE+4);
+		*p++ = cpu_to_be32(args->open_seqid->sequence->counter);
+		p = xdr_encode_opaque_fixed(p, args->open_stateid->data, NFS4_STATEID_SIZE);
+		*p++ = cpu_to_be32(args->lock_seqid->sequence->counter);
+		encode_lockowner(xdr, &args->lock_owner);
+	}
+	else {
+		p = reserve_space(xdr, NFS4_STATEID_SIZE+4);
+		p = xdr_encode_opaque_fixed(p, args->lock_stateid->data, NFS4_STATEID_SIZE);
+		*p = cpu_to_be32(args->lock_seqid->sequence->counter);
+	}
+	hdr->nops++;
+	hdr->replen += decode_lock_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_lockt(struct xdr_stream *xdr, const struct nfs_lockt_args *args, struct compound_hdr *hdr)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_LOCKT, decode_lockt_maxsz, hdr);
 	p = reserve_space(xdr, 20);
+=======
+	p = reserve_space(xdr, 24);
+	*p++ = cpu_to_be32(OP_LOCKT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*p++ = cpu_to_be32(nfs4_lock_type(args->fl, 0));
 	p = xdr_encode_hyper(p, args->fl->fl_start);
 	p = xdr_encode_hyper(p, nfs4_lock_length(args->fl));
 	encode_lockowner(xdr, &args->lock_owner);
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_lockt_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_locku(struct xdr_stream *xdr, const struct nfs_locku_args *args, struct compound_hdr *hdr)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_LOCKU, decode_locku_maxsz, hdr);
 	encode_uint32(xdr, nfs4_lock_type(args->fl, 0));
 	encode_nfs4_seqid(xdr, args->seqid);
@@ -1296,18 +1482,50 @@ static void encode_locku(struct xdr_stream *xdr, const struct nfs_locku_args *ar
 	p = reserve_space(xdr, 16);
 	p = xdr_encode_hyper(p, args->fl->fl_start);
 	xdr_encode_hyper(p, nfs4_lock_length(args->fl));
+=======
+	p = reserve_space(xdr, 12+NFS4_STATEID_SIZE+16);
+	*p++ = cpu_to_be32(OP_LOCKU);
+	*p++ = cpu_to_be32(nfs4_lock_type(args->fl, 0));
+	*p++ = cpu_to_be32(args->seqid->sequence->counter);
+	p = xdr_encode_opaque_fixed(p, args->stateid->data, NFS4_STATEID_SIZE);
+	p = xdr_encode_hyper(p, args->fl->fl_start);
+	xdr_encode_hyper(p, nfs4_lock_length(args->fl));
+	hdr->nops++;
+	hdr->replen += decode_locku_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_release_lockowner(struct xdr_stream *xdr, const struct nfs_lowner *lowner, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_RELEASE_LOCKOWNER, decode_release_lockowner_maxsz, hdr);
 	encode_lockowner(xdr, lowner);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_RELEASE_LOCKOWNER);
+	encode_lockowner(xdr, lowner);
+	hdr->nops++;
+	hdr->replen += decode_release_lockowner_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_lookup(struct xdr_stream *xdr, const struct qstr *name, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_LOOKUP, decode_lookup_maxsz, hdr);
 	encode_string(xdr, name->len, name->name);
+=======
+	int len = name->len;
+	__be32 *p;
+
+	p = reserve_space(xdr, 8 + len);
+	*p++ = cpu_to_be32(OP_LOOKUP);
+	xdr_encode_opaque(p, name->name, len);
+	hdr->nops++;
+	hdr->replen += decode_lookup_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_share_access(struct xdr_stream *xdr, fmode_t fmode)
@@ -1338,6 +1556,7 @@ static inline void encode_openhdr(struct xdr_stream *xdr, const struct nfs_opena
  * opcode 4, seqid 4, share_access 4, share_deny 4, clientid 8, ownerlen 4,
  * owner 4 = 32
  */
+<<<<<<< HEAD
 	encode_nfs4_seqid(xdr, arg->seqid);
 	encode_share_access(xdr, arg->fmode);
 	p = reserve_space(xdr, 36);
@@ -1347,6 +1566,18 @@ static inline void encode_openhdr(struct xdr_stream *xdr, const struct nfs_opena
 	*p++ = cpu_to_be32(arg->server->s_dev);
 	*p++ = cpu_to_be32(arg->id.uniquifier);
 	xdr_encode_hyper(p, arg->id.create_time);
+=======
+	p = reserve_space(xdr, 8);
+	*p++ = cpu_to_be32(OP_OPEN);
+	*p = cpu_to_be32(arg->seqid->sequence->counter);
+	encode_share_access(xdr, arg->fmode);
+	p = reserve_space(xdr, 32);
+	p = xdr_encode_hyper(p, arg->clientid);
+	*p++ = cpu_to_be32(20);
+	p = xdr_encode_opaque_fixed(p, "open id:", 8);
+	*p++ = cpu_to_be32(arg->server->s_dev);
+	xdr_encode_hyper(p, arg->id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void encode_createmode(struct xdr_stream *xdr, const struct nfs_openargs *arg)
@@ -1439,15 +1670,24 @@ static inline void encode_claim_delegate_cur(struct xdr_stream *xdr, const struc
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	p = reserve_space(xdr, 4);
 	*p = cpu_to_be32(NFS4_OPEN_CLAIM_DELEGATE_CUR);
 	encode_nfs4_stateid(xdr, stateid);
+=======
+	p = reserve_space(xdr, 4+NFS4_STATEID_SIZE);
+	*p++ = cpu_to_be32(NFS4_OPEN_CLAIM_DELEGATE_CUR);
+	xdr_encode_opaque_fixed(p, stateid->data, NFS4_STATEID_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encode_string(xdr, name->len, name->name);
 }
 
 static void encode_open(struct xdr_stream *xdr, const struct nfs_openargs *arg, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_OPEN, decode_open_maxsz, hdr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encode_openhdr(xdr, arg);
 	encode_opentype(xdr, arg);
 	switch (arg->claim) {
@@ -1463,32 +1703,72 @@ static void encode_open(struct xdr_stream *xdr, const struct nfs_openargs *arg, 
 	default:
 		BUG();
 	}
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_open_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_open_confirm(struct xdr_stream *xdr, const struct nfs_open_confirmargs *arg, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_OPEN_CONFIRM, decode_open_confirm_maxsz, hdr);
 	encode_nfs4_stateid(xdr, arg->stateid);
 	encode_nfs4_seqid(xdr, arg->seqid);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4+NFS4_STATEID_SIZE+4);
+	*p++ = cpu_to_be32(OP_OPEN_CONFIRM);
+	p = xdr_encode_opaque_fixed(p, arg->stateid->data, NFS4_STATEID_SIZE);
+	*p = cpu_to_be32(arg->seqid->sequence->counter);
+	hdr->nops++;
+	hdr->replen += decode_open_confirm_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_open_downgrade(struct xdr_stream *xdr, const struct nfs_closeargs *arg, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_OPEN_DOWNGRADE, decode_open_downgrade_maxsz, hdr);
 	encode_nfs4_stateid(xdr, arg->stateid);
 	encode_nfs4_seqid(xdr, arg->seqid);
 	encode_share_access(xdr, arg->fmode);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4+NFS4_STATEID_SIZE+4);
+	*p++ = cpu_to_be32(OP_OPEN_DOWNGRADE);
+	p = xdr_encode_opaque_fixed(p, arg->stateid->data, NFS4_STATEID_SIZE);
+	*p = cpu_to_be32(arg->seqid->sequence->counter);
+	encode_share_access(xdr, arg->fmode);
+	hdr->nops++;
+	hdr->replen += decode_open_downgrade_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 encode_putfh(struct xdr_stream *xdr, const struct nfs_fh *fh, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_PUTFH, decode_putfh_maxsz, hdr);
 	encode_string(xdr, fh->size, fh->data);
+=======
+	int len = fh->size;
+	__be32 *p;
+
+	p = reserve_space(xdr, 8 + len);
+	*p++ = cpu_to_be32(OP_PUTFH);
+	xdr_encode_opaque(p, fh->data, len);
+	hdr->nops++;
+	hdr->replen += decode_putfh_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_putrootfh(struct xdr_stream *xdr, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_PUTROOTFH, decode_putrootfh_maxsz, hdr);
 }
 
@@ -1508,19 +1788,55 @@ static void encode_open_stateid(struct xdr_stream *xdr,
 		encode_nfs4_stateid(xdr, &stateid);
 	} else
 		encode_nfs4_stateid(xdr, &zero_stateid);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_PUTROOTFH);
+	hdr->nops++;
+	hdr->replen += decode_putrootfh_maxsz;
+}
+
+static void encode_stateid(struct xdr_stream *xdr, const struct nfs_open_context *ctx, const struct nfs_lock_context *l_ctx, int zero_seqid)
+{
+	nfs4_stateid stateid;
+	__be32 *p;
+
+	p = reserve_space(xdr, NFS4_STATEID_SIZE);
+	if (ctx->state != NULL) {
+		nfs4_copy_stateid(&stateid, ctx->state, l_ctx->lockowner, l_ctx->pid);
+		if (zero_seqid)
+			stateid.stateid.seqid = 0;
+		xdr_encode_opaque_fixed(p, stateid.data, NFS4_STATEID_SIZE);
+	} else
+		xdr_encode_opaque_fixed(p, zero_stateid.data, NFS4_STATEID_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_read(struct xdr_stream *xdr, const struct nfs_readargs *args, struct compound_hdr *hdr)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_READ, decode_read_maxsz, hdr);
 	encode_open_stateid(xdr, args->context, args->lock_context,
 			FMODE_READ, hdr->minorversion);
+=======
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_READ);
+
+	encode_stateid(xdr, args->context, args->lock_context,
+		       hdr->minorversion);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	p = reserve_space(xdr, 12);
 	p = xdr_encode_hyper(p, args->offset);
 	*p = cpu_to_be32(args->count);
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_read_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_readdir(struct xdr_stream *xdr, const struct nfs4_readdir_arg *readdir, struct rpc_rqst *req, struct compound_hdr *hdr)
@@ -1530,7 +1846,11 @@ static void encode_readdir(struct xdr_stream *xdr, const struct nfs4_readdir_arg
 		FATTR4_WORD1_MOUNTED_ON_FILEID,
 	};
 	uint32_t dircount = readdir->count >> 1;
+<<<<<<< HEAD
 	__be32 *p, verf[2];
+=======
+	__be32 *p;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (readdir->plus) {
 		attrs[0] |= FATTR4_WORD0_TYPE|FATTR4_WORD0_CHANGE|FATTR4_WORD0_SIZE|
@@ -1545,38 +1865,75 @@ static void encode_readdir(struct xdr_stream *xdr, const struct nfs4_readdir_arg
 	if (!(readdir->bitmask[1] & FATTR4_WORD1_MOUNTED_ON_FILEID))
 		attrs[0] |= FATTR4_WORD0_FILEID;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_READDIR, decode_readdir_maxsz, hdr);
 	encode_uint64(xdr, readdir->cookie);
 	encode_nfs4_verifier(xdr, &readdir->verifier);
 	p = reserve_space(xdr, 20);
+=======
+	p = reserve_space(xdr, 12+NFS4_VERIFIER_SIZE+20);
+	*p++ = cpu_to_be32(OP_READDIR);
+	p = xdr_encode_hyper(p, readdir->cookie);
+	p = xdr_encode_opaque_fixed(p, readdir->verifier.data, NFS4_VERIFIER_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*p++ = cpu_to_be32(dircount);
 	*p++ = cpu_to_be32(readdir->count);
 	*p++ = cpu_to_be32(2);
 
 	*p++ = cpu_to_be32(attrs[0] & readdir->bitmask[0]);
 	*p = cpu_to_be32(attrs[1] & readdir->bitmask[1]);
+<<<<<<< HEAD
 	memcpy(verf, readdir->verifier.data, sizeof(verf));
 	dprintk("%s: cookie = %Lu, verifier = %08x:%08x, bitmap = %08x:%08x\n",
 			__func__,
 			(unsigned long long)readdir->cookie,
 			verf[0], verf[1],
+=======
+	hdr->nops++;
+	hdr->replen += decode_readdir_maxsz;
+	dprintk("%s: cookie = %Lu, verifier = %08x:%08x, bitmap = %08x:%08x\n",
+			__func__,
+			(unsigned long long)readdir->cookie,
+			((u32 *)readdir->verifier.data)[0],
+			((u32 *)readdir->verifier.data)[1],
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			attrs[0] & readdir->bitmask[0],
 			attrs[1] & readdir->bitmask[1]);
 }
 
 static void encode_readlink(struct xdr_stream *xdr, const struct nfs4_readlink *readlink, struct rpc_rqst *req, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_READLINK, decode_readlink_maxsz, hdr);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_READLINK);
+	hdr->nops++;
+	hdr->replen += decode_readlink_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_remove(struct xdr_stream *xdr, const struct qstr *name, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_REMOVE, decode_remove_maxsz, hdr);
 	encode_string(xdr, name->len, name->name);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 8 + name->len);
+	*p++ = cpu_to_be32(OP_REMOVE);
+	xdr_encode_opaque(p, name->name, name->len);
+	hdr->nops++;
+	hdr->replen += decode_remove_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_rename(struct xdr_stream *xdr, const struct qstr *oldname, const struct qstr *newname, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_RENAME, decode_rename_maxsz, hdr);
 	encode_string(xdr, oldname->len, oldname->name);
 	encode_string(xdr, newname->len, newname->name);
@@ -1587,12 +1944,42 @@ static void encode_renew(struct xdr_stream *xdr, clientid4 clid,
 {
 	encode_op_hdr(xdr, OP_RENEW, decode_renew_maxsz, hdr);
 	encode_uint64(xdr, clid);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_RENAME);
+	encode_string(xdr, oldname->len, oldname->name);
+	encode_string(xdr, newname->len, newname->name);
+	hdr->nops++;
+	hdr->replen += decode_rename_maxsz;
+}
+
+static void encode_renew(struct xdr_stream *xdr, const struct nfs_client *client_stateid, struct compound_hdr *hdr)
+{
+	__be32 *p;
+
+	p = reserve_space(xdr, 12);
+	*p++ = cpu_to_be32(OP_RENEW);
+	xdr_encode_hyper(p, client_stateid->cl_clientid);
+	hdr->nops++;
+	hdr->replen += decode_renew_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 encode_restorefh(struct xdr_stream *xdr, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_RESTOREFH, decode_restorefh_maxsz, hdr);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_RESTOREFH);
+	hdr->nops++;
+	hdr->replen += decode_restorefh_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1600,8 +1987,14 @@ encode_setacl(struct xdr_stream *xdr, struct nfs_setaclargs *arg, struct compoun
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_SETATTR, decode_setacl_maxsz, hdr);
 	encode_nfs4_stateid(xdr, &zero_stateid);
+=======
+	p = reserve_space(xdr, 4+NFS4_STATEID_SIZE);
+	*p++ = cpu_to_be32(OP_SETATTR);
+	xdr_encode_opaque_fixed(p, zero_stateid.data, NFS4_STATEID_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p = reserve_space(xdr, 2*4);
 	*p++ = cpu_to_be32(1);
 	*p = cpu_to_be32(FATTR4_WORD0_ACL);
@@ -1609,18 +2002,42 @@ encode_setacl(struct xdr_stream *xdr, struct nfs_setaclargs *arg, struct compoun
 	p = reserve_space(xdr, 4);
 	*p = cpu_to_be32(arg->acl_len);
 	xdr_write_pages(xdr, arg->acl_pages, arg->acl_pgbase, arg->acl_len);
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_setacl_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
 encode_savefh(struct xdr_stream *xdr, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_SAVEFH, decode_savefh_maxsz, hdr);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_SAVEFH);
+	hdr->nops++;
+	hdr->replen += decode_savefh_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_setattr(struct xdr_stream *xdr, const struct nfs_setattrargs *arg, const struct nfs_server *server, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_SETATTR, decode_setattr_maxsz, hdr);
 	encode_nfs4_stateid(xdr, &arg->stateid);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4+NFS4_STATEID_SIZE);
+	*p++ = cpu_to_be32(OP_SETATTR);
+	xdr_encode_opaque_fixed(p, arg->stateid.data, NFS4_STATEID_SIZE);
+	hdr->nops++;
+	hdr->replen += decode_setattr_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encode_attrs(xdr, arg->iap, server);
 }
 
@@ -1628,8 +2045,14 @@ static void encode_setclientid(struct xdr_stream *xdr, const struct nfs4_setclie
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_SETCLIENTID, decode_setclientid_maxsz, hdr);
 	encode_nfs4_verifier(xdr, setclientid->sc_verifier);
+=======
+	p = reserve_space(xdr, 4 + NFS4_VERIFIER_SIZE);
+	*p++ = cpu_to_be32(OP_SETCLIENTID);
+	xdr_encode_opaque_fixed(p, setclientid->sc_verifier->data, NFS4_VERIFIER_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	encode_string(xdr, setclientid->sc_name_len, setclientid->sc_name);
 	p = reserve_space(xdr, 4);
@@ -1638,23 +2061,47 @@ static void encode_setclientid(struct xdr_stream *xdr, const struct nfs4_setclie
 	encode_string(xdr, setclientid->sc_uaddr_len, setclientid->sc_uaddr);
 	p = reserve_space(xdr, 4);
 	*p = cpu_to_be32(setclientid->sc_cb_ident);
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_setclientid_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_setclientid_confirm(struct xdr_stream *xdr, const struct nfs4_setclientid_res *arg, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_SETCLIENTID_CONFIRM,
 			decode_setclientid_confirm_maxsz, hdr);
 	encode_uint64(xdr, arg->clientid);
 	encode_nfs4_verifier(xdr, &arg->confirm);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 12 + NFS4_VERIFIER_SIZE);
+	*p++ = cpu_to_be32(OP_SETCLIENTID_CONFIRM);
+	p = xdr_encode_hyper(p, arg->clientid);
+	xdr_encode_opaque_fixed(p, arg->confirm.data, NFS4_VERIFIER_SIZE);
+	hdr->nops++;
+	hdr->replen += decode_setclientid_confirm_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_write(struct xdr_stream *xdr, const struct nfs_writeargs *args, struct compound_hdr *hdr)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_WRITE, decode_write_maxsz, hdr);
 	encode_open_stateid(xdr, args->context, args->lock_context,
 			FMODE_WRITE, hdr->minorversion);
+=======
+	p = reserve_space(xdr, 4);
+	*p = cpu_to_be32(OP_WRITE);
+
+	encode_stateid(xdr, args->context, args->lock_context,
+		       hdr->minorversion);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	p = reserve_space(xdr, 16);
 	p = xdr_encode_hyper(p, args->offset);
@@ -1662,18 +2109,45 @@ static void encode_write(struct xdr_stream *xdr, const struct nfs_writeargs *arg
 	*p = cpu_to_be32(args->count);
 
 	xdr_write_pages(xdr, args->pages, args->pgbase, args->count);
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_write_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_delegreturn(struct xdr_stream *xdr, const nfs4_stateid *stateid, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_DELEGRETURN, decode_delegreturn_maxsz, hdr);
 	encode_nfs4_stateid(xdr, stateid);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 4+NFS4_STATEID_SIZE);
+
+	*p++ = cpu_to_be32(OP_DELEGRETURN);
+	xdr_encode_opaque_fixed(p, stateid->data, NFS4_STATEID_SIZE);
+	hdr->nops++;
+	hdr->replen += decode_delegreturn_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_secinfo(struct xdr_stream *xdr, const struct qstr *name, struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_SECINFO, decode_secinfo_maxsz, hdr);
 	encode_string(xdr, name->len, name->name);
+=======
+	int len = name->len;
+	__be32 *p;
+
+	p = reserve_space(xdr, 8 + len);
+	*p++ = cpu_to_be32(OP_SECINFO);
+	xdr_encode_opaque(p, name->name, len);
+	hdr->nops++;
+	hdr->replen += decode_secinfo_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #if defined(CONFIG_NFS_V4_1)
@@ -1683,17 +2157,25 @@ static void encode_exchange_id(struct xdr_stream *xdr,
 			       struct compound_hdr *hdr)
 {
 	__be32 *p;
+<<<<<<< HEAD
 	char impl_name[NFS4_OPAQUE_LIMIT];
 	int len = 0;
 
 	encode_op_hdr(xdr, OP_EXCHANGE_ID, decode_exchange_id_maxsz, hdr);
 	encode_nfs4_verifier(xdr, args->verifier);
+=======
+
+	p = reserve_space(xdr, 4 + sizeof(args->verifier->data));
+	*p++ = cpu_to_be32(OP_EXCHANGE_ID);
+	xdr_encode_opaque_fixed(p, args->verifier->data, sizeof(args->verifier->data));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	encode_string(xdr, args->id_len, args->id);
 
 	p = reserve_space(xdr, 12);
 	*p++ = cpu_to_be32(args->flags);
 	*p++ = cpu_to_be32(0);	/* zero length state_protect4_a */
+<<<<<<< HEAD
 
 	if (send_implementation_id &&
 	    sizeof(CONFIG_NFS_V4_1_IMPLEMENTATION_ID_DOMAIN) > 1 &&
@@ -1716,6 +2198,11 @@ static void encode_exchange_id(struct xdr_stream *xdr,
 		*p = cpu_to_be32(0);
 	} else
 		*p = cpu_to_be32(0);	/* implementation id array length=0 */
+=======
+	*p = cpu_to_be32(0);	/* zero length implementation id array */
+	hdr->nops++;
+	hdr->replen += decode_exchange_id_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_create_session(struct xdr_stream *xdr,
@@ -1738,8 +2225,13 @@ static void encode_create_session(struct xdr_stream *xdr,
 	len = scnprintf(machine_name, sizeof(machine_name), "%s",
 			clp->cl_ipaddr);
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_CREATE_SESSION, decode_create_session_maxsz, hdr);
 	p = reserve_space(xdr, 16 + 2*28 + 20 + len + 12);
+=======
+	p = reserve_space(xdr, 20 + 2*28 + 20 + len + 12);
+	*p++ = cpu_to_be32(OP_CREATE_SESSION);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p = xdr_encode_hyper(p, clp->cl_clientid);
 	*p++ = cpu_to_be32(clp->cl_seqid);			/*Sequence id */
 	*p++ = cpu_to_be32(args->flags);			/*flags */
@@ -1772,22 +2264,46 @@ static void encode_create_session(struct xdr_stream *xdr,
 	*p++ = cpu_to_be32(0);				/* UID */
 	*p++ = cpu_to_be32(0);				/* GID */
 	*p = cpu_to_be32(0);				/* No more gids */
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_create_session_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_destroy_session(struct xdr_stream *xdr,
 				   struct nfs4_session *session,
 				   struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_DESTROY_SESSION, decode_destroy_session_maxsz, hdr);
 	encode_opaque_fixed(xdr, session->sess_id.data, NFS4_MAX_SESSIONID_LEN);
+=======
+	__be32 *p;
+	p = reserve_space(xdr, 4 + NFS4_MAX_SESSIONID_LEN);
+	*p++ = cpu_to_be32(OP_DESTROY_SESSION);
+	xdr_encode_opaque_fixed(p, session->sess_id.data, NFS4_MAX_SESSIONID_LEN);
+	hdr->nops++;
+	hdr->replen += decode_destroy_session_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void encode_reclaim_complete(struct xdr_stream *xdr,
 				    struct nfs41_reclaim_complete_args *args,
 				    struct compound_hdr *hdr)
 {
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_RECLAIM_COMPLETE, decode_reclaim_complete_maxsz, hdr);
 	encode_uint32(xdr, args->one_fs);
+=======
+	__be32 *p;
+
+	p = reserve_space(xdr, 8);
+	*p++ = cpu_to_be32(OP_RECLAIM_COMPLETE);
+	*p++ = cpu_to_be32(args->one_fs);
+	hdr->nops++;
+	hdr->replen += decode_reclaim_complete_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif /* CONFIG_NFS_V4_1 */
 
@@ -1809,7 +2325,12 @@ static void encode_sequence(struct xdr_stream *xdr,
 	WARN_ON(args->sa_slotid == NFS4_MAX_SLOT_TABLE);
 	slot = tp->slots + args->sa_slotid;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_SEQUENCE, decode_sequence_maxsz, hdr);
+=======
+	p = reserve_space(xdr, 4 + NFS4_MAX_SESSIONID_LEN + 16);
+	*p++ = cpu_to_be32(OP_SEQUENCE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Sessionid + seqid + slotid + max slotid + cache_this
@@ -1823,17 +2344,26 @@ static void encode_sequence(struct xdr_stream *xdr,
 		((u32 *)session->sess_id.data)[3],
 		slot->seq_nr, args->sa_slotid,
 		tp->highest_used_slotid, args->sa_cache_this);
+<<<<<<< HEAD
 	p = reserve_space(xdr, NFS4_MAX_SESSIONID_LEN + 16);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p = xdr_encode_opaque_fixed(p, session->sess_id.data, NFS4_MAX_SESSIONID_LEN);
 	*p++ = cpu_to_be32(slot->seq_nr);
 	*p++ = cpu_to_be32(args->sa_slotid);
 	*p++ = cpu_to_be32(tp->highest_used_slotid);
 	*p = cpu_to_be32(args->sa_cache_this);
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_sequence_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_NFS_V4_1 */
 }
 
 #ifdef CONFIG_NFS_V4_1
 static void
+<<<<<<< HEAD
 encode_getdevicelist(struct xdr_stream *xdr,
 		     const struct nfs4_getdevicelist_args *args,
 		     struct compound_hdr *hdr)
@@ -1852,19 +2382,31 @@ encode_getdevicelist(struct xdr_stream *xdr,
 }
 
 static void
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 encode_getdeviceinfo(struct xdr_stream *xdr,
 		     const struct nfs4_getdeviceinfo_args *args,
 		     struct compound_hdr *hdr)
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_GETDEVICEINFO, decode_getdeviceinfo_maxsz, hdr);
 	p = reserve_space(xdr, 12 + NFS4_DEVICEID4_SIZE);
+=======
+	p = reserve_space(xdr, 16 + NFS4_DEVICEID4_SIZE);
+	*p++ = cpu_to_be32(OP_GETDEVICEINFO);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p = xdr_encode_opaque_fixed(p, args->pdev->dev_id.data,
 				    NFS4_DEVICEID4_SIZE);
 	*p++ = cpu_to_be32(args->pdev->layout_type);
 	*p++ = cpu_to_be32(args->pdev->pglen);		/* gdia_maxcount */
 	*p++ = cpu_to_be32(0);				/* bitmap length 0 */
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_getdeviceinfo_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -1874,16 +2416,26 @@ encode_layoutget(struct xdr_stream *xdr,
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_LAYOUTGET, decode_layoutget_maxsz, hdr);
 	p = reserve_space(xdr, 36);
+=======
+	p = reserve_space(xdr, 44 + NFS4_STATEID_SIZE);
+	*p++ = cpu_to_be32(OP_LAYOUTGET);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*p++ = cpu_to_be32(0);     /* Signal layout available */
 	*p++ = cpu_to_be32(args->type);
 	*p++ = cpu_to_be32(args->range.iomode);
 	p = xdr_encode_hyper(p, args->range.offset);
 	p = xdr_encode_hyper(p, args->range.length);
 	p = xdr_encode_hyper(p, args->minlength);
+<<<<<<< HEAD
 	encode_nfs4_stateid(xdr, &args->stateid);
 	encode_uint32(xdr, args->maxcount);
+=======
+	p = xdr_encode_opaque_fixed(p, &args->stateid.data, NFS4_STATEID_SIZE);
+	*p = cpu_to_be32(args->maxcount);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("%s: 1st type:0x%x iomode:%d off:%lu len:%lu mc:%d\n",
 		__func__,
@@ -1892,6 +2444,11 @@ encode_layoutget(struct xdr_stream *xdr,
 		(unsigned long)args->range.offset,
 		(unsigned long)args->range.length,
 		args->maxcount);
+<<<<<<< HEAD
+=======
+	hdr->nops++;
+	hdr->replen += decode_layoutget_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int
@@ -1905,6 +2462,7 @@ encode_layoutcommit(struct xdr_stream *xdr,
 	dprintk("%s: lbw: %llu type: %d\n", __func__, args->lastbytewritten,
 		NFS_SERVER(args->inode)->pnfs_curr_ld->id);
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_LAYOUTCOMMIT, decode_layoutcommit_maxsz, hdr);
 	p = reserve_space(xdr, 20);
 	/* Only whole file layouts */
@@ -1913,6 +2471,15 @@ encode_layoutcommit(struct xdr_stream *xdr,
 	*p = cpu_to_be32(0); /* reclaim */
 	encode_nfs4_stateid(xdr, &args->stateid);
 	p = reserve_space(xdr, 20);
+=======
+	p = reserve_space(xdr, 44 + NFS4_STATEID_SIZE);
+	*p++ = cpu_to_be32(OP_LAYOUTCOMMIT);
+	/* Only whole file layouts */
+	p = xdr_encode_hyper(p, 0); /* offset */
+	p = xdr_encode_hyper(p, args->lastbytewritten + 1);	/* length */
+	*p++ = cpu_to_be32(0); /* reclaim */
+	p = xdr_encode_opaque_fixed(p, args->stateid.data, NFS4_STATEID_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*p++ = cpu_to_be32(1); /* newoffset = TRUE */
 	p = xdr_encode_hyper(p, args->lastbytewritten);
 	*p++ = cpu_to_be32(0); /* Never send time_modify_changed */
@@ -1921,9 +2488,19 @@ encode_layoutcommit(struct xdr_stream *xdr,
 	if (NFS_SERVER(inode)->pnfs_curr_ld->encode_layoutcommit)
 		NFS_SERVER(inode)->pnfs_curr_ld->encode_layoutcommit(
 			NFS_I(inode)->layout, xdr, args);
+<<<<<<< HEAD
 	else
 		encode_uint32(xdr, 0); /* no layout-type payload */
 
+=======
+	else {
+		p = reserve_space(xdr, 4);
+		*p = cpu_to_be32(0); /* no layout-type payload */
+	}
+
+	hdr->nops++;
+	hdr->replen += decode_layoutcommit_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1934,21 +2511,35 @@ encode_layoutreturn(struct xdr_stream *xdr,
 {
 	__be32 *p;
 
+<<<<<<< HEAD
 	encode_op_hdr(xdr, OP_LAYOUTRETURN, decode_layoutreturn_maxsz, hdr);
 	p = reserve_space(xdr, 16);
+=======
+	p = reserve_space(xdr, 20);
+	*p++ = cpu_to_be32(OP_LAYOUTRETURN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*p++ = cpu_to_be32(0);		/* reclaim. always 0 for now */
 	*p++ = cpu_to_be32(args->layout_type);
 	*p++ = cpu_to_be32(IOMODE_ANY);
 	*p = cpu_to_be32(RETURN_FILE);
+<<<<<<< HEAD
 	p = reserve_space(xdr, 16);
 	p = xdr_encode_hyper(p, 0);
 	p = xdr_encode_hyper(p, NFS4_MAX_UINT64);
 	spin_lock(&args->inode->i_lock);
 	encode_nfs4_stateid(xdr, &args->stateid);
+=======
+	p = reserve_space(xdr, 16 + NFS4_STATEID_SIZE);
+	p = xdr_encode_hyper(p, 0);
+	p = xdr_encode_hyper(p, NFS4_MAX_UINT64);
+	spin_lock(&args->inode->i_lock);
+	xdr_encode_opaque_fixed(p, &args->stateid.data, NFS4_STATEID_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&args->inode->i_lock);
 	if (NFS_SERVER(args->inode)->pnfs_curr_ld->encode_layoutreturn) {
 		NFS_SERVER(args->inode)->pnfs_curr_ld->encode_layoutreturn(
 			NFS_I(args->inode)->layout, xdr, args);
+<<<<<<< HEAD
 	} else
 		encode_uint32(xdr, 0);
 }
@@ -1978,6 +2569,14 @@ static void encode_free_stateid(struct xdr_stream *xdr,
 {
 	encode_op_hdr(xdr, OP_FREE_STATEID, decode_free_stateid_maxsz, hdr);
 	encode_nfs4_stateid(xdr, args->stateid);
+=======
+	} else {
+		p = reserve_space(xdr, 4);
+		*p = cpu_to_be32(0);
+	}
+	hdr->nops++;
+	hdr->replen += decode_layoutreturn_maxsz;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 #endif /* CONFIG_NFS_V4_1 */
 
@@ -2196,7 +2795,11 @@ static void nfs4_xdr_enc_open(struct rpc_rqst *req, struct xdr_stream *xdr,
 	encode_getfh(xdr, &hdr);
 	encode_getfattr(xdr, args->bitmask, &hdr);
 	encode_restorefh(xdr, &hdr);
+<<<<<<< HEAD
 	encode_getfattr(xdr, args->dir_bitmask, &hdr);
+=======
+	encode_getfattr(xdr, args->bitmask, &hdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encode_nops(&hdr);
 }
 
@@ -2415,12 +3018,19 @@ static void nfs4_xdr_enc_getacl(struct rpc_rqst *req, struct xdr_stream *xdr,
 	encode_compound_hdr(xdr, req, &hdr);
 	encode_sequence(xdr, &args->seq_args, &hdr);
 	encode_putfh(xdr, args->fh, &hdr);
+<<<<<<< HEAD
 	replen = hdr.replen + op_decode_hdr_maxsz + 1;
+=======
+	replen = hdr.replen + op_decode_hdr_maxsz + nfs4_fattr_bitmap_maxsz + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encode_getattr_two(xdr, FATTR4_WORD0_ACL, 0, &hdr);
 
 	xdr_inline_pages(&req->rq_rcv_buf, replen << 2,
 		args->acl_pages, args->acl_pgbase, args->acl_len);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encode_nops(&hdr);
 }
 
@@ -2531,7 +3141,10 @@ static void nfs4_xdr_enc_server_caps(struct rpc_rqst *req,
 	encode_sequence(xdr, &args->seq_args, &hdr);
 	encode_putfh(xdr, args->fhandle, &hdr);
 	encode_getattr_one(xdr, FATTR4_WORD0_SUPPORTED_ATTRS|
+<<<<<<< HEAD
 			   FATTR4_WORD0_FH_EXPIRE_TYPE|
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   FATTR4_WORD0_LINK_SUPPORT|
 			   FATTR4_WORD0_SYMLINK_SUPPORT|
 			   FATTR4_WORD0_ACLSUPPORT, &hdr);
@@ -2549,7 +3162,11 @@ static void nfs4_xdr_enc_renew(struct rpc_rqst *req, struct xdr_stream *xdr,
 	};
 
 	encode_compound_hdr(xdr, req, &hdr);
+<<<<<<< HEAD
 	encode_renew(xdr, clp->cl_clientid, &hdr);
+=======
+	encode_renew(xdr, clp, &hdr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	encode_nops(&hdr);
 }
 
@@ -2579,7 +3196,11 @@ static void nfs4_xdr_enc_setclientid_confirm(struct rpc_rqst *req,
 	struct compound_hdr hdr = {
 		.nops	= 0,
 	};
+<<<<<<< HEAD
 	const u32 lease_bitmap[3] = { FATTR4_WORD0_LEASE_TIME };
+=======
+	const u32 lease_bitmap[2] = { FATTR4_WORD0_LEASE_TIME, 0 };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	encode_compound_hdr(xdr, req, &hdr);
 	encode_setclientid_confirm(xdr, arg, &hdr);
@@ -2723,7 +3344,11 @@ static void nfs4_xdr_enc_get_lease_time(struct rpc_rqst *req,
 	struct compound_hdr hdr = {
 		.minorversion = nfs4_xdr_minorversion(&args->la_seq_args),
 	};
+<<<<<<< HEAD
 	const u32 lease_bitmap[3] = { FATTR4_WORD0_LEASE_TIME };
+=======
+	const u32 lease_bitmap[2] = { FATTR4_WORD0_LEASE_TIME, 0 };
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	encode_compound_hdr(xdr, req, &hdr);
 	encode_sequence(xdr, &args->la_seq_args, &hdr);
@@ -2750,6 +3375,7 @@ static void nfs4_xdr_enc_reclaim_complete(struct rpc_rqst *req,
 }
 
 /*
+<<<<<<< HEAD
  * Encode GETDEVICELIST request
  */
 static void nfs4_xdr_enc_getdevicelist(struct rpc_rqst *req,
@@ -2768,6 +3394,8 @@ static void nfs4_xdr_enc_getdevicelist(struct rpc_rqst *req,
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Encode GETDEVICEINFO request
  */
 static void nfs4_xdr_enc_getdeviceinfo(struct rpc_rqst *req,
@@ -2851,6 +3479,7 @@ static void nfs4_xdr_enc_layoutreturn(struct rpc_rqst *req,
 	encode_layoutreturn(xdr, args, &hdr);
 	encode_nops(&hdr);
 }
+<<<<<<< HEAD
 
 /*
  * Encode SECINFO_NO_NAME request
@@ -2904,6 +3533,8 @@ static void nfs4_xdr_enc_free_stateid(struct rpc_rqst *req,
 	encode_free_stateid(xdr, args, &hdr);
 	encode_nops(&hdr);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_NFS_V4_1 */
 
 static void print_overflow_msg(const char *func, const struct xdr_stream *xdr)
@@ -3004,17 +3635,26 @@ static int decode_attr_bitmap(struct xdr_stream *xdr, uint32_t *bitmap)
 		goto out_overflow;
 	bmlen = be32_to_cpup(p);
 
+<<<<<<< HEAD
 	bitmap[0] = bitmap[1] = bitmap[2] = 0;
+=======
+	bitmap[0] = bitmap[1] = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p = xdr_inline_decode(xdr, (bmlen << 2));
 	if (unlikely(!p))
 		goto out_overflow;
 	if (bmlen > 0) {
 		bitmap[0] = be32_to_cpup(p++);
+<<<<<<< HEAD
 		if (bmlen > 1) {
 			bitmap[1] = be32_to_cpup(p++);
 			if (bmlen > 2)
 				bitmap[2] = be32_to_cpup(p);
 		}
+=======
+		if (bmlen > 1)
+			bitmap[1] = be32_to_cpup(p);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 out_overflow:
@@ -3046,9 +3686,14 @@ static int decode_attr_supported(struct xdr_stream *xdr, uint32_t *bitmap, uint3
 			return ret;
 		bitmap[0] &= ~FATTR4_WORD0_SUPPORTED_ATTRS;
 	} else
+<<<<<<< HEAD
 		bitmask[0] = bitmask[1] = bitmask[2] = 0;
 	dprintk("%s: bitmask=%08x:%08x:%08x\n", __func__,
 		bitmask[0], bitmask[1], bitmask[2]);
+=======
+		bitmask[0] = bitmask[1] = 0;
+	dprintk("%s: bitmask=%08x:%08x\n", __func__, bitmask[0], bitmask[1]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -3079,6 +3724,7 @@ out_overflow:
 	return -EIO;
 }
 
+<<<<<<< HEAD
 static int decode_attr_fh_expire_type(struct xdr_stream *xdr,
 				      uint32_t *bitmap, uint32_t *type)
 {
@@ -3101,6 +3747,8 @@ out_overflow:
 	return -EIO;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int decode_attr_change(struct xdr_stream *xdr, uint32_t *bitmap, uint64_t *change)
 {
 	__be32 *p;
@@ -3434,17 +4082,27 @@ static int decode_pathname(struct xdr_stream *xdr, struct nfs4_pathname *path)
 	n = be32_to_cpup(p);
 	if (n == 0)
 		goto root_path;
+<<<<<<< HEAD
 	dprintk("pathname4: ");
+=======
+	dprintk("path ");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	path->ncomponents = 0;
 	while (path->ncomponents < n) {
 		struct nfs4_string *component = &path->components[path->ncomponents];
 		status = decode_opaque_inline(xdr, &component->len, &component->data);
 		if (unlikely(status != 0))
 			goto out_eio;
+<<<<<<< HEAD
 		ifdebug (XDR)
 			pr_cont("%s%.*s ",
 				(path->ncomponents != n ? "/ " : ""),
 				component->len, component->data);
+=======
+		if (path->ncomponents != n)
+			dprintk("/");
+		dprintk("%s", component->data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (path->ncomponents < NFS4_PATHNAME_MAXCOMPONENTS)
 			path->ncomponents++;
 		else {
@@ -3453,13 +4111,21 @@ static int decode_pathname(struct xdr_stream *xdr, struct nfs4_pathname *path)
 		}
 	}
 out:
+<<<<<<< HEAD
+=======
+	dprintk("\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 root_path:
 /* a root pathname is sent as a zero component4 */
 	path->ncomponents = 1;
 	path->components[0].len=0;
 	path->components[0].data=NULL;
+<<<<<<< HEAD
 	dprintk("pathname4: /\n");
+=======
+	dprintk("path /\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	goto out;
 out_eio:
 	dprintk(" status %d", status);
@@ -3481,11 +4147,15 @@ static int decode_attr_fs_locations(struct xdr_stream *xdr, uint32_t *bitmap, st
 	status = 0;
 	if (unlikely(!(bitmap[0] & FATTR4_WORD0_FS_LOCATIONS)))
 		goto out;
+<<<<<<< HEAD
 	status = -EIO;
 	/* Ignore borken servers that return unrequested attrs */
 	if (unlikely(res == NULL))
 		goto out;
 	dprintk("%s: fsroot:\n", __func__);
+=======
+	dprintk("%s: fsroot ", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = decode_pathname(xdr, &res->fs_path);
 	if (unlikely(status != 0))
 		goto out;
@@ -3506,7 +4176,11 @@ static int decode_attr_fs_locations(struct xdr_stream *xdr, uint32_t *bitmap, st
 		m = be32_to_cpup(p);
 
 		loc->nservers = 0;
+<<<<<<< HEAD
 		dprintk("%s: servers:\n", __func__);
+=======
+		dprintk("%s: servers ", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		while (loc->nservers < m) {
 			struct nfs4_string *server = &loc->servers[loc->nservers];
 			status = decode_opaque_inline(xdr, &server->len, &server->data);
@@ -3538,7 +4212,11 @@ static int decode_attr_fs_locations(struct xdr_stream *xdr, uint32_t *bitmap, st
 			res->nlocations++;
 	}
 	if (res->nlocations != 0)
+<<<<<<< HEAD
 		status = NFS_ATTR_FATTR_V4_LOCATIONS;
+=======
+		status = NFS_ATTR_FATTR_V4_REFERRAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	dprintk("%s: fs_locations done, error = %d\n", __func__, status);
 	return status;
@@ -3716,8 +4394,12 @@ out_overflow:
 }
 
 static int decode_attr_owner(struct xdr_stream *xdr, uint32_t *bitmap,
+<<<<<<< HEAD
 		const struct nfs_server *server, uint32_t *uid,
 		struct nfs4_string *owner_name)
+=======
+		const struct nfs_server *server, uint32_t *uid, int may_sleep)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	uint32_t len;
 	__be32 *p;
@@ -3734,12 +4416,17 @@ static int decode_attr_owner(struct xdr_stream *xdr, uint32_t *bitmap,
 		p = xdr_inline_decode(xdr, len);
 		if (unlikely(!p))
 			goto out_overflow;
+<<<<<<< HEAD
 		if (owner_name != NULL) {
 			owner_name->data = kmemdup(p, len, GFP_NOWAIT);
 			if (owner_name->data != NULL) {
 				owner_name->len = len;
 				ret = NFS_ATTR_FATTR_OWNER_NAME;
 			}
+=======
+		if (!may_sleep) {
+			/* do nothing */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (len < XDR_MAX_NETOBJ) {
 			if (nfs_map_name_to_uid(server, (char *)p, len, uid) == 0)
 				ret = NFS_ATTR_FATTR_OWNER;
@@ -3759,8 +4446,12 @@ out_overflow:
 }
 
 static int decode_attr_group(struct xdr_stream *xdr, uint32_t *bitmap,
+<<<<<<< HEAD
 		const struct nfs_server *server, uint32_t *gid,
 		struct nfs4_string *group_name)
+=======
+		const struct nfs_server *server, uint32_t *gid, int may_sleep)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	uint32_t len;
 	__be32 *p;
@@ -3777,12 +4468,17 @@ static int decode_attr_group(struct xdr_stream *xdr, uint32_t *bitmap,
 		p = xdr_inline_decode(xdr, len);
 		if (unlikely(!p))
 			goto out_overflow;
+<<<<<<< HEAD
 		if (group_name != NULL) {
 			group_name->data = kmemdup(p, len, GFP_NOWAIT);
 			if (group_name->data != NULL) {
 				group_name->len = len;
 				ret = NFS_ATTR_FATTR_GROUP_NAME;
 			}
+=======
+		if (!may_sleep) {
+			/* do nothing */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else if (len < XDR_MAX_NETOBJ) {
 			if (nfs_map_group_to_gid(server, (char *)p, len, gid) == 0)
 				ret = NFS_ATTR_FATTR_GROUP;
@@ -4082,7 +4778,11 @@ static int decode_opaque_fixed(struct xdr_stream *xdr, void *buf, size_t len)
 
 static int decode_stateid(struct xdr_stream *xdr, nfs4_stateid *stateid)
 {
+<<<<<<< HEAD
 	return decode_opaque_fixed(xdr, stateid, NFS4_STATEID_SIZE);
+=======
+	return decode_opaque_fixed(xdr, stateid->data, NFS4_STATEID_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int decode_close(struct xdr_stream *xdr, struct nfs_closeres *res)
@@ -4099,7 +4799,11 @@ static int decode_close(struct xdr_stream *xdr, struct nfs_closeres *res)
 
 static int decode_verifier(struct xdr_stream *xdr, void *verifier)
 {
+<<<<<<< HEAD
 	return decode_opaque_fixed(xdr, verifier, NFS4_VERIFIER_SIZE);
+=======
+	return decode_opaque_fixed(xdr, verifier, 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int decode_commit(struct xdr_stream *xdr, struct nfs_writeres *res)
@@ -4138,7 +4842,11 @@ out_overflow:
 static int decode_server_caps(struct xdr_stream *xdr, struct nfs4_server_caps_res *res)
 {
 	__be32 *savep;
+<<<<<<< HEAD
 	uint32_t attrlen, bitmap[3] = {0};
+=======
+	uint32_t attrlen, bitmap[2] = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status;
 
 	if ((status = decode_op_hdr(xdr, OP_GETATTR)) != 0)
@@ -4149,9 +4857,12 @@ static int decode_server_caps(struct xdr_stream *xdr, struct nfs4_server_caps_re
 		goto xdr_error;
 	if ((status = decode_attr_supported(xdr, bitmap, res->attr_bitmask)) != 0)
 		goto xdr_error;
+<<<<<<< HEAD
 	if ((status = decode_attr_fh_expire_type(xdr, bitmap,
 						 &res->fh_expire_type)) != 0)
 		goto xdr_error;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((status = decode_attr_link_support(xdr, bitmap, &res->has_links)) != 0)
 		goto xdr_error;
 	if ((status = decode_attr_symlink_support(xdr, bitmap, &res->has_symlinks)) != 0)
@@ -4167,7 +4878,11 @@ xdr_error:
 static int decode_statfs(struct xdr_stream *xdr, struct nfs_fsstat *fsstat)
 {
 	__be32 *savep;
+<<<<<<< HEAD
 	uint32_t attrlen, bitmap[3] = {0};
+=======
+	uint32_t attrlen, bitmap[2] = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status;
 
 	if ((status = decode_op_hdr(xdr, OP_GETATTR)) != 0)
@@ -4199,7 +4914,11 @@ xdr_error:
 static int decode_pathconf(struct xdr_stream *xdr, struct nfs_pathconf *pathconf)
 {
 	__be32 *savep;
+<<<<<<< HEAD
 	uint32_t attrlen, bitmap[3] = {0};
+=======
+	uint32_t attrlen, bitmap[2] = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status;
 
 	if ((status = decode_op_hdr(xdr, OP_GETATTR)) != 0)
@@ -4222,8 +4941,12 @@ xdr_error:
 
 static int decode_getfattr_attrs(struct xdr_stream *xdr, uint32_t *bitmap,
 		struct nfs_fattr *fattr, struct nfs_fh *fh,
+<<<<<<< HEAD
 		struct nfs4_fs_locations *fs_loc,
 		const struct nfs_server *server)
+=======
+		const struct nfs_server *server, int may_sleep)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int status;
 	umode_t fmode = 0;
@@ -4258,6 +4981,11 @@ static int decode_getfattr_attrs(struct xdr_stream *xdr, uint32_t *bitmap,
 	status = decode_attr_error(xdr, bitmap, &err);
 	if (status < 0)
 		goto xdr_error;
+<<<<<<< HEAD
+=======
+	if (err == -NFS4ERR_WRONGSEC)
+		nfs_fixup_secinfo_attributes(fattr, fh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = decode_attr_filehandle(xdr, bitmap, fh);
 	if (status < 0)
@@ -4268,7 +4996,13 @@ static int decode_getfattr_attrs(struct xdr_stream *xdr, uint32_t *bitmap,
 		goto xdr_error;
 	fattr->valid |= status;
 
+<<<<<<< HEAD
 	status = decode_attr_fs_locations(xdr, bitmap, fs_loc);
+=======
+	status = decode_attr_fs_locations(xdr, bitmap, container_of(fattr,
+						struct nfs4_fs_locations,
+						fattr));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status < 0)
 		goto xdr_error;
 	fattr->valid |= status;
@@ -4286,12 +5020,20 @@ static int decode_getfattr_attrs(struct xdr_stream *xdr, uint32_t *bitmap,
 		goto xdr_error;
 	fattr->valid |= status;
 
+<<<<<<< HEAD
 	status = decode_attr_owner(xdr, bitmap, server, &fattr->uid, fattr->owner_name);
+=======
+	status = decode_attr_owner(xdr, bitmap, server, &fattr->uid, may_sleep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status < 0)
 		goto xdr_error;
 	fattr->valid |= status;
 
+<<<<<<< HEAD
 	status = decode_attr_group(xdr, bitmap, server, &fattr->gid, fattr->group_name);
+=======
+	status = decode_attr_group(xdr, bitmap, server, &fattr->gid, may_sleep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status < 0)
 		goto xdr_error;
 	fattr->valid |= status;
@@ -4332,12 +5074,20 @@ xdr_error:
 }
 
 static int decode_getfattr_generic(struct xdr_stream *xdr, struct nfs_fattr *fattr,
+<<<<<<< HEAD
 		struct nfs_fh *fh, struct nfs4_fs_locations *fs_loc,
 		const struct nfs_server *server)
 {
 	__be32 *savep;
 	uint32_t attrlen,
 		 bitmap[3] = {0};
+=======
+		struct nfs_fh *fh, const struct nfs_server *server, int may_sleep)
+{
+	__be32 *savep;
+	uint32_t attrlen,
+		 bitmap[2] = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status;
 
 	status = decode_op_hdr(xdr, OP_GETATTR);
@@ -4352,7 +5102,11 @@ static int decode_getfattr_generic(struct xdr_stream *xdr, struct nfs_fattr *fat
 	if (status < 0)
 		goto xdr_error;
 
+<<<<<<< HEAD
 	status = decode_getfattr_attrs(xdr, bitmap, fattr, fh, fs_loc, server);
+=======
+	status = decode_getfattr_attrs(xdr, bitmap, fattr, fh, server, may_sleep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status < 0)
 		goto xdr_error;
 
@@ -4363,9 +5117,15 @@ xdr_error:
 }
 
 static int decode_getfattr(struct xdr_stream *xdr, struct nfs_fattr *fattr,
+<<<<<<< HEAD
 		const struct nfs_server *server)
 {
 	return decode_getfattr_generic(xdr, fattr, NULL, NULL, server);
+=======
+		const struct nfs_server *server, int may_sleep)
+{
+	return decode_getfattr_generic(xdr, fattr, NULL, server, may_sleep);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -4389,8 +5149,13 @@ static int decode_first_pnfs_layout_type(struct xdr_stream *xdr,
 		return 0;
 	}
 	if (num > 1)
+<<<<<<< HEAD
 		printk(KERN_INFO "NFS: %s: Warning: Multiple pNFS layout "
 			"drivers per filesystem not supported\n", __func__);
+=======
+		printk(KERN_INFO "%s: Warning: Multiple pNFS layout drivers "
+			"per filesystem not supported\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Decode and set first layout type, move xdr->p past unused types */
 	p = xdr_inline_decode(xdr, num * 4);
@@ -4423,6 +5188,7 @@ static int decode_attr_pnfstype(struct xdr_stream *xdr, uint32_t *bitmap,
 	return status;
 }
 
+<<<<<<< HEAD
 /*
  * The prefered block size for layout directed io
  */
@@ -4449,6 +5215,12 @@ static int decode_fsinfo(struct xdr_stream *xdr, struct nfs_fsinfo *fsinfo)
 {
 	__be32 *savep;
 	uint32_t attrlen, bitmap[3];
+=======
+static int decode_fsinfo(struct xdr_stream *xdr, struct nfs_fsinfo *fsinfo)
+{
+	__be32 *savep;
+	uint32_t attrlen, bitmap[2];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int status;
 
 	if ((status = decode_op_hdr(xdr, OP_GETATTR)) != 0)
@@ -4476,9 +5248,12 @@ static int decode_fsinfo(struct xdr_stream *xdr, struct nfs_fsinfo *fsinfo)
 	status = decode_attr_pnfstype(xdr, bitmap, &fsinfo->layouttype);
 	if (status != 0)
 		goto xdr_error;
+<<<<<<< HEAD
 	status = decode_attr_layout_blksize(xdr, bitmap, &fsinfo->blksize);
 	if (status)
 		goto xdr_error;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = verify_attr_len(xdr, savep, attrlen);
 xdr_error:
@@ -4789,16 +5564,27 @@ static int decode_readdir(struct xdr_stream *xdr, struct rpc_rqst *req, struct n
 	size_t		hdrlen;
 	u32		recvd, pglen = rcvbuf->page_len;
 	int		status;
+<<<<<<< HEAD
 	__be32		verf[2];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = decode_op_hdr(xdr, OP_READDIR);
 	if (!status)
 		status = decode_verifier(xdr, readdir->verifier.data);
 	if (unlikely(status))
 		return status;
+<<<<<<< HEAD
 	memcpy(verf, readdir->verifier.data, sizeof(verf));
 	dprintk("%s: verifier = %08x:%08x\n",
 			__func__, verf[0], verf[1]);
+=======
+	dprintk("%s: verifier = %08x:%08x\n",
+			__func__,
+			((u32 *)readdir->verifier.data)[0],
+			((u32 *)readdir->verifier.data)[1]);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	hdrlen = (char *) xdr->p - (char *) iov->iov_base;
 	recvd = rcvbuf->len - hdrlen;
@@ -4893,6 +5679,7 @@ decode_restorefh(struct xdr_stream *xdr)
 }
 
 static int decode_getacl(struct xdr_stream *xdr, struct rpc_rqst *req,
+<<<<<<< HEAD
 			 struct nfs_getaclres *res)
 {
 	__be32 *savep, *bm_p;
@@ -4913,6 +5700,19 @@ static int decode_getacl(struct xdr_stream *xdr, struct rpc_rqst *req,
 	if (res->acl_data_offset > page_len)
 		return -ERANGE;
 
+=======
+		size_t *acl_len)
+{
+	__be32 *savep;
+	uint32_t attrlen,
+		 bitmap[2] = {0};
+	struct kvec *iov = req->rq_rcv_buf.head;
+	int status;
+
+	*acl_len = 0;
+	if ((status = decode_op_hdr(xdr, OP_GETATTR)) != 0)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((status = decode_attr_bitmap(xdr, bitmap)) != 0)
 		goto out;
 	if ((status = decode_attr_length(xdr, &attrlen, &savep)) != 0)
@@ -4922,15 +5722,20 @@ static int decode_getacl(struct xdr_stream *xdr, struct rpc_rqst *req,
 		return -EIO;
 	if (likely(bitmap[0] & FATTR4_WORD0_ACL)) {
 		size_t hdrlen;
+<<<<<<< HEAD
 
 		/* The bitmap (xdr len + bitmaps) and the attr xdr len words
 		 * are stored with the acl data to handle the problem of
 		 * variable length bitmaps.*/
 		xdr->p = bm_p;
+=======
+		u32 recvd;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* We ignore &savep and don't do consistency checks on
 		 * the attr length.  Let userspace figure it out.... */
 		hdrlen = (u8 *)xdr->p - (u8 *)iov->iov_base;
+<<<<<<< HEAD
 		attrlen += res->acl_data_offset;
 		if (attrlen > page_len) {
 			if (res->acl_flags & NFS4_ACL_LEN_REQUEST) {
@@ -4944,6 +5749,17 @@ static int decode_getacl(struct xdr_stream *xdr, struct rpc_rqst *req,
 		}
 		xdr_read_pages(xdr, attrlen);
 		res->acl_len = attrlen;
+=======
+		recvd = req->rq_rcv_buf.len - hdrlen;
+		if (attrlen > recvd) {
+			dprintk("NFS: server cheating in getattr"
+					" acl reply: attrlen %u > recvd %u\n",
+					attrlen, recvd);
+			return -EINVAL;
+		}
+		xdr_read_pages(xdr, attrlen);
+		*acl_len = attrlen;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		status = -EOPNOTSUPP;
 
@@ -5049,7 +5865,11 @@ static int decode_write(struct xdr_stream *xdr, struct nfs_writeres *res)
 		goto out_overflow;
 	res->count = be32_to_cpup(p++);
 	res->verf->committed = be32_to_cpup(p++);
+<<<<<<< HEAD
 	memcpy(res->verf->verifier, p, NFS4_VERIFIER_SIZE);
+=======
+	memcpy(res->verf->verifier, p, 8);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 out_overflow:
 	print_overflow_msg(__func__, xdr);
@@ -5092,13 +5912,23 @@ out_err:
 	return -EINVAL;
 }
 
+<<<<<<< HEAD
 static int decode_secinfo_common(struct xdr_stream *xdr, struct nfs4_secinfo_res *res)
+=======
+static int decode_secinfo(struct xdr_stream *xdr, struct nfs4_secinfo_res *res)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct nfs4_secinfo_flavor *sec_flavor;
 	int status;
 	__be32 *p;
 	int i, num_flavors;
 
+<<<<<<< HEAD
+=======
+	status = decode_op_hdr(xdr, OP_SECINFO);
+	if (status)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p = xdr_inline_decode(xdr, 4);
 	if (unlikely(!p))
 		goto out_overflow;
@@ -5124,7 +5954,10 @@ static int decode_secinfo_common(struct xdr_stream *xdr, struct nfs4_secinfo_res
 		res->flavors->num_flavors++;
 	}
 
+<<<<<<< HEAD
 	status = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 out_overflow:
@@ -5132,6 +5965,7 @@ out_overflow:
 	return -EIO;
 }
 
+<<<<<<< HEAD
 static int decode_secinfo(struct xdr_stream *xdr, struct nfs4_secinfo_res *res)
 {
 	int status = decode_op_hdr(xdr, OP_SECINFO);
@@ -5149,6 +5983,9 @@ static int decode_secinfo_no_name(struct xdr_stream *xdr, struct nfs4_secinfo_re
 	return decode_secinfo_common(xdr, res);
 }
 
+=======
+#if defined(CONFIG_NFS_V4_1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int decode_exchange_id(struct xdr_stream *xdr,
 			      struct nfs41_exchange_id_res *res)
 {
@@ -5157,7 +5994,10 @@ static int decode_exchange_id(struct xdr_stream *xdr,
 	char *dummy_str;
 	int status;
 	struct nfs_client *clp = res->client;
+<<<<<<< HEAD
 	uint32_t impl_id_count;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	status = decode_op_hdr(xdr, OP_EXCHANGE_ID);
 	if (status)
@@ -5188,11 +6028,16 @@ static int decode_exchange_id(struct xdr_stream *xdr,
 	if (unlikely(status))
 		return status;
 
+<<<<<<< HEAD
 	/* Save server_scope */
+=======
+	/* Throw away server_scope */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = decode_opaque_inline(xdr, &dummy, &dummy_str);
 	if (unlikely(status))
 		return status;
 
+<<<<<<< HEAD
 	if (unlikely(dummy > NFS4_OPAQUE_LIMIT))
 		return -EIO;
 
@@ -5231,6 +6076,13 @@ static int decode_exchange_id(struct xdr_stream *xdr,
 
 		/* if there's more than one entry, ignore the rest */
 	}
+=======
+	/* Throw away Implementation id array */
+	status = decode_opaque_inline(xdr, &dummy, &dummy_str);
+	if (unlikely(status))
+		return status;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 out_overflow:
 	print_overflow_msg(__func__, xdr);
@@ -5256,8 +6108,13 @@ static int decode_chan_attrs(struct xdr_stream *xdr,
 	attrs->max_reqs = be32_to_cpup(p++);
 	nr_attrs = be32_to_cpup(p);
 	if (unlikely(nr_attrs > 1)) {
+<<<<<<< HEAD
 		printk(KERN_WARNING "NFS: %s: Invalid rdma channel attrs "
 			"count %u\n", __func__, nr_attrs);
+=======
+		printk(KERN_WARNING "%s: Invalid rdma channel attrs count %u\n",
+			__func__, nr_attrs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	if (nr_attrs == 1) {
@@ -5385,6 +6242,7 @@ out_overflow:
 }
 
 #if defined(CONFIG_NFS_V4_1)
+<<<<<<< HEAD
 /*
  * TODO: Need to handle case when EOF != true;
  */
@@ -5432,6 +6290,8 @@ out_overflow:
 	print_overflow_msg(__func__, xdr);
 	return -EIO;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int decode_getdeviceinfo(struct xdr_stream *xdr,
 				struct pnfs_device *pdev)
@@ -5508,6 +6368,7 @@ static int decode_layoutget(struct xdr_stream *xdr, struct rpc_rqst *req,
 	status = decode_op_hdr(xdr, OP_LAYOUTGET);
 	if (status)
 		return status;
+<<<<<<< HEAD
 	p = xdr_inline_decode(xdr, 4);
 	if (unlikely(!p))
 		goto out_overflow;
@@ -5516,6 +6377,13 @@ static int decode_layoutget(struct xdr_stream *xdr, struct rpc_rqst *req,
 	p = xdr_inline_decode(xdr, 4);
 	if (unlikely(!p))
 		goto out_overflow;
+=======
+	p = xdr_inline_decode(xdr, 8 + NFS4_STATEID_SIZE);
+	if (unlikely(!p))
+		goto out_overflow;
+	res->return_on_close = be32_to_cpup(p++);
+	p = xdr_decode_opaque_fixed(p, res->stateid.data, NFS4_STATEID_SIZE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	layout_count = be32_to_cpup(p);
 	if (!layout_count) {
 		dprintk("%s: server responded with empty layout array\n",
@@ -5597,7 +6465,10 @@ static int decode_layoutcommit(struct xdr_stream *xdr,
 	int status;
 
 	status = decode_op_hdr(xdr, OP_LAYOUTCOMMIT);
+<<<<<<< HEAD
 	res->status = status;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (status)
 		return status;
 
@@ -5617,6 +6488,7 @@ out_overflow:
 	print_overflow_msg(__func__, xdr);
 	return -EIO;
 }
+<<<<<<< HEAD
 
 static int decode_test_stateid(struct xdr_stream *xdr,
 			       struct nfs41_test_stateid_res *res)
@@ -5667,6 +6539,8 @@ out_overflow:
 	print_overflow_msg(__func__, xdr);
 	return -EIO;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* CONFIG_NFS_V4_1 */
 
 /*
@@ -5695,7 +6569,12 @@ static int nfs4_xdr_dec_open_downgrade(struct rpc_rqst *rqstp,
 	status = decode_open_downgrade(xdr, res);
 	if (status != 0)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->fattr, res->server);
+=======
+	decode_getfattr(xdr, res->fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -5721,7 +6600,12 @@ static int nfs4_xdr_dec_access(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	status = decode_access(xdr, res);
 	if (status != 0)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->fattr, res->server);
+=======
+	decode_getfattr(xdr, res->fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -5750,7 +6634,12 @@ static int nfs4_xdr_dec_lookup(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	status = decode_getfh(xdr, res->fh);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	status = decode_getfattr(xdr, res->fattr, res->server);
+=======
+	status = decode_getfattr(xdr, res->fattr, res->server
+			,!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -5776,7 +6665,12 @@ static int nfs4_xdr_dec_lookup_root(struct rpc_rqst *rqstp,
 		goto out;
 	status = decode_getfh(xdr, res->fh);
 	if (status == 0)
+<<<<<<< HEAD
 		status = decode_getfattr(xdr, res->fattr, res->server);
+=======
+		status = decode_getfattr(xdr, res->fattr, res->server,
+				!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -5802,7 +6696,12 @@ static int nfs4_xdr_dec_remove(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	status = decode_remove(xdr, &res->cinfo);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->dir_attr, res->server);
+=======
+	decode_getfattr(xdr, res->dir_attr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -5835,12 +6734,22 @@ static int nfs4_xdr_dec_rename(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	if (status)
 		goto out;
 	/* Current FH is target directory */
+<<<<<<< HEAD
 	if (decode_getfattr(xdr, res->new_fattr, res->server))
+=======
+	if (decode_getfattr(xdr, res->new_fattr, res->server,
+				!RPC_IS_ASYNC(rqstp->rq_task)) != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	status = decode_restorefh(xdr);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->old_fattr, res->server);
+=======
+	decode_getfattr(xdr, res->old_fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -5876,12 +6785,22 @@ static int nfs4_xdr_dec_link(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	 * Note order: OP_LINK leaves the directory as the current
 	 *             filehandle.
 	 */
+<<<<<<< HEAD
 	if (decode_getfattr(xdr, res->dir_attr, res->server))
+=======
+	if (decode_getfattr(xdr, res->dir_attr, res->server,
+				!RPC_IS_ASYNC(rqstp->rq_task)) != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	status = decode_restorefh(xdr);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->fattr, res->server);
+=======
+	decode_getfattr(xdr, res->fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -5913,12 +6832,22 @@ static int nfs4_xdr_dec_create(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	status = decode_getfh(xdr, res->fh);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	if (decode_getfattr(xdr, res->fattr, res->server))
+=======
+	if (decode_getfattr(xdr, res->fattr, res->server,
+				!RPC_IS_ASYNC(rqstp->rq_task)) != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	status = decode_restorefh(xdr);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->dir_fattr, res->server);
+=======
+	decode_getfattr(xdr, res->dir_fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -5950,7 +6879,12 @@ static int nfs4_xdr_dec_getattr(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	status = decode_putfh(xdr);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	status = decode_getfattr(xdr, res->fattr, res->server);
+=======
+	status = decode_getfattr(xdr, res->fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6006,10 +6940,13 @@ nfs4_xdr_dec_getacl(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	struct compound_hdr hdr;
 	int status;
 
+<<<<<<< HEAD
 	if (res->acl_scratch != NULL) {
 		void *p = page_address(res->acl_scratch);
 		xdr_set_scratch_buffer(xdr, p, PAGE_SIZE);
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = decode_compound_hdr(xdr, &hdr);
 	if (status)
 		goto out;
@@ -6019,7 +6956,11 @@ nfs4_xdr_dec_getacl(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	status = decode_putfh(xdr);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	status = decode_getacl(xdr, rqstp, res);
+=======
+	status = decode_getacl(xdr, rqstp, &res->acl_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	return status;
@@ -6052,7 +6993,12 @@ static int nfs4_xdr_dec_close(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	 * 	an ESTALE error. Shouldn't be a problem,
 	 * 	though, since fattr->valid will remain unset.
 	 */
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->fattr, res->server);
+=======
+	decode_getfattr(xdr, res->fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6081,6 +7027,7 @@ static int nfs4_xdr_dec_open(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	status = decode_open(xdr, res);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	status = decode_getfh(xdr, &res->fh);
 	if (status)
 		goto out;
@@ -6089,6 +7036,17 @@ static int nfs4_xdr_dec_open(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	if (decode_restorefh(xdr) != 0)
 		goto out;
 	decode_getfattr(xdr, res->dir_attr, res->server);
+=======
+	if (decode_getfh(xdr, &res->fh) != 0)
+		goto out;
+	if (decode_getfattr(xdr, res->f_attr, res->server,
+				!RPC_IS_ASYNC(rqstp->rq_task)) != 0)
+		goto out;
+	if (decode_restorefh(xdr) != 0)
+		goto out;
+	decode_getfattr(xdr, res->dir_attr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6136,7 +7094,12 @@ static int nfs4_xdr_dec_open_noattr(struct rpc_rqst *rqstp,
 	status = decode_open(xdr, res);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->f_attr, res->server);
+=======
+	decode_getfattr(xdr, res->f_attr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6163,7 +7126,12 @@ static int nfs4_xdr_dec_setattr(struct rpc_rqst *rqstp,
 	status = decode_setattr(xdr);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->fattr, res->server);
+=======
+	decode_getfattr(xdr, res->fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6343,7 +7311,12 @@ static int nfs4_xdr_dec_write(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	if (status)
 		goto out;
 	if (res->fattr)
+<<<<<<< HEAD
 		decode_getfattr(xdr, res->fattr, res->server);
+=======
+		decode_getfattr(xdr, res->fattr, res->server,
+				!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!status)
 		status = res->count;
 out:
@@ -6372,7 +7345,12 @@ static int nfs4_xdr_dec_commit(struct rpc_rqst *rqstp, struct xdr_stream *xdr,
 	if (status)
 		goto out;
 	if (res->fattr)
+<<<<<<< HEAD
 		decode_getfattr(xdr, res->fattr, res->server);
+=======
+		decode_getfattr(xdr, res->fattr, res->server,
+				!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6531,7 +7509,12 @@ static int nfs4_xdr_dec_delegreturn(struct rpc_rqst *rqstp,
 	status = decode_delegreturn(xdr);
 	if (status != 0)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->fattr, res->server);
+=======
+	decode_getfattr(xdr, res->fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6559,9 +7542,15 @@ static int nfs4_xdr_dec_fs_locations(struct rpc_rqst *req,
 	if (status)
 		goto out;
 	xdr_enter_page(xdr, PAGE_SIZE);
+<<<<<<< HEAD
 	status = decode_getfattr_generic(xdr, &res->fs_locations->fattr,
 					 NULL, res->fs_locations,
 					 res->fs_locations->server);
+=======
+	status = decode_getfattr(xdr, &res->fs_locations->fattr,
+				 res->fs_locations->server,
+				 !RPC_IS_ASYNC(req->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6586,6 +7575,11 @@ static int nfs4_xdr_dec_secinfo(struct rpc_rqst *rqstp,
 	if (status)
 		goto out;
 	status = decode_secinfo(xdr, res);
+<<<<<<< HEAD
+=======
+	if (status)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6694,6 +7688,7 @@ static int nfs4_xdr_dec_reclaim_complete(struct rpc_rqst *rqstp,
 }
 
 /*
+<<<<<<< HEAD
  * Decode GETDEVICELIST response
  */
 static int nfs4_xdr_dec_getdevicelist(struct rpc_rqst *rqstp,
@@ -6720,6 +7715,8 @@ out:
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Decode GETDEVINFO response
  */
 static int nfs4_xdr_dec_getdeviceinfo(struct rpc_rqst *rqstp,
@@ -6810,6 +7807,7 @@ static int nfs4_xdr_dec_layoutcommit(struct rpc_rqst *rqstp,
 	status = decode_layoutcommit(xdr, rqstp, res);
 	if (status)
 		goto out;
+<<<<<<< HEAD
 	decode_getfattr(xdr, res->fattr, res->server);
 out:
 	return status;
@@ -6877,6 +7875,10 @@ static int nfs4_xdr_dec_free_stateid(struct rpc_rqst *rqstp,
 	if (status)
 		goto out;
 	status = decode_free_stateid(xdr, res);
+=======
+	decode_getfattr(xdr, res->fattr, res->server,
+			!RPC_IS_ASYNC(rqstp->rq_task));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	return status;
 }
@@ -6899,7 +7901,11 @@ out:
 int nfs4_decode_dirent(struct xdr_stream *xdr, struct nfs_entry *entry,
 		       int plus)
 {
+<<<<<<< HEAD
 	uint32_t bitmap[3] = {0};
+=======
+	uint32_t bitmap[2] = {0};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t len;
 	__be32 *p = xdr_inline_decode(xdr, 4);
 	if (unlikely(!p))
@@ -6941,7 +7947,11 @@ int nfs4_decode_dirent(struct xdr_stream *xdr, struct nfs_entry *entry,
 		goto out_overflow;
 
 	if (decode_getfattr_attrs(xdr, bitmap, entry->fattr, entry->fh,
+<<<<<<< HEAD
 				  NULL, entry->server) < 0)
+=======
+					entry->server, 1) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_overflow;
 	if (entry->fattr->valid & NFS_ATTR_FATTR_MOUNTED_ON_FILEID)
 		entry->ino = entry->fattr->mounted_on_fileid;
@@ -7082,6 +8092,7 @@ struct rpc_procinfo	nfs4_procedures[] = {
 	PROC(LAYOUTGET,		enc_layoutget,		dec_layoutget),
 	PROC(LAYOUTCOMMIT,	enc_layoutcommit,	dec_layoutcommit),
 	PROC(LAYOUTRETURN,	enc_layoutreturn,	dec_layoutreturn),
+<<<<<<< HEAD
 	PROC(SECINFO_NO_NAME,	enc_secinfo_no_name,	dec_secinfo_no_name),
 	PROC(TEST_STATEID,	enc_test_stateid,	dec_test_stateid),
 	PROC(FREE_STATEID,	enc_free_stateid,	dec_free_stateid),
@@ -7090,6 +8101,12 @@ struct rpc_procinfo	nfs4_procedures[] = {
 };
 
 const struct rpc_version nfs_version4 = {
+=======
+#endif /* CONFIG_NFS_V4_1 */
+};
+
+struct rpc_version		nfs_version4 = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.number			= 4,
 	.nrprocs		= ARRAY_SIZE(nfs4_procedures),
 	.procs			= nfs4_procedures

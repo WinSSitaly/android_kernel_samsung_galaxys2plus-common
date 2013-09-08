@@ -11,7 +11,10 @@
 #include <linux/device.h>
 #include <linux/mod_devicetable.h>
 #include <asm/fcx.h>
+<<<<<<< HEAD
 #include <asm/irq.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* structs from asm/cio.h */
 struct irb;
@@ -128,7 +131,10 @@ enum uc_todo {
  * @restore: callback for restoring after hibernation
  * @uc_handler: callback for unit check handler
  * @driver: embedded device driver structure
+<<<<<<< HEAD
  * @int_class: interruption class to use for accounting interrupts
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct ccw_driver {
 	struct ccw_device_id *ids;
@@ -146,7 +152,10 @@ struct ccw_driver {
 	int (*restore)(struct ccw_device *);
 	enum uc_todo (*uc_handler) (struct ccw_device *, struct irb *);
 	struct device_driver driver;
+<<<<<<< HEAD
 	enum interruption_class int_class;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern struct ccw_device *get_ccwdev_by_busid(struct ccw_driver *cdrv,

@@ -59,7 +59,11 @@ config SOUND_OSS_CORE_PRECLAIM
 
 source "sound/oss/dmasound/Kconfig"
 
+<<<<<<< HEAD
 if !M68K && !UML
+=======
+if !M68K
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 menuconfig SND
 	tristate "Advanced Linux Sound Architecture"
@@ -92,6 +96,11 @@ source "sound/spi/Kconfig"
 source "sound/mips/Kconfig"
 
 source "sound/sh/Kconfig"
+<<<<<<< HEAD
+=======
+ 
+source "sound/caph/Kconfig"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # the following will depend on the order of config.
 # here assuming USB is defined before ALSA

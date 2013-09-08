@@ -70,12 +70,16 @@ config BATTERY_DS2760
 
 config BATTERY_DS2780
 	tristate "DS2780 battery driver"
+<<<<<<< HEAD
 	depends on HAS_IOMEM
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select W1
 	select W1_SLAVE_DS2780
 	help
 	  Say Y here to enable support for batteries with ds2780 chip.
 
+<<<<<<< HEAD
 config BATTERY_DS2781
 	tristate "2781 battery driver"
 	depends on HAS_IOMEM
@@ -90,6 +94,8 @@ config BATTERY_DS2781
 
 	  If you are unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config BATTERY_DS2782
 	tristate "DS2782/DS2786 standalone gas-gauge"
 	depends on I2C
@@ -130,12 +136,21 @@ config BATTERY_WM97XX
 	help
 	  Say Y to enable support for battery measured by WM97xx aux port.
 
+<<<<<<< HEAD
 config BATTERY_SBS
         tristate "SBS Compliant gas gauge"
         depends on I2C
         help
 	  Say Y to include support for SBS battery driver for SBS-compliant
 	  gas gauges.
+=======
+config BATTERY_BQ20Z75
+        tristate "TI BQ20z75 gas gauge"
+        depends on I2C
+        help
+         Say Y to include support for TI BQ20z75 SBS-compliant
+         gas gauge and protection IC.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 config BATTERY_BQ27x00
 	tristate "BQ27x00 battery driver"
@@ -157,6 +172,22 @@ config BATTERY_BQ27X00_PLATFORM
 	help
 	  Say Y here to enable support for batteries with BQ27000 (HDQ) chips.
 
+<<<<<<< HEAD
+=======
+config BQ24272_CHARGER
+	bool "BQ24272 support"
+	default n
+	help
+	  Say Y here to enable support for charger bq24272 chips.
+
+config SMB358_CHARGER
+	bool "SMB358 support"
+	default n
+	help
+	  Say Y here to enable support for charger SMB358 chips.	  
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config BATTERY_DA9030
 	tristate "DA9030 battery driver"
 	depends on PMIC_DA903X
@@ -164,6 +195,7 @@ config BATTERY_DA9030
 	  Say Y here to enable support for batteries charger integrated into
 	  DA9030 PMIC.
 
+<<<<<<< HEAD
 config BATTERY_DA9052
 	tristate "Dialog DA9052 Battery"
 	depends on PMIC_DA9052
@@ -172,6 +204,8 @@ config BATTERY_DA9052
 	  Say Y here to enable support for batteries charger integrated into
 	  DA9052 PMIC.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config BATTERY_MAX17040
 	tristate "Maxim MAX17040 Fuel Gauge"
 	depends on I2C
@@ -248,12 +282,15 @@ config CHARGER_TWL4030
 	help
 	  Say Y here to enable support for TWL4030 Battery Charge Interface.
 
+<<<<<<< HEAD
 config CHARGER_LP8727
 	tristate "TI/National Semiconductor LP8727 charger driver"
 	depends on I2C
 	help
 	  Say Y here to enable support for LP8727 Charger Driver.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config CHARGER_GPIO
 	tristate "GPIO charger"
 	depends on GPIOLIB
@@ -264,6 +301,7 @@ config CHARGER_GPIO
 	  This driver can be build as a module. If so, the module will be
 	  called gpio-charger.
 
+<<<<<<< HEAD
 config CHARGER_MANAGER
 	bool "Battery charger manager for multiple chargers"
 	depends on REGULATOR && RTC_CLASS
@@ -307,4 +345,101 @@ config AB8500_BATTERY_THERM_ON_BATCTRL
 	help
 	  Say Y to enable battery temperature measurements using
 	  thermistor connected on BATCTRL ADC.
+=======
+config BATTERY_BCM59055
+	tristate "BCM59055 Battery support"
+	depends on MFD_BCM_PMU590XX
+	help
+	  A battery driver for PMU59055.
+
+config BCM_CMP_BATTERY_MULTI
+        tristate "CMP Multi Battery and Power Supply Driver"
+        default n
+        depends on POWER_SUPPLY
+        help
+          CMP driver for multiple platforms for supplying power supply information
+          to Power Supply system.
+
+config BCM_CMP_BATTERY_BQ24616
+        tristate "CMP BQ24616 Battery and Power Supply Driver"
+        default n
+        depends on POWER_SUPPLY
+        help
+          CMP driver based on BQ24616 for supplying battery and power supply
+          information to Power Supply system.
+
+config MONITOR_ADC121C021_I2C
+        tristate "ADC121C021 Battery Monitor"
+        depends on I2C
+        help
+         Say Y here if you want to support a ADC121C021 battery monitor.
+         If unsure, say N.
+
+config MONITOR_BQ27541_I2C
+        tristate "BQ27541 Battery Monitor"
+        depends on I2C
+        help
+         Say Y here if you want to support BQ27541 battery monitor.
+
+config POWER_BCMPMU
+	bool "BCMPMU battery driver"
+	depends on MFD_BCMPMU
+	default n
+	help
+	 Say Y to include support of battery driver for BCM PMUs.
+
+config CHARGER_BCMPMU
+	bool "BCMPMU charger driver"
+	depends on MFD_BCMPMU
+	default n
+	help
+	 Say Y to include support of charger driver for BCM PMUs.
+
+config CHARGER_BCMPMU_EXT
+	bool "BCMPMU external charger driver"
+	depends on MFD_BCMPMU
+	default n
+	help
+	 Say Y to include support of external charger driver for BCM PMUs.
+
+config BCMPMU_EM
+	tristate "BCMPMU charging and gauging driver"
+	depends on MFD_BCMPMU
+	default n
+	help
+	 Say Y to include kernel charging and gauging module for BCM PMUs.
+
+config CHARGER_BCMPMU_SPA
+	bool "BCMPMU support SPA charging module"
+	depends on MFD_BCMPMU
+	default n
+	help
+	 Say Y to support
+	 SPA charging module
+	 for BRCM
+	 PMUs.
+
+config SEC_CHARGING_FEATURE
+	tristate "Samsung Charging driver"
+	depends on POWER_SUPPLY
+	default n
+	help
+	 Say Y to add SPA charging module.
+
+config SPA_SUPPLEMENTARY_CHARGING
+	tristate "Samsung Charging driver, SPA supplementary charging"
+	depends on POWER_SUPPLY
+	default n
+	help
+	 Say Y to add SPA supplementary charging feature.
+
+config BCM_FAKE_BATTERY_DRIVER
+     tristate "Dummy Battery and Power Supply Driver"
+     default n
+     depends on POWER_SUPPLY
+     ---help---
+     Dummy driver for supplying fake battery and power supply information to
+     Power Supply system.
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif # POWER_SUPPLY

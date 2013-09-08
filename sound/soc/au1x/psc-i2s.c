@@ -42,6 +42,7 @@
 	(SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE)
 
 #define I2SSTAT_BUSY(stype)	\
+<<<<<<< HEAD
 	((stype) == SNDRV_PCM_STREAM_PLAYBACK ? PSC_I2SSTAT_TB : PSC_I2SSTAT_RB)
 #define I2SPCR_START(stype)	\
 	((stype) == SNDRV_PCM_STREAM_PLAYBACK ? PSC_I2SPCR_TS : PSC_I2SPCR_RS)
@@ -49,6 +50,15 @@
 	((stype) == SNDRV_PCM_STREAM_PLAYBACK ? PSC_I2SPCR_TP : PSC_I2SPCR_RP)
 #define I2SPCR_CLRFIFO(stype)	\
 	((stype) == SNDRV_PCM_STREAM_PLAYBACK ? PSC_I2SPCR_TC : PSC_I2SPCR_RC)
+=======
+	((stype) == PCM_TX ? PSC_I2SSTAT_TB : PSC_I2SSTAT_RB)
+#define I2SPCR_START(stype)	\
+	((stype) == PCM_TX ? PSC_I2SPCR_TS : PSC_I2SPCR_RS)
+#define I2SPCR_STOP(stype)	\
+	((stype) == PCM_TX ? PSC_I2SPCR_TP : PSC_I2SPCR_RP)
+#define I2SPCR_CLRFIFO(stype)	\
+	((stype) == PCM_TX ? PSC_I2SPCR_TC : PSC_I2SPCR_RC)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 static int au1xpsc_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
@@ -240,7 +250,11 @@ static int au1xpsc_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
 			       struct snd_soc_dai *dai)
 {
 	struct au1xpsc_audio_data *pscdata = snd_soc_dai_get_drvdata(dai);
+<<<<<<< HEAD
 	int ret, stype = substream->stream;
+=======
+	int ret, stype = SUBSTREAM_TYPE(substream);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (cmd) {
 	case SNDRV_PCM_TRIGGER_START:
@@ -257,6 +271,7 @@ static int au1xpsc_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int au1xpsc_i2s_startup(struct snd_pcm_substream *substream,
 			       struct snd_soc_dai *dai)
 {
@@ -267,6 +282,9 @@ static int au1xpsc_i2s_startup(struct snd_pcm_substream *substream,
 
 static const struct snd_soc_dai_ops au1xpsc_i2s_dai_ops = {
 	.startup	= au1xpsc_i2s_startup,
+=======
+static struct snd_soc_dai_ops au1xpsc_i2s_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.trigger	= au1xpsc_i2s_trigger,
 	.hw_params	= au1xpsc_i2s_hw_params,
 	.set_fmt	= au1xpsc_i2s_set_fmt,
@@ -290,11 +308,16 @@ static const struct snd_soc_dai_driver au1xpsc_i2s_dai_template = {
 
 static int __devinit au1xpsc_i2s_drvprobe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct resource *iores, *dmares;
+=======
+	struct resource *r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long sel;
 	int ret;
 	struct au1xpsc_audio_data *wd;
 
+<<<<<<< HEAD
 	wd = devm_kzalloc(&pdev->dev, sizeof(struct au1xpsc_audio_data),
 			  GFP_KERNEL);
 	if (!wd)
@@ -324,6 +347,25 @@ static int __devinit au1xpsc_i2s_drvprobe(struct platform_device *pdev)
 	if (!dmares)
 		return -EBUSY;
 	wd->dmaids[SNDRV_PCM_STREAM_CAPTURE] = dmares->start;
+=======
+	wd = kzalloc(sizeof(struct au1xpsc_audio_data), GFP_KERNEL);
+	if (!wd)
+		return -ENOMEM;
+
+	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	if (!r) {
+		ret = -ENODEV;
+		goto out0;
+	}
+
+	ret = -EBUSY;
+	if (!request_mem_region(r->start, resource_size(r), pdev->name))
+		goto out0;
+
+	wd->mmio = ioremap(r->start, resource_size(r));
+	if (!wd->mmio)
+		goto out1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* preserve PSC clock source set up by platform (dev.platform_data
 	 * is already occupied by soc layer)
@@ -350,12 +392,37 @@ static int __devinit au1xpsc_i2s_drvprobe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, wd);
 
+<<<<<<< HEAD
 	return snd_soc_register_dai(&pdev->dev, &wd->dai_drv);
+=======
+	ret = snd_soc_register_dai(&pdev->dev, &wd->dai_drv);
+	if (ret)
+		goto out1;
+
+	/* finally add the DMA device for this PSC */
+	wd->dmapd = au1xpsc_pcm_add(pdev);
+	if (wd->dmapd)
+		return 0;
+
+	snd_soc_unregister_dai(&pdev->dev);
+out1:
+	release_mem_region(r->start, resource_size(r));
+out0:
+	kfree(wd);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devexit au1xpsc_i2s_drvremove(struct platform_device *pdev)
 {
 	struct au1xpsc_audio_data *wd = platform_get_drvdata(pdev);
+<<<<<<< HEAD
+=======
+	struct resource *r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+
+	if (wd->dmapd)
+		au1xpsc_pcm_destroy(wd->dmapd);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_unregister_dai(&pdev->dev);
 
@@ -364,6 +431,13 @@ static int __devexit au1xpsc_i2s_drvremove(struct platform_device *pdev)
 	au_writel(PSC_CTRL_DISABLE, PSC_CTRL(wd));
 	au_sync();
 
+<<<<<<< HEAD
+=======
+	iounmap(wd->mmio);
+	release_mem_region(r->start, resource_size(r));
+	kfree(wd);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -421,7 +495,22 @@ static struct platform_driver au1xpsc_i2s_driver = {
 	.remove		= __devexit_p(au1xpsc_i2s_drvremove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(au1xpsc_i2s_driver);
+=======
+static int __init au1xpsc_i2s_load(void)
+{
+	return platform_driver_register(&au1xpsc_i2s_driver);
+}
+
+static void __exit au1xpsc_i2s_unload(void)
+{
+	platform_driver_unregister(&au1xpsc_i2s_driver);
+}
+
+module_init(au1xpsc_i2s_load);
+module_exit(au1xpsc_i2s_unload);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Au12x0/Au1550 PSC I2S ALSA ASoC audio driver");

@@ -61,6 +61,10 @@
 #include <linux/aer.h>
 #include <asm/dma.h>
 #include <asm/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 #include <scsi/scsi_host.h>
 #include <scsi/scsi.h>
@@ -1735,7 +1739,11 @@ static int arcmsr_iop_message_xfer(struct AdapterControlBlock *acb,
 						(uint32_t ) cmd->cmnd[8];
 						/* 4 bytes: Areca io control code */
 	sg = scsi_sglist(cmd);
+<<<<<<< HEAD
 	buffer = kmap_atomic(sg_page(sg)) + sg->offset;
+=======
+	buffer = kmap_atomic(sg_page(sg), KM_IRQ0) + sg->offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (scsi_sg_count(cmd) > 1) {
 		retvalue = ARCMSR_MESSAGE_FAIL;
 		goto message_out;
@@ -1984,7 +1992,11 @@ static int arcmsr_iop_message_xfer(struct AdapterControlBlock *acb,
 	}
 	message_out:
 	sg = scsi_sglist(cmd);
+<<<<<<< HEAD
 	kunmap_atomic(buffer - sg->offset);
+=======
+	kunmap_atomic(buffer - sg->offset, KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return retvalue;
 }
 
@@ -2034,11 +2046,19 @@ static void arcmsr_handle_virtual_command(struct AdapterControlBlock *acb,
 		strncpy(&inqdata[32], "R001", 4); /* Product Revision */
 
 		sg = scsi_sglist(cmd);
+<<<<<<< HEAD
 		buffer = kmap_atomic(sg_page(sg)) + sg->offset;
 
 		memcpy(buffer, inqdata, sizeof(inqdata));
 		sg = scsi_sglist(cmd);
 		kunmap_atomic(buffer - sg->offset);
+=======
+		buffer = kmap_atomic(sg_page(sg), KM_IRQ0) + sg->offset;
+
+		memcpy(buffer, inqdata, sizeof(inqdata));
+		sg = scsi_sglist(cmd);
+		kunmap_atomic(buffer - sg->offset, KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		cmd->scsi_done(cmd);
 	}

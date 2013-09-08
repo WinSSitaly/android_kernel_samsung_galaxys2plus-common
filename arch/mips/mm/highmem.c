@@ -41,7 +41,11 @@ EXPORT_SYMBOL(kunmap);
  * kmaps are appropriate for short, tight code paths only.
  */
 
+<<<<<<< HEAD
 void *kmap_atomic(struct page *page)
+=======
+void *__kmap_atomic(struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long vaddr;
 	int idx, type;
@@ -62,7 +66,11 @@ void *kmap_atomic(struct page *page)
 
 	return (void*) vaddr;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL(kmap_atomic);
+=======
+EXPORT_SYMBOL(__kmap_atomic);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __kunmap_atomic(void *kvaddr)
 {

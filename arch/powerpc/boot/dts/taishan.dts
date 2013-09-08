@@ -337,7 +337,11 @@
 				rx-fifo-size = <4096>;
 				tx-fifo-size = <2048>;
 				phy-mode = "rgmii";
+<<<<<<< HEAD
 				phy-address = <1>;
+=======
+				phy-map = <0x00000001>;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				rgmii-device = <&RGMII0>;
 				rgmii-channel = <0>;
  				zmii-device = <&ZMII0>;
@@ -361,7 +365,11 @@
 				rx-fifo-size = <4096>;
 				tx-fifo-size = <2048>;
 				phy-mode = "rgmii";
+<<<<<<< HEAD
 				phy-address = <3>;
+=======
+				phy-map = <0x00000003>;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				rgmii-device = <&RGMII0>;
 				rgmii-channel = <1>;
  				zmii-device = <&ZMII0>;

@@ -17,8 +17,11 @@
 #ifndef __LINUX_MFD_TPS65910_H
 #define __LINUX_MFD_TPS65910_H
 
+<<<<<<< HEAD
 #include <linux/gpio.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* TPS chip id list */
 #define TPS65910			0
 #define TPS65911			1
@@ -245,8 +248,12 @@
 
 
 /*Registers VDD1, VDD2 voltage values definitions */
+<<<<<<< HEAD
 #define VDD1_2_NUM_VOLT_FINE				73
 #define VDD1_2_NUM_VOLT_COARSE				3
+=======
+#define VDD1_2_NUM_VOLTS				73
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define VDD1_2_MIN_VOLT					6000
 #define VDD1_2_OFFSET					125
 
@@ -272,7 +279,11 @@
 #define LDO1_SEL_MASK					0xFC
 #define LDO3_SEL_MASK					0x7C
 #define LDO_MIN_VOLT					1000
+<<<<<<< HEAD
 #define LDO_MAX_VOLT					3300
+=======
+#define LDO_MAX_VOLT					3300;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 /*Register VDIG1  (0x80) register.RegisterDescription */
@@ -659,8 +670,11 @@
 
 
 /*Register GPIO  (0x80) register.RegisterDescription */
+<<<<<<< HEAD
 #define GPIO_SLEEP_MASK                         0x80
 #define GPIO_SLEEP_SHIFT                        7
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define GPIO_DEB_MASK                           0x10
 #define GPIO_DEB_SHIFT                          4
 #define GPIO_PUEN_MASK                          0x08
@@ -744,6 +758,7 @@
 #define TPS65910_GPIO_STS				BIT(1)
 #define TPS65910_GPIO_SET				BIT(0)
 
+<<<<<<< HEAD
 /* Max number of TPS65910/11 GPIOs */
 #define TPS65910_NUM_GPIO				6
 #define TPS65911_NUM_GPIO				9
@@ -783,6 +798,8 @@
 #define TPS65910_SLEEP_CONTROL_EXT_INPUT_EN3		0x4
 #define TPS65911_SLEEP_CONTROL_EXT_INPUT_SLEEP		0x8
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct tps65910_board
  * Board platform data may be used to initialize regulators.
@@ -794,9 +811,13 @@ struct tps65910_board {
 	int irq_base;
 	int vmbch_threshold;
 	int vmbch2_threshold;
+<<<<<<< HEAD
 	bool en_gpio_sleep[TPS6591X_MAX_NUM_GPIO];
 	unsigned long regulator_ext_sleep_control[TPS65910_NUM_REGS];
 	struct regulator_init_data *tps65910_pmic_init_data[TPS65910_NUM_REGS];
+=======
+	struct regulator_init_data *tps65910_pmic_init_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -806,7 +827,10 @@ struct tps65910_board {
 struct tps65910 {
 	struct device *dev;
 	struct i2c_client *i2c_client;
+<<<<<<< HEAD
 	struct regmap *regmap;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mutex io_mutex;
 	unsigned int id;
 	int (*read)(struct tps65910 *tps65910, u8 reg, int size, void *dest);
@@ -838,7 +862,10 @@ int tps65910_clear_bits(struct tps65910 *tps65910, u8 reg, u8 mask);
 void tps65910_gpio_init(struct tps65910 *tps65910, int gpio_base);
 int tps65910_irq_init(struct tps65910 *tps65910, int irq,
 		struct tps65910_platform_data *pdata);
+<<<<<<< HEAD
 int tps65910_irq_exit(struct tps65910 *tps65910);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int tps65910_chip_id(struct tps65910 *tps65910)
 {

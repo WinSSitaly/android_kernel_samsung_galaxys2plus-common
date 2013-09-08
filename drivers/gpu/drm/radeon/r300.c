@@ -74,7 +74,11 @@ void rv370_pcie_gart_tlb_flush(struct radeon_device *rdev)
 
 int rv370_pcie_gart_set_page(struct radeon_device *rdev, int i, uint64_t addr)
 {
+<<<<<<< HEAD
 	void __iomem *ptr = rdev->gart.ptr;
+=======
+	void __iomem *ptr = (void *)rdev->gart.table.vram.ptr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (i < 0 || i > rdev->gart.num_gpu_pages) {
 		return -EINVAL;
@@ -93,7 +97,11 @@ int rv370_pcie_gart_init(struct radeon_device *rdev)
 {
 	int r;
 
+<<<<<<< HEAD
 	if (rdev->gart.robj) {
+=======
+	if (rdev->gart.table.vram.robj) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		WARN(1, "RV370 PCIE GART already initialized\n");
 		return 0;
 	}
@@ -105,8 +113,13 @@ int rv370_pcie_gart_init(struct radeon_device *rdev)
 	if (r)
 		DRM_ERROR("Failed to register debugfs file for PCIE gart !\n");
 	rdev->gart.table_size = rdev->gart.num_gpu_pages * 4;
+<<<<<<< HEAD
 	rdev->asic->gart.tlb_flush = &rv370_pcie_gart_tlb_flush;
 	rdev->asic->gart.set_page = &rv370_pcie_gart_set_page;
+=======
+	rdev->asic->gart_tlb_flush = &rv370_pcie_gart_tlb_flush;
+	rdev->asic->gart_set_page = &rv370_pcie_gart_set_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return radeon_gart_table_vram_alloc(rdev);
 }
 
@@ -116,7 +129,11 @@ int rv370_pcie_gart_enable(struct radeon_device *rdev)
 	uint32_t tmp;
 	int r;
 
+<<<<<<< HEAD
 	if (rdev->gart.robj == NULL) {
+=======
+	if (rdev->gart.table.vram.robj == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(rdev->dev, "No VRAM object for PCIE GART.\n");
 		return -EINVAL;
 	}
@@ -144,9 +161,14 @@ int rv370_pcie_gart_enable(struct radeon_device *rdev)
 	tmp |= RADEON_PCIE_TX_GART_UNMAPPED_ACCESS_DISCARD;
 	WREG32_PCIE(RADEON_PCIE_TX_GART_CNTL, tmp);
 	rv370_pcie_gart_tlb_flush(rdev);
+<<<<<<< HEAD
 	DRM_INFO("PCIE GART of %uM enabled (table at 0x%016llX).\n",
 		 (unsigned)(rdev->mc.gtt_size >> 20),
 		 (unsigned long long)table_addr);
+=======
+	DRM_INFO("PCIE GART of %uM enabled (table at 0x%08X).\n",
+		 (unsigned)(rdev->mc.gtt_size >> 20), table_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rdev->gart.ready = true;
 	return 0;
 }
@@ -154,6 +176,10 @@ int rv370_pcie_gart_enable(struct radeon_device *rdev)
 void rv370_pcie_gart_disable(struct radeon_device *rdev)
 {
 	u32 tmp;
+<<<<<<< HEAD
+=======
+	int r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	WREG32_PCIE(RADEON_PCIE_TX_GART_START_LO, 0);
 	WREG32_PCIE(RADEON_PCIE_TX_GART_END_LO, 0);
@@ -162,7 +188,18 @@ void rv370_pcie_gart_disable(struct radeon_device *rdev)
 	tmp = RREG32_PCIE(RADEON_PCIE_TX_GART_CNTL);
 	tmp |= RADEON_PCIE_TX_GART_UNMAPPED_ACCESS_DISCARD;
 	WREG32_PCIE(RADEON_PCIE_TX_GART_CNTL, tmp & ~RADEON_PCIE_TX_GART_EN);
+<<<<<<< HEAD
 	radeon_gart_table_vram_unpin(rdev);
+=======
+	if (rdev->gart.table.vram.robj) {
+		r = radeon_bo_reserve(rdev->gart.table.vram.robj, false);
+		if (likely(r == 0)) {
+			radeon_bo_kunmap(rdev->gart.table.vram.robj);
+			radeon_bo_unpin(rdev->gart.table.vram.robj);
+			radeon_bo_unreserve(rdev->gart.table.vram.robj);
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void rv370_pcie_gart_fini(struct radeon_device *rdev)
@@ -175,6 +212,7 @@ void rv370_pcie_gart_fini(struct radeon_device *rdev)
 void r300_fence_ring_emit(struct radeon_device *rdev,
 			  struct radeon_fence *fence)
 {
+<<<<<<< HEAD
 	struct radeon_ring *ring = &rdev->ring[fence->ring];
 
 	/* Who ever call radeon_fence_emit should call ring_lock and ask
@@ -207,6 +245,38 @@ void r300_fence_ring_emit(struct radeon_device *rdev,
 }
 
 void r300_ring_start(struct radeon_device *rdev, struct radeon_ring *ring)
+=======
+	/* Who ever call radeon_fence_emit should call ring_lock and ask
+	 * for enough space (today caller are ib schedule and buffer move) */
+	/* Write SC register so SC & US assert idle */
+	radeon_ring_write(rdev, PACKET0(R300_RE_SCISSORS_TL, 0));
+	radeon_ring_write(rdev, 0);
+	radeon_ring_write(rdev, PACKET0(R300_RE_SCISSORS_BR, 0));
+	radeon_ring_write(rdev, 0);
+	/* Flush 3D cache */
+	radeon_ring_write(rdev, PACKET0(R300_RB3D_DSTCACHE_CTLSTAT, 0));
+	radeon_ring_write(rdev, R300_RB3D_DC_FLUSH);
+	radeon_ring_write(rdev, PACKET0(R300_RB3D_ZCACHE_CTLSTAT, 0));
+	radeon_ring_write(rdev, R300_ZC_FLUSH);
+	/* Wait until IDLE & CLEAN */
+	radeon_ring_write(rdev, PACKET0(RADEON_WAIT_UNTIL, 0));
+	radeon_ring_write(rdev, (RADEON_WAIT_3D_IDLECLEAN |
+				 RADEON_WAIT_2D_IDLECLEAN |
+				 RADEON_WAIT_DMA_GUI_IDLE));
+	radeon_ring_write(rdev, PACKET0(RADEON_HOST_PATH_CNTL, 0));
+	radeon_ring_write(rdev, rdev->config.r300.hdp_cntl |
+				RADEON_HDP_READ_BUFFER_INVALIDATE);
+	radeon_ring_write(rdev, PACKET0(RADEON_HOST_PATH_CNTL, 0));
+	radeon_ring_write(rdev, rdev->config.r300.hdp_cntl);
+	/* Emit fence sequence & fire IRQ */
+	radeon_ring_write(rdev, PACKET0(rdev->fence_drv.scratch_reg, 0));
+	radeon_ring_write(rdev, fence->seq);
+	radeon_ring_write(rdev, PACKET0(RADEON_GEN_INT_STATUS, 0));
+	radeon_ring_write(rdev, RADEON_SW_INT_FIRE);
+}
+
+void r300_ring_start(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned gb_tile_config;
 	int r;
@@ -229,16 +299,26 @@ void r300_ring_start(struct radeon_device *rdev, struct radeon_ring *ring)
 		break;
 	}
 
+<<<<<<< HEAD
 	r = radeon_ring_lock(rdev, ring, 64);
 	if (r) {
 		return;
 	}
 	radeon_ring_write(ring, PACKET0(RADEON_ISYNC_CNTL, 0));
 	radeon_ring_write(ring,
+=======
+	r = radeon_ring_lock(rdev, 64);
+	if (r) {
+		return;
+	}
+	radeon_ring_write(rdev, PACKET0(RADEON_ISYNC_CNTL, 0));
+	radeon_ring_write(rdev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  RADEON_ISYNC_ANY2D_IDLE3D |
 			  RADEON_ISYNC_ANY3D_IDLE2D |
 			  RADEON_ISYNC_WAIT_IDLEGUI |
 			  RADEON_ISYNC_CPSCRATCH_IDLEGUI);
+<<<<<<< HEAD
 	radeon_ring_write(ring, PACKET0(R300_GB_TILE_CONFIG, 0));
 	radeon_ring_write(ring, gb_tile_config);
 	radeon_ring_write(ring, PACKET0(RADEON_WAIT_UNTIL, 0));
@@ -267,6 +347,36 @@ void r300_ring_start(struct radeon_device *rdev, struct radeon_ring *ring)
 	radeon_ring_write(ring, R300_ZC_FLUSH | R300_ZC_FREE);
 	radeon_ring_write(ring, PACKET0(R300_GB_MSPOS0, 0));
 	radeon_ring_write(ring,
+=======
+	radeon_ring_write(rdev, PACKET0(R300_GB_TILE_CONFIG, 0));
+	radeon_ring_write(rdev, gb_tile_config);
+	radeon_ring_write(rdev, PACKET0(RADEON_WAIT_UNTIL, 0));
+	radeon_ring_write(rdev,
+			  RADEON_WAIT_2D_IDLECLEAN |
+			  RADEON_WAIT_3D_IDLECLEAN);
+	radeon_ring_write(rdev, PACKET0(R300_DST_PIPE_CONFIG, 0));
+	radeon_ring_write(rdev, R300_PIPE_AUTO_CONFIG);
+	radeon_ring_write(rdev, PACKET0(R300_GB_SELECT, 0));
+	radeon_ring_write(rdev, 0);
+	radeon_ring_write(rdev, PACKET0(R300_GB_ENABLE, 0));
+	radeon_ring_write(rdev, 0);
+	radeon_ring_write(rdev, PACKET0(R300_RB3D_DSTCACHE_CTLSTAT, 0));
+	radeon_ring_write(rdev, R300_RB3D_DC_FLUSH | R300_RB3D_DC_FREE);
+	radeon_ring_write(rdev, PACKET0(R300_RB3D_ZCACHE_CTLSTAT, 0));
+	radeon_ring_write(rdev, R300_ZC_FLUSH | R300_ZC_FREE);
+	radeon_ring_write(rdev, PACKET0(RADEON_WAIT_UNTIL, 0));
+	radeon_ring_write(rdev,
+			  RADEON_WAIT_2D_IDLECLEAN |
+			  RADEON_WAIT_3D_IDLECLEAN);
+	radeon_ring_write(rdev, PACKET0(R300_GB_AA_CONFIG, 0));
+	radeon_ring_write(rdev, 0);
+	radeon_ring_write(rdev, PACKET0(R300_RB3D_DSTCACHE_CTLSTAT, 0));
+	radeon_ring_write(rdev, R300_RB3D_DC_FLUSH | R300_RB3D_DC_FREE);
+	radeon_ring_write(rdev, PACKET0(R300_RB3D_ZCACHE_CTLSTAT, 0));
+	radeon_ring_write(rdev, R300_ZC_FLUSH | R300_ZC_FREE);
+	radeon_ring_write(rdev, PACKET0(R300_GB_MSPOS0, 0));
+	radeon_ring_write(rdev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  ((6 << R300_MS_X0_SHIFT) |
 			   (6 << R300_MS_Y0_SHIFT) |
 			   (6 << R300_MS_X1_SHIFT) |
@@ -275,8 +385,13 @@ void r300_ring_start(struct radeon_device *rdev, struct radeon_ring *ring)
 			   (6 << R300_MS_Y2_SHIFT) |
 			   (6 << R300_MSBD0_Y_SHIFT) |
 			   (6 << R300_MSBD0_X_SHIFT)));
+<<<<<<< HEAD
 	radeon_ring_write(ring, PACKET0(R300_GB_MSPOS1, 0));
 	radeon_ring_write(ring,
+=======
+	radeon_ring_write(rdev, PACKET0(R300_GB_MSPOS1, 0));
+	radeon_ring_write(rdev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  ((6 << R300_MS_X3_SHIFT) |
 			   (6 << R300_MS_Y3_SHIFT) |
 			   (6 << R300_MS_X4_SHIFT) |
@@ -284,6 +399,7 @@ void r300_ring_start(struct radeon_device *rdev, struct radeon_ring *ring)
 			   (6 << R300_MS_X5_SHIFT) |
 			   (6 << R300_MS_Y5_SHIFT) |
 			   (6 << R300_MSBD1_SHIFT)));
+<<<<<<< HEAD
 	radeon_ring_write(ring, PACKET0(R300_GA_ENHANCE, 0));
 	radeon_ring_write(ring, R300_GA_DEADLOCK_CNTL | R300_GA_FASTSYNC_CNTL);
 	radeon_ring_write(ring, PACKET0(R300_GA_POLY_MODE, 0));
@@ -294,6 +410,18 @@ void r300_ring_start(struct radeon_device *rdev, struct radeon_ring *ring)
 			  R300_GEOMETRY_ROUND_NEAREST |
 			  R300_COLOR_ROUND_NEAREST);
 	radeon_ring_unlock_commit(rdev, ring);
+=======
+	radeon_ring_write(rdev, PACKET0(R300_GA_ENHANCE, 0));
+	radeon_ring_write(rdev, R300_GA_DEADLOCK_CNTL | R300_GA_FASTSYNC_CNTL);
+	radeon_ring_write(rdev, PACKET0(R300_GA_POLY_MODE, 0));
+	radeon_ring_write(rdev,
+			  R300_FRONT_PTYPE_TRIANGE | R300_BACK_PTYPE_TRIANGE);
+	radeon_ring_write(rdev, PACKET0(R300_GA_ROUND_MODE, 0));
+	radeon_ring_write(rdev,
+			  R300_GEOMETRY_ROUND_NEAREST |
+			  R300_COLOR_ROUND_NEAREST);
+	radeon_ring_unlock_commit(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void r300_errata(struct radeon_device *rdev)
@@ -377,13 +505,18 @@ void r300_gpu_init(struct radeon_device *rdev)
 		 rdev->num_gb_pipes, rdev->num_z_pipes);
 }
 
+<<<<<<< HEAD
 bool r300_gpu_is_lockup(struct radeon_device *rdev, struct radeon_ring *ring)
+=======
+bool r300_gpu_is_lockup(struct radeon_device *rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 rbbm_status;
 	int r;
 
 	rbbm_status = RREG32(R_000E40_RBBM_STATUS);
 	if (!G_000E40_GUI_ACTIVE(rbbm_status)) {
+<<<<<<< HEAD
 		r100_gpu_lockup_update(&rdev->config.r300.lockup, ring);
 		return false;
 	}
@@ -397,6 +530,21 @@ bool r300_gpu_is_lockup(struct radeon_device *rdev, struct radeon_ring *ring)
 	}
 	ring->rptr = RREG32(RADEON_CP_RB_RPTR);
 	return r100_gpu_cp_is_lockup(rdev, &rdev->config.r300.lockup, ring);
+=======
+		r100_gpu_lockup_update(&rdev->config.r300.lockup, &rdev->cp);
+		return false;
+	}
+	/* force CP activities */
+	r = radeon_ring_lock(rdev, 2);
+	if (!r) {
+		/* PACKET2 NOP */
+		radeon_ring_write(rdev, 0x80000000);
+		radeon_ring_write(rdev, 0x80000000);
+		radeon_ring_unlock_commit(rdev);
+	}
+	rdev->cp.rptr = RREG32(RADEON_CP_RB_RPTR);
+	return r100_gpu_cp_is_lockup(rdev, &rdev->config.r300.lockup, &rdev->cp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int r300_asic_reset(struct radeon_device *rdev)
@@ -703,6 +851,7 @@ static int r300_packet0_check(struct radeon_cs_parser *p,
 			return r;
 		}
 
+<<<<<<< HEAD
 		if (p->cs_flags & RADEON_CS_KEEP_TILING_FLAGS) {
 			ib[idx] = (idx_value & 31) | /* keep the 1st 5 bits */
 				  ((idx_value & ~31) + (u32)reloc->lobj.gpu_offset);
@@ -718,6 +867,18 @@ static int r300_packet0_check(struct radeon_cs_parser *p,
 			tmp |= tile_flags;
 			ib[idx] = tmp;
 		}
+=======
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MACRO)
+			tile_flags |= R300_TXO_MACRO_TILE;
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO)
+			tile_flags |= R300_TXO_MICRO_TILE;
+		else if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO_SQUARE)
+			tile_flags |= R300_TXO_MICRO_TILE_SQUARE;
+
+		tmp = idx_value + ((u32)reloc->lobj.gpu_offset);
+		tmp |= tile_flags;
+		ib[idx] = tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		track->textures[i].robj = reloc->robj;
 		track->tex_dirty = true;
 		break;
@@ -767,6 +928,7 @@ static int r300_packet0_check(struct radeon_cs_parser *p,
 		/* RB3D_COLORPITCH1 */
 		/* RB3D_COLORPITCH2 */
 		/* RB3D_COLORPITCH3 */
+<<<<<<< HEAD
 		if (!(p->cs_flags & RADEON_CS_KEEP_TILING_FLAGS)) {
 			r = r100_cs_packet_next_reloc(p, &reloc);
 			if (r) {
@@ -787,6 +949,26 @@ static int r300_packet0_check(struct radeon_cs_parser *p,
 			tmp |= tile_flags;
 			ib[idx] = tmp;
 		}
+=======
+		r = r100_cs_packet_next_reloc(p, &reloc);
+		if (r) {
+			DRM_ERROR("No reloc for ib[%d]=0x%04X\n",
+				  idx, reg);
+			r100_cs_dump_packet(p, pkt);
+			return r;
+		}
+
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MACRO)
+			tile_flags |= R300_COLOR_TILE_ENABLE;
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO)
+			tile_flags |= R300_COLOR_MICROTILE_ENABLE;
+		else if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO_SQUARE)
+			tile_flags |= R300_COLOR_MICROTILE_SQUARE_ENABLE;
+
+		tmp = idx_value & ~(0x7 << 16);
+		tmp |= tile_flags;
+		ib[idx] = tmp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		i = (reg - 0x4E38) >> 2;
 		track->cb[i].pitch = idx_value & 0x3FFE;
 		switch (((idx_value >> 21) & 0xF)) {
@@ -852,6 +1034,7 @@ static int r300_packet0_check(struct radeon_cs_parser *p,
 		break;
 	case 0x4F24:
 		/* ZB_DEPTHPITCH */
+<<<<<<< HEAD
 		if (!(p->cs_flags & RADEON_CS_KEEP_TILING_FLAGS)) {
 			r = r100_cs_packet_next_reloc(p, &reloc);
 			if (r) {
@@ -872,6 +1055,27 @@ static int r300_packet0_check(struct radeon_cs_parser *p,
 			tmp |= tile_flags;
 			ib[idx] = tmp;
 		}
+=======
+		r = r100_cs_packet_next_reloc(p, &reloc);
+		if (r) {
+			DRM_ERROR("No reloc for ib[%d]=0x%04X\n",
+				  idx, reg);
+			r100_cs_dump_packet(p, pkt);
+			return r;
+		}
+
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MACRO)
+			tile_flags |= R300_DEPTHMACROTILE_ENABLE;
+		if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO)
+			tile_flags |= R300_DEPTHMICROTILE_TILED;
+		else if (reloc->lobj.tiling_flags & RADEON_TILING_MICRO_SQUARE)
+			tile_flags |= R300_DEPTHMICROTILE_TILED_SQUARE;
+
+		tmp = idx_value & ~(0x7 << 16);
+		tmp |= tile_flags;
+		ib[idx] = tmp;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		track->zb.pitch = idx_value & 0x3FFC;
 		track->zb_dirty = true;
 		break;
@@ -1398,6 +1602,7 @@ static int r300_startup(struct radeon_device *rdev)
 	if (r)
 		return r;
 
+<<<<<<< HEAD
 	r = radeon_fence_driver_start_ring(rdev, RADEON_RING_TYPE_GFX_INDEX);
 	if (r) {
 		dev_err(rdev->dev, "failed initializing CP fences (%d).\n", r);
@@ -1411,6 +1616,9 @@ static int r300_startup(struct radeon_device *rdev)
 			return r;
 	}
 
+=======
+	/* Enable IRQ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r100_irq_set(rdev);
 	rdev->config.r300.hdp_cntl = RREG32(RADEON_HOST_PATH_CNTL);
 	/* 1M ring buffer */
@@ -1419,6 +1627,7 @@ static int r300_startup(struct radeon_device *rdev)
 		dev_err(rdev->dev, "failed initializing CP (%d).\n", r);
 		return r;
 	}
+<<<<<<< HEAD
 
 	r = radeon_ib_pool_start(rdev);
 	if (r)
@@ -1431,13 +1640,23 @@ static int r300_startup(struct radeon_device *rdev)
 		return r;
 	}
 
+=======
+	r = r100_ib_init(rdev);
+	if (r) {
+		dev_err(rdev->dev, "failed initializing IB (%d).\n", r);
+		return r;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 int r300_resume(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	int r;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Make sur GART are not working */
 	if (rdev->flags & RADEON_IS_PCIE)
 		rv370_pcie_gart_disable(rdev);
@@ -1457,6 +1676,7 @@ int r300_resume(struct radeon_device *rdev)
 	r300_clock_startup(rdev);
 	/* Initialize surface registers */
 	radeon_surface_init(rdev);
+<<<<<<< HEAD
 
 	rdev->accel_working = true;
 	r = r300_startup(rdev);
@@ -1464,11 +1684,17 @@ int r300_resume(struct radeon_device *rdev)
 		rdev->accel_working = false;
 	}
 	return r;
+=======
+	return r300_startup(rdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int r300_suspend(struct radeon_device *rdev)
 {
+<<<<<<< HEAD
 	radeon_ib_pool_suspend(rdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r100_cp_disable(rdev);
 	radeon_wb_disable(rdev);
 	r100_irq_disable(rdev);
@@ -1551,6 +1777,12 @@ int r300_init(struct radeon_device *rdev)
 	r = radeon_fence_driver_init(rdev);
 	if (r)
 		return r;
+<<<<<<< HEAD
+=======
+	r = radeon_irq_kms_init(rdev);
+	if (r)
+		return r;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Memory manager */
 	r = radeon_bo_init(rdev);
 	if (r)
@@ -1566,6 +1798,7 @@ int r300_init(struct radeon_device *rdev)
 			return r;
 	}
 	r300_set_reg_safe(rdev);
+<<<<<<< HEAD
 
 	r = radeon_ib_pool_init(rdev);
 	rdev->accel_working = true;
@@ -1574,6 +1807,9 @@ int r300_init(struct radeon_device *rdev)
 		rdev->accel_working = false;
 	}
 
+=======
+	rdev->accel_working = true;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = r300_startup(rdev);
 	if (r) {
 		/* Somethings want wront with the accel init stop accel */

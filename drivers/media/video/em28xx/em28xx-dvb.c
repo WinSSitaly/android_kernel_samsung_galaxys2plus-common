@@ -1,7 +1,11 @@
 /*
  DVB device driver for em28xx
 
+<<<<<<< HEAD
  (c) 2008-2011 Mauro Carvalho Chehab <mchehab@infradead.org>
+=======
+ (c) 2008 Mauro Carvalho Chehab <mchehab@infradead.org>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  (c) 2008 Devin Heitmueller <devin.heitmueller@gmail.com>
 	- Fixes for the driver to properly work with HVR-950
@@ -40,11 +44,14 @@
 #include "s921.h"
 #include "drxd.h"
 #include "cxd2820r.h"
+<<<<<<< HEAD
 #include "tda18271c2dd.h"
 #include "drxk.h"
 #include "tda10071.h"
 #include "a8293.h"
 #include "qt1010.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("driver for em28xx based DVB cards");
 MODULE_AUTHOR("Mauro Carvalho Chehab <mchehab@infradead.org>");
@@ -61,6 +68,12 @@ if (debug >= level) 						\
 	printk(KERN_DEBUG "%s/2-dvb: " fmt, dev->name, ## arg);	\
 } while (0)
 
+<<<<<<< HEAD
+=======
+#define EM28XX_DVB_NUM_BUFS 5
+#define EM28XX_DVB_MAX_PACKETS 64
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct em28xx_dvb {
 	struct dvb_frontend        *fe[2];
 
@@ -75,11 +88,14 @@ struct em28xx_dvb {
 	struct dmx_frontend        fe_hw;
 	struct dmx_frontend        fe_mem;
 	struct dvb_net             net;
+<<<<<<< HEAD
 
 	/* Due to DRX-K - probably need changes */
 	int (*gate_ctrl)(struct dvb_frontend *, int);
 	struct semaphore      pll_mutex;
 	bool			dont_attach_fe1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 
@@ -122,7 +138,11 @@ static inline void print_err_status(struct em28xx *dev,
 	}
 }
 
+<<<<<<< HEAD
 static inline int em28xx_dvb_isoc_copy(struct em28xx *dev, struct urb *urb)
+=======
+static inline int dvb_isoc_copy(struct em28xx *dev, struct urb *urb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 
@@ -155,17 +175,26 @@ static inline int em28xx_dvb_isoc_copy(struct em28xx *dev, struct urb *urb)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int em28xx_start_streaming(struct em28xx_dvb *dvb)
+=======
+static int start_streaming(struct em28xx_dvb *dvb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rc;
 	struct em28xx *dev = dvb->adapter.priv;
 	int max_dvb_packet_size;
 
+<<<<<<< HEAD
 	usb_set_interface(dev->udev, 0, dev->dvb_alt);
+=======
+	usb_set_interface(dev->udev, 0, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = em28xx_set_mode(dev, EM28XX_DIGITAL_MODE);
 	if (rc < 0)
 		return rc;
 
+<<<<<<< HEAD
 	max_dvb_packet_size = dev->dvb_max_pkt_size;
 	if (max_dvb_packet_size < 0)
 		return max_dvb_packet_size;
@@ -184,13 +213,31 @@ static int em28xx_stop_streaming(struct em28xx_dvb *dvb)
 	struct em28xx *dev = dvb->adapter.priv;
 
 	em28xx_capture_start(dev, 0);
+=======
+	max_dvb_packet_size = em28xx_isoc_dvb_max_packetsize(dev);
+
+	return em28xx_init_isoc(dev, EM28XX_DVB_MAX_PACKETS,
+				EM28XX_DVB_NUM_BUFS, max_dvb_packet_size,
+				dvb_isoc_copy);
+}
+
+static int stop_streaming(struct em28xx_dvb *dvb)
+{
+	struct em28xx *dev = dvb->adapter.priv;
+
+	em28xx_uninit_isoc(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	em28xx_set_mode(dev, EM28XX_SUSPEND);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int em28xx_start_feed(struct dvb_demux_feed *feed)
+=======
+static int start_feed(struct dvb_demux_feed *feed)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dvb_demux *demux  = feed->demux;
 	struct em28xx_dvb *dvb = demux->priv;
@@ -204,7 +251,11 @@ static int em28xx_start_feed(struct dvb_demux_feed *feed)
 	rc = dvb->nfeeds;
 
 	if (dvb->nfeeds == 1) {
+<<<<<<< HEAD
 		ret = em28xx_start_streaming(dvb);
+=======
+		ret = start_streaming(dvb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret < 0)
 			rc = ret;
 	}
@@ -213,7 +264,11 @@ static int em28xx_start_feed(struct dvb_demux_feed *feed)
 	return rc;
 }
 
+<<<<<<< HEAD
 static int em28xx_stop_feed(struct dvb_demux_feed *feed)
+=======
+static int stop_feed(struct dvb_demux_feed *feed)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dvb_demux *demux  = feed->demux;
 	struct em28xx_dvb *dvb = demux->priv;
@@ -223,7 +278,11 @@ static int em28xx_stop_feed(struct dvb_demux_feed *feed)
 	dvb->nfeeds--;
 
 	if (0 == dvb->nfeeds)
+<<<<<<< HEAD
 		err = em28xx_stop_streaming(dvb);
+=======
+		err = stop_streaming(dvb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_unlock(&dvb->lock);
 	return err;
@@ -301,6 +360,7 @@ static struct zl10353_config em28xx_zl10353_xc3028_no_i2c_gate = {
 };
 
 static struct drxd_config em28xx_drxd = {
+<<<<<<< HEAD
 	.demod_address = 0x70,
 	.demod_revision = 0xa2,
 	.pll_type = DRXD_PLL_NONE,
@@ -499,6 +559,16 @@ static void pctv_520e_init(struct em28xx *dev)
 };
 
 static int em28xx_mt352_terratec_xs_init(struct dvb_frontend *fe)
+=======
+	.index = 0, .demod_address = 0x70, .demod_revision = 0xa2,
+	.demoda_address = 0x00, .pll_address = 0x00,
+	.pll_type = DRXD_PLL_NONE, .clock = 12000, .insert_rs_byte = 1,
+	.pll_set = NULL, .osc_deviation = NULL, .IF = 42800000,
+	.disable_i2c_gate_ctrl = 1,
+};
+
+static int mt352_terratec_xs_init(struct dvb_frontend *fe)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Values extracted from a USB trace of the Terratec Windows driver */
 	static u8 clock_config[]   = { CLOCK_CTL,  0x38, 0x2c };
@@ -530,7 +600,11 @@ static struct mt352_config terratec_xs_mt352_cfg = {
 	.demod_address = (0x1e >> 1),
 	.no_tuner = 1,
 	.if2 = 45600,
+<<<<<<< HEAD
 	.demod_init = em28xx_mt352_terratec_xs_init,
+=======
+	.demod_init = mt352_terratec_xs_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct tda10023_config em28xx_tda10023_config = {
@@ -541,6 +615,16 @@ static struct tda10023_config em28xx_tda10023_config = {
 static struct cxd2820r_config em28xx_cxd2820r_config = {
 	.i2c_address = (0xd8 >> 1),
 	.ts_mode = CXD2820R_TS_SERIAL,
+<<<<<<< HEAD
+=======
+	.if_dvbt_6  = 3300,
+	.if_dvbt_7  = 3500,
+	.if_dvbt_8  = 4000,
+	.if_dvbt2_6 = 3300,
+	.if_dvbt2_7 = 3500,
+	.if_dvbt2_8 = 4000,
+	.if_dvbc    = 5000,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* enable LNA for DVB-T2 and DVB-C */
 	.gpio_dvbt2[0] = CXD2820R_GPIO_E | CXD2820R_GPIO_O | CXD2820R_GPIO_L,
@@ -549,6 +633,7 @@ static struct cxd2820r_config em28xx_cxd2820r_config = {
 
 static struct tda18271_config em28xx_cxd2820r_tda18271_config = {
 	.output_opt = TDA18271_OUTPUT_LT_OFF,
+<<<<<<< HEAD
 	.gate = TDA18271_GATE_DIGITAL,
 };
 
@@ -574,11 +659,17 @@ static struct zl10353_config em28xx_zl10353_no_i2c_gate_dev = {
 static struct qt1010_config em28xx_qt1010_config = {
 	.i2c_address = 0x62
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* ------------------------------------------------------------------ */
 
+<<<<<<< HEAD
 static int em28xx_attach_xc3028(u8 addr, struct em28xx *dev)
+=======
+static int attach_xc3028(u8 addr, struct em28xx *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dvb_frontend *fe;
 	struct xc2028_config cfg;
@@ -608,8 +699,15 @@ static int em28xx_attach_xc3028(u8 addr, struct em28xx *dev)
 
 /* ------------------------------------------------------------------ */
 
+<<<<<<< HEAD
 static int em28xx_register_dvb(struct em28xx_dvb *dvb, struct module *module,
 			       struct em28xx *dev, struct device *device)
+=======
+static int register_dvb(struct em28xx_dvb *dvb,
+		 struct module *module,
+		 struct em28xx *dev,
+		 struct device *device)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int result;
 
@@ -656,8 +754,13 @@ static int em28xx_register_dvb(struct em28xx_dvb *dvb, struct module *module,
 	dvb->demux.priv       = dvb;
 	dvb->demux.filternum  = 256;
 	dvb->demux.feednum    = 256;
+<<<<<<< HEAD
 	dvb->demux.start_feed = em28xx_start_feed;
 	dvb->demux.stop_feed  = em28xx_stop_feed;
+=======
+	dvb->demux.start_feed = start_feed;
+	dvb->demux.stop_feed  = stop_feed;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	result = dvb_dmx_init(&dvb->demux);
 	if (result < 0) {
@@ -725,7 +828,11 @@ fail_adapter:
 	return result;
 }
 
+<<<<<<< HEAD
 static void em28xx_unregister_dvb(struct em28xx_dvb *dvb)
+=======
+static void unregister_dvb(struct em28xx_dvb *dvb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	dvb_net_release(&dvb->net);
 	dvb->demux.dmx.remove_frontend(&dvb->demux.dmx, &dvb->fe_mem);
@@ -735,15 +842,25 @@ static void em28xx_unregister_dvb(struct em28xx_dvb *dvb)
 	if (dvb->fe[1])
 		dvb_unregister_frontend(dvb->fe[1]);
 	dvb_unregister_frontend(dvb->fe[0]);
+<<<<<<< HEAD
 	if (dvb->fe[1] && !dvb->dont_attach_fe1)
+=======
+	if (dvb->fe[1])
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dvb_frontend_detach(dvb->fe[1]);
 	dvb_frontend_detach(dvb->fe[0]);
 	dvb_unregister_adapter(&dvb->adapter);
 }
 
+<<<<<<< HEAD
 static int em28xx_dvb_init(struct em28xx *dev)
 {
 	int result = 0, mfe_shared = 0;
+=======
+static int dvb_init(struct em28xx *dev)
+{
+	int result = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct em28xx_dvb *dvb;
 
 	if (!dev->board.has_dvb) {
@@ -765,7 +882,11 @@ static int em28xx_dvb_init(struct em28xx *dev)
 	em28xx_set_mode(dev, EM28XX_DIGITAL_MODE);
 	/* init frontend */
 	switch (dev->model) {
+<<<<<<< HEAD
 	case EM2874_BOARD_LEADERSHIP_ISDBT:
+=======
+	case EM2874_LEADERSHIP_ISDBT:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dvb->fe[0] = dvb_attach(s921_attach,
 				&sharp_isdbt, &dev->i2c_adap);
 
@@ -782,7 +903,11 @@ static int em28xx_dvb_init(struct em28xx *dev)
 		dvb->fe[0] = dvb_attach(lgdt330x_attach,
 					   &em2880_lgdt3303_dev,
 					   &dev->i2c_adap);
+<<<<<<< HEAD
 		if (em28xx_attach_xc3028(0x61, dev) < 0) {
+=======
+		if (attach_xc3028(0x61, dev) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = -EINVAL;
 			goto out_free;
 		}
@@ -791,7 +916,11 @@ static int em28xx_dvb_init(struct em28xx *dev)
 		dvb->fe[0] = dvb_attach(zl10353_attach,
 					   &em28xx_zl10353_with_xc3028,
 					   &dev->i2c_adap);
+<<<<<<< HEAD
 		if (em28xx_attach_xc3028(0x61, dev) < 0) {
+=======
+		if (attach_xc3028(0x61, dev) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = -EINVAL;
 			goto out_free;
 		}
@@ -802,7 +931,11 @@ static int em28xx_dvb_init(struct em28xx *dev)
 		dvb->fe[0] = dvb_attach(zl10353_attach,
 					   &em28xx_zl10353_xc3028_no_i2c_gate,
 					   &dev->i2c_adap);
+<<<<<<< HEAD
 		if (em28xx_attach_xc3028(0x61, dev) < 0) {
+=======
+		if (attach_xc3028(0x61, dev) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = -EINVAL;
 			goto out_free;
 		}
@@ -823,11 +956,16 @@ static int em28xx_dvb_init(struct em28xx *dev)
 						   &dev->i2c_adap);
 		}
 
+<<<<<<< HEAD
 		if (em28xx_attach_xc3028(0x61, dev) < 0) {
+=======
+		if (attach_xc3028(0x61, dev) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = -EINVAL;
 			goto out_free;
 		}
 		break;
+<<<<<<< HEAD
 	case EM2870_BOARD_KWORLD_355U:
 		dvb->fe[0] = dvb_attach(zl10353_attach,
 					   &em28xx_zl10353_no_i2c_gate_dev,
@@ -836,12 +974,18 @@ static int em28xx_dvb_init(struct em28xx *dev)
 			dvb_attach(qt1010_attach, dvb->fe[0],
 				   &dev->i2c_adap, &em28xx_qt1010_config);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case EM2883_BOARD_KWORLD_HYBRID_330U:
 	case EM2882_BOARD_EVGA_INDTUBE:
 		dvb->fe[0] = dvb_attach(s5h1409_attach,
 					   &em28xx_s5h1409_with_xc3028,
 					   &dev->i2c_adap);
+<<<<<<< HEAD
 		if (em28xx_attach_xc3028(0x61, dev) < 0) {
+=======
+		if (attach_xc3028(0x61, dev) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = -EINVAL;
 			goto out_free;
 		}
@@ -862,7 +1006,11 @@ static int em28xx_dvb_init(struct em28xx *dev)
 	case EM2882_BOARD_PINNACLE_HYBRID_PRO_330E:
 		dvb->fe[0] = dvb_attach(drxd_attach, &em28xx_drxd, NULL,
 					   &dev->i2c_adap, &dev->udev->dev);
+<<<<<<< HEAD
 		if (em28xx_attach_xc3028(0x61, dev) < 0) {
+=======
+		if (attach_xc3028(0x61, dev) < 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = -EINVAL;
 			goto out_free;
 		}
@@ -889,6 +1037,7 @@ static int em28xx_dvb_init(struct em28xx *dev)
 				   &dev->i2c_adap, &kworld_a340_config);
 		break;
 	case EM28174_BOARD_PCTV_290E:
+<<<<<<< HEAD
 		dvb->fe[0] = dvb_attach(cxd2820r_attach,
 					&em28xx_cxd2820r_config,
 					&dev->i2c_adap);
@@ -1012,10 +1161,36 @@ static int em28xx_dvb_init(struct em28xx *dev)
 			if (!dvb_attach(tda18271_attach, dvb->fe[0], 0x60,
 					&dev->i2c_adap,
 					&em28xx_cxd2820r_tda18271_config)) {
+=======
+		/* MFE
+		 * FE 0 = DVB-T/T2 + FE 1 = DVB-C, both sharing same tuner. */
+		/* FE 0 */
+		dvb->fe[0] = dvb_attach(cxd2820r_attach,
+			&em28xx_cxd2820r_config, &dev->i2c_adap, NULL);
+		if (dvb->fe[0]) {
+			struct i2c_adapter *i2c_tuner;
+			i2c_tuner = cxd2820r_get_tuner_i2c_adapter(dvb->fe[0]);
+			/* FE 0 attach tuner */
+			if (!dvb_attach(tda18271_attach, dvb->fe[0], 0x60,
+				i2c_tuner, &em28xx_cxd2820r_tda18271_config)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dvb_frontend_detach(dvb->fe[0]);
 				result = -EINVAL;
 				goto out_free;
 			}
+<<<<<<< HEAD
+=======
+			/* FE 1. This dvb_attach() cannot fail. */
+			dvb->fe[1] = dvb_attach(cxd2820r_attach, NULL, NULL,
+				dvb->fe[0]);
+			dvb->fe[1]->id = 1;
+			/* FE 1 attach tuner */
+			if (!dvb_attach(tda18271_attach, dvb->fe[1], 0x60,
+				i2c_tuner, &em28xx_cxd2820r_tda18271_config)) {
+				dvb_frontend_detach(dvb->fe[1]);
+				/* leave FE 0 still active */
+			}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		break;
 	default:
@@ -1030,18 +1205,27 @@ static int em28xx_dvb_init(struct em28xx *dev)
 	}
 	/* define general-purpose callback pointer */
 	dvb->fe[0]->callback = em28xx_tuner_callback;
+<<<<<<< HEAD
 	if (dvb->fe[1])
 		dvb->fe[1]->callback = em28xx_tuner_callback;
 
 	/* register everything */
 	result = em28xx_register_dvb(dvb, THIS_MODULE, dev, &dev->udev->dev);
+=======
+
+	/* register everything */
+	result = register_dvb(dvb, THIS_MODULE, dev, &dev->udev->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (result < 0)
 		goto out_free;
 
+<<<<<<< HEAD
 	/* MFE lock */
 	dvb->adapter.mfe_shared = mfe_shared;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	em28xx_info("Successfully loaded em28xx-dvb\n");
 ret:
 	em28xx_set_mode(dev, EM28XX_SUSPEND);
@@ -1054,6 +1238,7 @@ out_free:
 	goto ret;
 }
 
+<<<<<<< HEAD
 static inline void prevent_sleep(struct dvb_frontend_ops *ops)
 {
 	ops->set_voltage = NULL;
@@ -1062,6 +1247,9 @@ static inline void prevent_sleep(struct dvb_frontend_ops *ops)
 }
 
 static int em28xx_dvb_fini(struct em28xx *dev)
+=======
+static int dvb_fini(struct em28xx *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (!dev->board.has_dvb) {
 		/* This device does not support the extension */
@@ -1069,6 +1257,7 @@ static int em28xx_dvb_fini(struct em28xx *dev)
 	}
 
 	if (dev->dvb) {
+<<<<<<< HEAD
 		struct em28xx_dvb *dvb = dev->dvb;
 
 		if (dev->state & DEV_DISCONNECTED) {
@@ -1082,6 +1271,10 @@ static int em28xx_dvb_fini(struct em28xx *dev)
 
 		em28xx_unregister_dvb(dvb);
 		kfree(dvb);
+=======
+		unregister_dvb(dev->dvb);
+		kfree(dev->dvb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev->dvb = NULL;
 	}
 
@@ -1091,8 +1284,13 @@ static int em28xx_dvb_fini(struct em28xx *dev)
 static struct em28xx_ops dvb_ops = {
 	.id   = EM28XX_DVB,
 	.name = "Em28xx dvb Extension",
+<<<<<<< HEAD
 	.init = em28xx_dvb_init,
 	.fini = em28xx_dvb_fini,
+=======
+	.init = dvb_init,
+	.fini = dvb_fini,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init em28xx_dvb_register(void)

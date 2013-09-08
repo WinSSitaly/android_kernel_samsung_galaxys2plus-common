@@ -644,8 +644,26 @@ static struct i2c_driver rx8025_driver = {
 	.id_table	= rx8025_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(rx8025_driver);
+=======
+static int __init rx8025_init(void)
+{
+	return i2c_add_driver(&rx8025_driver);
+}
+
+static void __exit rx8025_exit(void)
+{
+	i2c_del_driver(&rx8025_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Wolfgang Grandegger <wg@grandegger.com>");
 MODULE_DESCRIPTION("RX-8025 SA/NB RTC driver");
 MODULE_LICENSE("GPL");
+<<<<<<< HEAD
+=======
+
+module_init(rx8025_init);
+module_exit(rx8025_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

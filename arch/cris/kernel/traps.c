@@ -17,7 +17,10 @@
 
 #include <asm/pgtable.h>
 #include <asm/uaccess.h>
+<<<<<<< HEAD
 #include <arch/system.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void arch_enable_nmi(void);
 extern void stop_watchdog(void);

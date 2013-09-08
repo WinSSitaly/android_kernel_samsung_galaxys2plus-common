@@ -20,7 +20,10 @@
 #include <linux/module.h>
 #include <linux/kthread.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/nsproxy.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/sunrpc/types.h>
 #include <linux/sunrpc/xdr.h>
@@ -31,7 +34,11 @@
 
 #define RPCDBG_FACILITY	RPCDBG_SVCDSP
 
+<<<<<<< HEAD
 static void svc_unregister(const struct svc_serv *serv, struct net *net);
+=======
+static void svc_unregister(const struct svc_serv *serv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define svc_serv_is_pooled(serv)    ((serv)->sv_function)
 
@@ -287,6 +294,10 @@ svc_pool_map_put(void)
 	mutex_lock(&svc_pool_map_mutex);
 
 	if (!--m->count) {
+<<<<<<< HEAD
+=======
+		m->mode = SVC_POOL_DEFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree(m->to_pool);
 		m->to_pool = NULL;
 		kfree(m->pool_to);
@@ -298,6 +309,7 @@ svc_pool_map_put(void)
 }
 
 
+<<<<<<< HEAD
 static int svc_pool_map_get_node(unsigned int pidx)
 {
 	const struct svc_pool_map *m = &svc_pool_map;
@@ -310,6 +322,8 @@ static int svc_pool_map_get_node(unsigned int pidx)
 	}
 	return NUMA_NO_NODE;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Set the given thread's cpus_allowed mask so that it
  * will only run on cpus in the given pool.
@@ -369,6 +383,7 @@ svc_pool_for_cpu(struct svc_serv *serv, int cpu)
 	return &serv->sv_pools[pidx % serv->sv_nrpools];
 }
 
+<<<<<<< HEAD
 int svc_rpcb_setup(struct svc_serv *serv, struct net *net)
 {
 	int err;
@@ -414,13 +429,19 @@ int svc_bind(struct svc_serv *serv, struct net *net)
 	return svc_rpcb_setup(serv, net);
 }
 EXPORT_SYMBOL_GPL(svc_bind);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Create an RPC service
  */
 static struct svc_serv *
 __svc_create(struct svc_program *prog, unsigned int bufsize, int npools,
+<<<<<<< HEAD
 	     void (*shutdown)(struct svc_serv *serv, struct net *net))
+=======
+	     void (*shutdown)(struct svc_serv *serv))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct svc_serv	*serv;
 	unsigned int vers;
@@ -479,15 +500,24 @@ __svc_create(struct svc_program *prog, unsigned int bufsize, int npools,
 		spin_lock_init(&pool->sp_lock);
 	}
 
+<<<<<<< HEAD
 	if (svc_uses_rpcbind(serv) && (!serv->sv_shutdown))
 		serv->sv_shutdown = svc_rpcb_cleanup;
+=======
+	/* Remove any stale portmap registrations */
+	svc_unregister(serv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return serv;
 }
 
 struct svc_serv *
 svc_create(struct svc_program *prog, unsigned int bufsize,
+<<<<<<< HEAD
 	   void (*shutdown)(struct svc_serv *serv, struct net *net))
+=======
+	   void (*shutdown)(struct svc_serv *serv))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return __svc_create(prog, bufsize, /*npools*/1, shutdown);
 }
@@ -495,7 +525,11 @@ EXPORT_SYMBOL_GPL(svc_create);
 
 struct svc_serv *
 svc_create_pooled(struct svc_program *prog, unsigned int bufsize,
+<<<<<<< HEAD
 		  void (*shutdown)(struct svc_serv *serv, struct net *net),
+=======
+		  void (*shutdown)(struct svc_serv *serv),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		  svc_thread_fn func, struct module *mod)
 {
 	struct svc_serv *serv;
@@ -512,6 +546,7 @@ svc_create_pooled(struct svc_program *prog, unsigned int bufsize,
 }
 EXPORT_SYMBOL_GPL(svc_create_pooled);
 
+<<<<<<< HEAD
 void svc_shutdown_net(struct svc_serv *serv, struct net *net)
 {
 	/*
@@ -530,6 +565,8 @@ void svc_shutdown_net(struct svc_serv *serv, struct net *net)
 }
 EXPORT_SYMBOL_GPL(svc_shutdown_net);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Destroy an RPC service. Should be called with appropriate locking to
  * protect the sv_nrthreads, sv_permsocks and sv_tempsocks.
@@ -550,6 +587,7 @@ svc_destroy(struct svc_serv *serv)
 		printk("svc_destroy: no threads for serv=%p!\n", serv);
 
 	del_timer_sync(&serv->sv_temptimer);
+<<<<<<< HEAD
 
 	/*
 	 * The last user is gone and thus all sockets have to be destroyed to
@@ -557,12 +595,31 @@ svc_destroy(struct svc_serv *serv)
 	 */
 	BUG_ON(!list_empty(&serv->sv_permsocks));
 	BUG_ON(!list_empty(&serv->sv_tempsocks));
+=======
+	/*
+	 * The set of xprts (contained in the sv_tempsocks and
+	 * sv_permsocks lists) is now constant, since it is modified
+	 * only by accepting new sockets (done by service threads in
+	 * svc_recv) or aging old ones (done by sv_temptimer), or
+	 * configuration changes (excluded by whatever locking the
+	 * caller is using--nfsd_mutex in the case of nfsd).  So it's
+	 * safe to traverse those lists and shut everything down:
+	 */
+	svc_close_all(serv);
+
+	if (serv->sv_shutdown)
+		serv->sv_shutdown(serv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	cache_clean_deferred(serv);
 
 	if (svc_serv_is_pooled(serv))
 		svc_pool_map_put();
 
+<<<<<<< HEAD
+=======
+	svc_unregister(serv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(serv->sv_pools);
 	kfree(serv);
 }
@@ -573,7 +630,11 @@ EXPORT_SYMBOL_GPL(svc_destroy);
  * We allocate pages and place them in rq_argpages.
  */
 static int
+<<<<<<< HEAD
 svc_init_buffer(struct svc_rqst *rqstp, unsigned int size, int node)
+=======
+svc_init_buffer(struct svc_rqst *rqstp, unsigned int size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int pages, arghi;
 
@@ -587,7 +648,11 @@ svc_init_buffer(struct svc_rqst *rqstp, unsigned int size, int node)
 	arghi = 0;
 	BUG_ON(pages > RPCSVC_MAXPAGES);
 	while (pages) {
+<<<<<<< HEAD
 		struct page *p = alloc_pages_node(node, GFP_KERNEL, 0);
+=======
+		struct page *p = alloc_page(GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!p)
 			break;
 		rqstp->rq_pages[arghi++] = p;
@@ -610,11 +675,19 @@ svc_release_buffer(struct svc_rqst *rqstp)
 }
 
 struct svc_rqst *
+<<<<<<< HEAD
 svc_prepare_thread(struct svc_serv *serv, struct svc_pool *pool, int node)
 {
 	struct svc_rqst	*rqstp;
 
 	rqstp = kzalloc_node(sizeof(*rqstp), GFP_KERNEL, node);
+=======
+svc_prepare_thread(struct svc_serv *serv, struct svc_pool *pool)
+{
+	struct svc_rqst	*rqstp;
+
+	rqstp = kzalloc(sizeof(*rqstp), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!rqstp)
 		goto out_enomem;
 
@@ -628,6 +701,7 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_pool *pool, int node)
 	rqstp->rq_server = serv;
 	rqstp->rq_pool = pool;
 
+<<<<<<< HEAD
 	rqstp->rq_argp = kmalloc_node(serv->sv_xdrsize, GFP_KERNEL, node);
 	if (!rqstp->rq_argp)
 		goto out_thread;
@@ -637,6 +711,17 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_pool *pool, int node)
 		goto out_thread;
 
 	if (!svc_init_buffer(rqstp, serv->sv_max_mesg, node))
+=======
+	rqstp->rq_argp = kmalloc(serv->sv_xdrsize, GFP_KERNEL);
+	if (!rqstp->rq_argp)
+		goto out_thread;
+
+	rqstp->rq_resp = kmalloc(serv->sv_xdrsize, GFP_KERNEL);
+	if (!rqstp->rq_resp)
+		goto out_thread;
+
+	if (!svc_init_buffer(rqstp, serv->sv_max_mesg))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_thread;
 
 	return rqstp;
@@ -703,8 +788,13 @@ found_pool:
  * Create or destroy enough new threads to make the number
  * of threads the given number.  If `pool' is non-NULL, applies
  * only to threads in that pool, otherwise round-robins between
+<<<<<<< HEAD
  * all pools.  Caller must ensure that mutual exclusion between this and
  * server startup or shutdown.
+=======
+ * all pools.  Must be called with a svc_get() reference and
+ * the BKL or another lock to protect access to svc_serv fields.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Destroying threads relies on the service threads filling in
  * rqstp->rq_task, which only the nfs ones do.  Assumes the serv
@@ -721,7 +811,10 @@ svc_set_num_threads(struct svc_serv *serv, struct svc_pool *pool, int nrservs)
 	struct svc_pool *chosen_pool;
 	int error = 0;
 	unsigned int state = serv->sv_nrthreads-1;
+<<<<<<< HEAD
 	int node;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pool == NULL) {
 		/* The -1 assumes caller has done a svc_get() */
@@ -737,16 +830,24 @@ svc_set_num_threads(struct svc_serv *serv, struct svc_pool *pool, int nrservs)
 		nrservs--;
 		chosen_pool = choose_pool(serv, pool, &state);
 
+<<<<<<< HEAD
 		node = svc_pool_map_get_node(chosen_pool->sp_id);
 		rqstp = svc_prepare_thread(serv, chosen_pool, node);
+=======
+		rqstp = svc_prepare_thread(serv, chosen_pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR(rqstp)) {
 			error = PTR_ERR(rqstp);
 			break;
 		}
 
 		__module_get(serv->sv_module);
+<<<<<<< HEAD
 		task = kthread_create_on_node(serv->sv_function, rqstp,
 					      node, serv->sv_name);
+=======
+		task = kthread_create(serv->sv_function, rqstp, serv->sv_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (IS_ERR(task)) {
 			error = PTR_ERR(task);
 			module_put(serv->sv_module);
@@ -810,8 +911,12 @@ EXPORT_SYMBOL_GPL(svc_exit_thread);
  * Returns zero on success; a negative errno value is returned
  * if any error occurs.
  */
+<<<<<<< HEAD
 static int __svc_rpcb_register4(struct net *net, const u32 program,
 				const u32 version,
+=======
+static int __svc_rpcb_register4(const u32 program, const u32 version,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				const unsigned short protocol,
 				const unsigned short port)
 {
@@ -834,7 +939,11 @@ static int __svc_rpcb_register4(struct net *net, const u32 program,
 		return -ENOPROTOOPT;
 	}
 
+<<<<<<< HEAD
 	error = rpcb_v4_register(net, program, version,
+=======
+	error = rpcb_v4_register(program, version,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					(const struct sockaddr *)&sin, netid);
 
 	/*
@@ -842,12 +951,20 @@ static int __svc_rpcb_register4(struct net *net, const u32 program,
 	 * registration request with the legacy rpcbind v2 protocol.
 	 */
 	if (error == -EPROTONOSUPPORT)
+<<<<<<< HEAD
 		error = rpcb_register(net, program, version, protocol, port);
+=======
+		error = rpcb_register(program, version, protocol, port);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_IPV6)
+=======
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Register an "inet6" protocol family netid with the local
  * rpcbind daemon via an rpcbind v4 SET request.
@@ -858,8 +975,12 @@ static int __svc_rpcb_register4(struct net *net, const u32 program,
  * Returns zero on success; a negative errno value is returned
  * if any error occurs.
  */
+<<<<<<< HEAD
 static int __svc_rpcb_register6(struct net *net, const u32 program,
 				const u32 version,
+=======
+static int __svc_rpcb_register6(const u32 program, const u32 version,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				const unsigned short protocol,
 				const unsigned short port)
 {
@@ -882,7 +1003,11 @@ static int __svc_rpcb_register6(struct net *net, const u32 program,
 		return -ENOPROTOOPT;
 	}
 
+<<<<<<< HEAD
 	error = rpcb_v4_register(net, program, version,
+=======
+	error = rpcb_v4_register(program, version,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					(const struct sockaddr *)&sin6, netid);
 
 	/*
@@ -894,7 +1019,11 @@ static int __svc_rpcb_register6(struct net *net, const u32 program,
 
 	return error;
 }
+<<<<<<< HEAD
 #endif	/* IS_ENABLED(CONFIG_IPV6) */
+=======
+#endif	/* defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Register a kernel RPC service via rpcbind version 4.
@@ -902,7 +1031,11 @@ static int __svc_rpcb_register6(struct net *net, const u32 program,
  * Returns zero on success; a negative errno value is returned
  * if any error occurs.
  */
+<<<<<<< HEAD
 static int __svc_register(struct net *net, const char *progname,
+=======
+static int __svc_register(const char *progname,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  const u32 program, const u32 version,
 			  const int family,
 			  const unsigned short protocol,
@@ -912,6 +1045,7 @@ static int __svc_register(struct net *net, const char *progname,
 
 	switch (family) {
 	case PF_INET:
+<<<<<<< HEAD
 		error = __svc_rpcb_register4(net, program, version,
 						protocol, port);
 		break;
@@ -920,6 +1054,16 @@ static int __svc_register(struct net *net, const char *progname,
 		error = __svc_rpcb_register6(net, program, version,
 						protocol, port);
 #endif
+=======
+		error = __svc_rpcb_register4(program, version,
+						protocol, port);
+		break;
+#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+	case PF_INET6:
+		error = __svc_rpcb_register6(program, version,
+						protocol, port);
+#endif	/* defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE) */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (error < 0)
@@ -931,16 +1075,24 @@ static int __svc_register(struct net *net, const char *progname,
 /**
  * svc_register - register an RPC service with the local portmapper
  * @serv: svc_serv struct for the service to register
+<<<<<<< HEAD
  * @net: net namespace for the service to register
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @family: protocol family of service's listener socket
  * @proto: transport protocol number to advertise
  * @port: port to advertise
  *
  * Service is registered for any address in the passed-in protocol family
  */
+<<<<<<< HEAD
 int svc_register(const struct svc_serv *serv, struct net *net,
 		 const int family, const unsigned short proto,
 		 const unsigned short port)
+=======
+int svc_register(const struct svc_serv *serv, const int family,
+		 const unsigned short proto, const unsigned short port)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct svc_program	*progp;
 	unsigned int		i;
@@ -965,7 +1117,11 @@ int svc_register(const struct svc_serv *serv, struct net *net,
 			if (progp->pg_vers[i]->vs_hidden)
 				continue;
 
+<<<<<<< HEAD
 			error = __svc_register(net, progp->pg_name, progp->pg_prog,
+=======
+			error = __svc_register(progp->pg_name, progp->pg_prog,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						i, family, proto, port);
 			if (error < 0)
 				break;
@@ -982,19 +1138,31 @@ int svc_register(const struct svc_serv *serv, struct net *net,
  * any "inet6" entries anyway.  So a PMAP_UNSET should be sufficient
  * in this case to clear all existing entries for [program, version].
  */
+<<<<<<< HEAD
 static void __svc_unregister(struct net *net, const u32 program, const u32 version,
+=======
+static void __svc_unregister(const u32 program, const u32 version,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     const char *progname)
 {
 	int error;
 
+<<<<<<< HEAD
 	error = rpcb_v4_register(net, program, version, NULL, "");
+=======
+	error = rpcb_v4_register(program, version, NULL, "");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * User space didn't support rpcbind v4, so retry this
 	 * request with the legacy rpcbind v2 protocol.
 	 */
 	if (error == -EPROTONOSUPPORT)
+<<<<<<< HEAD
 		error = rpcb_register(net, program, version, 0, 0);
+=======
+		error = rpcb_register(program, version, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	dprintk("svc: %s(%sv%u), error %d\n",
 			__func__, progname, version, error);
@@ -1008,7 +1176,11 @@ static void __svc_unregister(struct net *net, const u32 program, const u32 versi
  * The result of unregistration is reported via dprintk for those who want
  * verification of the result, but is otherwise not important.
  */
+<<<<<<< HEAD
 static void svc_unregister(const struct svc_serv *serv, struct net *net)
+=======
+static void svc_unregister(const struct svc_serv *serv)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct svc_program *progp;
 	unsigned long flags;
@@ -1025,7 +1197,11 @@ static void svc_unregister(const struct svc_serv *serv, struct net *net)
 
 			dprintk("svc: attempting to unregister %sv%u\n",
 				progp->pg_name, i);
+<<<<<<< HEAD
 			__svc_unregister(net, progp->pg_prog, i, progp->pg_name);
+=======
+			__svc_unregister(progp->pg_prog, i, progp->pg_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -1037,8 +1213,14 @@ static void svc_unregister(const struct svc_serv *serv, struct net *net)
 /*
  * Printk the given error with the address of the client that caused it.
  */
+<<<<<<< HEAD
 static __printf(2, 3)
 int svc_printk(struct svc_rqst *rqstp, const char *fmt, ...)
+=======
+static int
+__attribute__ ((format (printf, 2, 3)))
+svc_printk(struct svc_rqst *rqstp, const char *fmt, ...)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	va_list args;
 	int 	r;
@@ -1332,7 +1514,11 @@ svc_process(struct svc_rqst *rqstp)
 	}
 }
 
+<<<<<<< HEAD
 #if defined(CONFIG_SUNRPC_BACKCHANNEL)
+=======
+#if defined(CONFIG_NFS_V4_1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Process a backchannel RPC request that arrived over an existing
  * outbound connection
@@ -1376,6 +1562,7 @@ bc_svc_process(struct svc_serv *serv, struct rpc_rqst *req,
 						sizeof(req->rq_snd_buf));
 		return bc_send(req);
 	} else {
+<<<<<<< HEAD
 		/* drop request */
 		xprt_free_bc_request(req);
 		return 0;
@@ -1383,6 +1570,14 @@ bc_svc_process(struct svc_serv *serv, struct rpc_rqst *req,
 }
 EXPORT_SYMBOL_GPL(bc_svc_process);
 #endif /* CONFIG_SUNRPC_BACKCHANNEL */
+=======
+		/* Nothing to do to drop request */
+		return 0;
+	}
+}
+EXPORT_SYMBOL(bc_svc_process);
+#endif /* CONFIG_NFS_V4_1 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Return (transport-specific) limit on the rpc payload.

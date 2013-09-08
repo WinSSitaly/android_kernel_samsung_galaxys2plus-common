@@ -39,6 +39,22 @@ static const struct dentry_operations anon_inodefs_dentry_operations = {
 	.d_dname	= anon_inodefs_dname,
 };
 
+<<<<<<< HEAD
+=======
+static struct dentry *anon_inodefs_mount(struct file_system_type *fs_type,
+				int flags, const char *dev_name, void *data)
+{
+	return mount_pseudo(fs_type, "anon_inode:", NULL,
+			&anon_inodefs_dentry_operations, ANON_INODE_FS_MAGIC);
+}
+
+static struct file_system_type anon_inode_fs_type = {
+	.name		= "anon_inodefs",
+	.mount		= anon_inodefs_mount,
+	.kill_sb	= kill_anon_super,
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * nop .set_page_dirty method so that people can use .page_mkwrite on
  * anon inodes.
@@ -52,6 +68,7 @@ static const struct address_space_operations anon_aops = {
 	.set_page_dirty = anon_set_page_dirty,
 };
 
+<<<<<<< HEAD
 /*
  * A single inode exists for all anon_inode files. Contrary to pipes,
  * anon_inode inodes have no associated per-instance data, so we need
@@ -108,6 +125,8 @@ static struct file_system_type anon_inode_fs_type = {
 	.kill_sb	= kill_anon_super,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * anon_inode_getfile - creates a new file instance by hooking it up to an
  *                      anonymous inode, and a dentry that describe the "class"
@@ -223,6 +242,41 @@ err_put_unused_fd:
 }
 EXPORT_SYMBOL_GPL(anon_inode_getfd);
 
+<<<<<<< HEAD
+=======
+/*
+ * A single inode exists for all anon_inode files. Contrary to pipes,
+ * anon_inode inodes have no associated per-instance data, so we need
+ * only allocate one of them.
+ */
+static struct inode *anon_inode_mkinode(void)
+{
+	struct inode *inode = new_inode(anon_inode_mnt->mnt_sb);
+
+	if (!inode)
+		return ERR_PTR(-ENOMEM);
+
+	inode->i_ino = get_next_ino();
+	inode->i_fop = &anon_inode_fops;
+
+	inode->i_mapping->a_ops = &anon_aops;
+
+	/*
+	 * Mark the inode dirty from the very beginning,
+	 * that way it will never be moved to the dirty
+	 * list because mark_inode_dirty() will think
+	 * that it already _is_ on the dirty list.
+	 */
+	inode->i_state = I_DIRTY;
+	inode->i_mode = S_IRUSR | S_IWUSR;
+	inode->i_uid = current_fsuid();
+	inode->i_gid = current_fsgid();
+	inode->i_flags |= S_PRIVATE;
+	inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+	return inode;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __init anon_inode_init(void)
 {
 	int error;
@@ -235,8 +289,21 @@ static int __init anon_inode_init(void)
 		error = PTR_ERR(anon_inode_mnt);
 		goto err_unregister_filesystem;
 	}
+<<<<<<< HEAD
 	return 0;
 
+=======
+	anon_inode_inode = anon_inode_mkinode();
+	if (IS_ERR(anon_inode_inode)) {
+		error = PTR_ERR(anon_inode_inode);
+		goto err_mntput;
+	}
+
+	return 0;
+
+err_mntput:
+	mntput(anon_inode_mnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_unregister_filesystem:
 	unregister_filesystem(&anon_inode_fs_type);
 err_exit:

@@ -15,7 +15,10 @@
 #include <linux/rtnetlink.h>
 #include <linux/llc.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/llc.h>
 #include <net/llc_pdu.h>
 #include <net/garp.h>
@@ -167,8 +170,12 @@ static struct garp_attr *garp_attr_lookup(const struct garp_applicant *app,
 	return NULL;
 }
 
+<<<<<<< HEAD
 static struct garp_attr *garp_attr_create(struct garp_applicant *app,
 					  const void *data, u8 len, u8 type)
+=======
+static void garp_attr_insert(struct garp_applicant *app, struct garp_attr *new)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rb_node *parent = NULL, **p = &app->gid.rb_node;
 	struct garp_attr *attr;
@@ -177,16 +184,33 @@ static struct garp_attr *garp_attr_create(struct garp_applicant *app,
 	while (*p) {
 		parent = *p;
 		attr = rb_entry(parent, struct garp_attr, node);
+<<<<<<< HEAD
 		d = garp_attr_cmp(attr, data, len, type);
+=======
+		d = garp_attr_cmp(attr, new->data, new->dlen, new->type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (d < 0)
 			p = &parent->rb_left;
 		else if (d > 0)
 			p = &parent->rb_right;
+<<<<<<< HEAD
 		else {
 			/* The attribute already exists; re-use it. */
 			return attr;
 		}
 	}
+=======
+	}
+	rb_link_node(&new->node, parent, p);
+	rb_insert_color(&new->node, &app->gid);
+}
+
+static struct garp_attr *garp_attr_create(struct garp_applicant *app,
+					  const void *data, u8 len, u8 type)
+{
+	struct garp_attr *attr;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	attr = kmalloc(sizeof(*attr) + len, GFP_ATOMIC);
 	if (!attr)
 		return attr;
@@ -194,9 +218,13 @@ static struct garp_attr *garp_attr_create(struct garp_applicant *app,
 	attr->type  = type;
 	attr->dlen  = len;
 	memcpy(attr->data, data, len);
+<<<<<<< HEAD
 
 	rb_link_node(&attr->node, parent, p);
 	rb_insert_color(&attr->node, &app->gid);
+=======
+	garp_attr_insert(app, attr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return attr;
 }
 
@@ -552,7 +580,11 @@ static void garp_release_port(struct net_device *dev)
 		if (rtnl_dereference(port->applicants[i]))
 			return;
 	}
+<<<<<<< HEAD
 	RCU_INIT_POINTER(dev->garp_port, NULL);
+=======
+	rcu_assign_pointer(dev->garp_port, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree_rcu(port, rcu);
 }
 
@@ -604,7 +636,11 @@ void garp_uninit_applicant(struct net_device *dev, struct garp_application *appl
 
 	ASSERT_RTNL();
 
+<<<<<<< HEAD
 	RCU_INIT_POINTER(port->applicants[appl->type], NULL);
+=======
+	rcu_assign_pointer(port->applicants[appl->type], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Delete timer and generate a final TRANSMIT_PDU event to flush out
 	 * all pending messages before the applicant is gone. */

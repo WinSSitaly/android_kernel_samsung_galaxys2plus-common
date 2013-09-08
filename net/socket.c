@@ -181,7 +181,11 @@ static DEFINE_PER_CPU(int, sockets_in_use);
  *	invalid addresses -EFAULT is returned. On a success 0 is returned.
  */
 
+<<<<<<< HEAD
 int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_storage *kaddr)
+=======
+int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr *kaddr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (ulen < 0 || ulen > sizeof(struct sockaddr_storage))
 		return -EINVAL;
@@ -209,7 +213,11 @@ int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_storage *k
  *	specified. Zero is returned for a success.
  */
 
+<<<<<<< HEAD
 static int move_addr_to_user(struct sockaddr_storage *kaddr, int klen,
+=======
+static int move_addr_to_user(struct sockaddr *kaddr, int klen,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     void __user *uaddr, int __user *ulen)
 {
 	int err;
@@ -467,7 +475,11 @@ static struct socket *sock_alloc(void)
 	struct inode *inode;
 	struct socket *sock;
 
+<<<<<<< HEAD
 	inode = new_inode_pseudo(sock_mnt->mnt_sb);
+=======
+	inode = new_inode(sock_mnt->mnt_sb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!inode)
 		return NULL;
 
@@ -522,9 +534,12 @@ void sock_release(struct socket *sock)
 	if (rcu_dereference_protected(sock->wq, 1)->fasync_list)
 		printk(KERN_ERR "sock_release: fasync list not empty!\n");
 
+<<<<<<< HEAD
 	if (test_bit(SOCK_EXTERNALLY_ALLOCATED, &sock->flags))
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	percpu_sub(sockets_in_use, 1);
 	if (!sock->file) {
 		iput(SOCK_INODE(sock));
@@ -541,8 +556,11 @@ int sock_tx_timestamp(struct sock *sk, __u8 *tx_flags)
 		*tx_flags |= SKBTX_HW_TSTAMP;
 	if (sock_flag(sk, SOCK_TIMESTAMPING_TX_SOFTWARE))
 		*tx_flags |= SKBTX_SW_TSTAMP;
+<<<<<<< HEAD
 	if (sock_flag(sk, SOCK_WIFI_STATUS))
 		*tx_flags |= SKBTX_WIFI_STATUS;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL(sock_tx_timestamp);
@@ -554,8 +572,11 @@ static inline int __sock_sendmsg_nosec(struct kiocb *iocb, struct socket *sock,
 
 	sock_update_classid(sock->sk);
 
+<<<<<<< HEAD
 	sock_update_netprioidx(sock->sk);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	si->sock = sock;
 	si->scm = NULL;
 	si->msg = msg;
@@ -587,7 +608,11 @@ int sock_sendmsg(struct socket *sock, struct msghdr *msg, size_t size)
 }
 EXPORT_SYMBOL(sock_sendmsg);
 
+<<<<<<< HEAD
 static int sock_sendmsg_nosec(struct socket *sock, struct msghdr *msg, size_t size)
+=======
+int sock_sendmsg_nosec(struct socket *sock, struct msghdr *msg, size_t size)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct kiocb iocb;
 	struct sock_iocb siocb;
@@ -681,6 +706,7 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
 }
 EXPORT_SYMBOL_GPL(__sock_recv_timestamp);
 
+<<<<<<< HEAD
 void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
 	struct sk_buff *skb)
 {
@@ -697,6 +723,8 @@ void __sock_recv_wifi_status(struct msghdr *msg, struct sock *sk,
 }
 EXPORT_SYMBOL_GPL(__sock_recv_wifi_status);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void sock_recv_drops(struct msghdr *msg, struct sock *sk,
 				   struct sk_buff *skb)
 {
@@ -1452,7 +1480,11 @@ SYSCALL_DEFINE3(bind, int, fd, struct sockaddr __user *, umyaddr, int, addrlen)
 
 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
 	if (sock) {
+<<<<<<< HEAD
 		err = move_addr_to_kernel(umyaddr, addrlen, &address);
+=======
+		err = move_addr_to_kernel(umyaddr, addrlen, (struct sockaddr *)&address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err >= 0) {
 			err = security_socket_bind(sock,
 						   (struct sockaddr *)&address,
@@ -1559,7 +1591,11 @@ SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
 			err = -ECONNABORTED;
 			goto out_fd;
 		}
+<<<<<<< HEAD
 		err = move_addr_to_user(&address,
+=======
+		err = move_addr_to_user((struct sockaddr *)&address,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					len, upeer_sockaddr, upeer_addrlen);
 		if (err < 0)
 			goto out_fd;
@@ -1608,7 +1644,11 @@ SYSCALL_DEFINE3(connect, int, fd, struct sockaddr __user *, uservaddr,
 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
 	if (!sock)
 		goto out;
+<<<<<<< HEAD
 	err = move_addr_to_kernel(uservaddr, addrlen, &address);
+=======
+	err = move_addr_to_kernel(uservaddr, addrlen, (struct sockaddr *)&address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		goto out_put;
 
@@ -1648,7 +1688,11 @@ SYSCALL_DEFINE3(getsockname, int, fd, struct sockaddr __user *, usockaddr,
 	err = sock->ops->getname(sock, (struct sockaddr *)&address, &len, 0);
 	if (err)
 		goto out_put;
+<<<<<<< HEAD
 	err = move_addr_to_user(&address, len, usockaddr, usockaddr_len);
+=======
+	err = move_addr_to_user((struct sockaddr *)&address, len, usockaddr, usockaddr_len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out_put:
 	fput_light(sock->file, fput_needed);
@@ -1680,7 +1724,11 @@ SYSCALL_DEFINE3(getpeername, int, fd, struct sockaddr __user *, usockaddr,
 		    sock->ops->getname(sock, (struct sockaddr *)&address, &len,
 				       1);
 		if (!err)
+<<<<<<< HEAD
 			err = move_addr_to_user(&address, len, usockaddr,
+=======
+			err = move_addr_to_user((struct sockaddr *)&address, len, usockaddr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						usockaddr_len);
 		fput_light(sock->file, fput_needed);
 	}
@@ -1719,7 +1767,11 @@ SYSCALL_DEFINE6(sendto, int, fd, void __user *, buff, size_t, len,
 	msg.msg_controllen = 0;
 	msg.msg_namelen = 0;
 	if (addr) {
+<<<<<<< HEAD
 		err = move_addr_to_kernel(addr, addr_len, &address);
+=======
+		err = move_addr_to_kernel(addr, addr_len, (struct sockaddr *)&address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (err < 0)
 			goto out_put;
 		msg.msg_name = (struct sockaddr *)&address;
@@ -1782,7 +1834,11 @@ SYSCALL_DEFINE6(recvfrom, int, fd, void __user *, ubuf, size_t, size,
 	err = sock_recvmsg(sock, &msg, size, flags);
 
 	if (err >= 0 && addr != NULL) {
+<<<<<<< HEAD
 		err2 = move_addr_to_user(&address,
+=======
+		err2 = move_addr_to_user((struct sockaddr *)&address,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 msg.msg_namelen, addr, addr_len);
 		if (err2 < 0)
 			err = err2;
@@ -1899,9 +1955,15 @@ struct used_address {
 	unsigned int name_len;
 };
 
+<<<<<<< HEAD
 static int ___sys_sendmsg(struct socket *sock, struct msghdr __user *msg,
 			  struct msghdr *msg_sys, unsigned flags,
 			  struct used_address *used_address)
+=======
+static int __sys_sendmsg(struct socket *sock, struct msghdr __user *msg,
+			 struct msghdr *msg_sys, unsigned flags,
+			 struct used_address *used_address)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct compat_msghdr __user *msg_compat =
 	    (struct compat_msghdr __user *)msg;
@@ -1936,9 +1998,19 @@ static int ___sys_sendmsg(struct socket *sock, struct msghdr __user *msg,
 
 	/* This will also move the address data into kernel space */
 	if (MSG_CMSG_COMPAT & flags) {
+<<<<<<< HEAD
 		err = verify_compat_iovec(msg_sys, iov, &address, VERIFY_READ);
 	} else
 		err = verify_iovec(msg_sys, iov, &address, VERIFY_READ);
+=======
+		err = verify_compat_iovec(msg_sys, iov,
+					  (struct sockaddr *)&address,
+					  VERIFY_READ);
+	} else
+		err = verify_iovec(msg_sys, iov,
+				   (struct sockaddr *)&address,
+				   VERIFY_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		goto out_freeiov;
 	total_len = err;
@@ -2017,6 +2089,7 @@ out:
  *	BSD sendmsg interface
  */
 
+<<<<<<< HEAD
 long __sys_sendmsg(int fd, struct msghdr __user *msg, unsigned flags)
 {
 	int fput_needed, err;
@@ -2028,12 +2101,25 @@ long __sys_sendmsg(int fd, struct msghdr __user *msg, unsigned flags)
 		goto out;
 
 	err = ___sys_sendmsg(sock, msg, &msg_sys, flags, NULL);
+=======
+SYSCALL_DEFINE3(sendmsg, int, fd, struct msghdr __user *, msg, unsigned, flags)
+{
+	int fput_needed, err;
+	struct msghdr msg_sys;
+	struct socket *sock = sockfd_lookup_light(fd, &err, &fput_needed);
+
+	if (!sock)
+		goto out;
+
+	err = __sys_sendmsg(sock, msg, &msg_sys, flags, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fput_light(sock->file, fput_needed);
 out:
 	return err;
 }
 
+<<<<<<< HEAD
 SYSCALL_DEFINE3(sendmsg, int, fd, struct msghdr __user *, msg, unsigned int, flags)
 {
 	if (flags & MSG_CMSG_COMPAT)
@@ -2041,6 +2127,8 @@ SYSCALL_DEFINE3(sendmsg, int, fd, struct msghdr __user *, msg, unsigned int, fla
 	return __sys_sendmsg(fd, msg, flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *	Linux sendmmsg interface
  */
@@ -2071,16 +2159,26 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
 
 	while (datagrams < vlen) {
 		if (MSG_CMSG_COMPAT & flags) {
+<<<<<<< HEAD
 			err = ___sys_sendmsg(sock, (struct msghdr __user *)compat_entry,
 					     &msg_sys, flags, &used_address);
+=======
+			err = __sys_sendmsg(sock, (struct msghdr __user *)compat_entry,
+					    &msg_sys, flags, &used_address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err < 0)
 				break;
 			err = __put_user(err, &compat_entry->msg_len);
 			++compat_entry;
 		} else {
+<<<<<<< HEAD
 			err = ___sys_sendmsg(sock,
 					     (struct msghdr __user *)entry,
 					     &msg_sys, flags, &used_address);
+=======
+			err = __sys_sendmsg(sock, (struct msghdr __user *)entry,
+					    &msg_sys, flags, &used_address);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err < 0)
 				break;
 			err = put_user(err, &entry->msg_len);
@@ -2104,6 +2202,7 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
 SYSCALL_DEFINE4(sendmmsg, int, fd, struct mmsghdr __user *, mmsg,
 		unsigned int, vlen, unsigned int, flags)
 {
+<<<<<<< HEAD
 	if (flags & MSG_CMSG_COMPAT)
 		return -EINVAL;
 	return __sys_sendmmsg(fd, mmsg, vlen, flags);
@@ -2111,6 +2210,13 @@ SYSCALL_DEFINE4(sendmmsg, int, fd, struct mmsghdr __user *, mmsg,
 
 static int ___sys_recvmsg(struct socket *sock, struct msghdr __user *msg,
 			  struct msghdr *msg_sys, unsigned flags, int nosec)
+=======
+	return __sys_sendmmsg(fd, mmsg, vlen, flags);
+}
+
+static int __sys_recvmsg(struct socket *sock, struct msghdr __user *msg,
+			 struct msghdr *msg_sys, unsigned flags, int nosec)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct compat_msghdr __user *msg_compat =
 	    (struct compat_msghdr __user *)msg;
@@ -2153,9 +2259,19 @@ static int ___sys_recvmsg(struct socket *sock, struct msghdr __user *msg,
 	uaddr = (__force void __user *)msg_sys->msg_name;
 	uaddr_len = COMPAT_NAMELEN(msg);
 	if (MSG_CMSG_COMPAT & flags) {
+<<<<<<< HEAD
 		err = verify_compat_iovec(msg_sys, iov, &addr, VERIFY_WRITE);
 	} else
 		err = verify_iovec(msg_sys, iov, &addr, VERIFY_WRITE);
+=======
+		err = verify_compat_iovec(msg_sys, iov,
+					  (struct sockaddr *)&addr,
+					  VERIFY_WRITE);
+	} else
+		err = verify_iovec(msg_sys, iov,
+				   (struct sockaddr *)&addr,
+				   VERIFY_WRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err < 0)
 		goto out_freeiov;
 	total_len = err;
@@ -2172,7 +2288,11 @@ static int ___sys_recvmsg(struct socket *sock, struct msghdr __user *msg,
 	len = err;
 
 	if (uaddr != NULL) {
+<<<<<<< HEAD
 		err = move_addr_to_user(&addr,
+=======
+		err = move_addr_to_user((struct sockaddr *)&addr,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					msg_sys->msg_namelen, uaddr,
 					uaddr_len);
 		if (err < 0)
@@ -2203,6 +2323,7 @@ out:
  *	BSD recvmsg interface
  */
 
+<<<<<<< HEAD
 long __sys_recvmsg(int fd, struct msghdr __user *msg, unsigned flags)
 {
 	int fput_needed, err;
@@ -2214,12 +2335,26 @@ long __sys_recvmsg(int fd, struct msghdr __user *msg, unsigned flags)
 		goto out;
 
 	err = ___sys_recvmsg(sock, msg, &msg_sys, flags, 0);
+=======
+SYSCALL_DEFINE3(recvmsg, int, fd, struct msghdr __user *, msg,
+		unsigned int, flags)
+{
+	int fput_needed, err;
+	struct msghdr msg_sys;
+	struct socket *sock = sockfd_lookup_light(fd, &err, &fput_needed);
+
+	if (!sock)
+		goto out;
+
+	err = __sys_recvmsg(sock, msg, &msg_sys, flags, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fput_light(sock->file, fput_needed);
 out:
 	return err;
 }
 
+<<<<<<< HEAD
 SYSCALL_DEFINE3(recvmsg, int, fd, struct msghdr __user *, msg,
 		unsigned int, flags)
 {
@@ -2228,6 +2363,8 @@ SYSCALL_DEFINE3(recvmsg, int, fd, struct msghdr __user *, msg,
 	return __sys_recvmsg(fd, msg, flags);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  *     Linux recvmmsg interface
  */
@@ -2265,18 +2402,30 @@ int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
 		 * No need to ask LSM for more than the first datagram.
 		 */
 		if (MSG_CMSG_COMPAT & flags) {
+<<<<<<< HEAD
 			err = ___sys_recvmsg(sock, (struct msghdr __user *)compat_entry,
 					     &msg_sys, flags & ~MSG_WAITFORONE,
 					     datagrams);
+=======
+			err = __sys_recvmsg(sock, (struct msghdr __user *)compat_entry,
+					    &msg_sys, flags & ~MSG_WAITFORONE,
+					    datagrams);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err < 0)
 				break;
 			err = __put_user(err, &compat_entry->msg_len);
 			++compat_entry;
 		} else {
+<<<<<<< HEAD
 			err = ___sys_recvmsg(sock,
 					     (struct msghdr __user *)entry,
 					     &msg_sys, flags & ~MSG_WAITFORONE,
 					     datagrams);
+=======
+			err = __sys_recvmsg(sock, (struct msghdr __user *)entry,
+					    &msg_sys, flags & ~MSG_WAITFORONE,
+					    datagrams);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (err < 0)
 				break;
 			err = put_user(err, &entry->msg_len);
@@ -2343,9 +2492,12 @@ SYSCALL_DEFINE5(recvmmsg, int, fd, struct mmsghdr __user *, mmsg,
 	int datagrams;
 	struct timespec timeout_sys;
 
+<<<<<<< HEAD
 	if (flags & MSG_CMSG_COMPAT)
 		return -EINVAL;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!timeout)
 		return __sys_recvmmsg(fd, mmsg, vlen, flags, NULL);
 
@@ -2538,7 +2690,11 @@ void sock_unregister(int family)
 	BUG_ON(family < 0 || family >= NPROTO);
 
 	spin_lock(&net_family_lock);
+<<<<<<< HEAD
 	RCU_INIT_POINTER(net_families[family], NULL);
+=======
+	rcu_assign_pointer(net_families[family], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&net_family_lock);
 
 	synchronize_rcu();
@@ -2618,7 +2774,11 @@ void socket_seq_show(struct seq_file *seq)
 
 #ifdef CONFIG_COMPAT
 static int do_siocgstamp(struct net *net, struct socket *sock,
+<<<<<<< HEAD
 			 unsigned int cmd, void __user *up)
+=======
+			 unsigned int cmd, struct compat_timeval __user *up)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	mm_segment_t old_fs = get_fs();
 	struct timeval ktv;
@@ -2627,14 +2787,25 @@ static int do_siocgstamp(struct net *net, struct socket *sock,
 	set_fs(KERNEL_DS);
 	err = sock_do_ioctl(net, sock, cmd, (unsigned long)&ktv);
 	set_fs(old_fs);
+<<<<<<< HEAD
 	if (!err)
 		err = compat_put_timeval(&ktv, up);
 
+=======
+	if (!err) {
+		err = put_user(ktv.tv_sec, &up->tv_sec);
+		err |= __put_user(ktv.tv_usec, &up->tv_usec);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
 static int do_siocgstampns(struct net *net, struct socket *sock,
+<<<<<<< HEAD
 			   unsigned int cmd, void __user *up)
+=======
+			 unsigned int cmd, struct compat_timespec __user *up)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	mm_segment_t old_fs = get_fs();
 	struct timespec kts;
@@ -2643,9 +2814,16 @@ static int do_siocgstampns(struct net *net, struct socket *sock,
 	set_fs(KERNEL_DS);
 	err = sock_do_ioctl(net, sock, cmd, (unsigned long)&kts);
 	set_fs(old_fs);
+<<<<<<< HEAD
 	if (!err)
 		err = compat_put_timespec(&kts, up);
 
+=======
+	if (!err) {
+		err = put_user(kts.tv_sec, &up->tv_sec);
+		err |= __put_user(kts.tv_nsec, &up->tv_nsec);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -2681,7 +2859,10 @@ static int dev_ifconf(struct net *net, struct compat_ifconf __user *uifc32)
 	if (copy_from_user(&ifc32, uifc32, sizeof(struct compat_ifconf)))
 		return -EFAULT;
 
+<<<<<<< HEAD
 	memset(&ifc, 0, sizeof(ifc));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ifc32.ifcbuf == 0) {
 		ifc32.ifc_len = 0;
 		ifc.ifc_len = 0;
@@ -2775,10 +2956,17 @@ static int ethtool_ioctl(struct net *net, struct compat_ifreq __user *ifr32)
 	case ETHTOOL_GRXRINGS:
 	case ETHTOOL_GRXCLSRLCNT:
 	case ETHTOOL_GRXCLSRULE:
+<<<<<<< HEAD
 	case ETHTOOL_SRXCLSRLINS:
 		convert_out = true;
 		/* fall through */
 	case ETHTOOL_SRXCLSRLDEL:
+=======
+		convert_out = true;
+		/* fall through */
+	case ETHTOOL_SRXCLSRLDEL:
+	case ETHTOOL_SRXCLSRLINS:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buf_size += sizeof(struct ethtool_rxnfc);
 		convert_in = true;
 		break;
@@ -2920,7 +3108,11 @@ static int bond_ioctl(struct net *net, unsigned int cmd,
 
 		return dev_ioctl(net, cmd, uifr);
 	default:
+<<<<<<< HEAD
 		return -ENOIOCTLCMD;
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -3247,6 +3439,23 @@ static int compat_sock_ioctl_trans(struct file *file, struct socket *sock,
 		return sock_do_ioctl(net, sock, cmd, arg);
 	}
 
+<<<<<<< HEAD
+=======
+	/* Prevent warning from compat_sys_ioctl, these always
+	 * result in -EINVAL in the native case anyway. */
+	switch (cmd) {
+	case SIOCRTMSG:
+	case SIOCGIFCOUNT:
+	case SIOCSRARP:
+	case SIOCGRARP:
+	case SIOCDRARP:
+	case SIOCSIFLINK:
+	case SIOCGIFSLAVE:
+	case SIOCSIFSLAVE:
+		return -EINVAL;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -ENOIOCTLCMD;
 }
 

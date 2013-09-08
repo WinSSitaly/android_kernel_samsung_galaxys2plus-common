@@ -141,7 +141,11 @@ static inline unsigned __read_seqcount_begin(const seqcount_t *s)
 	unsigned ret;
 
 repeat:
+<<<<<<< HEAD
 	ret = ACCESS_ONCE(s->sequence);
+=======
+	ret = s->sequence;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(ret & 1)) {
 		cpu_relax();
 		goto repeat;
@@ -166,6 +170,7 @@ static inline unsigned read_seqcount_begin(const seqcount_t *s)
 }
 
 /**
+<<<<<<< HEAD
  * raw_seqcount_begin - begin a seq-read critical section
  * @s: pointer to seqcount_t
  * Returns: count to be passed to read_seqcount_retry
@@ -187,6 +192,8 @@ static inline unsigned raw_seqcount_begin(const seqcount_t *s)
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * __read_seqcount_retry - end a seq-read critical section (without barrier)
  * @s: pointer to seqcount_t
  * @start: count, from read_seqcount_begin

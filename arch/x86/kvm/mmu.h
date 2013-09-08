@@ -49,8 +49,11 @@
 #define PFERR_FETCH_MASK (1U << 4)
 
 int kvm_mmu_get_spte_hierarchy(struct kvm_vcpu *vcpu, u64 addr, u64 sptes[4]);
+<<<<<<< HEAD
 void kvm_mmu_set_mmio_spte_mask(u64 mmio_mask);
 int handle_mmio_page_fault_common(struct kvm_vcpu *vcpu, u64 addr, bool direct);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int kvm_init_shadow_mmu(struct kvm_vcpu *vcpu, struct kvm_mmu *context);
 
 static inline unsigned int kvm_mmu_available_pages(struct kvm *kvm)
@@ -78,6 +81,7 @@ static inline int is_present_gpte(unsigned long pte)
 	return pte & PT_PRESENT_MASK;
 }
 
+<<<<<<< HEAD
 static inline int is_writable_pte(unsigned long pte)
 {
 	return pte & PT_WRITABLE_MASK;
@@ -101,4 +105,6 @@ static inline bool check_write_user_access(struct kvm_vcpu *vcpu,
 
 	return true;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

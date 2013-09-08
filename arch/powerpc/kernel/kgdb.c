@@ -24,7 +24,10 @@
 #include <asm/current.h>
 #include <asm/processor.h>
 #include <asm/machdep.h>
+<<<<<<< HEAD
 #include <asm/debug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * This table contains the mapping between PowerPC hardware trap types, and

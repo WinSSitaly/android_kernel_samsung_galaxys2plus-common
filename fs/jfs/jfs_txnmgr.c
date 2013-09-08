@@ -1143,6 +1143,10 @@ int txCommit(tid_t tid,		/* transaction identifier */
 	struct jfs_log *log;
 	struct tblock *tblk;
 	struct lrd *lrd;
+<<<<<<< HEAD
+=======
+	int lsn;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct inode *ip;
 	struct jfs_inode_info *jfs_ip;
 	int k, n;
@@ -1309,7 +1313,11 @@ int txCommit(tid_t tid,		/* transaction identifier */
 	 */
 	lrd->type = cpu_to_le16(LOG_COMMIT);
 	lrd->length = 0;
+<<<<<<< HEAD
 	lmLog(log, tblk, lrd, NULL);
+=======
+	lsn = lmLog(log, tblk, lrd, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	lmGroupCommit(log, tblk);
 
@@ -2800,7 +2808,11 @@ int jfs_lazycommit(void *arg)
 
 		if (freezing(current)) {
 			LAZY_UNLOCK(flags);
+<<<<<<< HEAD
 			try_to_freeze();
+=======
+			refrigerator();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			DECLARE_WAITQUEUE(wq, current);
 
@@ -2934,6 +2946,10 @@ int jfs_sync(void *arg)
 {
 	struct inode *ip;
 	struct jfs_inode_info *jfs_ip;
+<<<<<<< HEAD
+=======
+	int rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tid_t tid;
 
 	do {
@@ -2959,7 +2975,11 @@ int jfs_sync(void *arg)
 				 */
 				TXN_UNLOCK();
 				tid = txBegin(ip->i_sb, COMMIT_INODE);
+<<<<<<< HEAD
 				txCommit(tid, 1, &ip, 0);
+=======
+				rc = txCommit(tid, 1, &ip, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				txEnd(tid);
 				mutex_unlock(&jfs_ip->commit_mutex);
 
@@ -2994,7 +3014,11 @@ int jfs_sync(void *arg)
 
 		if (freezing(current)) {
 			TXN_UNLOCK();
+<<<<<<< HEAD
 			try_to_freeze();
+=======
+			refrigerator();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			set_current_state(TASK_INTERRUPTIBLE);
 			TXN_UNLOCK();

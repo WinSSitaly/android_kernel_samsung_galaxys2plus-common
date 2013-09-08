@@ -61,10 +61,14 @@ struct pt_regs {
 #define instruction_pointer(regs)	((regs)->pc)
 #define profile_pc(regs)		instruction_pointer(regs)
 
+<<<<<<< HEAD
 static inline long regs_return_value(struct pt_regs *regs)
 {
 	return regs->r3;
 }
+=======
+void show_regs(struct pt_regs *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #else /* __KERNEL__ */
 

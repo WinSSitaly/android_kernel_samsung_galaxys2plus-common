@@ -208,6 +208,13 @@ int __copy_in_user(void __user *dst, const void __user *src, unsigned size)
 	}
 }
 
+<<<<<<< HEAD
+=======
+__must_check long
+strncpy_from_user(char *dst, const char __user *src, long count);
+__must_check long
+__strncpy_from_user(char *dst, const char __user *src, long count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 __must_check long strnlen_user(const char __user *str, long n);
 __must_check long __strnlen_user(const char __user *str, long n);
 __must_check long strlen_user(const char __user *str);

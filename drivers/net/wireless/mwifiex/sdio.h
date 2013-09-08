@@ -28,9 +28,12 @@
 
 #include "main.h"
 
+<<<<<<< HEAD
 #define SD8787_DEFAULT_FW_NAME "mrvl/sd8787_uapsta.bin"
 #define SD8797_DEFAULT_FW_NAME "mrvl/sd8797_uapsta.bin"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define BLOCK_MODE	1
 #define BYTE_MODE	0
 
@@ -55,10 +58,17 @@
 
 #define SDIO_MP_AGGR_DEF_PKT_LIMIT	8
 
+<<<<<<< HEAD
 #define SDIO_MP_TX_AGGR_DEF_BUF_SIZE        (8192)	/* 8K */
 
 /* Multi port RX aggregation buffer size */
 #define SDIO_MP_RX_AGGR_DEF_BUF_SIZE        (16384)	/* 16K */
+=======
+#define SDIO_MP_TX_AGGR_DEF_BUF_SIZE        (4096)	/* 4K */
+
+/* Multi port RX aggregation buffer size */
+#define SDIO_MP_RX_AGGR_DEF_BUF_SIZE        (4096)	/* 4K */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Misc. Config Register : Auto Re-enable interrupts */
 #define AUTO_RE_ENABLE_INT              BIT(4)
@@ -170,6 +180,12 @@
 /* Rx unit register */
 #define CARD_RX_UNIT_REG		0x63
 
+<<<<<<< HEAD
+=======
+/* Event header len w/o 4 bytes of interface header */
+#define MWIFIEX_EVENT_HEADER_LEN           4
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Max retry number of CMD53 write */
 #define MAX_WRITE_IOMEM_RETRY		2
 
@@ -302,6 +318,7 @@ struct sdio_mmc_card {
 	struct mwifiex_sdio_mpa_tx mpa_tx;
 	struct mwifiex_sdio_mpa_rx mpa_rx;
 };
+<<<<<<< HEAD
 
 /*
  * .cmdrsp_complete handler
@@ -323,4 +340,6 @@ static inline int mwifiex_sdio_event_complete(struct mwifiex_adapter *adapter,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _MWIFIEX_SDIO_H */

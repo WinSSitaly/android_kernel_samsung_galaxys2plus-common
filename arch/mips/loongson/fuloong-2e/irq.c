@@ -42,7 +42,10 @@ asmlinkage void mach_irq_dispatch(unsigned int pending)
 static struct irqaction cascade_irqaction = {
 	.handler = no_action,
 	.name = "cascade",
+<<<<<<< HEAD
 	.flags = IRQF_NO_THREAD,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init mach_init_irq(void)

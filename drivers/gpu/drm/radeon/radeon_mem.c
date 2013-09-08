@@ -139,7 +139,11 @@ static int init_heap(struct mem_block **heap, int start, int size)
 	if (!blocks)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	*heap = kzalloc(sizeof(**heap), GFP_KERNEL);
+=======
+	*heap = kmalloc(sizeof(**heap), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!*heap) {
 		kfree(blocks);
 		return -ENOMEM;
@@ -150,6 +154,10 @@ static int init_heap(struct mem_block **heap, int start, int size)
 	blocks->file_priv = NULL;
 	blocks->next = blocks->prev = *heap;
 
+<<<<<<< HEAD
+=======
+	memset(*heap, 0, sizeof(**heap));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	(*heap)->file_priv = (struct drm_file *) - 1;
 	(*heap)->next = (*heap)->prev = blocks;
 	return 0;

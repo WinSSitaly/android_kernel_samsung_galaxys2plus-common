@@ -18,8 +18,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/kprobes.h>
 #include <linux/socket.h>
@@ -241,7 +244,11 @@ static __init int tcpprobe_init(void)
 	if (ret)
 		goto err1;
 
+<<<<<<< HEAD
 	pr_info("probe registered (port=%d) bufsize=%u\n", port, bufsize);
+=======
+	pr_info("TCP probe registered (port=%d) bufsize=%u\n", port, bufsize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
  err1:
 	proc_net_remove(&init_net, procname);

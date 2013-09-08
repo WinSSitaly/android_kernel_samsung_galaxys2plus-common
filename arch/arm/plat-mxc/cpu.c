@@ -1,7 +1,10 @@
 
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/io.h>
 #include <mach/hardware.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned int __mxc_cpu_type;
 EXPORT_SYMBOL(__mxc_cpu_type);
@@ -11,6 +14,7 @@ void mxc_set_cpu_type(unsigned int type)
 	__mxc_cpu_type = type;
 }
 
+<<<<<<< HEAD
 void imx_print_silicon_rev(const char *cpu, int srev)
 {
 	if (srev == IMX_CHIP_REVISION_UNKNOWN)
@@ -42,3 +46,5 @@ void __init imx_set_aips(void __iomem *base)
 	reg = __raw_readl(base + 0x50) & 0x00FFFFFF;
 	__raw_writel(reg, base + 0x50);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -137,6 +137,10 @@ struct fsldma_device {
 struct fsldma_chan {
 	char name[8];			/* Channel name */
 	struct fsldma_chan_regs __iomem *regs;
+<<<<<<< HEAD
+=======
+	dma_cookie_t completed_cookie;	/* The maximum cookie completed */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spinlock_t desc_lock;		/* Descriptor operation lock */
 	struct list_head ld_pending;	/* Link descriptors queue */
 	struct list_head ld_running;	/* Link descriptors queue */

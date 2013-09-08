@@ -36,7 +36,10 @@ struct adp5520_chip {
 	struct blocking_notifier_head notifier_list;
 	int irq;
 	unsigned long id;
+<<<<<<< HEAD
 	uint8_t mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __adp5520_read(struct i2c_client *client,
@@ -110,7 +113,11 @@ int adp5520_set_bits(struct device *dev, int reg, uint8_t bit_mask)
 
 	ret = __adp5520_read(chip->client, reg, &reg_val);
 
+<<<<<<< HEAD
 	if (!ret && ((reg_val & bit_mask) != bit_mask)) {
+=======
+	if (!ret && ((reg_val & bit_mask) == 0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg_val |= bit_mask;
 		ret = __adp5520_write(chip->client, reg, reg_val);
 	}
@@ -327,10 +334,14 @@ static int adp5520_suspend(struct device *dev)
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adp5520_chip *chip = dev_get_drvdata(&client->dev);
 
+<<<<<<< HEAD
 	adp5520_read(chip->dev, ADP5520_MODE_STATUS, &chip->mode);
 	/* All other bits are W1C */
 	chip->mode &= ADP5520_BL_EN | ADP5520_DIM_EN | ADP5520_nSTNBY;
 	adp5520_write(chip->dev, ADP5520_MODE_STATUS, 0);
+=======
+	adp5520_clr_bits(chip->dev, ADP5520_MODE_STATUS, ADP5520_nSTNBY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -339,7 +350,11 @@ static int adp5520_resume(struct device *dev)
 	struct i2c_client *client = to_i2c_client(dev);
 	struct adp5520_chip *chip = dev_get_drvdata(&client->dev);
 
+<<<<<<< HEAD
 	adp5520_write(chip->dev, ADP5520_MODE_STATUS, chip->mode);
+=======
+	adp5520_set_bits(chip->dev, ADP5520_MODE_STATUS, ADP5520_nSTNBY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 #endif

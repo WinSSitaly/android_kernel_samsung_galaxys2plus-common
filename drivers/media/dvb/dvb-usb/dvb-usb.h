@@ -85,7 +85,11 @@ static inline u8 rc5_data(struct rc_map_table *key)
 	return key->scancode & 0xff;
 }
 
+<<<<<<< HEAD
 static inline u16 rc5_scan(struct rc_map_table *key)
+=======
+static inline u8 rc5_scan(struct rc_map_table *key)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return key->scancode & 0xffff;
 }
@@ -124,8 +128,11 @@ struct usb_data_stream_properties {
  * @caps: capabilities of the DVB USB device.
  * @pid_filter_count: number of PID filter position in the optional hardware
  *  PID-filter.
+<<<<<<< HEAD
  * @num_frontends: number of frontends of the DVB USB adapter.
  * @frontend_ctrl: called to power on/off active frontend.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @streaming_ctrl: called to start and stop the MPEG2-TS streaming of the
  *  device (not URB submitting/killing).
  * @pid_filter_ctrl: called to en/disable the PID filter, if any.
@@ -136,7 +143,11 @@ struct usb_data_stream_properties {
  *  pll_desc and pll_init_buf of struct dvb_usb_device).
  * @stream: configuration of the USB streaming
  */
+<<<<<<< HEAD
 struct dvb_usb_adapter_fe_properties {
+=======
+struct dvb_usb_adapter_properties {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DVB_USB_ADAP_HAS_PID_FILTER               0x01
 #define DVB_USB_ADAP_PID_FILTER_CAN_BE_TURNED_OFF 0x02
 #define DVB_USB_ADAP_NEED_PID_FILTERING           0x04
@@ -154,6 +165,7 @@ struct dvb_usb_adapter_fe_properties {
 	struct usb_data_stream_properties stream;
 
 	int size_of_priv;
+<<<<<<< HEAD
 };
 
 #define MAX_NO_OF_FE_PER_ADAP 2
@@ -166,6 +178,11 @@ struct dvb_usb_adapter_properties {
 
 	int num_frontends;
 	struct dvb_usb_adapter_fe_properties fe[MAX_NO_OF_FE_PER_ADAP];
+=======
+
+	int (*fe_ioctl_override) (struct dvb_frontend *,
+				  unsigned int, void *, unsigned int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /**
@@ -356,6 +373,7 @@ struct usb_data_stream {
  *
  * @stream: the usb data stream.
  */
+<<<<<<< HEAD
 struct dvb_usb_fe_adapter {
 	struct dvb_frontend *fe;
 
@@ -370,6 +388,8 @@ struct dvb_usb_fe_adapter {
 	void *priv;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct dvb_usb_adapter {
 	struct dvb_usb_device *dev;
 	struct dvb_usb_adapter_properties props;
@@ -381,16 +401,30 @@ struct dvb_usb_adapter {
 	u8  id;
 
 	int feedcount;
+<<<<<<< HEAD
+=======
+	int pid_filtering;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* dvb */
 	struct dvb_adapter   dvb_adap;
 	struct dmxdev        dmxdev;
 	struct dvb_demux     demux;
 	struct dvb_net       dvb_net;
+<<<<<<< HEAD
 
 	struct dvb_usb_fe_adapter fe_adap[MAX_NO_OF_FE_PER_ADAP];
 	int active_fe;
 	int num_frontends_initialized;
+=======
+	struct dvb_frontend *fe;
+	int                  max_feed_count;
+
+	int (*fe_init)  (struct dvb_frontend *);
+	int (*fe_sleep) (struct dvb_frontend *);
+
+	struct usb_data_stream stream;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	void *priv;
 };

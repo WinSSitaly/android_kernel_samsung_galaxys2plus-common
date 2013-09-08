@@ -67,11 +67,18 @@
  *
  * NEC	MegaRAID PCI Express ROMB	1000	0408	1033	8287
  *
+<<<<<<< HEAD
  * For history of changes, see Documentation/scsi/ChangeLog.megaraid
  */
 
 #include <linux/slab.h>
 #include <linux/module.h>
+=======
+ * For history of changes, see Documentation/ChangeLog.megaraid
+ */
+
+#include <linux/slab.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "megaraid_mbox.h"
 
 static int megaraid_init(void);

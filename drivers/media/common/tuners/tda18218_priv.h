@@ -100,8 +100,11 @@ struct tda18218_priv {
 	struct tda18218_config *cfg;
 	struct i2c_adapter *i2c;
 
+<<<<<<< HEAD
 	u32 if_frequency;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 regs[TDA18218_NUM_REGS];
 };
 

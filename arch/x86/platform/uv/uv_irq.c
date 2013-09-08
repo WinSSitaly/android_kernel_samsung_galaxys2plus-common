@@ -25,7 +25,11 @@ struct uv_irq_2_mmr_pnode{
 	int			irq;
 };
 
+<<<<<<< HEAD
 static DEFINE_SPINLOCK(uv_irq_lock);
+=======
+static spinlock_t		uv_irq_lock;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct rb_root		uv_irq_root;
 
 static int uv_set_irq_affinity(struct irq_data *, const struct cpumask *, bool);

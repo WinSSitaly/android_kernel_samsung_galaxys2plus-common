@@ -33,7 +33,11 @@
 
 /* Module Parameters */
 static unsigned int num_modules = CMODIO_MAX_MODULES;
+<<<<<<< HEAD
 static char *modules[CMODIO_MAX_MODULES] = {
+=======
+static unsigned char *modules[CMODIO_MAX_MODULES] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"empty", "empty", "empty", "empty",
 };
 

@@ -32,6 +32,10 @@
 
 #include <linux/init.h>
 #include <linux/numa.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/numa.h>
 
 #define COMPILER_DEPENDENT_INT64	long

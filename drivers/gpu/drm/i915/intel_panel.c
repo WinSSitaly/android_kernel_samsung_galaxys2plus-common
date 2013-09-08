@@ -47,6 +47,11 @@ intel_fixed_panel_mode(struct drm_display_mode *fixed_mode,
 	adjusted_mode->vtotal = fixed_mode->vtotal;
 
 	adjusted_mode->clock = fixed_mode->clock;
+<<<<<<< HEAD
+=======
+
+	drm_mode_set_crtcinfo(adjusted_mode, CRTC_INTERLACE_HALVE_V);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* adjusted_mode has been preset to be the panel's fixed mode */
@@ -82,7 +87,11 @@ intel_pch_panel_fitting(struct drm_device *dev,
 			if (scaled_width > scaled_height) { /* pillar */
 				width = scaled_height / mode->vdisplay;
 				if (width & 1)
+<<<<<<< HEAD
 					width++;
+=======
+				    	width++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				x = (adjusted_mode->hdisplay - width + 1) / 2;
 				y = 0;
 				height = adjusted_mode->vdisplay;
@@ -139,8 +148,13 @@ static u32 i915_read_blc_pwm_ctl(struct drm_i915_private *dev_priv)
 			dev_priv->saveBLC_PWM_CTL2 = val;
 		} else if (val == 0) {
 			I915_WRITE(BLC_PWM_PCH_CTL2,
+<<<<<<< HEAD
 				   dev_priv->saveBLC_PWM_CTL2);
 			val = dev_priv->saveBLC_PWM_CTL2;
+=======
+				   dev_priv->saveBLC_PWM_CTL);
+			val = dev_priv->saveBLC_PWM_CTL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		val = I915_READ(BLC_PWM_CTL);
@@ -176,10 +190,20 @@ u32 intel_panel_get_max_backlight(struct drm_device *dev)
 	if (HAS_PCH_SPLIT(dev)) {
 		max >>= 16;
 	} else {
+<<<<<<< HEAD
 		if (INTEL_INFO(dev)->gen < 4)
 			max >>= 17;
 		else
 			max >>= 16;
+=======
+		if (IS_PINEVIEW(dev)) {
+			max >>= 17;
+		} else {
+			max >>= 16;
+			if (INTEL_INFO(dev)->gen < 4)
+				max &= ~1;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (is_backlight_combination_mode(dev))
 			max *= 0xff;
@@ -198,12 +222,22 @@ u32 intel_panel_get_backlight(struct drm_device *dev)
 		val = I915_READ(BLC_PWM_CPU_CTL) & BACKLIGHT_DUTY_CYCLE_MASK;
 	} else {
 		val = I915_READ(BLC_PWM_CTL) & BACKLIGHT_DUTY_CYCLE_MASK;
+<<<<<<< HEAD
 		if (INTEL_INFO(dev)->gen < 4)
 			val >>= 1;
 
 		if (is_backlight_combination_mode(dev)) {
 			u8 lbpc;
 
+=======
+		if (IS_PINEVIEW(dev))
+			val >>= 1;
+
+		if (is_backlight_combination_mode(dev)){
+			u8 lbpc;
+
+			val &= ~1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			pci_read_config_byte(dev->pdev, PCI_LBPC, &lbpc);
 			val *= lbpc;
 		}
@@ -230,7 +264,11 @@ static void intel_panel_actually_set_backlight(struct drm_device *dev, u32 level
 	if (HAS_PCH_SPLIT(dev))
 		return intel_pch_panel_set_backlight(dev, level);
 
+<<<<<<< HEAD
 	if (is_backlight_combination_mode(dev)) {
+=======
+	if (is_backlight_combination_mode(dev)){
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 max = intel_panel_get_max_backlight(dev);
 		u8 lbpc;
 
@@ -240,9 +278,17 @@ static void intel_panel_actually_set_backlight(struct drm_device *dev, u32 level
 	}
 
 	tmp = I915_READ(BLC_PWM_CTL);
+<<<<<<< HEAD
 	if (INTEL_INFO(dev)->gen < 4) 
 		level <<= 1;
 	tmp &= ~BACKLIGHT_DUTY_CYCLE_MASK;
+=======
+	if (IS_PINEVIEW(dev)) {
+		tmp &= ~(BACKLIGHT_DUTY_CYCLE_MASK - 1);
+		level <<= 1;
+	} else
+		tmp &= ~BACKLIGHT_DUTY_CYCLE_MASK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	I915_WRITE(BLC_PWM_CTL, tmp | level);
 }
 
@@ -274,7 +320,11 @@ void intel_panel_enable_backlight(struct drm_device *dev)
 	intel_panel_actually_set_backlight(dev, dev_priv->backlight_level);
 }
 
+<<<<<<< HEAD
 static void intel_panel_init_backlight(struct drm_device *dev)
+=======
+void intel_panel_setup_backlight(struct drm_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
 
@@ -306,6 +356,7 @@ intel_panel_detect(struct drm_device *dev)
 
 	return connector_status_unknown;
 }
+<<<<<<< HEAD
 
 #ifdef CONFIG_BACKLIGHT_CLASS_DEVICE
 static int intel_panel_update_status(struct backlight_device *bd)
@@ -377,3 +428,5 @@ void intel_panel_destroy_backlight(struct drm_device *dev)
 	return;
 }
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

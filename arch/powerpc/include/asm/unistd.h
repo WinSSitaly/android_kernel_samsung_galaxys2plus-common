@@ -373,12 +373,19 @@
 #define __NR_syncfs		348
 #define __NR_sendmmsg		349
 #define __NR_setns		350
+<<<<<<< HEAD
 #define __NR_process_vm_readv	351
 #define __NR_process_vm_writev	352
 
 #ifdef __KERNEL__
 
 #define __NR_syscalls		353
+=======
+
+#ifdef __KERNEL__
+
+#define __NR_syscalls		351
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define __NR__exit __NR_exit
 #define NR_syscalls	__NR_syscalls

@@ -79,7 +79,11 @@ tcindex_lookup(struct tcindex_data *p, u16 key)
 }
 
 
+<<<<<<< HEAD
 static int tcindex_classify(struct sk_buff *skb, const struct tcf_proto *tp,
+=======
+static int tcindex_classify(struct sk_buff *skb, struct tcf_proto *tp,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    struct tcf_result *res)
 {
 	struct tcindex_data *p = PRIV(tp);

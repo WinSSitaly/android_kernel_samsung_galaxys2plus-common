@@ -127,6 +127,12 @@ static struct platform_device sh_keysc_device = {
 	.dev	= {
 		.platform_data	= &sh_keysc_info,
 	},
+<<<<<<< HEAD
+=======
+	.archdata = {
+		.hwblk_id = HWBLK_KEYSC,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct platform_device *se7722_devices[] __initdata = {

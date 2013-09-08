@@ -37,7 +37,11 @@ struct nvram_header {
 
 extern int nvram_getenv(char *name, char *val, size_t val_len);
 
+<<<<<<< HEAD
 static inline void nvram_parse_macaddr(char *buf, u8 macaddr[6])
+=======
+static inline void nvram_parse_macaddr(char *buf, u8 *macaddr)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	if (strchr(buf, ':'))
 		sscanf(buf, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &macaddr[0],

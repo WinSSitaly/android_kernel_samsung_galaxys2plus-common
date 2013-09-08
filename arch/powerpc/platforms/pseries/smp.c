@@ -14,6 +14,10 @@
 
 
 #include <linux/kernel.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/smp.h>
 #include <linux/interrupt.h>
@@ -22,11 +26,19 @@
 #include <linux/spinlock.h>
 #include <linux/cache.h>
 #include <linux/err.h>
+<<<<<<< HEAD
 #include <linux/device.h>
 #include <linux/cpu.h>
 
 #include <asm/ptrace.h>
 #include <linux/atomic.h>
+=======
+#include <linux/sysdev.h>
+#include <linux/cpu.h>
+
+#include <asm/ptrace.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 #include <asm/page.h>
 #include <asm/pgtable.h>
@@ -37,11 +49,19 @@
 #include <asm/machdep.h>
 #include <asm/cputable.h>
 #include <asm/firmware.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/rtas.h>
 #include <asm/pSeries_reconfig.h>
 #include <asm/mpic.h>
 #include <asm/vdso_datapage.h>
 #include <asm/cputhreads.h>
+<<<<<<< HEAD
+=======
+#include <asm/mpic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/xics.h>
 
 #include "plpar_wrappers.h"
@@ -147,7 +167,10 @@ static void __devinit smp_xics_setup_cpu(int cpu)
 	set_cpu_current_state(cpu, CPU_STATE_ONLINE);
 	set_default_offline_state(cpu);
 #endif
+<<<<<<< HEAD
 	pseries_notify_cpuidle_add_cpu(cpu);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __devinit smp_pSeries_kick_cpu(int nr)
@@ -205,7 +228,11 @@ static struct smp_ops_t pSeries_mpic_smp_ops = {
 };
 
 static struct smp_ops_t pSeries_xics_smp_ops = {
+<<<<<<< HEAD
 	.message_pass	= NULL,	/* Use smp_muxed_ipi_message_pass */
+=======
+	.message_pass	= smp_muxed_ipi_message_pass,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.cause_ipi	= NULL,	/* Filled at runtime by xics_smp_probe() */
 	.probe		= xics_smp_probe,
 	.kick_cpu	= smp_pSeries_kick_cpu,

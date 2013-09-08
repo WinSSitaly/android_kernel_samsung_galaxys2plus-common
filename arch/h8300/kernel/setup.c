@@ -46,7 +46,11 @@
 #include <asm/regs267x.h>
 #endif
 
+<<<<<<< HEAD
 #define STUBSIZE 0xc000
+=======
+#define STUBSIZE 0xc000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 unsigned long rom_length;
 unsigned long memory_start;

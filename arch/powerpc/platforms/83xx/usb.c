@@ -171,7 +171,11 @@ int mpc831x_usb_cfg(void)
 		of_node_put(np);
 		return ret;
 	}
+<<<<<<< HEAD
 	usb_regs = ioremap(res.start, resource_size(&res));
+=======
+	usb_regs = ioremap(res.start, res.end - res.start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Using on-chip PHY */
 	if (prop && (!strcmp(prop, "utmi_wide") ||

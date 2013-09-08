@@ -58,6 +58,15 @@ static const signed short ff_joystick_ac[] = {
 	-1
 };
 
+<<<<<<< HEAD
+=======
+static const signed short ff_wheel[] = {
+	FF_CONSTANT,
+	FF_AUTOCENTER,
+	-1
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct dev_type devices[] = {
 	{ 0x046d, 0xc211, ff_rumble },
 	{ 0x046d, 0xc219, ff_rumble },
@@ -65,7 +74,18 @@ static const struct dev_type devices[] = {
 	{ 0x046d, 0xc286, ff_joystick_ac },
 	{ 0x046d, 0xc287, ff_joystick_ac },
 	{ 0x046d, 0xc293, ff_joystick },
+<<<<<<< HEAD
 	{ 0x046d, 0xc295, ff_joystick },
+=======
+	{ 0x046d, 0xc294, ff_wheel },
+	{ 0x046d, 0xc298, ff_wheel },
+	{ 0x046d, 0xc299, ff_wheel },
+	{ 0x046d, 0xc29b, ff_wheel },
+	{ 0x046d, 0xc295, ff_joystick },
+	{ 0x046d, 0xc298, ff_wheel },
+	{ 0x046d, 0xc299, ff_wheel },
+	{ 0x046d, 0xca03, ff_wheel },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int hid_lgff_play(struct input_dev *dev, void *data, struct ff_effect *effect)
@@ -130,14 +150,37 @@ static void hid_lgff_set_autocenter(struct input_dev *dev, u16 magnitude)
 int lgff_init(struct hid_device* hid)
 {
 	struct hid_input *hidinput = list_entry(hid->inputs.next, struct hid_input, list);
+<<<<<<< HEAD
 	struct input_dev *dev = hidinput->input;
+=======
+	struct list_head *report_list = &hid->report_enum[HID_OUTPUT_REPORT].report_list;
+	struct input_dev *dev = hidinput->input;
+	struct hid_report *report;
+	struct hid_field *field;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	const signed short *ff_bits = ff_joystick;
 	int error;
 	int i;
 
+<<<<<<< HEAD
 	/* Check that the report looks ok */
 	if (!hid_validate_values(hid, HID_OUTPUT_REPORT, 0, 0, 7))
 		return -ENODEV;
+=======
+	/* Find the report to use */
+	if (list_empty(report_list)) {
+		hid_err(hid, "No output report found\n");
+		return -1;
+	}
+
+	/* Check that the report looks ok */
+	report = list_entry(report_list->next, struct hid_report, list);
+	field = report->field[0];
+	if (!field) {
+		hid_err(hid, "NULL field\n");
+		return -1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < ARRAY_SIZE(devices); i++) {
 		if (dev->id.vendor == devices[i].idVendor &&

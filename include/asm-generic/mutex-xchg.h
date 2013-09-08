@@ -26,6 +26,7 @@ static inline void
 __mutex_fastpath_lock(atomic_t *count, void (*fail_fn)(atomic_t *))
 {
 	if (unlikely(atomic_xchg(count, 0) != 1))
+<<<<<<< HEAD
 		/*
 		 * We failed to acquire the lock, so mark it contended
 		 * to ensure that any waiting tasks are woken up by the
@@ -33,6 +34,9 @@ __mutex_fastpath_lock(atomic_t *count, void (*fail_fn)(atomic_t *))
 		 */
 		if (likely(atomic_xchg(count, -1) != 1))
 			fail_fn(count);
+=======
+		fail_fn(count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -49,8 +53,12 @@ static inline int
 __mutex_fastpath_lock_retval(atomic_t *count, int (*fail_fn)(atomic_t *))
 {
 	if (unlikely(atomic_xchg(count, 0) != 1))
+<<<<<<< HEAD
 		if (likely(atomic_xchg(count, -1) != 1))
 			return fail_fn(count);
+=======
+		return fail_fn(count);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

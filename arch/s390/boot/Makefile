@@ -23,4 +23,8 @@ $(obj)/compressed/vmlinux: FORCE
 
 install: $(CONFIGURE) $(obj)/image
 	sh -x  $(srctree)/$(obj)/install.sh $(KERNELRELEASE) $(obj)/image \
+<<<<<<< HEAD
 	      System.map "$(INSTALL_PATH)"
+=======
+	      System.map Kerntypes "$(INSTALL_PATH)"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

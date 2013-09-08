@@ -2,11 +2,20 @@
 # arch/microblaze/boot/Makefile
 #
 
+<<<<<<< HEAD
+=======
+MKIMAGE := $(srctree)/scripts/mkuboot.sh
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 obj-y += linked_dtb.o
 
 targets := linux.bin linux.bin.gz simpleImage.%
 
+<<<<<<< HEAD
 OBJCOPYFLAGS := -R .note -R .comment -R .note.gnu.build-id -O binary
+=======
+OBJCOPYFLAGS := -O binary
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 # Ensure system.dtb exists
 $(obj)/linked_dtb.o: $(obj)/system.dtb
@@ -33,9 +42,17 @@ quiet_cmd_strip = STRIP   $@
 	cmd_strip = $(STRIP) -K microblaze_start -K _end -K __log_buf \
 				-K _fdt_start vmlinux -o $@
 
+<<<<<<< HEAD
 UIMAGE_IN = $@
 UIMAGE_OUT = $@.ub
 UIMAGE_LOADADDR = $(CONFIG_KERNEL_BASE_ADDR)
+=======
+quiet_cmd_uimage = UIMAGE  $@.ub
+	cmd_uimage = $(CONFIG_SHELL) $(MKIMAGE) -A microblaze -O linux -T kernel \
+		-C none -n 'Linux-$(KERNELRELEASE)' \
+		-a $(CONFIG_KERNEL_BASE_ADDR) -e $(CONFIG_KERNEL_BASE_ADDR) \
+		-d $@ $@.ub
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 $(obj)/simpleImage.%: vmlinux FORCE
 	$(call if_changed,cp,.unstrip)

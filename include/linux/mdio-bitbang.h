@@ -2,8 +2,12 @@
 #define __LINUX_MDIO_BITBANG_H
 
 #include <linux/phy.h>
+<<<<<<< HEAD
 
 struct module;
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct mdiobb_ctrl;
 
@@ -32,8 +36,11 @@ struct mdiobb_ops {
 
 struct mdiobb_ctrl {
 	const struct mdiobb_ops *ops;
+<<<<<<< HEAD
 	/* reset callback */
 	int (*reset)(struct mii_bus *bus);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* The returned bus is not yet registered with the phy layer. */

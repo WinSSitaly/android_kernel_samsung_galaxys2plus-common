@@ -31,6 +31,7 @@
 #include <linux/if_link.h>
 
 #ifdef __KERNEL__
+<<<<<<< HEAD
 #include <linux/pm_qos.h>
 #include <linux/timer.h>
 #include <linux/bug.h>
@@ -39,11 +40,25 @@
 #include <asm/cache.h>
 #include <asm/byteorder.h>
 
+=======
+#include <linux/pm_qos_params.h>
+#include <linux/timer.h>
+#include <linux/delay.h>
+#include <linux/mm.h>
+#include <asm/atomic.h>
+#include <asm/cache.h>
+#include <asm/byteorder.h>
+
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/percpu.h>
 #include <linux/rculist.h>
 #include <linux/dmaengine.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/dynamic_queue_limits.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/ethtool.h>
 #include <net/net_namespace.h>
@@ -51,12 +66,18 @@
 #ifdef CONFIG_DCB
 #include <net/dcbnl.h>
 #endif
+<<<<<<< HEAD
 #include <net/netprio_cgroup.h>
 
 #include <linux/netdev_features.h>
 
 struct netpoll_info;
 struct device;
+=======
+
+struct vlan_group;
+struct netpoll_info;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct phy_device;
 /* 802.11 specific */
 struct wireless_dev;
@@ -64,6 +85,14 @@ struct wireless_dev;
 #define SET_ETHTOOL_OPS(netdev,ops) \
 	( (netdev)->ethtool_ops = (ops) )
 
+<<<<<<< HEAD
+=======
+#define HAVE_ALLOC_NETDEV		/* feature macro: alloc_xxxdev
+					   functions are available. */
+#define HAVE_FREE_NETDEV		/* free_netdev() */
+#define HAVE_NETDEV_PRIV		/* netdev_priv() */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* hardware address assignment types */
 #define NET_ADDR_PERM		0	/* address is permanent (default) */
 #define NET_ADDR_RANDOM		1	/* address is generated randomly */
@@ -145,20 +174,35 @@ static inline bool dev_xmit_complete(int rc)
  *	used.
  */
 
+<<<<<<< HEAD
 #if defined(CONFIG_WLAN) || IS_ENABLED(CONFIG_AX25)
+=======
+#if defined(CONFIG_WLAN) || defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # if defined(CONFIG_MAC80211_MESH)
 #  define LL_MAX_HEADER 128
 # else
 #  define LL_MAX_HEADER 96
 # endif
+<<<<<<< HEAD
 #elif IS_ENABLED(CONFIG_TR)
+=======
+#elif defined(CONFIG_TR) || defined(CONFIG_TR_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # define LL_MAX_HEADER 48
 #else
 # define LL_MAX_HEADER 32
 #endif
 
+<<<<<<< HEAD
 #if !IS_ENABLED(CONFIG_NET_IPIP) && !IS_ENABLED(CONFIG_NET_IPGRE) && \
     !IS_ENABLED(CONFIG_IPV6_SIT) && !IS_ENABLED(CONFIG_IPV6_TUNNEL)
+=======
+#if !defined(CONFIG_NET_IPIP) && !defined(CONFIG_NET_IPIP_MODULE) && \
+    !defined(CONFIG_NET_IPGRE) &&  !defined(CONFIG_NET_IPGRE_MODULE) && \
+    !defined(CONFIG_IPV6_SIT) && !defined(CONFIG_IPV6_SIT_MODULE) && \
+    !defined(CONFIG_IPV6_TUNNEL) && !defined(CONFIG_IPV6_TUNNEL_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAX_HEADER LL_MAX_HEADER
 #else
 #define MAX_HEADER (LL_MAX_HEADER + 48)
@@ -214,11 +258,14 @@ enum {
 #include <linux/cache.h>
 #include <linux/skbuff.h>
 
+<<<<<<< HEAD
 #ifdef CONFIG_RPS
 #include <linux/static_key.h>
 extern struct static_key rps_needed;
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct neighbour;
 struct neigh_parms;
 struct sk_buff;
@@ -232,9 +279,15 @@ struct netdev_hw_addr {
 #define NETDEV_HW_ADDR_T_SLAVE		3
 #define NETDEV_HW_ADDR_T_UNICAST	4
 #define NETDEV_HW_ADDR_T_MULTICAST	5
+<<<<<<< HEAD
 	bool			global_use;
 	int			refcount;
 	int			synced;
+=======
+	bool			synced;
+	bool			global_use;
+	int			refcount;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct rcu_head		rcu_head;
 };
 
@@ -259,8 +312,26 @@ struct netdev_hw_addr_list {
 	netdev_hw_addr_list_for_each(ha, &(dev)->mc)
 
 struct hh_cache {
+<<<<<<< HEAD
 	u16		hh_len;
 	u16		__pad;
+=======
+	struct hh_cache *hh_next;	/* Next entry			     */
+	atomic_t	hh_refcnt;	/* number of users                   */
+/*
+ * We want hh_output, hh_len, hh_lock and hh_data be a in a separate
+ * cache line on SMP.
+ * They are mostly read, but hh_refcnt may be changed quite frequently,
+ * incurring cache line ping pongs.
+ */
+	__be16		hh_type ____cacheline_aligned_in_smp;
+					/* protocol identifier, f.e ETH_P_IP
+                                         *  NOTE:  For VLANs, this will be the
+                                         *  encapuslated type. --BLG
+                                         */
+	u16		hh_len;		/* length of header */
+	int		(*hh_output)(struct sk_buff *skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	seqlock_t	hh_lock;
 
 	/* cached hardware header; allow for machine alignment needs.        */
@@ -272,6 +343,15 @@ struct hh_cache {
 	unsigned long	hh_data[HH_DATA_ALIGN(LL_MAX_HEADER) / sizeof(long)];
 };
 
+<<<<<<< HEAD
+=======
+static inline void hh_cache_put(struct hh_cache *hh)
+{
+	if (atomic_dec_and_test(&hh->hh_refcnt))
+		kfree(hh);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Reserve HH_DATA_MOD byte aligned hard_header_len, but at least that much.
  * Alternative is:
  *   dev->hard_header_len ? (dev->hard_header_len +
@@ -279,11 +359,22 @@ struct hh_cache {
  *
  * We could use other alignment values, but we must maintain the
  * relationship HH alignment <= LL alignment.
+<<<<<<< HEAD
+=======
+ *
+ * LL_ALLOCATED_SPACE also takes into account the tailroom the device
+ * may need.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 #define LL_RESERVED_SPACE(dev) \
 	((((dev)->hard_header_len+(dev)->needed_headroom)&~(HH_DATA_MOD - 1)) + HH_DATA_MOD)
 #define LL_RESERVED_SPACE_EXTRA(dev,extra) \
 	((((dev)->hard_header_len+(dev)->needed_headroom+(extra))&~(HH_DATA_MOD - 1)) + HH_DATA_MOD)
+<<<<<<< HEAD
+=======
+#define LL_ALLOCATED_SPACE(dev) \
+	((((dev)->hard_header_len+(dev)->needed_headroom+(dev)->needed_tailroom)&~(HH_DATA_MOD - 1)) + HH_DATA_MOD)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct header_ops {
 	int	(*create) (struct sk_buff *skb, struct net_device *dev,
@@ -291,7 +382,12 @@ struct header_ops {
 			   const void *saddr, unsigned len);
 	int	(*parse)(const struct sk_buff *skb, unsigned char *haddr);
 	int	(*rebuild)(struct sk_buff *skb);
+<<<<<<< HEAD
 	int	(*cache)(const struct neighbour *neigh, struct hh_cache *hh, __be16 type);
+=======
+#define HAVE_HEADER_CACHE
+	int	(*cache)(const struct neighbour *neigh, struct hh_cache *hh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void	(*cache_update)(struct hh_cache *hh,
 				const struct net_device *dev,
 				const unsigned char *haddr);
@@ -418,7 +514,11 @@ typedef rx_handler_result_t rx_handler_func_t(struct sk_buff **pskb);
 
 extern void __napi_schedule(struct napi_struct *n);
 
+<<<<<<< HEAD
 static inline bool napi_disable_pending(struct napi_struct *n)
+=======
+static inline int napi_disable_pending(struct napi_struct *n)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return test_bit(NAPI_STATE_DISABLE, &n->state);
 }
@@ -432,7 +532,11 @@ static inline bool napi_disable_pending(struct napi_struct *n)
  * insure only one NAPI poll instance runs.  We also make
  * sure there is no pending NAPI disable.
  */
+<<<<<<< HEAD
 static inline bool napi_schedule_prep(struct napi_struct *n)
+=======
+static inline int napi_schedule_prep(struct napi_struct *n)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return !napi_disable_pending(n) &&
 		!test_and_set_bit(NAPI_STATE_SCHED, &n->state);
@@ -452,6 +556,7 @@ static inline void napi_schedule(struct napi_struct *n)
 }
 
 /* Try to reschedule poll. Called by dev->poll() after napi_complete().  */
+<<<<<<< HEAD
 static inline bool napi_reschedule(struct napi_struct *napi)
 {
 	if (napi_schedule_prep(napi)) {
@@ -459,6 +564,15 @@ static inline bool napi_reschedule(struct napi_struct *napi)
 		return true;
 	}
 	return false;
+=======
+static inline int napi_reschedule(struct napi_struct *napi)
+{
+	if (napi_schedule_prep(napi)) {
+		__napi_schedule(napi);
+		return 1;
+	}
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -518,6 +632,7 @@ static inline void napi_synchronize(const struct napi_struct *n)
 #endif
 
 enum netdev_queue_state_t {
+<<<<<<< HEAD
 	__QUEUE_STATE_DRV_XOFF,
 	__QUEUE_STATE_STACK_XOFF,
 	__QUEUE_STATE_FROZEN,
@@ -535,6 +650,13 @@ enum netdev_queue_state_t {
  * of the XOFF bits are set in the state).  Drivers should not need to call
  * netif_xmit*stopped functions, they should only be using netif_tx_*.
  */
+=======
+	__QUEUE_STATE_XOFF,
+	__QUEUE_STATE_FROZEN,
+#define QUEUE_STATE_XOFF_OR_FROZEN ((1 << __QUEUE_STATE_XOFF)		| \
+				    (1 << __QUEUE_STATE_FROZEN))
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct netdev_queue {
 /*
@@ -542,8 +664,14 @@ struct netdev_queue {
  */
 	struct net_device	*dev;
 	struct Qdisc		*qdisc;
+<<<<<<< HEAD
 	struct Qdisc		*qdisc_sleeping;
 #ifdef CONFIG_SYSFS
+=======
+	unsigned long		state;
+	struct Qdisc		*qdisc_sleeping;
+#ifdef CONFIG_RPS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kobject		kobj;
 #endif
 #if defined(CONFIG_XPS) && defined(CONFIG_NUMA)
@@ -558,6 +686,7 @@ struct netdev_queue {
 	 * please use this field instead of dev->trans_start
 	 */
 	unsigned long		trans_start;
+<<<<<<< HEAD
 
 	/*
 	 * Number of TX timeouts for this queue
@@ -570,6 +699,8 @@ struct netdev_queue {
 #ifdef CONFIG_BQL
 	struct dql		dql;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } ____cacheline_aligned_in_smp;
 
 static inline int netdev_queue_numa_node_read(const struct netdev_queue *q)
@@ -598,7 +729,11 @@ struct rps_map {
 	struct rcu_head rcu;
 	u16 cpus[0];
 };
+<<<<<<< HEAD
 #define RPS_MAP_SIZE(_num) (sizeof(struct rps_map) + ((_num) * sizeof(u16)))
+=======
+#define RPS_MAP_SIZE(_num) (sizeof(struct rps_map) + (_num * sizeof(u16)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The rps_dev_flow structure contains the mapping of a flow to a CPU, the
@@ -622,7 +757,11 @@ struct rps_dev_flow_table {
 	struct rps_dev_flow flows[0];
 };
 #define RPS_DEV_FLOW_TABLE_SIZE(_num) (sizeof(struct rps_dev_flow_table) + \
+<<<<<<< HEAD
     ((_num) * sizeof(struct rps_dev_flow)))
+=======
+    (_num * sizeof(struct rps_dev_flow)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * The rps_sock_flow_table contains mappings of flows to the last CPU
@@ -633,7 +772,11 @@ struct rps_sock_flow_table {
 	u16 ents[0];
 };
 #define	RPS_SOCK_FLOW_TABLE_SIZE(_num) (sizeof(struct rps_sock_flow_table) + \
+<<<<<<< HEAD
     ((_num) * sizeof(u16)))
+=======
+    (_num * sizeof(u16)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define RPS_NO_CPU 0xffff
 
@@ -685,7 +828,11 @@ struct xps_map {
 	struct rcu_head rcu;
 	u16 queues[0];
 };
+<<<<<<< HEAD
 #define XPS_MAP_SIZE(_num) (sizeof(struct xps_map) + ((_num) * sizeof(u16)))
+=======
+#define XPS_MAP_SIZE(_num) (sizeof(struct xps_map) + (_num * sizeof(u16)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define XPS_MIN_MAP_ALLOC ((L1_CACHE_BYTES - sizeof(struct xps_map))	\
     / sizeof(u16))
 
@@ -708,6 +855,7 @@ struct netdev_tc_txq {
 	u16 offset;
 };
 
+<<<<<<< HEAD
 #if defined(CONFIG_FCOE) || defined(CONFIG_FCOE_MODULE)
 /*
  * This structure is to hold information about the device
@@ -725,6 +873,8 @@ struct netdev_fcoe_hbainfo {
 };
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This structure defines the management hooks for network devices.
  * The following hooks can be defined; unless noted otherwise, they are
@@ -765,8 +915,14 @@ struct netdev_fcoe_hbainfo {
  *
  * void (*ndo_set_rx_mode)(struct net_device *dev);
  *	This function is called device changes address list filtering.
+<<<<<<< HEAD
  *	If driver handles unicast address filtering, it should set
  *	IFF_UNICAST_FLT to its priv_flags.
+=======
+ *
+ * void (*ndo_set_multicast_list)(struct net_device *dev);
+ *	This function is called when the multicast address list changes.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * int (*ndo_set_mac_address)(struct net_device *dev, void *addr);
  *	This function  is called when the Media Access Control address
@@ -809,11 +965,25 @@ struct netdev_fcoe_hbainfo {
  *	3. Update dev->stats asynchronously and atomically, and define
  *	   neither operation.
  *
+<<<<<<< HEAD
  * int (*ndo_vlan_rx_add_vid)(struct net_device *dev, unsigned short vid);
  *	If device support VLAN filtering (dev->features & NETIF_F_HW_VLAN_FILTER)
  *	this function is called when a VLAN id is registered.
  *
  * int (*ndo_vlan_rx_kill_vid)(struct net_device *dev, unsigned short vid);
+=======
+ * void (*ndo_vlan_rx_register)(struct net_device *dev, struct vlan_group *grp);
+ *	If device support VLAN receive acceleration
+ *	(ie. dev->features & NETIF_F_HW_VLAN_RX), then this function is called
+ *	when vlan groups for the device changes.  Note: grp is NULL
+ *	if no vlan's groups are being used.
+ *
+ * void (*ndo_vlan_rx_add_vid)(struct net_device *dev, unsigned short vid);
+ *	If device support VLAN filtering (dev->features & NETIF_F_HW_VLAN_FILTER)
+ *	this function is called when a VLAN id is registered.
+ *
+ * void (*ndo_vlan_rx_kill_vid)(struct net_device *dev, unsigned short vid);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	If device support VLAN filtering (dev->features & NETIF_F_HW_VLAN_FILTER)
  *	this function is called when a VLAN id is unregistered.
  *
@@ -823,7 +993,10 @@ struct netdev_fcoe_hbainfo {
  * int (*ndo_set_vf_mac)(struct net_device *dev, int vf, u8* mac);
  * int (*ndo_set_vf_vlan)(struct net_device *dev, int vf, u16 vlan, u8 qos);
  * int (*ndo_set_vf_tx_rate)(struct net_device *dev, int vf, int rate);
+<<<<<<< HEAD
  * int (*ndo_set_vf_spoofchk)(struct net_device *dev, int vf, bool setting);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * int (*ndo_get_vf_config)(struct net_device *dev,
  *			    int vf, struct ifla_vf_info *ivf);
  * int (*ndo_set_vf_port)(struct net_device *dev, int vf,
@@ -865,6 +1038,7 @@ struct netdev_fcoe_hbainfo {
  *	perform necessary setup and returns 1 to indicate the device is set up
  *	successfully to perform DDP on this I/O, otherwise this returns 0.
  *
+<<<<<<< HEAD
  * int (*ndo_fcoe_get_hbainfo)(struct net_device *dev,
  *			       struct netdev_fcoe_hbainfo *hbainfo);
  *	Called when the FCoE Protocol stack wants information on the underlying
@@ -872,6 +1046,8 @@ struct netdev_fcoe_hbainfo {
  *	register attributes with Fiber Channel management service as per the
  *	FC-GS Fabric Device Management Information(FDMI) specification.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * int (*ndo_fcoe_get_wwn)(struct net_device *dev, u64 *wwn, int type);
  *	Called when the underlying device wants to override default World Wide
  *	Name (WWN) generation mechanism in FCoE protocol stack to pass its own
@@ -894,18 +1070,30 @@ struct netdev_fcoe_hbainfo {
  *	Called to release previously enslaved netdev.
  *
  *      Feature/offload setting functions.
+<<<<<<< HEAD
  * netdev_features_t (*ndo_fix_features)(struct net_device *dev,
  *		netdev_features_t features);
+=======
+ * u32 (*ndo_fix_features)(struct net_device *dev, u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	Adjusts the requested feature flags according to device-specific
  *	constraints, and returns the resulting flags. Must not modify
  *	the device state.
  *
+<<<<<<< HEAD
  * int (*ndo_set_features)(struct net_device *dev, netdev_features_t features);
+=======
+ * int (*ndo_set_features)(struct net_device *dev, u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	Called to update device configuration to new features. Passed
  *	feature set might be less than what was returned by ndo_fix_features()).
  *	Must return >0 or -errno if it changed dev->features itself.
  *
  */
+<<<<<<< HEAD
+=======
+#define HAVE_NET_DEVICE_OPS
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct net_device_ops {
 	int			(*ndo_init)(struct net_device *dev);
 	void			(*ndo_uninit)(struct net_device *dev);
@@ -918,6 +1106,10 @@ struct net_device_ops {
 	void			(*ndo_change_rx_flags)(struct net_device *dev,
 						       int flags);
 	void			(*ndo_set_rx_mode)(struct net_device *dev);
+<<<<<<< HEAD
+=======
+	void			(*ndo_set_multicast_list)(struct net_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			(*ndo_set_mac_address)(struct net_device *dev,
 						       void *addr);
 	int			(*ndo_validate_addr)(struct net_device *dev);
@@ -935,9 +1127,17 @@ struct net_device_ops {
 						     struct rtnl_link_stats64 *storage);
 	struct net_device_stats* (*ndo_get_stats)(struct net_device *dev);
 
+<<<<<<< HEAD
 	int			(*ndo_vlan_rx_add_vid)(struct net_device *dev,
 						       unsigned short vid);
 	int			(*ndo_vlan_rx_kill_vid)(struct net_device *dev,
+=======
+	void			(*ndo_vlan_rx_register)(struct net_device *dev,
+						        struct vlan_group *grp);
+	void			(*ndo_vlan_rx_add_vid)(struct net_device *dev,
+						       unsigned short vid);
+	void			(*ndo_vlan_rx_kill_vid)(struct net_device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						        unsigned short vid);
 #ifdef CONFIG_NET_POLL_CONTROLLER
 	void                    (*ndo_poll_controller)(struct net_device *dev);
@@ -951,8 +1151,11 @@ struct net_device_ops {
 						   int queue, u16 vlan, u8 qos);
 	int			(*ndo_set_vf_tx_rate)(struct net_device *dev,
 						      int vf, int rate);
+<<<<<<< HEAD
 	int			(*ndo_set_vf_spoofchk)(struct net_device *dev,
 						       int vf, bool setting);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			(*ndo_get_vf_config)(struct net_device *dev,
 						     int vf,
 						     struct ifla_vf_info *ivf);
@@ -962,7 +1165,11 @@ struct net_device_ops {
 	int			(*ndo_get_vf_port)(struct net_device *dev,
 						   int vf, struct sk_buff *skb);
 	int			(*ndo_setup_tc)(struct net_device *dev, u8 tc);
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_FCOE)
+=======
+#if defined(CONFIG_FCOE) || defined(CONFIG_FCOE_MODULE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			(*ndo_fcoe_enable)(struct net_device *dev);
 	int			(*ndo_fcoe_disable)(struct net_device *dev);
 	int			(*ndo_fcoe_ddp_setup)(struct net_device *dev,
@@ -975,17 +1182,23 @@ struct net_device_ops {
 						       u16 xid,
 						       struct scatterlist *sgl,
 						       unsigned int sgc);
+<<<<<<< HEAD
 	int			(*ndo_fcoe_get_hbainfo)(struct net_device *dev,
 							struct netdev_fcoe_hbainfo *hbainfo);
 #endif
 
 #if IS_ENABLED(CONFIG_LIBFCOE)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define NETDEV_FCOE_WWNN 0
 #define NETDEV_FCOE_WWPN 1
 	int			(*ndo_fcoe_get_wwn)(struct net_device *dev,
 						    u64 *wwn, int type);
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_RFS_ACCEL
 	int			(*ndo_rx_flow_steer)(struct net_device *dev,
 						     const struct sk_buff *skb,
@@ -996,12 +1209,19 @@ struct net_device_ops {
 						 struct net_device *slave_dev);
 	int			(*ndo_del_slave)(struct net_device *dev,
 						 struct net_device *slave_dev);
+<<<<<<< HEAD
 	netdev_features_t	(*ndo_fix_features)(struct net_device *dev,
 						    netdev_features_t features);
 	int			(*ndo_set_features)(struct net_device *dev,
 						    netdev_features_t features);
 	int			(*ndo_neigh_construct)(struct neighbour *n);
 	void			(*ndo_neigh_destroy)(struct neighbour *n);
+=======
+	u32			(*ndo_fix_features)(struct net_device *dev,
+						    u32 features);
+	int			(*ndo_set_features)(struct net_device *dev,
+						    u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -1023,7 +1243,11 @@ struct net_device {
 	 */
 	char			name[IFNAMSIZ];
 
+<<<<<<< HEAD
 	struct pm_qos_request	pm_qos_req;
+=======
+	struct pm_qos_request_list pm_qos_req;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* device name hash chain */
 	struct hlist_node	name_hlist;
@@ -1051,6 +1275,7 @@ struct net_device {
 	struct list_head	unreg_list;
 
 	/* currently active device features */
+<<<<<<< HEAD
 	netdev_features_t	features;
 	/* user-changeable features */
 	netdev_features_t	hw_features;
@@ -1058,6 +1283,93 @@ struct net_device {
 	netdev_features_t	wanted_features;
 	/* mask of features inheritable by VLAN devices */
 	netdev_features_t	vlan_features;
+=======
+	u32			features;
+	/* user-changeable features */
+	u32			hw_features;
+	/* user-requested features */
+	u32			wanted_features;
+	/* mask of features inheritable by VLAN devices */
+	u32			vlan_features;
+
+	/* Net device feature bits; if you change something,
+	 * also update netdev_features_strings[] in ethtool.c */
+
+#define NETIF_F_SG		1	/* Scatter/gather IO. */
+#define NETIF_F_IP_CSUM		2	/* Can checksum TCP/UDP over IPv4. */
+#define NETIF_F_NO_CSUM		4	/* Does not require checksum. F.e. loopack. */
+#define NETIF_F_HW_CSUM		8	/* Can checksum all the packets. */
+#define NETIF_F_IPV6_CSUM	16	/* Can checksum TCP/UDP over IPV6 */
+#define NETIF_F_HIGHDMA		32	/* Can DMA to high memory. */
+#define NETIF_F_FRAGLIST	64	/* Scatter/gather IO. */
+#define NETIF_F_HW_VLAN_TX	128	/* Transmit VLAN hw acceleration */
+#define NETIF_F_HW_VLAN_RX	256	/* Receive VLAN hw acceleration */
+#define NETIF_F_HW_VLAN_FILTER	512	/* Receive filtering on VLAN */
+#define NETIF_F_VLAN_CHALLENGED	1024	/* Device cannot handle VLAN packets */
+#define NETIF_F_GSO		2048	/* Enable software GSO. */
+#define NETIF_F_LLTX		4096	/* LockLess TX - deprecated. Please */
+					/* do not use LLTX in new drivers */
+#define NETIF_F_NETNS_LOCAL	8192	/* Does not change network namespaces */
+#define NETIF_F_GRO		16384	/* Generic receive offload */
+#define NETIF_F_LRO		32768	/* large receive offload */
+
+/* the GSO_MASK reserves bits 16 through 23 */
+#define NETIF_F_FCOE_CRC	(1 << 24) /* FCoE CRC32 */
+#define NETIF_F_SCTP_CSUM	(1 << 25) /* SCTP checksum offload */
+#define NETIF_F_FCOE_MTU	(1 << 26) /* Supports max FCoE MTU, 2158 bytes*/
+#define NETIF_F_NTUPLE		(1 << 27) /* N-tuple filters supported */
+#define NETIF_F_RXHASH		(1 << 28) /* Receive hashing offload */
+#define NETIF_F_RXCSUM		(1 << 29) /* Receive checksumming offload */
+#define NETIF_F_NOCACHE_COPY	(1 << 30) /* Use no-cache copyfromuser */
+#define NETIF_F_LOOPBACK	(1 << 31) /* Enable loopback */
+
+	/* Segmentation offload features */
+#define NETIF_F_GSO_SHIFT	16
+#define NETIF_F_GSO_MASK	0x00ff0000
+#define NETIF_F_TSO		(SKB_GSO_TCPV4 << NETIF_F_GSO_SHIFT)
+#define NETIF_F_UFO		(SKB_GSO_UDP << NETIF_F_GSO_SHIFT)
+#define NETIF_F_GSO_ROBUST	(SKB_GSO_DODGY << NETIF_F_GSO_SHIFT)
+#define NETIF_F_TSO_ECN		(SKB_GSO_TCP_ECN << NETIF_F_GSO_SHIFT)
+#define NETIF_F_TSO6		(SKB_GSO_TCPV6 << NETIF_F_GSO_SHIFT)
+#define NETIF_F_FSO		(SKB_GSO_FCOE << NETIF_F_GSO_SHIFT)
+
+	/* Features valid for ethtool to change */
+	/* = all defined minus driver/device-class-related */
+#define NETIF_F_NEVER_CHANGE	(NETIF_F_VLAN_CHALLENGED | \
+				  NETIF_F_LLTX | NETIF_F_NETNS_LOCAL)
+#define NETIF_F_ETHTOOL_BITS	(0xff3fffff & ~NETIF_F_NEVER_CHANGE)
+
+	/* List of features with software fallbacks. */
+#define NETIF_F_GSO_SOFTWARE	(NETIF_F_TSO | NETIF_F_TSO_ECN | \
+				 NETIF_F_TSO6 | NETIF_F_UFO)
+
+
+#define NETIF_F_GEN_CSUM	(NETIF_F_NO_CSUM | NETIF_F_HW_CSUM)
+#define NETIF_F_V4_CSUM		(NETIF_F_GEN_CSUM | NETIF_F_IP_CSUM)
+#define NETIF_F_V6_CSUM		(NETIF_F_GEN_CSUM | NETIF_F_IPV6_CSUM)
+#define NETIF_F_ALL_CSUM	(NETIF_F_V4_CSUM | NETIF_F_V6_CSUM)
+
+#define NETIF_F_ALL_TSO 	(NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_TSO_ECN)
+
+#define NETIF_F_ALL_FCOE	(NETIF_F_FCOE_CRC | NETIF_F_FCOE_MTU | \
+				 NETIF_F_FSO)
+
+	/*
+	 * If one device supports one of these features, then enable them
+	 * for all in netdev_increment_features.
+	 */
+#define NETIF_F_ONE_FOR_ALL	(NETIF_F_GSO_SOFTWARE | NETIF_F_GSO_ROBUST | \
+				 NETIF_F_SG | NETIF_F_HIGHDMA |		\
+				 NETIF_F_FRAGLIST | NETIF_F_VLAN_CHALLENGED)
+	/*
+	 * If one device doesn't support one of these features, then disable it
+	 * for all in netdev_increment_features.
+	 */
+#define NETIF_F_ALL_FOR_ALL	(NETIF_F_NOCACHE_COPY | NETIF_F_FSO)
+
+	/* changeable features with no special hardware requirements */
+#define NETIF_F_SOFT_FEATURES	(NETIF_F_GSO | NETIF_F_GRO)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Interface index. Unique device identifier	*/
 	int			ifindex;
@@ -1083,8 +1395,12 @@ struct net_device {
 	const struct header_ops *header_ops;
 
 	unsigned int		flags;	/* interface flags (a la BSD)	*/
+<<<<<<< HEAD
 	unsigned int		priv_flags; /* Like 'flags' but invisible to userspace.
 					     * See if.h for definitions. */
+=======
+	unsigned int		priv_flags; /* Like 'flags' but invisible to userspace. */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned short		gflags;
 	unsigned short		padded;	/* How much padding added by alloc_netdev() */
 
@@ -1109,24 +1425,39 @@ struct net_device {
 	unsigned char		perm_addr[MAX_ADDR_LEN]; /* permanent hw address */
 	unsigned char		addr_assign_type; /* hw address assignment type */
 	unsigned char		addr_len;	/* hardware address length	*/
+<<<<<<< HEAD
 	unsigned char		neigh_priv_len;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned short          dev_id;		/* for shared network cards */
 
 	spinlock_t		addr_list_lock;
 	struct netdev_hw_addr_list	uc;	/* Unicast mac addresses */
 	struct netdev_hw_addr_list	mc;	/* Multicast mac addresses */
+<<<<<<< HEAD
 	bool			uc_promisc;
+=======
+	int			uc_promisc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int		promiscuity;
 	unsigned int		allmulti;
 
 
 	/* Protocol specific pointers */
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_VLAN_8021Q)
 	struct vlan_info __rcu	*vlan_info;	/* VLAN info */
 #endif
 #if IS_ENABLED(CONFIG_NET_DSA)
 	struct dsa_switch_tree	*dsa_ptr;	/* dsa specific data */
+=======
+#if defined(CONFIG_VLAN_8021Q) || defined(CONFIG_VLAN_8021Q_MODULE)
+	struct vlan_group __rcu	*vlgrp;		/* VLAN group */
+#endif
+#ifdef CONFIG_NET_DSA
+	void			*dsa_ptr;	/* dsa specific data */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 	void 			*atalk_ptr;	/* AppleTalk link 	*/
 	struct in_device __rcu	*ip_ptr;	/* IPv4 specific data	*/
@@ -1162,11 +1493,17 @@ struct net_device {
 
 	unsigned char		broadcast[MAX_ADDR_LEN];	/* hw bcast add	*/
 
+<<<<<<< HEAD
 #ifdef CONFIG_SYSFS
 	struct kset		*queues_kset;
 #endif
 
 #ifdef CONFIG_RPS
+=======
+#ifdef CONFIG_RPS
+	struct kset		*queues_kset;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct netdev_rx_queue	*_rx;
 
 	/* Number of RX queues allocated at register_netdev() time */
@@ -1279,8 +1616,11 @@ struct net_device {
 	/* for setting kernel sock attribute on TCP connection setup */
 #define GSO_MAX_SIZE		65536
 	unsigned int		gso_max_size;
+<<<<<<< HEAD
 #define GSO_MAX_SEGS		65535
 	u16			gso_max_segs;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_DCB
 	/* Data Center Bridging netlink ops */
@@ -1290,6 +1630,7 @@ struct net_device {
 	struct netdev_tc_txq tc_to_txq[TC_MAX_QUEUE];
 	u8 prio_tc_map[TC_BITMASK + 1];
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_FCOE)
 	/* max exchange id for FCoE LRO by ddp */
 	unsigned int		fcoe_ddp_xid;
@@ -1297,6 +1638,15 @@ struct net_device {
 #if IS_ENABLED(CONFIG_NETPRIO_CGROUP)
 	struct netprio_map __rcu *priomap;
 #endif
+=======
+#if defined(CONFIG_FCOE) || defined(CONFIG_FCOE_MODULE)
+	/* max exchange id for FCoE LRO by ddp */
+	unsigned int		fcoe_ddp_xid;
+#endif
+	/* n-tuple filter list attached to this device */
+	struct ethtool_rx_ntuple_list ethtool_ntuple_list;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* phy device may attach itself for hardware timestamping */
 	struct phy_device *phydev;
 
@@ -1405,6 +1755,18 @@ static inline bool netdev_uses_dsa_tags(struct net_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifndef CONFIG_NET_NS
+static inline void skb_set_dev(struct sk_buff *skb, struct net_device *dev)
+{
+	skb->dev = dev;
+}
+#else /* CONFIG_NET_NS */
+void skb_set_dev(struct sk_buff *skb, struct net_device *dev);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline bool netdev_uses_trailer_tags(struct net_device *dev)
 {
 #ifdef CONFIG_NET_DSA_TAG_TRAILER
@@ -1491,17 +1853,25 @@ struct packet_type {
 					 struct packet_type *,
 					 struct net_device *);
 	struct sk_buff		*(*gso_segment)(struct sk_buff *skb,
+<<<<<<< HEAD
 						netdev_features_t features);
+=======
+						u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int			(*gso_send_check)(struct sk_buff *skb);
 	struct sk_buff		**(*gro_receive)(struct sk_buff **head,
 					       struct sk_buff *skb);
 	int			(*gro_complete)(struct sk_buff *skb);
+<<<<<<< HEAD
 	bool			(*id_match)(struct packet_type *ptype,
 					    struct sock *sk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void			*af_packet_priv;
 	struct list_head	list;
 };
 
+<<<<<<< HEAD
 #include <linux/notifier.h>
 
 /* netdevice notifier chain. Please remember to update the rtnetlink
@@ -1537,6 +1907,11 @@ extern int unregister_netdevice_notifier(struct notifier_block *nb);
 extern int call_netdevice_notifiers(unsigned long val, struct net_device *dev);
 
 
+=======
+#include <linux/interrupt.h>
+#include <linux/notifier.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern rwlock_t				dev_base_lock;		/* Device list lock */
 
 
@@ -1619,9 +1994,18 @@ static inline void unregister_netdevice(struct net_device *dev)
 extern int 		netdev_refcnt_read(const struct net_device *dev);
 extern void		free_netdev(struct net_device *dev);
 extern void		synchronize_net(void);
+<<<<<<< HEAD
 extern int		init_dummy_netdev(struct net_device *dev);
 extern void		netdev_resync_ops(struct net_device *dev);
 
+=======
+extern int 		register_netdevice_notifier(struct notifier_block *nb);
+extern int		unregister_netdevice_notifier(struct notifier_block *nb);
+extern int		init_dummy_netdev(struct net_device *dev);
+extern void		netdev_resync_ops(struct net_device *dev);
+
+extern int call_netdevice_notifiers(unsigned long val, struct net_device *dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern struct net_device	*dev_get_by_index(struct net *net, int ifindex);
 extern struct net_device	*__dev_get_by_index(struct net *net, int ifindex);
 extern struct net_device	*dev_get_by_index_rcu(struct net *net, int ifindex);
@@ -1757,11 +2141,20 @@ static inline void input_queue_tail_incr_save(struct softnet_data *sd,
 
 DECLARE_PER_CPU_ALIGNED(struct softnet_data, softnet_data);
 
+<<<<<<< HEAD
+=======
+#define HAVE_NETIF_QUEUE
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void __netif_schedule(struct Qdisc *q);
 
 static inline void netif_schedule_queue(struct netdev_queue *txq)
 {
+<<<<<<< HEAD
 	if (!(txq->state & QUEUE_STATE_ANY_XOFF))
+=======
+	if (!test_bit(__QUEUE_STATE_XOFF, &txq->state))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__netif_schedule(txq->qdisc);
 }
 
@@ -1775,7 +2168,11 @@ static inline void netif_tx_schedule_all(struct net_device *dev)
 
 static inline void netif_tx_start_queue(struct netdev_queue *dev_queue)
 {
+<<<<<<< HEAD
 	clear_bit(__QUEUE_STATE_DRV_XOFF, &dev_queue->state);
+=======
+	clear_bit(__QUEUE_STATE_XOFF, &dev_queue->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1807,7 +2204,11 @@ static inline void netif_tx_wake_queue(struct netdev_queue *dev_queue)
 		return;
 	}
 #endif
+<<<<<<< HEAD
 	if (test_and_clear_bit(__QUEUE_STATE_DRV_XOFF, &dev_queue->state))
+=======
+	if (test_and_clear_bit(__QUEUE_STATE_XOFF, &dev_queue->state))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__netif_schedule(dev_queue->qdisc);
 }
 
@@ -1839,7 +2240,11 @@ static inline void netif_tx_stop_queue(struct netdev_queue *dev_queue)
 		pr_info("netif_stop_queue() cannot be called before register_netdev()\n");
 		return;
 	}
+<<<<<<< HEAD
 	set_bit(__QUEUE_STATE_DRV_XOFF, &dev_queue->state);
+=======
+	set_bit(__QUEUE_STATE_XOFF, &dev_queue->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1864,9 +2269,15 @@ static inline void netif_tx_stop_all_queues(struct net_device *dev)
 	}
 }
 
+<<<<<<< HEAD
 static inline bool netif_tx_queue_stopped(const struct netdev_queue *dev_queue)
 {
 	return test_bit(__QUEUE_STATE_DRV_XOFF, &dev_queue->state);
+=======
+static inline int netif_tx_queue_stopped(const struct netdev_queue *dev_queue)
+{
+	return test_bit(__QUEUE_STATE_XOFF, &dev_queue->state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1875,11 +2286,16 @@ static inline bool netif_tx_queue_stopped(const struct netdev_queue *dev_queue)
  *
  *	Test if transmit queue on device is currently unable to send.
  */
+<<<<<<< HEAD
 static inline bool netif_queue_stopped(const struct net_device *dev)
+=======
+static inline int netif_queue_stopped(const struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return netif_tx_queue_stopped(netdev_get_tx_queue(dev, 0));
 }
 
+<<<<<<< HEAD
 static inline bool netif_xmit_stopped(const struct netdev_queue *dev_queue)
 {
 	return dev_queue->state & QUEUE_STATE_ANY_XOFF;
@@ -1960,6 +2376,11 @@ static inline void netdev_tx_reset_queue(struct netdev_queue *q)
 static inline void netdev_reset_queue(struct net_device *dev_queue)
 {
 	netdev_tx_reset_queue(netdev_get_tx_queue(dev_queue, 0));
+=======
+static inline int netif_tx_queue_frozen_or_stopped(const struct netdev_queue *dev_queue)
+{
+	return dev_queue->state & QUEUE_STATE_XOFF_OR_FROZEN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1968,7 +2389,11 @@ static inline void netdev_reset_queue(struct net_device *dev_queue)
  *
  *	Test if the device has been brought up.
  */
+<<<<<<< HEAD
 static inline bool netif_running(const struct net_device *dev)
+=======
+static inline int netif_running(const struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return test_bit(__LINK_STATE_START, &dev->state);
 }
@@ -2018,16 +2443,26 @@ static inline void netif_stop_subqueue(struct net_device *dev, u16 queue_index)
  *
  * Check individual transmit queue of a device with multiple transmit queues.
  */
+<<<<<<< HEAD
 static inline bool __netif_subqueue_stopped(const struct net_device *dev,
 					    u16 queue_index)
+=======
+static inline int __netif_subqueue_stopped(const struct net_device *dev,
+					 u16 queue_index)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct netdev_queue *txq = netdev_get_tx_queue(dev, queue_index);
 
 	return netif_tx_queue_stopped(txq);
 }
 
+<<<<<<< HEAD
 static inline bool netif_subqueue_stopped(const struct net_device *dev,
 					  struct sk_buff *skb)
+=======
+static inline int netif_subqueue_stopped(const struct net_device *dev,
+					 struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return __netif_subqueue_stopped(dev, skb_get_queue_mapping(skb));
 }
@@ -2046,7 +2481,11 @@ static inline void netif_wake_subqueue(struct net_device *dev, u16 queue_index)
 	if (netpoll_trap())
 		return;
 #endif
+<<<<<<< HEAD
 	if (test_and_clear_bit(__QUEUE_STATE_DRV_XOFF, &txq->state))
+=======
+	if (test_and_clear_bit(__QUEUE_STATE_XOFF, &txq->state))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		__netif_schedule(txq->qdisc);
 }
 
@@ -2066,7 +2505,11 @@ static inline u16 skb_tx_hash(const struct net_device *dev,
  *
  * Check if device has multiple transmit queues
  */
+<<<<<<< HEAD
 static inline bool netif_is_multiqueue(const struct net_device *dev)
+=======
+static inline int netif_is_multiqueue(const struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return dev->num_tx_queues > 1;
 }
@@ -2109,8 +2552,15 @@ extern void dev_kfree_skb_irq(struct sk_buff *skb);
  */
 extern void dev_kfree_skb_any(struct sk_buff *skb);
 
+<<<<<<< HEAD
 extern int		netif_rx(struct sk_buff *skb);
 extern int		netif_rx_ni(struct sk_buff *skb);
+=======
+#define HAVE_NETIF_RX 1
+extern int		netif_rx(struct sk_buff *skb);
+extern int		netif_rx_ni(struct sk_buff *skb);
+#define HAVE_NETIF_RECEIVE_SKB 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int		netif_receive_skb(struct sk_buff *skb);
 extern gro_result_t	dev_gro_receive(struct napi_struct *napi,
 					struct sk_buff *skb);
@@ -2136,7 +2586,11 @@ extern int netdev_rx_handler_register(struct net_device *dev,
 				      void *rx_handler_data);
 extern void netdev_rx_handler_unregister(struct net_device *dev);
 
+<<<<<<< HEAD
 extern bool		dev_valid_name(const char *name);
+=======
+extern int		dev_valid_name(const char *name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int		dev_ioctl(struct net *net, unsigned int cmd, void __user *);
 extern int		dev_ethtool(struct net *net, struct ifreq *);
 extern unsigned		dev_get_flags(const struct net_device *);
@@ -2170,7 +2624,11 @@ extern void netdev_run_todo(void);
  */
 static inline void dev_put(struct net_device *dev)
 {
+<<<<<<< HEAD
 	this_cpu_dec(*dev->pcpu_refcnt);
+=======
+	irqsafe_cpu_dec(*dev->pcpu_refcnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2181,7 +2639,11 @@ static inline void dev_put(struct net_device *dev)
  */
 static inline void dev_hold(struct net_device *dev)
 {
+<<<<<<< HEAD
 	this_cpu_inc(*dev->pcpu_refcnt);
+=======
+	irqsafe_cpu_inc(*dev->pcpu_refcnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Carrier loss detection, dial on demand. The functions netif_carrier_on
@@ -2202,7 +2664,11 @@ extern void linkwatch_forget_dev(struct net_device *dev);
  *
  * Check if carrier is present on device
  */
+<<<<<<< HEAD
 static inline bool netif_carrier_ok(const struct net_device *dev)
+=======
+static inline int netif_carrier_ok(const struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return !test_bit(__LINK_STATE_NOCARRIER, &dev->state);
 }
@@ -2254,7 +2720,11 @@ static inline void netif_dormant_off(struct net_device *dev)
  *
  * Check if carrier is present on device
  */
+<<<<<<< HEAD
 static inline bool netif_dormant(const struct net_device *dev)
+=======
+static inline int netif_dormant(const struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return test_bit(__LINK_STATE_DORMANT, &dev->state);
 }
@@ -2266,7 +2736,11 @@ static inline bool netif_dormant(const struct net_device *dev)
  *
  * Check if carrier is operational
  */
+<<<<<<< HEAD
 static inline bool netif_oper_up(const struct net_device *dev)
+=======
+static inline int netif_oper_up(const struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return (dev->operstate == IF_OPER_UP ||
 		dev->operstate == IF_OPER_UNKNOWN /* backward compat */);
@@ -2278,7 +2752,11 @@ static inline bool netif_oper_up(const struct net_device *dev)
  *
  * Check if device has not been removed from system.
  */
+<<<<<<< HEAD
 static inline bool netif_device_present(struct net_device *dev)
+=======
+static inline int netif_device_present(struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return test_bit(__LINK_STATE_PRESENT, &dev->state);
 }
@@ -2290,6 +2768,10 @@ extern void netif_device_attach(struct net_device *dev);
 /*
  * Network interface message level settings
  */
+<<<<<<< HEAD
+=======
+#define HAVE_NETIF_MSG 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum {
 	NETIF_MSG_DRV		= 0x0001,
@@ -2348,9 +2830,15 @@ static inline void __netif_tx_lock_bh(struct netdev_queue *txq)
 	txq->xmit_lock_owner = smp_processor_id();
 }
 
+<<<<<<< HEAD
 static inline bool __netif_tx_trylock(struct netdev_queue *txq)
 {
 	bool ok = spin_trylock(&txq->_xmit_lock);
+=======
+static inline int __netif_tx_trylock(struct netdev_queue *txq)
+{
+	int ok = spin_trylock(&txq->_xmit_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (likely(ok))
 		txq->xmit_lock_owner = smp_processor_id();
 	return ok;
@@ -2465,11 +2953,14 @@ static inline void netif_addr_lock(struct net_device *dev)
 	spin_lock(&dev->addr_list_lock);
 }
 
+<<<<<<< HEAD
 static inline void netif_addr_lock_nested(struct net_device *dev)
 {
 	spin_lock_nested(&dev->addr_list_lock, SINGLE_DEPTH_NESTING);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void netif_addr_lock_bh(struct net_device *dev)
 {
 	spin_lock_bh(&dev->addr_list_lock);
@@ -2571,8 +3062,11 @@ extern void		dev_load(struct net *net, const char *name);
 extern void		dev_mcast_init(void);
 extern struct rtnl_link_stats64 *dev_get_stats(struct net_device *dev,
 					       struct rtnl_link_stats64 *storage);
+<<<<<<< HEAD
 extern void netdev_stats_to_stats64(struct rtnl_link_stats64 *stats64,
 				    const struct net_device_stats *netdev_stats);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int		netdev_max_backlog;
 extern int		netdev_tstamp_prequeue;
@@ -2582,8 +3076,12 @@ extern int		netdev_set_master(struct net_device *dev, struct net_device *master)
 extern int netdev_set_bond_master(struct net_device *dev,
 				  struct net_device *master);
 extern int skb_checksum_help(struct sk_buff *skb);
+<<<<<<< HEAD
 extern struct sk_buff *skb_gso_segment(struct sk_buff *skb,
 	netdev_features_t features);
+=======
+extern struct sk_buff *skb_gso_segment(struct sk_buff *skb, u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_BUG
 extern void netdev_rx_csum_fault(struct net_device *dev);
 #else
@@ -2610,6 +3108,7 @@ extern const char *netdev_drivername(const struct net_device *dev);
 
 extern void linkwatch_run_queue(void);
 
+<<<<<<< HEAD
 static inline netdev_features_t netdev_get_wanted_features(
 	struct net_device *dev)
 {
@@ -2617,6 +3116,14 @@ static inline netdev_features_t netdev_get_wanted_features(
 }
 netdev_features_t netdev_increment_features(netdev_features_t all,
 	netdev_features_t one, netdev_features_t mask);
+=======
+static inline u32 netdev_get_wanted_features(struct net_device *dev)
+{
+	return (dev->features & ~dev->hw_features) | dev->wanted_features;
+}
+u32 netdev_increment_features(u32 all, u32 one, u32 mask);
+u32 netdev_fix_features(struct net_device *dev, u32 features);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __netdev_update_features(struct net_device *dev);
 void netdev_update_features(struct net_device *dev);
 void netdev_change_features(struct net_device *dev);
@@ -2624,6 +3131,7 @@ void netdev_change_features(struct net_device *dev);
 void netif_stacked_transfer_operstate(const struct net_device *rootdev,
 					struct net_device *dev);
 
+<<<<<<< HEAD
 netdev_features_t netif_skb_features(struct sk_buff *skb);
 
 static inline bool net_gso_ok(netdev_features_t features, int gso_type)
@@ -2642,17 +3150,35 @@ static inline bool net_gso_ok(netdev_features_t features, int gso_type)
 }
 
 static inline bool skb_gso_ok(struct sk_buff *skb, netdev_features_t features)
+=======
+u32 netif_skb_features(struct sk_buff *skb);
+
+static inline int net_gso_ok(u32 features, int gso_type)
+{
+	int feature = gso_type << NETIF_F_GSO_SHIFT;
+	return (features & feature) == feature;
+}
+
+static inline int skb_gso_ok(struct sk_buff *skb, u32 features)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return net_gso_ok(features, skb_shinfo(skb)->gso_type) &&
 	       (!skb_has_frag_list(skb) || (features & NETIF_F_FRAGLIST));
 }
 
+<<<<<<< HEAD
 static inline bool netif_needs_gso(struct sk_buff *skb,
 				   netdev_features_t features)
 {
 	return skb_is_gso(skb) && (!skb_gso_ok(skb, features) ||
 		unlikely((skb->ip_summed != CHECKSUM_PARTIAL) &&
 			 (skb->ip_summed != CHECKSUM_UNNECESSARY)));
+=======
+static inline int netif_needs_gso(struct sk_buff *skb, int features)
+{
+	return skb_is_gso(skb) && (!skb_gso_ok(skb, features) ||
+		unlikely(skb->ip_summed != CHECKSUM_PARTIAL));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline void netif_set_gso_max_size(struct net_device *dev,
@@ -2661,17 +3187,44 @@ static inline void netif_set_gso_max_size(struct net_device *dev,
 	dev->gso_max_size = size;
 }
 
+<<<<<<< HEAD
 static inline bool netif_is_bond_slave(struct net_device *dev)
+=======
+static inline int netif_is_bond_slave(struct net_device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return dev->flags & IFF_SLAVE && dev->priv_flags & IFF_BONDING;
 }
 
+<<<<<<< HEAD
 static inline bool netif_supports_nofcs(struct net_device *dev)
 {
 	return dev->priv_flags & IFF_SUPP_NOFCS;
 }
 
 extern struct pernet_operations __net_initdata loopback_net_ops;
+=======
+extern struct pernet_operations __net_initdata loopback_net_ops;
+
+int dev_ethtool_get_settings(struct net_device *dev,
+			     struct ethtool_cmd *cmd);
+
+static inline u32 dev_ethtool_get_rx_csum(struct net_device *dev)
+{
+	if (dev->features & NETIF_F_RXCSUM)
+		return 1;
+	if (!dev->ethtool_ops || !dev->ethtool_ops->get_rx_csum)
+		return 0;
+	return dev->ethtool_ops->get_rx_csum(dev);
+}
+
+static inline u32 dev_ethtool_get_flags(struct net_device *dev)
+{
+	if (!dev->ethtool_ops || !dev->ethtool_ops->get_flags)
+		return 0;
+	return dev->ethtool_ops->get_flags(dev);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Logging, debugging and troubleshooting/diagnostic helpers. */
 
@@ -2684,6 +3237,7 @@ static inline const char *netdev_name(const struct net_device *dev)
 	return dev->name;
 }
 
+<<<<<<< HEAD
 extern int __netdev_printk(const char *level, const struct net_device *dev,
 			struct va_format *vaf);
 
@@ -2704,10 +3258,30 @@ extern __printf(2, 3)
 int netdev_notice(const struct net_device *dev, const char *format, ...);
 extern __printf(2, 3)
 int netdev_info(const struct net_device *dev, const char *format, ...);
+=======
+extern int netdev_printk(const char *level, const struct net_device *dev,
+			 const char *format, ...)
+	__attribute__ ((format (printf, 3, 4)));
+extern int netdev_emerg(const struct net_device *dev, const char *format, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int netdev_alert(const struct net_device *dev, const char *format, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int netdev_crit(const struct net_device *dev, const char *format, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int netdev_err(const struct net_device *dev, const char *format, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int netdev_warn(const struct net_device *dev, const char *format, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int netdev_notice(const struct net_device *dev, const char *format, ...)
+	__attribute__ ((format (printf, 2, 3)));
+extern int netdev_info(const struct net_device *dev, const char *format, ...)
+	__attribute__ ((format (printf, 2, 3)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MODULE_ALIAS_NETDEV(device) \
 	MODULE_ALIAS("netdev-" device)
 
+<<<<<<< HEAD
 #if defined(CONFIG_DYNAMIC_DEBUG)
 #define netdev_dbg(__dev, format, args...)			\
 do {								\
@@ -2716,6 +3290,17 @@ do {								\
 #elif defined(DEBUG)
 #define netdev_dbg(__dev, format, args...)			\
 	netdev_printk(KERN_DEBUG, __dev, format, ##args)
+=======
+#if defined(DEBUG)
+#define netdev_dbg(__dev, format, args...)			\
+	netdev_printk(KERN_DEBUG, __dev, format, ##args)
+#elif defined(CONFIG_DYNAMIC_DEBUG)
+#define netdev_dbg(__dev, format, args...)			\
+do {								\
+	dynamic_dev_dbg((__dev)->dev.parent, "%s: " format,	\
+			netdev_name(__dev), ##args);		\
+} while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #else
 #define netdev_dbg(__dev, format, args...)			\
 ({								\
@@ -2781,7 +3366,13 @@ do {								\
 #define netif_dbg(priv, type, netdev, format, args...)		\
 do {								\
 	if (netif_msg_##type(priv))				\
+<<<<<<< HEAD
 		dynamic_netdev_dbg(netdev, format, ##args);	\
+=======
+		dynamic_dev_dbg((netdev)->dev.parent,		\
+				"%s: " format,			\
+				netdev_name(netdev), ##args);	\
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } while (0)
 #else
 #define netif_dbg(priv, type, dev, format, args...)			\

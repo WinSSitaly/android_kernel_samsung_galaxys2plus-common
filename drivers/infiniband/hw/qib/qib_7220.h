@@ -97,7 +97,11 @@ struct qib_chippport_specific {
 	u64 iblnkerrsnap;
 	u64 ibcctrl; /* kr_ibcctrl shadow */
 	u64 ibcddrctrl; /* kr_ibcddrctrl shadow */
+<<<<<<< HEAD
 	unsigned long chase_end;
+=======
+	u64 chase_end;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 last_delay_mult;
 };
 

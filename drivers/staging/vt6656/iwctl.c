@@ -46,6 +46,12 @@
 
 #include <net/iw_handler.h>
 
+<<<<<<< HEAD
+=======
+
+/*---------------------  Static Definitions -------------------------*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef WPA_SUPPLICANT_DRIVER_WEXT_SUPPORT
 #define SUPPORTED_WIRELESS_EXT                  18
 #else
@@ -60,8 +66,24 @@ static const long frequency_list[] = {
     5700, 5745, 5765, 5785, 5805, 5825
 	};
 
+<<<<<<< HEAD
 static int          msglevel                =MSG_LEVEL_INFO;
 
+=======
+
+/*---------------------  Static Classes  ----------------------------*/
+
+
+//static int          msglevel                =MSG_LEVEL_DEBUG;
+static int          msglevel                =MSG_LEVEL_INFO;
+
+
+/*---------------------  Static Variables  --------------------------*/
+/*---------------------  Static Functions  --------------------------*/
+
+/*---------------------  Export Variables  --------------------------*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct iw_statistics *iwctl_get_wireless_stats(struct net_device *dev)
 {
 	PSDevice pDevice = netdev_priv(dev);
@@ -73,6 +95,10 @@ struct iw_statistics *iwctl_get_wireless_stats(struct net_device *dev)
                pDevice->wstats.qual.qual =(BYTE) pDevice->scStatistic.LinkQuality;
 	RFvRSSITodBm(pDevice, (BYTE)(pDevice->uCurrRSSI), &ldBm);
 	pDevice->wstats.qual.level = ldBm;
+<<<<<<< HEAD
+=======
+	//pDevice->wstats.qual.level = 0x100 - pDevice->uCurrRSSI;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pDevice->wstats.qual.noise = 0;
 	pDevice->wstats.qual.updated = 1;
 	pDevice->wstats.discard.nwid = 0;
@@ -85,6 +111,24 @@ struct iw_statistics *iwctl_get_wireless_stats(struct net_device *dev)
 	return &pDevice->wstats;
 }
 
+<<<<<<< HEAD
+=======
+
+
+/*------------------------------------------------------------------*/
+
+
+static int iwctl_commit(struct net_device *dev,
+			      struct iw_request_info *info,
+			      void *wrq,
+			      char *extra)
+{
+    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO " SIOCSIWCOMMIT\n");
+
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Wireless Handler : get protocol name
  */
@@ -98,6 +142,20 @@ int iwctl_giwname(struct net_device *dev,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+int iwctl_giwnwid(struct net_device *dev,
+             struct iw_request_info *info,
+			 struct iw_param *wrq,
+                   char *extra)
+{
+ 	//wrq->value = 0x100;
+	//wrq->disabled = 0;
+	//wrq->fixed = 1;
+	//return 0;
+  return -EOPNOTSUPP;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Wireless Handler : set scan
  */
@@ -167,12 +225,20 @@ if(pDevice->byReAssocCount > 0) {   //reject scan when re-associating!
  }
 
 	 pMgmt->eScanType = WMAC_SCAN_PASSIVE;
+<<<<<<< HEAD
+=======
+         //printk("SIOCSIWSCAN:WLAN_CMD_BSSID_SCAN\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bScheduleCommand((void *) pDevice, WLAN_CMD_BSSID_SCAN, NULL);
 	spin_unlock_irq(&pDevice->lock);
 
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Wireless Handler : get scan results
  */
@@ -471,7 +537,11 @@ int iwctl_siwmode(struct net_device *dev,
  * Wireless Handler : get operation mode
  */
 
+<<<<<<< HEAD
 void iwctl_giwmode(struct net_device *dev,
+=======
+int iwctl_giwmode(struct net_device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
              struct iw_request_info *info,
              __u32 *wmode,
              char *extra)
@@ -498,6 +568,11 @@ void iwctl_giwmode(struct net_device *dev,
 	default:
 		*wmode = IW_MODE_ADHOC;
 	}
+<<<<<<< HEAD
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -505,7 +580,11 @@ void iwctl_giwmode(struct net_device *dev,
  * Wireless Handler : get capability range
  */
 
+<<<<<<< HEAD
 void iwctl_giwrange(struct net_device *dev,
+=======
+int iwctl_giwrange(struct net_device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
              struct iw_request_info *info,
              struct iw_point *wrq,
              char *extra)
@@ -600,6 +679,12 @@ void iwctl_giwrange(struct net_device *dev,
 		range->avg_qual.level = 176;	// -80 dBm
 		range->avg_qual.noise = 0;
 	}
+<<<<<<< HEAD
+=======
+
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -671,7 +756,13 @@ int iwctl_giwap(struct net_device *dev,
 
     memcpy(wrq->sa_data, pMgmt->abyCurrBSSID, 6);
 
+<<<<<<< HEAD
  if ((pDevice->bLinkPass == FALSE) && (pMgmt->eCurrMode != WMAC_MODE_ESS_AP))
+=======
+//20080123-02,<Modify> by Einsn Liu
+ if ((pDevice->bLinkPass == FALSE) && (pMgmt->eCurrMode != WMAC_MODE_ESS_AP))
+ //   if ((pDevice->bLinkPass == FALSE) && (pMgmt->eCurrMode == WMAC_MODE_ESS_STA))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
         memset(wrq->sa_data, 0, 6);
 
     if (pMgmt->eCurrMode == WMAC_MODE_ESS_AP) {
@@ -856,7 +947,12 @@ int iwctl_siwessid(struct net_device *dev,
 /*
  * Wireless Handler : get essid
  */
+<<<<<<< HEAD
 void iwctl_giwessid(struct net_device *dev,
+=======
+
+int iwctl_giwessid(struct net_device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
              struct iw_request_info *info,
              struct iw_point *wrq,
              char *extra)
@@ -873,11 +969,20 @@ void iwctl_giwessid(struct net_device *dev,
 
 	// Get the current SSID
     pItemSSID = (PWLAN_IE_SSID)pMgmt->abyCurrSSID;
+<<<<<<< HEAD
+=======
+	//pItemSSID = (PWLAN_IE_SSID)pMgmt->abyDesireSSID;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	memcpy(extra, pItemSSID->abySSID , pItemSSID->len);
 	extra[pItemSSID->len] = '\0';
 
         wrq->length = pItemSSID->len;
 	wrq->flags = 1; // active
+<<<<<<< HEAD
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -965,7 +1070,12 @@ int iwctl_siwrate(struct net_device *dev,
 /*
  * Wireless Handler : get data rate
  */
+<<<<<<< HEAD
 void iwctl_giwrate(struct net_device *dev,
+=======
+
+int iwctl_giwrate(struct net_device *dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
              struct iw_request_info *info,
              struct iw_param *wrq,
              char *extra)
@@ -1003,6 +1113,12 @@ void iwctl_giwrate(struct net_device *dev,
 	    if (pDevice->bFixRate == TRUE)
 	        wrq->fixed = TRUE;
     }
+<<<<<<< HEAD
+=======
+
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 
@@ -1010,6 +1126,7 @@ void iwctl_giwrate(struct net_device *dev,
 /*
  * Wireless Handler : set rts threshold
  */
+<<<<<<< HEAD
 int iwctl_siwrts(struct net_device *dev,
 		 struct iw_param *wrq)
 {
@@ -1023,6 +1140,29 @@ int iwctl_siwrts(struct net_device *dev,
 
 	else
 		pDevice->wRTSThreshold = wrq->value;
+=======
+
+int iwctl_siwrts(struct net_device *dev,
+             struct iw_request_info *info,
+			 struct iw_param *wrq,
+             char *extra)
+{
+	PSDevice	        pDevice = (PSDevice)netdev_priv(dev);
+	int rc = 0;
+
+    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO " SIOCSIWRTS \n");
+
+	{
+	    int rthr = wrq->value;
+	    if(wrq->disabled)
+			rthr = 2312;
+	    if((rthr < 0) || (rthr > 2312)) {
+			rc = -EINVAL;
+    	}else {
+		    pDevice->wRTSThreshold = rthr;
+	    }
+    }
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -1272,6 +1412,58 @@ int iwctl_siwencode(struct net_device *dev,
 	return rc;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * Wireless Handler : get encode mode
+ */
+//2008-0409-06, <Mark> by Einsn Liu
+ /*
+int iwctl_giwencode(struct net_device *dev,
+             struct iw_request_info *info,
+             struct iw_point *wrq,
+             char *extra)
+{
+    PSDevice	        pDevice = (PSDevice)netdev_priv(dev);
+    PSMgmtObject        pMgmt = &(pDevice->sMgmtObj);
+    int rc = 0;
+    char abyKey[WLAN_WEP232_KEYLEN];
+	unsigned int index = (unsigned int)(wrq->flags & IW_ENCODE_INDEX);
+	PSKeyItem   pKey = NULL;
+
+    DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO " SIOCGIWENCODE\n");
+
+
+	memset(abyKey, 0, sizeof(abyKey));
+	// Check encryption mode
+	wrq->flags = IW_ENCODE_NOKEY;
+	// Is WEP enabled ???
+	if (pDevice->bEncryptionEnable)
+		wrq->flags |=  IW_ENCODE_ENABLED;
+    else
+		wrq->flags |=  IW_ENCODE_DISABLED;
+
+    if (pMgmt->bShareKeyAlgorithm)
+		wrq->flags |=  IW_ENCODE_RESTRICTED;
+	else
+		wrq->flags |=  IW_ENCODE_OPEN;
+
+	if (KeybGetKey(&(pDevice->sKey), pDevice->abyBroadcastAddr, (BYTE)index , &pKey)){
+        wrq->length = pKey->uKeyLength;
+        memcpy(abyKey, pKey->abyKey,  pKey->uKeyLength);
+    }
+    else {
+        rc = -EINVAL;
+        return rc;
+    }
+	wrq->flags |= index;
+	// Copy the key to the user buffer
+	memcpy(extra,  abyKey, WLAN_WEP232_KEYLEN);
+	return 0;
+}
+*/
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int iwctl_giwencode(struct net_device *dev,
 			struct iw_request_info *info,
 			struct iw_point *wrq,
@@ -1458,6 +1650,10 @@ int iwctl_siwauth(struct net_device *dev,
 		wpa_version = wrq->value;
 		if(wrq->value == IW_AUTH_WPA_VERSION_DISABLED) {
 		       PRINT_K("iwctl_siwauth:set WPADEV to disable at 1??????\n");
+<<<<<<< HEAD
+=======
+			//pDevice->bWPADEVUp = FALSE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		else if(wrq->value == IW_AUTH_WPA_VERSION_WPA) {
                           PRINT_K("iwctl_siwauth:set WPADEV to WPA1******\n");
@@ -1465,6 +1661,10 @@ int iwctl_siwauth(struct net_device *dev,
 		else {
                           PRINT_K("iwctl_siwauth:set WPADEV to WPA2******\n");
 		}
+<<<<<<< HEAD
+=======
+		//pDevice->bWPASuppWextEnabled =TRUE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case IW_AUTH_CIPHER_PAIRWISE:
 		pairwise = wrq->value;
@@ -1521,6 +1721,14 @@ int iwctl_siwauth(struct net_device *dev,
 		}
 		break;
 	case IW_AUTH_WPA_ENABLED:
+<<<<<<< HEAD
+=======
+		//pDevice->bWPADEVUp = !! wrq->value;
+		//if(pDevice->bWPADEVUp==TRUE)
+		  // printk("iwctl_siwauth:set WPADEV to enable successful*******\n");
+		//else
+		 //  printk("iwctl_siwauth:set WPADEV to enable fail?????\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case IW_AUTH_RX_UNENCRYPTED_EAPOL:
 		break;
@@ -1535,6 +1743,10 @@ int iwctl_siwauth(struct net_device *dev,
 			pDevice->eEncryptionStatus = Ndis802_11EncryptionDisabled;
 			pMgmt->bShareKeyAlgorithm = FALSE;
 			pMgmt->eAuthenMode = WMAC_AUTH_OPEN;
+<<<<<<< HEAD
+=======
+			//pDevice->bWPADEVUp = FALSE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 PRINT_K("iwctl_siwauth:set WPADEV to disaable at 2?????\n");
 		}
 
@@ -1543,6 +1755,18 @@ int iwctl_siwauth(struct net_device *dev,
 		ret = -EOPNOTSUPP;
 		break;
 	}
+<<<<<<< HEAD
+=======
+/*
+	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "wpa_version = %d\n",wpa_version);
+	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "pairwise = %d\n",pairwise);
+	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "pDevice->eEncryptionStatus = %d\n",pDevice->eEncryptionStatus);
+	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "pMgmt->eAuthenMode  = %d\n",pMgmt->eAuthenMode);
+	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "pMgmt->bShareKeyAlgorithm = %s\n",pMgmt->bShareKeyAlgorithm?"TRUE":"FALSE");
+	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "pDevice->bEncryptionEnable = %s\n",pDevice->bEncryptionEnable?"TRUE":"FALSE");
+	DBG_PRT(MSG_LEVEL_DEBUG, KERN_INFO "pDevice->bWPADEVUp = %s\n",pDevice->bWPADEVUp?"TRUE":"FALSE");
+*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
    return ret;
 }
 
@@ -1631,6 +1855,11 @@ int iwctl_siwencodeext(struct net_device *dev,
     u8  seq[IW_ENCODE_SEQ_MAX_SIZE];
     u8 key[64];
     size_t seq_len=0,key_len=0;
+<<<<<<< HEAD
+=======
+//
+   // int ii;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     u8 *buf;
     size_t blen;
     u8 key_array[64];
@@ -1760,6 +1989,10 @@ int iwctl_siwmlme(struct net_device *dev,
 	PSDevice			pDevice = (PSDevice)netdev_priv(dev);
 	PSMgmtObject	pMgmt = &(pDevice->sMgmtObj);
 	struct iw_mlme *mlme = (struct iw_mlme *)extra;
+<<<<<<< HEAD
+=======
+	//u16 reason = cpu_to_le16(mlme->reason_code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	if(memcmp(pMgmt->abyCurrBSSID, mlme->addr.sa_data, ETH_ALEN)){
@@ -1768,6 +2001,15 @@ int iwctl_siwmlme(struct net_device *dev,
 	}
 	switch(mlme->cmd){
 	case IW_MLME_DEAUTH:
+<<<<<<< HEAD
+=======
+		//this command seems to be not complete,please test it --einsnliu
+		//printk("iwctl_siwmlme--->send DEAUTH\n");
+		/* bScheduleCommand((void *) pDevice,
+		   WLAN_CMD_DEAUTH,
+		   (PBYTE)&reason); */
+		//break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case IW_MLME_DISASSOC:
 		if(pDevice->bLinkPass == TRUE){
 		  PRINT_K("iwctl_siwmlme--->send DISASSOCIATE\n");
@@ -1786,9 +2028,84 @@ int iwctl_siwmlme(struct net_device *dev,
 
 #endif
 
+<<<<<<< HEAD
 static const iw_handler		iwctl_handler[] =
 {
 	(iw_handler) NULL,      /* SIOCSIWCOMMIT */
+=======
+/*------------------------------------------------------------------*/
+/*
+ * Structures to export the Wireless Handlers
+ */
+
+
+/*
+static const iw_handler		iwctl_handler[] =
+{
+	(iw_handler) iwctl_commit,      // SIOCSIWCOMMIT
+	(iw_handler) iwctl_giwname,     // SIOCGIWNAME
+	(iw_handler) NULL,				// SIOCSIWNWID
+	(iw_handler) NULL,				// SIOCGIWNWID
+	(iw_handler) iwctl_siwfreq,		// SIOCSIWFREQ
+	(iw_handler) iwctl_giwfreq,		// SIOCGIWFREQ
+	(iw_handler) iwctl_siwmode,		// SIOCSIWMODE
+	(iw_handler) iwctl_giwmode,		// SIOCGIWMODE
+	(iw_handler) NULL,		        // SIOCSIWSENS
+	(iw_handler) iwctl_giwsens,		        // SIOCGIWSENS
+	(iw_handler) NULL, 		        // SIOCSIWRANGE
+	(iw_handler) iwctl_giwrange,		// SIOCGIWRANGE
+	(iw_handler) NULL,         		    // SIOCSIWPRIV
+	(iw_handler) NULL,             		// SIOCGIWPRIV
+	(iw_handler) NULL,             		// SIOCSIWSTATS
+	(iw_handler) NULL,                  // SIOCGIWSTATS
+    (iw_handler) NULL,                  // SIOCSIWSPY
+	(iw_handler) NULL,		            // SIOCGIWSPY
+	(iw_handler) NULL,				    // -- hole --
+	(iw_handler) NULL,				    // -- hole --
+	(iw_handler) iwctl_siwap,		    // SIOCSIWAP
+	(iw_handler) iwctl_giwap,		    // SIOCGIWAP
+	(iw_handler) NULL,				    // -- hole -- 0x16
+	(iw_handler) iwctl_giwaplist,       // SIOCGIWAPLIST
+	(iw_handler) iwctl_siwscan,         // SIOCSIWSCAN
+	(iw_handler) iwctl_giwscan,         // SIOCGIWSCAN
+	(iw_handler) iwctl_siwessid,		// SIOCSIWESSID
+	(iw_handler) iwctl_giwessid,		// SIOCGIWESSID
+	(iw_handler) NULL,		// SIOCSIWNICKN
+	(iw_handler) NULL,		// SIOCGIWNICKN
+	(iw_handler) NULL,				    // -- hole --
+	(iw_handler) NULL,				    // -- hole --
+	(iw_handler) iwctl_siwrate,		// SIOCSIWRATE 0x20
+	(iw_handler) iwctl_giwrate,		// SIOCGIWRATE
+	(iw_handler) iwctl_siwrts,		// SIOCSIWRTS
+	(iw_handler) iwctl_giwrts,		// SIOCGIWRTS
+	(iw_handler) iwctl_siwfrag,		// SIOCSIWFRAG
+	(iw_handler) iwctl_giwfrag,		// SIOCGIWFRAG
+	(iw_handler) NULL,		// SIOCSIWTXPOW
+	(iw_handler) NULL,		// SIOCGIWTXPOW
+	(iw_handler) iwctl_siwretry,		// SIOCSIWRETRY
+	(iw_handler) iwctl_giwretry,		// SIOCGIWRETRY
+	(iw_handler) iwctl_siwencode,		// SIOCSIWENCODE
+	(iw_handler) iwctl_giwencode,		// SIOCGIWENCODE
+	(iw_handler) iwctl_siwpower,		// SIOCSIWPOWER
+	(iw_handler) iwctl_giwpower,		// SIOCGIWPOWER
+	(iw_handler) NULL,			// -- hole --
+	(iw_handler) NULL,			// -- hole --
+	(iw_handler) iwctl_siwgenie,    // SIOCSIWGENIE
+	(iw_handler) iwctl_giwgenie,    // SIOCGIWGENIE
+	(iw_handler) iwctl_siwauth,		// SIOCSIWAUTH
+	(iw_handler) iwctl_giwauth,		// SIOCGIWAUTH
+	(iw_handler) iwctl_siwencodeext,		// SIOCSIWENCODEEXT
+	(iw_handler) iwctl_giwencodeext,		// SIOCGIWENCODEEXT
+	(iw_handler) NULL,				// SIOCSIWPMKSA
+	(iw_handler) NULL,				// -- hole --
+
+};
+*/
+
+static const iw_handler		iwctl_handler[] =
+{
+	(iw_handler) iwctl_commit,      // SIOCSIWCOMMIT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	(iw_handler) NULL,      // SIOCGIWNAME
 	(iw_handler) NULL,				// SIOCSIWNWID
 	(iw_handler) NULL,				// SIOCGIWNWID
@@ -1865,9 +2182,19 @@ const struct iw_handler_def	iwctl_handler_def =
 {
 	.get_wireless_stats = &iwctl_get_wireless_stats,
 	.num_standard	= sizeof(iwctl_handler)/sizeof(iw_handler),
+<<<<<<< HEAD
 	.num_private	= 0,
 	.num_private_args = 0,
 	.standard	= (iw_handler *) iwctl_handler,
+=======
+//	.num_private	= sizeof(iwctl_private_handler)/sizeof(iw_handler),
+//	.num_private_args = sizeof(iwctl_private_args)/sizeof(struct iw_priv_args),
+	.num_private	= 0,
+	.num_private_args = 0,
+	.standard	= (iw_handler *) iwctl_handler,
+//	.private	= (iw_handler *) iwctl_private_handler,
+//	.private_args	= (struct iw_priv_args *)iwctl_private_args,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.private	= NULL,
 	.private_args	= NULL,
 };

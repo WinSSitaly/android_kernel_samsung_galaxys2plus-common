@@ -23,7 +23,11 @@
 #include <asm/uaccess.h>
 #include <asm/page.h>
 #include <asm/pgalloc.h>
+<<<<<<< HEAD
 #include <asm/traps.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/machdep.h>
 #include <asm/io.h>
 #ifdef CONFIG_ATARI
@@ -75,6 +79,7 @@ extern void init_pointer_table(unsigned long ptable);
 
 extern pmd_t *zero_pgtable;
 
+<<<<<<< HEAD
 #if defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)
 #define VECTORS	&vectors[0]
 #else
@@ -107,6 +112,8 @@ void __init print_memmap(void)
 		MLK_ROUNDUP(_sbss, _ebss));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __init mem_init(void)
 {
 	pg_data_t *pgdat;
@@ -115,6 +122,14 @@ void __init mem_init(void)
 	int initpages = 0;
 	int i;
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ATARI
+	if (MACH_IS_ATARI)
+		atari_stram_mem_init_hook();
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* this will put all memory onto the freelists */
 	totalram_pages = num_physpages = 0;
 	for_each_online_pgdat(pgdat) {
@@ -138,7 +153,11 @@ void __init mem_init(void)
 		}
 	}
 
+<<<<<<< HEAD
 #if !defined(CONFIG_SUN3) && !defined(CONFIG_COLDFIRE)
+=======
+#ifndef CONFIG_SUN3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* insert pointer tables allocated so far into the tablelist */
 	init_pointer_table((unsigned long)kernel_pg_dir);
 	for (i = 0; i < PTRS_PER_PGD; i++) {
@@ -157,7 +176,10 @@ void __init mem_init(void)
 	       codepages << (PAGE_SHIFT-10),
 	       datapages << (PAGE_SHIFT-10),
 	       initpages << (PAGE_SHIFT-10));
+<<<<<<< HEAD
 	print_memmap();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_BLK_DEV_INITRD

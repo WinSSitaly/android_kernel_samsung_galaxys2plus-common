@@ -44,15 +44,26 @@
 #include <xen/page.h>
 #include <xen/grant_table.h>
 #include <xen/interface/memory.h>
+<<<<<<< HEAD
 #include <xen/hvc-console.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/xen/hypercall.h>
 
 #include <asm/pgtable.h>
 #include <asm/sync_bitops.h>
 
+<<<<<<< HEAD
 /* External tools reserve first few grant table entries. */
 #define NR_RESERVED_ENTRIES 8
 #define GNTTAB_LIST_END 0xffffffff
+=======
+
+/* External tools reserve first few grant table entries. */
+#define NR_RESERVED_ENTRIES 8
+#define GNTTAB_LIST_END 0xffffffff
+#define GREFS_PER_GRANT_FRAME (PAGE_SIZE / sizeof(struct grant_entry))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static grant_ref_t **gnttab_list;
 static unsigned int nr_grant_frames;
@@ -63,6 +74,7 @@ static DEFINE_SPINLOCK(gnttab_list_lock);
 unsigned long xen_hvm_resume_frames;
 EXPORT_SYMBOL_GPL(xen_hvm_resume_frames);
 
+<<<<<<< HEAD
 static union {
 	struct grant_entry_v1 *v1;
 	union grant_entry_v2 *v2;
@@ -148,13 +160,19 @@ static grant_status_t *grstatus;
 
 static int grant_table_version;
 static int grefs_per_grant_frame;
+=======
+static struct grant_entry *shared;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct gnttab_free_callback *gnttab_free_callback_list;
 
 static int gnttab_expand(unsigned int req_entries);
 
 #define RPP (PAGE_SIZE / sizeof(grant_ref_t))
+<<<<<<< HEAD
 #define SPP (PAGE_SIZE / sizeof(grant_status_t))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline grant_ref_t *__gnttab_entry(grant_ref_t entry)
 {
@@ -166,7 +184,11 @@ static inline grant_ref_t *__gnttab_entry(grant_ref_t entry)
 static int get_free_entries(unsigned count)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	int ref, rc = 0;
+=======
+	int ref, rc;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	grant_ref_t head;
 
 	spin_lock_irqsave(&gnttab_list_lock, flags);
@@ -226,6 +248,7 @@ static void put_free_entry(grant_ref_t ref)
 	spin_unlock_irqrestore(&gnttab_list_lock, flags);
 }
 
+<<<<<<< HEAD
 /*
  * Following applies to gnttab_update_entry_v1 and gnttab_update_entry_v2.
  * Introducing a valid entry into the grant table:
@@ -253,6 +276,25 @@ static void gnttab_update_entry_v2(grant_ref_t ref, domid_t domid,
 	gnttab_shared.v2[ref].full_page.frame = frame;
 	wmb();
 	gnttab_shared.v2[ref].hdr.flags = GTF_permit_access | flags;
+=======
+static void update_grant_entry(grant_ref_t ref, domid_t domid,
+			       unsigned long frame, unsigned flags)
+{
+	/*
+	 * Introducing a valid entry into the grant table:
+	 *  1. Write ent->domid.
+	 *  2. Write ent->frame:
+	 *      GTF_permit_access:   Frame to which access is permitted.
+	 *      GTF_accept_transfer: Pseudo-phys frame slot being filled by new
+	 *                           frame, or zero if none.
+	 *  3. Write memory barrier (WMB).
+	 *  4. Write ent->flags, inc. valid type.
+	 */
+	shared[ref].frame = frame;
+	shared[ref].domid = domid;
+	wmb();
+	shared[ref].flags = flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -261,7 +303,11 @@ static void gnttab_update_entry_v2(grant_ref_t ref, domid_t domid,
 void gnttab_grant_foreign_access_ref(grant_ref_t ref, domid_t domid,
 				     unsigned long frame, int readonly)
 {
+<<<<<<< HEAD
 	gnttab_interface->update_entry(ref, domid, frame,
+=======
+	update_grant_entry(ref, domid, frame,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   GTF_permit_access | (readonly ? GTF_readonly : 0));
 }
 EXPORT_SYMBOL_GPL(gnttab_grant_foreign_access_ref);
@@ -281,6 +327,7 @@ int gnttab_grant_foreign_access(domid_t domid, unsigned long frame,
 }
 EXPORT_SYMBOL_GPL(gnttab_grant_foreign_access);
 
+<<<<<<< HEAD
 void gnttab_update_subpage_entry_v2(grant_ref_t ref, domid_t domid,
 				    unsigned long frame, int flags,
 				    unsigned page_off,
@@ -421,12 +468,30 @@ static int gnttab_end_foreign_access_ref_v1(grant_ref_t ref, int readonly)
 
 	pflags = &gnttab_shared.v1[ref].flags;
 	nflags = *pflags;
+=======
+int gnttab_query_foreign_access(grant_ref_t ref)
+{
+	u16 nflags;
+
+	nflags = shared[ref].flags;
+
+	return (nflags & (GTF_reading|GTF_writing));
+}
+EXPORT_SYMBOL_GPL(gnttab_query_foreign_access);
+
+int gnttab_end_foreign_access_ref(grant_ref_t ref, int readonly)
+{
+	u16 flags, nflags;
+
+	nflags = shared[ref].flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do {
 		flags = nflags;
 		if (flags & (GTF_reading|GTF_writing)) {
 			printk(KERN_ALERT "WARNING: g.e. still in use!\n");
 			return 0;
 		}
+<<<<<<< HEAD
 	} while ((nflags = sync_cmpxchg(pflags, flags, 0)) != flags);
 
 	return 1;
@@ -459,6 +524,12 @@ int gnttab_end_foreign_access_ref(grant_ref_t ref, int readonly)
 {
 	return gnttab_interface->end_foreign_access_ref(ref, readonly);
 }
+=======
+	} while ((nflags = sync_cmpxchg(&shared[ref].flags, flags, 0)) != flags);
+
+	return 1;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(gnttab_end_foreign_access_ref);
 
 void gnttab_end_foreign_access(grant_ref_t ref, int readonly,
@@ -493,6 +564,7 @@ EXPORT_SYMBOL_GPL(gnttab_grant_foreign_transfer);
 void gnttab_grant_foreign_transfer_ref(grant_ref_t ref, domid_t domid,
 				       unsigned long pfn)
 {
+<<<<<<< HEAD
 	gnttab_interface->update_entry(ref, domid, pfn, GTF_accept_transfer);
 }
 EXPORT_SYMBOL_GPL(gnttab_grant_foreign_transfer_ref);
@@ -504,29 +576,53 @@ static unsigned long gnttab_end_foreign_transfer_ref_v1(grant_ref_t ref)
 	u16          *pflags;
 
 	pflags = &gnttab_shared.v1[ref].flags;
+=======
+	update_grant_entry(ref, domid, pfn, GTF_accept_transfer);
+}
+EXPORT_SYMBOL_GPL(gnttab_grant_foreign_transfer_ref);
+
+unsigned long gnttab_end_foreign_transfer_ref(grant_ref_t ref)
+{
+	unsigned long frame;
+	u16           flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * If a transfer is not even yet started, try to reclaim the grant
 	 * reference and return failure (== 0).
 	 */
+<<<<<<< HEAD
 	while (!((flags = *pflags) & GTF_transfer_committed)) {
 		if (sync_cmpxchg(pflags, flags, 0) == flags)
+=======
+	while (!((flags = shared[ref].flags) & GTF_transfer_committed)) {
+		if (sync_cmpxchg(&shared[ref].flags, flags, 0) == flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		cpu_relax();
 	}
 
 	/* If a transfer is in progress then wait until it is completed. */
 	while (!(flags & GTF_transfer_completed)) {
+<<<<<<< HEAD
 		flags = *pflags;
+=======
+		flags = shared[ref].flags;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cpu_relax();
 	}
 
 	rmb();	/* Read the frame number /after/ reading completion status. */
+<<<<<<< HEAD
 	frame = gnttab_shared.v1[ref].frame;
+=======
+	frame = shared[ref].frame;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(frame == 0);
 
 	return frame;
 }
+<<<<<<< HEAD
 
 static unsigned long gnttab_end_foreign_transfer_ref_v2(grant_ref_t ref)
 {
@@ -563,6 +659,8 @@ unsigned long gnttab_end_foreign_transfer_ref(grant_ref_t ref)
 {
 	return gnttab_interface->end_foreign_transfer_ref(ref);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(gnttab_end_foreign_transfer_ref);
 
 unsigned long gnttab_end_foreign_transfer(grant_ref_t ref)
@@ -641,6 +739,7 @@ void gnttab_request_free_callback(struct gnttab_free_callback *callback,
 				  void (*fn)(void *), void *arg, u16 count)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct gnttab_free_callback *cb;
 
 	spin_lock_irqsave(&gnttab_list_lock, flags);
@@ -653,6 +752,11 @@ void gnttab_request_free_callback(struct gnttab_free_callback *callback,
 		cb = cb->next;
 	}
 
+=======
+	spin_lock_irqsave(&gnttab_list_lock, flags);
+	if (callback->next)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	callback->fn = fn;
 	callback->arg = arg;
 	callback->count = count;
@@ -685,6 +789,7 @@ static int grow_gnttab_list(unsigned int more_frames)
 	unsigned int new_nr_grant_frames, extra_entries, i;
 	unsigned int nr_glist_frames, new_nr_glist_frames;
 
+<<<<<<< HEAD
 	BUG_ON(grefs_per_grant_frame == 0);
 
 	new_nr_grant_frames = nr_grant_frames + more_frames;
@@ -693,6 +798,14 @@ static int grow_gnttab_list(unsigned int more_frames)
 	nr_glist_frames = (nr_grant_frames * grefs_per_grant_frame + RPP - 1) / RPP;
 	new_nr_glist_frames =
 		(new_nr_grant_frames * grefs_per_grant_frame + RPP - 1) / RPP;
+=======
+	new_nr_grant_frames = nr_grant_frames + more_frames;
+	extra_entries       = more_frames * GREFS_PER_GRANT_FRAME;
+
+	nr_glist_frames = (nr_grant_frames * GREFS_PER_GRANT_FRAME + RPP - 1) / RPP;
+	new_nr_glist_frames =
+		(new_nr_grant_frames * GREFS_PER_GRANT_FRAME + RPP - 1) / RPP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = nr_glist_frames; i < new_nr_glist_frames; i++) {
 		gnttab_list[i] = (grant_ref_t *)__get_free_page(GFP_ATOMIC);
 		if (!gnttab_list[i])
@@ -700,12 +813,21 @@ static int grow_gnttab_list(unsigned int more_frames)
 	}
 
 
+<<<<<<< HEAD
 	for (i = grefs_per_grant_frame * nr_grant_frames;
 	     i < grefs_per_grant_frame * new_nr_grant_frames - 1; i++)
 		gnttab_entry(i) = i + 1;
 
 	gnttab_entry(i) = gnttab_free_head;
 	gnttab_free_head = grefs_per_grant_frame * nr_grant_frames;
+=======
+	for (i = GREFS_PER_GRANT_FRAME * nr_grant_frames;
+	     i < GREFS_PER_GRANT_FRAME * new_nr_grant_frames - 1; i++)
+		gnttab_entry(i) = i + 1;
+
+	gnttab_entry(i) = gnttab_free_head;
+	gnttab_free_head = GREFS_PER_GRANT_FRAME * nr_grant_frames;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gnttab_free_count += extra_entries;
 
 	nr_grant_frames = new_nr_grant_frames;
@@ -745,7 +867,10 @@ unsigned int gnttab_max_grant_frames(void)
 EXPORT_SYMBOL_GPL(gnttab_max_grant_frames);
 
 int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
+<<<<<<< HEAD
 		    struct gnttab_map_grant_ref *kmap_ops,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		    struct page **pages, unsigned int count)
 {
 	int i, ret;
@@ -769,10 +894,32 @@ int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
 				(map_ops[i].host_addr & ~PAGE_MASK));
 			mfn = pte_mfn(*pte);
 		} else {
+<<<<<<< HEAD
 			mfn = PFN_DOWN(map_ops[i].dev_bus_addr);
 		}
 		ret = m2p_add_override(mfn, pages[i], kmap_ops ?
 				       &kmap_ops[i] : NULL);
+=======
+			/* If you really wanted to do this:
+			 * mfn = PFN_DOWN(map_ops[i].dev_bus_addr);
+			 *
+			 * The reason we do not implement it is b/c on the
+			 * unmap path (gnttab_unmap_refs) we have no means of
+			 * checking whether the page is !GNTMAP_contains_pte.
+			 *
+			 * That is without some extra data-structure to carry
+			 * the struct page, bool clear_pte, and list_head next
+			 * tuples and deal with allocation/delallocation, etc.
+			 *
+			 * The users of this API set the GNTMAP_contains_pte
+			 * flag so lets just return not supported until it
+			 * becomes neccessary to implement.
+			 */
+			return -EOPNOTSUPP;
+		}
+		ret = m2p_add_override(mfn, pages[i],
+				       map_ops[i].flags & GNTMAP_contains_pte);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret)
 			return ret;
 	}
@@ -782,8 +929,12 @@ int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
 EXPORT_SYMBOL_GPL(gnttab_map_refs);
 
 int gnttab_unmap_refs(struct gnttab_unmap_grant_ref *unmap_ops,
+<<<<<<< HEAD
 		      struct gnttab_map_grant_ref *kmap_ops,
 		      struct page **pages, unsigned int count)
+=======
+		struct page **pages, unsigned int count)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i, ret;
 
@@ -795,8 +946,12 @@ int gnttab_unmap_refs(struct gnttab_unmap_grant_ref *unmap_ops,
 		return ret;
 
 	for (i = 0; i < count; i++) {
+<<<<<<< HEAD
 		ret = m2p_remove_override(pages[i], kmap_ops ?
 				       &kmap_ops[i] : NULL);
+=======
+		ret = m2p_remove_override(pages[i], true /* clear the PTE */);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret)
 			return ret;
 	}
@@ -805,6 +960,7 @@ int gnttab_unmap_refs(struct gnttab_unmap_grant_ref *unmap_ops,
 }
 EXPORT_SYMBOL_GPL(gnttab_unmap_refs);
 
+<<<<<<< HEAD
 static unsigned nr_status_frames(unsigned nr_grant_frames)
 {
 	BUG_ON(grefs_per_grant_frame == 0);
@@ -877,6 +1033,8 @@ static void gnttab_unmap_frames_v2(void)
 	arch_gnttab_unmap(grstatus, nr_status_frames(nr_grant_frames));
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int gnttab_map(unsigned int start_idx, unsigned int end_idx)
 {
 	struct gnttab_setup_table setup;
@@ -908,9 +1066,12 @@ static int gnttab_map(unsigned int start_idx, unsigned int end_idx)
 		return rc;
 	}
 
+<<<<<<< HEAD
 	/* No need for kzalloc as it is initialized in following hypercall
 	 * GNTTABOP_setup_table.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	frames = kmalloc(nr_gframes * sizeof(unsigned long), GFP_ATOMIC);
 	if (!frames)
 		return -ENOMEM;
@@ -927,6 +1088,7 @@ static int gnttab_map(unsigned int start_idx, unsigned int end_idx)
 
 	BUG_ON(rc || setup.status);
 
+<<<<<<< HEAD
 	rc = gnttab_interface->map_frames(frames, nr_gframes);
 
 	kfree(frames);
@@ -987,6 +1149,18 @@ static void gnttab_request_version(void)
 }
 
 static int gnttab_setup(void)
+=======
+	rc = arch_gnttab_map_shared(frames, nr_gframes, gnttab_max_grant_frames(),
+				    &shared);
+	BUG_ON(rc);
+
+	kfree(frames);
+
+	return 0;
+}
+
+int gnttab_resume(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned int max_nr_gframes;
 
@@ -997,10 +1171,16 @@ static int gnttab_setup(void)
 	if (xen_pv_domain())
 		return gnttab_map(0, nr_grant_frames - 1);
 
+<<<<<<< HEAD
 	if (gnttab_shared.addr == NULL) {
 		gnttab_shared.addr = ioremap(xen_hvm_resume_frames,
 						PAGE_SIZE * max_nr_gframes);
 		if (gnttab_shared.addr == NULL) {
+=======
+	if (!shared) {
+		shared = ioremap(xen_hvm_resume_frames, PAGE_SIZE * max_nr_gframes);
+		if (shared == NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			printk(KERN_WARNING
 					"Failed to ioremap gnttab share frames!");
 			return -ENOMEM;
@@ -1012,6 +1192,7 @@ static int gnttab_setup(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 int gnttab_resume(void)
 {
 	gnttab_request_version();
@@ -1021,6 +1202,11 @@ int gnttab_resume(void)
 int gnttab_suspend(void)
 {
 	gnttab_interface->unmap_frames();
+=======
+int gnttab_suspend(void)
+{
+	arch_gnttab_unmap_shared(shared, nr_grant_frames);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1029,10 +1215,16 @@ static int gnttab_expand(unsigned int req_entries)
 	int rc;
 	unsigned int cur, extra;
 
+<<<<<<< HEAD
 	BUG_ON(grefs_per_grant_frame == 0);
 	cur = nr_grant_frames;
 	extra = ((req_entries + (grefs_per_grant_frame-1)) /
 		 grefs_per_grant_frame);
+=======
+	cur = nr_grant_frames;
+	extra = ((req_entries + (GREFS_PER_GRANT_FRAME-1)) /
+		 GREFS_PER_GRANT_FRAME);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (cur + extra > gnttab_max_grant_frames())
 		return -ENOSPC;
 
@@ -1048,24 +1240,34 @@ int gnttab_init(void)
 	int i;
 	unsigned int max_nr_glist_frames, nr_glist_frames;
 	unsigned int nr_init_grefs;
+<<<<<<< HEAD
 	int ret;
 
 	gnttab_request_version();
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nr_grant_frames = 1;
 	boot_max_nr_grant_frames = __max_nr_grant_frames();
 
 	/* Determine the maximum number of frames required for the
 	 * grant reference free list on the current hypervisor.
 	 */
+<<<<<<< HEAD
 	BUG_ON(grefs_per_grant_frame == 0);
 	max_nr_glist_frames = (boot_max_nr_grant_frames *
 			       grefs_per_grant_frame / RPP);
+=======
+	max_nr_glist_frames = (boot_max_nr_grant_frames *
+			       GREFS_PER_GRANT_FRAME / RPP);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	gnttab_list = kmalloc(max_nr_glist_frames * sizeof(grant_ref_t *),
 			      GFP_KERNEL);
 	if (gnttab_list == NULL)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	nr_glist_frames = (nr_grant_frames * grefs_per_grant_frame + RPP - 1) / RPP;
 	for (i = 0; i < nr_glist_frames; i++) {
 		gnttab_list[i] = (grant_ref_t *)__get_free_page(GFP_KERNEL);
@@ -1081,6 +1283,19 @@ int gnttab_init(void)
 	}
 
 	nr_init_grefs = nr_grant_frames * grefs_per_grant_frame;
+=======
+	nr_glist_frames = (nr_grant_frames * GREFS_PER_GRANT_FRAME + RPP - 1) / RPP;
+	for (i = 0; i < nr_glist_frames; i++) {
+		gnttab_list[i] = (grant_ref_t *)__get_free_page(GFP_KERNEL);
+		if (gnttab_list[i] == NULL)
+			goto ini_nomem;
+	}
+
+	if (gnttab_resume() < 0)
+		return -ENODEV;
+
+	nr_init_grefs = nr_grant_frames * GREFS_PER_GRANT_FRAME;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = NR_RESERVED_ENTRIES; i < nr_init_grefs - 1; i++)
 		gnttab_entry(i) = i + 1;
@@ -1096,7 +1311,11 @@ int gnttab_init(void)
 	for (i--; i >= 0; i--)
 		free_page((unsigned long)gnttab_list[i]);
 	kfree(gnttab_list);
+<<<<<<< HEAD
 	return ret;
+=======
+	return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(gnttab_init);
 

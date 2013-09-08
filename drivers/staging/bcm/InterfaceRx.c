@@ -157,7 +157,11 @@ static void read_bulk_callback(struct urb *urb)
 		{
 			/* Moving ahead by ETH_HLEN to the data ptr as received from FW */
 			skb_pull(skb, ETH_HLEN);
+<<<<<<< HEAD
 			PHSReceive(Adapter, pLeader->Vcid, skb, &skb->len,
+=======
+			PHSRecieve(Adapter, pLeader->Vcid, skb, &skb->len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					NULL,bHeaderSupressionEnabled);
 
 			if(!Adapter->PackInfo[QueueIndex].bEthCSSupport)
@@ -229,7 +233,11 @@ static int ReceiveRcb(PS_INTERFACE_ADAPTER psIntfAdapter, PUSB_RCB pRcb)
 /*
 Function:				InterfaceRx
 
+<<<<<<< HEAD
 Description:			This is the hardware specific Function for Receiving
+=======
+Description:			This is the hardware specific Function for Recieveing
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 						data packet/control packets from the device.
 
 Input parameters:		IN PMINI_ADAPTER Adapter   - Miniport Adapter Context

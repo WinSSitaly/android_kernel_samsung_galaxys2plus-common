@@ -158,7 +158,11 @@ sys_call_table:
 	.long	sys_sched_rr_get_interval
 	.long	sys_nanosleep
 	.long	sys_poll
+<<<<<<< HEAD
 	.long	sys_ni_syscall		/* 145 was nfsservctl */
+=======
+	.long	sys_nfsservctl		/* 145 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.long	sys_setresgid
 	.long	sys_getresgid
 	.long	sys_prctl

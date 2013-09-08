@@ -21,6 +21,7 @@ extern int amd_numa_init(void);
 extern int amd_get_subcaches(int);
 extern int amd_set_subcaches(int, int);
 
+<<<<<<< HEAD
 struct amd_l3_cache {
 	unsigned indices;
 	u8	 subcaches[4];
@@ -30,6 +31,11 @@ struct amd_northbridge {
 	struct pci_dev *misc;
 	struct pci_dev *link;
 	struct amd_l3_cache l3_cache;
+=======
+struct amd_northbridge {
+	struct pci_dev *misc;
+	struct pci_dev *link;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct amd_northbridge_info {

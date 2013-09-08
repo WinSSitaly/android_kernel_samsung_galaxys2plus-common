@@ -14,7 +14,11 @@
 #include <linux/amba/serial.h>
 #include <mach/hardware.h>
 
+<<<<<<< HEAD
 		.macro	addruart, rp, rv, tmp
+=======
+		.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mov	\rp, #SPEAR_DBG_UART_BASE		@ Physical base
 		mov	\rv, #VA_SPEAR_DBG_UART_BASE		@ Virtual base
 		.endm

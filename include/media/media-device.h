@@ -23,6 +23,10 @@
 #ifndef _MEDIA_DEVICE_H
 #define _MEDIA_DEVICE_H
 
+<<<<<<< HEAD
+=======
+#include <linux/device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/list.h>
 #include <linux/mutex.h>
 #include <linux/spinlock.h>
@@ -30,8 +34,11 @@
 #include <media/media-devnode.h>
 #include <media/media-entity.h>
 
+<<<<<<< HEAD
 struct device;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * struct media_device - Media device
  * @dev:	Parent device

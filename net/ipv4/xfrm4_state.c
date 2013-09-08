@@ -12,7 +12,10 @@
 #include <linux/pfkeyv2.h>
 #include <linux/ipsec.h>
 #include <linux/netfilter_ipv4.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int xfrm4_init_flags(struct xfrm_state *x)
 {

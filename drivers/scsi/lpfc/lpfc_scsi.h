@@ -1,7 +1,11 @@
 /*******************************************************************
  * This file is part of the Emulex Linux Device Driver for         *
  * Fibre Channel Host Bus Adapters.                                *
+<<<<<<< HEAD
  * Copyright (C) 2004-2012 Emulex.  All rights reserved.           *
+=======
+ * Copyright (C) 2004-2006 Emulex.  All rights reserved.           *
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * EMULEX and SLI are trademarks of Emulex.                        *
  * www.emulex.com                                                  *
  *                                                                 *
@@ -21,7 +25,10 @@
 #include <asm/byteorder.h>
 
 struct lpfc_hba;
+<<<<<<< HEAD
 #define LPFC_FCP_CDB_LEN 16
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define list_remove_head(list, entry, type, member)		\
 	do {							\
@@ -103,7 +110,11 @@ struct fcp_cmnd {
 #define  WRITE_DATA      0x01	/* Bit 0 */
 #define  READ_DATA       0x02	/* Bit 1 */
 
+<<<<<<< HEAD
 	uint8_t fcpCdb[LPFC_FCP_CDB_LEN]; /* SRB cdb field is copied here */
+=======
+	uint8_t fcpCdb[16];	/* SRB cdb field is copied here */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	uint32_t fcpDl;		/* Total transfer length */
 
 };
@@ -150,6 +161,7 @@ struct lpfc_scsi_buf {
 	struct lpfc_iocbq cur_iocbq;
 	wait_queue_head_t *waitq;
 	unsigned long start_time;
+<<<<<<< HEAD
 
 #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
 	/* Used to restore any changes to protection data for error injection */
@@ -160,8 +172,14 @@ struct lpfc_scsi_buf {
 #define	LPFC_INJERR_APPTAG	2
 #define	LPFC_INJERR_GUARD	3
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define LPFC_SCSI_DMA_EXT_SIZE 264
 #define LPFC_BPL_SIZE          1024
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MDAC_DIRECT_CMD                  0x22

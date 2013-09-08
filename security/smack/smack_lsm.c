@@ -5,6 +5,7 @@
  *
  *  Authors:
  *	Casey Schaufler <casey@schaufler-ca.com>
+<<<<<<< HEAD
  *	Jarkko Sakkinen <jarkko.sakkinen@intel.com>
  *
  *  Copyright (C) 2007 Casey Schaufler <casey@schaufler-ca.com>
@@ -12,6 +13,14 @@
  *                Paul Moore <paul@paul-moore.com>
  *  Copyright (C) 2010 Nokia Corporation
  *  Copyright (C) 2011 Intel Corporation.
+=======
+ *	Jarkko Sakkinen <ext-jarkko.2.sakkinen@nokia.com>
+ *
+ *  Copyright (C) 2007 Casey Schaufler <casey@schaufler-ca.com>
+ *  Copyright (C) 2009 Hewlett-Packard Development Company, L.P.
+ *                Paul Moore <paul.moore@hp.com>
+ *  Copyright (C) 2010 Nokia Corporation
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2,
@@ -35,10 +44,13 @@
 #include <linux/audit.h>
 #include <linux/magic.h>
 #include <linux/dcache.h>
+<<<<<<< HEAD
 #include <linux/personality.h>
 #include <linux/msg.h>
 #include <linux/shm.h>
 #include <linux/binfmts.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "smack.h"
 
 #define task_security(task)	(task_cred_xxx((task), security))
@@ -409,7 +421,11 @@ static int smack_sb_statfs(struct dentry *dentry)
 static int smack_sb_mount(char *dev_name, struct path *path,
 			  char *type, unsigned long flags, void *data)
 {
+<<<<<<< HEAD
 	struct superblock_smack *sbp = path->dentry->d_sb->s_security;
+=======
+	struct superblock_smack *sbp = path->mnt->mnt_sb->s_security;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct smk_audit_info ad;
 
 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
@@ -438,7 +454,11 @@ static int smack_sb_umount(struct vfsmount *mnt, int flags)
 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
 	smk_ad_setfield_u_fs_path(&ad, path);
 
+<<<<<<< HEAD
 	sbp = path.dentry->d_sb->s_security;
+=======
+	sbp = mnt->mnt_sb->s_security;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return smk_curacc(sbp->smk_floor, MAY_WRITE, &ad);
 }
 
@@ -446,6 +466,7 @@ static int smack_sb_umount(struct vfsmount *mnt, int flags)
  * BPRM hooks
  */
 
+<<<<<<< HEAD
 /**
  * smack_bprm_set_creds - set creds for exec
  * @bprm: the exec information
@@ -457,6 +478,13 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
 	struct inode *inode = bprm->file->f_path.dentry->d_inode;
 	struct task_smack *bsp = bprm->cred->security;
 	struct inode_smack *isp;
+=======
+static int smack_bprm_set_creds(struct linux_binprm *bprm)
+{
+	struct task_smack *tsp = bprm->cred->security;
+	struct inode_smack *isp;
+	struct dentry *dp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 
 	rc = cap_bprm_set_creds(bprm);
@@ -466,6 +494,7 @@ static int smack_bprm_set_creds(struct linux_binprm *bprm)
 	if (bprm->cred_prepared)
 		return 0;
 
+<<<<<<< HEAD
 	isp = inode->i_security;
 	if (isp->smk_task == NULL || isp->smk_task == bsp->smk_task)
 		return 0;
@@ -508,6 +537,22 @@ static int smack_bprm_secureexec(struct linux_binprm *bprm)
 		ret = 1;
 
 	return ret;
+=======
+	if (bprm->file == NULL || bprm->file->f_dentry == NULL)
+		return 0;
+
+	dp = bprm->file->f_dentry;
+
+	if (dp->d_inode == NULL)
+		return 0;
+
+	isp = dp->d_inode->i_security;
+
+	if (isp->smk_task != NULL)
+		tsp->smk_task = isp->smk_task;
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -555,8 +600,11 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
 				     const struct qstr *qstr, char **name,
 				     void **value, size_t *len)
 {
+<<<<<<< HEAD
 	struct smack_known *skp;
 	char *csp = smk_of_current();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *isp = smk_of_inode(inode);
 	char *dsp = smk_of_inode(dir);
 	int may;
@@ -568,9 +616,14 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
 	}
 
 	if (value) {
+<<<<<<< HEAD
 		skp = smk_find_entry(csp);
 		rcu_read_lock();
 		may = smk_access_entry(csp, dsp, &skp->smk_rules);
+=======
+		rcu_read_lock();
+		may = smk_access_entry(smk_of_current(), dsp, &smack_rule_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rcu_read_unlock();
 
 		/*
@@ -731,10 +784,16 @@ static int smack_inode_rename(struct inode *old_inode,
  *
  * Returns 0 if access is permitted, -EACCES otherwise
  */
+<<<<<<< HEAD
 static int smack_inode_permission(struct inode *inode, int mask)
 {
 	struct smk_audit_info ad;
 	int no_block = mask & MAY_NOT_BLOCK;
+=======
+static int smack_inode_permission(struct inode *inode, int mask, unsigned flags)
+{
+	struct smk_audit_info ad;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mask &= (MAY_READ|MAY_WRITE|MAY_EXEC|MAY_APPEND);
 	/*
@@ -744,7 +803,11 @@ static int smack_inode_permission(struct inode *inode, int mask)
 		return 0;
 
 	/* May be droppable after audit */
+<<<<<<< HEAD
 	if (no_block)
+=======
+	if (flags & IPERM_FLAG_RCU)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ECHILD;
 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_INODE);
 	smk_ad_setfield_u_fs_inode(&ad, inode);
@@ -883,7 +946,11 @@ static void smack_inode_post_setxattr(struct dentry *dentry, const char *name,
 	return;
 }
 
+<<<<<<< HEAD
 /**
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * smack_inode_getxattr - Smack check on getxattr
  * @dentry: the object
  * @name: unused
@@ -900,7 +967,11 @@ static int smack_inode_getxattr(struct dentry *dentry, const char *name)
 	return smk_curacc(smk_of_inode(dentry->d_inode), MAY_READ, &ad);
 }
 
+<<<<<<< HEAD
 /**
+=======
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * smack_inode_removexattr - Smack check on removexattr
  * @dentry: the object
  * @name: name of the attribute
@@ -1130,31 +1201,60 @@ static int smack_file_lock(struct file *file, unsigned int cmd)
  * @cmd: what action to check
  * @arg: unused
  *
+<<<<<<< HEAD
  * Generally these operations are harmless.
  * File locking operations present an obvious mechanism
  * for passing information, so they require write access.
  *
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Returns 0 if current has access, error code otherwise
  */
 static int smack_file_fcntl(struct file *file, unsigned int cmd,
 			    unsigned long arg)
 {
 	struct smk_audit_info ad;
+<<<<<<< HEAD
 	int rc = 0;
 
 
 	switch (cmd) {
 	case F_GETLK:
+=======
+	int rc;
+
+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
+	smk_ad_setfield_u_fs_path(&ad, file->f_path);
+
+	switch (cmd) {
+	case F_DUPFD:
+	case F_GETFD:
+	case F_GETFL:
+	case F_GETLK:
+	case F_GETOWN:
+	case F_GETSIG:
+		rc = smk_curacc(file->f_security, MAY_READ, &ad);
+		break;
+	case F_SETFD:
+	case F_SETFL:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case F_SETLK:
 	case F_SETLKW:
 	case F_SETOWN:
 	case F_SETSIG:
+<<<<<<< HEAD
 		smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_PATH);
 		smk_ad_setfield_u_fs_path(&ad, file->f_path);
 		rc = smk_curacc(file->f_security, MAY_WRITE, &ad);
 		break;
 	default:
 		break;
+=======
+		rc = smk_curacc(file->f_security, MAY_WRITE, &ad);
+		break;
+	default:
+		rc = smk_curacc(file->f_security, MAY_READWRITE, &ad);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return rc;
@@ -1175,7 +1275,10 @@ static int smack_file_mmap(struct file *file,
 			   unsigned long flags, unsigned long addr,
 			   unsigned long addr_only)
 {
+<<<<<<< HEAD
 	struct smack_known *skp;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct smack_rule *srp;
 	struct task_smack *tsp;
 	char *sp;
@@ -1208,7 +1311,10 @@ static int smack_file_mmap(struct file *file,
 
 	tsp = current_security();
 	sp = smk_of_current();
+<<<<<<< HEAD
 	skp = smk_find_entry(sp);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rc = 0;
 
 	rcu_read_lock();
@@ -1216,8 +1322,20 @@ static int smack_file_mmap(struct file *file,
 	 * For each Smack rule associated with the subject
 	 * label verify that the SMACK64MMAP also has access
 	 * to that rule's object label.
+<<<<<<< HEAD
 	 */
 	list_for_each_entry_rcu(srp, &skp->smk_rules, list) {
+=======
+	 *
+	 * Because neither of the labels comes
+	 * from the networking code it is sufficient
+	 * to compare pointers.
+	 */
+	list_for_each_entry_rcu(srp, &smack_rule_list, list) {
+		if (srp->smk_subject != sp)
+			continue;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		osmack = srp->smk_object;
 		/*
 		 * Matching labels always allows access.
@@ -1246,8 +1364,12 @@ static int smack_file_mmap(struct file *file,
 		 * If there isn't one a SMACK64MMAP subject
 		 * can't have as much access as current.
 		 */
+<<<<<<< HEAD
 		skp = smk_find_entry(msmack);
 		mmay = smk_access_entry(msmack, osmack, &skp->smk_rules);
+=======
+		mmay = smk_access_entry(msmack, osmack, &smack_rule_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (mmay == -ENOENT) {
 			rc = -EACCES;
 			break;
@@ -1348,6 +1470,7 @@ static int smack_file_receive(struct file *file)
 	return smk_curacc(file->f_security, may, &ad);
 }
 
+<<<<<<< HEAD
 /**
  * smack_dentry_open - Smack dentry open processing
  * @file: the object
@@ -1366,6 +1489,8 @@ static int smack_dentry_open(struct file *file, const struct cred *cred)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Task hooks
  */
@@ -1506,6 +1631,7 @@ static int smack_kernel_create_files_as(struct cred *new,
 /**
  * smk_curacc_on_task - helper to log task related access
  * @p: the task object
+<<<<<<< HEAD
  * @access: the access requested
  * @caller: name of the calling function for audit
  *
@@ -1517,6 +1643,17 @@ static int smk_curacc_on_task(struct task_struct *p, int access,
 	struct smk_audit_info ad;
 
 	smk_ad_init(&ad, caller, LSM_AUDIT_DATA_TASK);
+=======
+ * @access : the access requested
+ *
+ * Return 0 if access is permitted
+ */
+static int smk_curacc_on_task(struct task_struct *p, int access)
+{
+	struct smk_audit_info ad;
+
+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_TASK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	smk_ad_setfield_u_tsk(&ad, p);
 	return smk_curacc(smk_of_task(task_security(p)), access, &ad);
 }
@@ -1530,7 +1667,11 @@ static int smk_curacc_on_task(struct task_struct *p, int access,
  */
 static int smack_task_setpgid(struct task_struct *p, pid_t pgid)
 {
+<<<<<<< HEAD
 	return smk_curacc_on_task(p, MAY_WRITE, __func__);
+=======
+	return smk_curacc_on_task(p, MAY_WRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1541,7 +1682,11 @@ static int smack_task_setpgid(struct task_struct *p, pid_t pgid)
  */
 static int smack_task_getpgid(struct task_struct *p)
 {
+<<<<<<< HEAD
 	return smk_curacc_on_task(p, MAY_READ, __func__);
+=======
+	return smk_curacc_on_task(p, MAY_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1552,7 +1697,11 @@ static int smack_task_getpgid(struct task_struct *p)
  */
 static int smack_task_getsid(struct task_struct *p)
 {
+<<<<<<< HEAD
 	return smk_curacc_on_task(p, MAY_READ, __func__);
+=======
+	return smk_curacc_on_task(p, MAY_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1580,7 +1729,11 @@ static int smack_task_setnice(struct task_struct *p, int nice)
 
 	rc = cap_task_setnice(p, nice);
 	if (rc == 0)
+<<<<<<< HEAD
 		rc = smk_curacc_on_task(p, MAY_WRITE, __func__);
+=======
+		rc = smk_curacc_on_task(p, MAY_WRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -1597,7 +1750,11 @@ static int smack_task_setioprio(struct task_struct *p, int ioprio)
 
 	rc = cap_task_setioprio(p, ioprio);
 	if (rc == 0)
+<<<<<<< HEAD
 		rc = smk_curacc_on_task(p, MAY_WRITE, __func__);
+=======
+		rc = smk_curacc_on_task(p, MAY_WRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -1609,7 +1766,11 @@ static int smack_task_setioprio(struct task_struct *p, int ioprio)
  */
 static int smack_task_getioprio(struct task_struct *p)
 {
+<<<<<<< HEAD
 	return smk_curacc_on_task(p, MAY_READ, __func__);
+=======
+	return smk_curacc_on_task(p, MAY_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1626,7 +1787,11 @@ static int smack_task_setscheduler(struct task_struct *p)
 
 	rc = cap_task_setscheduler(p);
 	if (rc == 0)
+<<<<<<< HEAD
 		rc = smk_curacc_on_task(p, MAY_WRITE, __func__);
+=======
+		rc = smk_curacc_on_task(p, MAY_WRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -1638,7 +1803,11 @@ static int smack_task_setscheduler(struct task_struct *p)
  */
 static int smack_task_getscheduler(struct task_struct *p)
 {
+<<<<<<< HEAD
 	return smk_curacc_on_task(p, MAY_READ, __func__);
+=======
+	return smk_curacc_on_task(p, MAY_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1649,7 +1818,11 @@ static int smack_task_getscheduler(struct task_struct *p)
  */
 static int smack_task_movememory(struct task_struct *p)
 {
+<<<<<<< HEAD
 	return smk_curacc_on_task(p, MAY_WRITE, __func__);
+=======
+	return smk_curacc_on_task(p, MAY_WRITE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -1764,7 +1937,11 @@ static int smack_sk_alloc_security(struct sock *sk, int family, gfp_t gfp_flags)
 
 	ssp->smk_in = csp;
 	ssp->smk_out = csp;
+<<<<<<< HEAD
 	ssp->smk_packet = NULL;
+=======
+	ssp->smk_packet[0] = '\0';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sk->sk_security = ssp;
 
@@ -1943,6 +2120,7 @@ static int smack_netlabel_send(struct sock *sk, struct sockaddr_in *sap)
 	rcu_read_lock();
 	hostsp = smack_host_label(sap);
 	if (hostsp != NULL) {
+<<<<<<< HEAD
 #ifdef CONFIG_AUDIT
 		struct lsm_network_audit net;
 
@@ -1952,6 +2130,15 @@ static int smack_netlabel_send(struct sock *sk, struct sockaddr_in *sap)
 		ad.a.u.net->v4info.daddr = sap->sin_addr.s_addr;
 #endif
 		sk_lbl = SMACK_UNLABELED_SOCKET;
+=======
+		sk_lbl = SMACK_UNLABELED_SOCKET;
+#ifdef CONFIG_AUDIT
+		smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NET);
+		ad.a.u.net.family = sap->sin_family;
+		ad.a.u.net.dport = sap->sin_port;
+		ad.a.u.net.v4info.daddr = sap->sin_addr.s_addr;
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = smk_access(ssp->smk_out, hostsp, MAY_WRITE, &ad);
 	} else {
 		sk_lbl = SMACK_CIPSO_SOCKET;
@@ -2808,6 +2995,7 @@ static int smack_unix_stream_connect(struct sock *sock,
 {
 	struct socket_smack *ssp = sock->sk_security;
 	struct socket_smack *osp = other->sk_security;
+<<<<<<< HEAD
 	struct socket_smack *nsp = newsk->sk_security;
 	struct smk_audit_info ad;
 	int rc = 0;
@@ -2818,10 +3006,18 @@ static int smack_unix_stream_connect(struct sock *sock,
 	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
 	smk_ad_setfield_u_net_sk(&ad, other);
 #endif
+=======
+	struct smk_audit_info ad;
+	int rc = 0;
+
+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NET);
+	smk_ad_setfield_u_net_sk(&ad, other);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!capable(CAP_MAC_OVERRIDE))
 		rc = smk_access(ssp->smk_out, osp->smk_in, MAY_WRITE, &ad);
 
+<<<<<<< HEAD
 	/*
 	 * Cross reference the peer labels for SO_PEERSEC.
 	 */
@@ -2830,6 +3026,8 @@ static int smack_unix_stream_connect(struct sock *sock,
 		ssp->smk_packet = osp->smk_out;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return rc;
 }
 
@@ -2848,12 +3046,17 @@ static int smack_unix_may_send(struct socket *sock, struct socket *other)
 	struct smk_audit_info ad;
 	int rc = 0;
 
+<<<<<<< HEAD
 #ifdef CONFIG_AUDIT
 	struct lsm_network_audit net;
 
 	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
 	smk_ad_setfield_u_net_sk(&ad, other->sk);
 #endif
+=======
+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NET);
+	smk_ad_setfield_u_net_sk(&ad, other->sk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!capable(CAP_MAC_OVERRIDE))
 		rc = smk_access(ssp->smk_out, osp->smk_in, MAY_WRITE, &ad);
@@ -2885,6 +3088,7 @@ static int smack_socket_sendmsg(struct socket *sock, struct msghdr *msg,
 	return smack_netlabel_send(sock->sk, sip);
 }
 
+<<<<<<< HEAD
 /**
  * smack_from_secattr - Convert a netlabel attr.mls.lvl/attr.mls.cat pair to smack
  * @sap: netlabel secattr
@@ -2896,6 +3100,18 @@ static char *smack_from_secattr(struct netlbl_lsm_secattr *sap,
 				struct socket_smack *ssp)
 {
 	struct smack_known *skp;
+=======
+
+/**
+ * smack_from_secattr - Convert a netlabel attr.mls.lvl/attr.mls.cat pair to smack
+ * @sap: netlabel secattr
+ * @sip: where to put the result
+ *
+ * Copies a smack label into sip
+ */
+static void smack_from_secattr(struct netlbl_lsm_secattr *sap, char *sip)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char smack[SMK_LABELLEN];
 	char *sp;
 	int pcat;
@@ -2925,6 +3141,7 @@ static char *smack_from_secattr(struct netlbl_lsm_secattr *sap,
 		 * we are already done. WeeHee.
 		 */
 		if (sap->attr.mls.lvl == smack_cipso_direct) {
+<<<<<<< HEAD
 			/*
 			 * The label sent is usually on the label list.
 			 *
@@ -2951,17 +3168,26 @@ static char *smack_from_secattr(struct netlbl_lsm_secattr *sap,
 			    ssp->smk_in == smack_known_star.smk_known)
 				return smack_known_web.smk_known;
 			return smack_known_star.smk_known;
+=======
+			memcpy(sip, smack, SMK_MAXLEN);
+			return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		/*
 		 * Look it up in the supplied table if it is not
 		 * a direct mapping.
 		 */
+<<<<<<< HEAD
 		sp = smack_from_cipso(sap->attr.mls.lvl, smack);
 		if (sp != NULL)
 			return sp;
 		if (ssp != NULL && ssp->smk_in == smack_known_star.smk_known)
 			return smack_known_web.smk_known;
 		return smack_known_star.smk_known;
+=======
+		smack_from_cipso(sap->attr.mls.lvl, smack, sip);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if ((sap->flags & NETLBL_SECATTR_SECID) != 0) {
 		/*
@@ -2976,14 +3202,24 @@ static char *smack_from_secattr(struct netlbl_lsm_secattr *sap,
 		 * secid is from a fallback.
 		 */
 		BUG_ON(sp == NULL);
+<<<<<<< HEAD
 		return sp;
+=======
+		strncpy(sip, sp, SMK_MAXLEN);
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	/*
 	 * Without guidance regarding the smack value
 	 * for the packet fall back on the network
 	 * ambient value.
 	 */
+<<<<<<< HEAD
 	return smack_net_ambient;
+=======
+	strncpy(sip, smack_net_ambient, SMK_MAXLEN);
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -2997,12 +3233,19 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
 {
 	struct netlbl_lsm_secattr secattr;
 	struct socket_smack *ssp = sk->sk_security;
+<<<<<<< HEAD
 	char *csp;
 	int rc;
 	struct smk_audit_info ad;
 #ifdef CONFIG_AUDIT
 	struct lsm_network_audit net;
 #endif
+=======
+	char smack[SMK_LABELLEN];
+	char *csp;
+	int rc;
+	struct smk_audit_info ad;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (sk->sk_family != PF_INET && sk->sk_family != PF_INET6)
 		return 0;
 
@@ -3012,17 +3255,30 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
 	netlbl_secattr_init(&secattr);
 
 	rc = netlbl_skbuff_getattr(skb, sk->sk_family, &secattr);
+<<<<<<< HEAD
 	if (rc == 0)
 		csp = smack_from_secattr(&secattr, ssp);
 	else
+=======
+	if (rc == 0) {
+		smack_from_secattr(&secattr, smack);
+		csp = smack;
+	} else
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		csp = smack_net_ambient;
 
 	netlbl_secattr_destroy(&secattr);
 
 #ifdef CONFIG_AUDIT
+<<<<<<< HEAD
 	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
 	ad.a.u.net->family = sk->sk_family;
 	ad.a.u.net->netif = skb->skb_iif;
+=======
+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NET);
+	ad.a.u.net.family = sk->sk_family;
+	ad.a.u.net.netif = skb->skb_iif;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ipv4_skb_to_auditdata(skb, &ad.a, NULL);
 #endif
 	/*
@@ -3051,6 +3307,7 @@ static int smack_socket_getpeersec_stream(struct socket *sock,
 					  int __user *optlen, unsigned len)
 {
 	struct socket_smack *ssp;
+<<<<<<< HEAD
 	char *rcp = "";
 	int slen = 1;
 	int rc = 0;
@@ -3064,6 +3321,17 @@ static int smack_socket_getpeersec_stream(struct socket *sock,
 	if (slen > len)
 		rc = -ERANGE;
 	else if (copy_to_user(optval, rcp, slen) != 0)
+=======
+	int slen;
+	int rc = 0;
+
+	ssp = sock->sk->sk_security;
+	slen = strlen(ssp->smk_packet) + 1;
+
+	if (slen > len)
+		rc = -ERANGE;
+	else if (copy_to_user(optval, ssp->smk_packet, slen) != 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = -EFAULT;
 
 	if (put_user(slen, optlen) != 0)
@@ -3086,8 +3354,13 @@ static int smack_socket_getpeersec_dgram(struct socket *sock,
 
 {
 	struct netlbl_lsm_secattr secattr;
+<<<<<<< HEAD
 	struct socket_smack *ssp = NULL;
 	char *sp;
+=======
+	struct socket_smack *sp;
+	char smack[SMK_LABELLEN];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int family = PF_UNSPEC;
 	u32 s = 0;	/* 0 is the invalid secid */
 	int rc;
@@ -3102,12 +3375,18 @@ static int smack_socket_getpeersec_dgram(struct socket *sock,
 		family = sock->sk->sk_family;
 
 	if (family == PF_UNIX) {
+<<<<<<< HEAD
 		ssp = sock->sk->sk_security;
 		s = smack_to_secid(ssp->smk_out);
+=======
+		sp = sock->sk->sk_security;
+		s = smack_to_secid(sp->smk_out);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (family == PF_INET || family == PF_INET6) {
 		/*
 		 * Translate what netlabel gave us.
 		 */
+<<<<<<< HEAD
 		if (sock != NULL && sock->sk != NULL)
 			ssp = sock->sk->sk_security;
 		netlbl_secattr_init(&secattr);
@@ -3115,6 +3394,13 @@ static int smack_socket_getpeersec_dgram(struct socket *sock,
 		if (rc == 0) {
 			sp = smack_from_secattr(&secattr, ssp);
 			s = smack_to_secid(sp);
+=======
+		netlbl_secattr_init(&secattr);
+		rc = netlbl_skbuff_getattr(skb, family, &secattr);
+		if (rc == 0) {
+			smack_from_secattr(&secattr, smack);
+			s = smack_to_secid(smack);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		netlbl_secattr_destroy(&secattr);
 	}
@@ -3162,12 +3448,18 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
 	struct netlbl_lsm_secattr secattr;
 	struct sockaddr_in addr;
 	struct iphdr *hdr;
+<<<<<<< HEAD
 	char *sp;
 	int rc;
 	struct smk_audit_info ad;
 #ifdef CONFIG_AUDIT
 	struct lsm_network_audit net;
 #endif
+=======
+	char smack[SMK_LABELLEN];
+	int rc;
+	struct smk_audit_info ad;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* handle mapped IPv4 packets arriving via IPv6 sockets */
 	if (family == PF_INET6 && skb->protocol == htons(ETH_P_IP))
@@ -3176,6 +3468,7 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
 	netlbl_secattr_init(&secattr);
 	rc = netlbl_skbuff_getattr(skb, family, &secattr);
 	if (rc == 0)
+<<<<<<< HEAD
 		sp = smack_from_secattr(&secattr, ssp);
 	else
 		sp = smack_known_huh.smk_known;
@@ -3185,13 +3478,28 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
 	smk_ad_init_net(&ad, __func__, LSM_AUDIT_DATA_NET, &net);
 	ad.a.u.net->family = family;
 	ad.a.u.net->netif = skb->skb_iif;
+=======
+		smack_from_secattr(&secattr, smack);
+	else
+		strncpy(smack, smack_known_huh.smk_known, SMK_MAXLEN);
+	netlbl_secattr_destroy(&secattr);
+
+#ifdef CONFIG_AUDIT
+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_NET);
+	ad.a.u.net.family = family;
+	ad.a.u.net.netif = skb->skb_iif;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ipv4_skb_to_auditdata(skb, &ad.a, NULL);
 #endif
 	/*
 	 * Receiving a packet requires that the other end be able to write
 	 * here. Read access is not required.
 	 */
+<<<<<<< HEAD
 	rc = smk_access(sp, ssp->smk_in, MAY_WRITE, &ad);
+=======
+	rc = smk_access(smack, ssp->smk_in, MAY_WRITE, &ad);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (rc != 0)
 		return rc;
 
@@ -3199,7 +3507,11 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
 	 * Save the peer's label in the request_sock so we can later setup
 	 * smk_packet in the child socket so that SO_PEERCRED can report it.
 	 */
+<<<<<<< HEAD
 	req->peer_secid = smack_to_secid(sp);
+=======
+	req->peer_secid = smack_to_secid(smack);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We need to decide if we want to label the incoming connection here
@@ -3212,7 +3524,11 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
 	if (smack_host_label(&addr) == NULL) {
 		rcu_read_unlock();
 		netlbl_secattr_init(&secattr);
+<<<<<<< HEAD
 		smack_to_secattr(sp, &secattr);
+=======
+		smack_to_secattr(smack, &secattr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		rc = netlbl_req_setattr(req, &secattr);
 		netlbl_secattr_destroy(&secattr);
 	} else {
@@ -3234,11 +3550,21 @@ static void smack_inet_csk_clone(struct sock *sk,
 				 const struct request_sock *req)
 {
 	struct socket_smack *ssp = sk->sk_security;
+<<<<<<< HEAD
 
 	if (req->peer_secid != 0)
 		ssp->smk_packet = smack_from_secid(req->peer_secid);
 	else
 		ssp->smk_packet = NULL;
+=======
+	char *smack;
+
+	if (req->peer_secid != 0) {
+		smack = smack_from_secid(req->peer_secid);
+		strncpy(ssp->smk_packet, smack, SMK_MAXLEN);
+	} else
+		ssp->smk_packet[0] = '\0';
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3516,8 +3842,11 @@ struct security_operations smack_ops = {
 	.sb_umount = 			smack_sb_umount,
 
 	.bprm_set_creds =		smack_bprm_set_creds,
+<<<<<<< HEAD
 	.bprm_committing_creds =	smack_bprm_committing_creds,
 	.bprm_secureexec =		smack_bprm_secureexec,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	.inode_alloc_security = 	smack_inode_alloc_security,
 	.inode_free_security = 		smack_inode_free_security,
@@ -3549,8 +3878,11 @@ struct security_operations smack_ops = {
 	.file_send_sigiotask = 		smack_file_send_sigiotask,
 	.file_receive = 		smack_file_receive,
 
+<<<<<<< HEAD
 	.dentry_open =			smack_dentry_open,
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.cred_alloc_blank =		smack_cred_alloc_blank,
 	.cred_free =			smack_cred_free,
 	.cred_prepare =			smack_cred_prepare,
@@ -3640,6 +3972,7 @@ struct security_operations smack_ops = {
 };
 
 
+<<<<<<< HEAD
 static __init void init_smack_known_list(void)
 {
 	/*
@@ -3672,6 +4005,10 @@ static __init void init_smack_known_list(void)
 	/*
 	 * Create the known labels list
 	 */
+=======
+static __init void init_smack_know_list(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_add(&smack_known_huh.list, &smack_known_list);
 	list_add(&smack_known_hat.list, &smack_known_list);
 	list_add(&smack_known_star.list, &smack_known_list);
@@ -3706,8 +4043,21 @@ static __init int smack_init(void)
 	cred = (struct cred *) current->cred;
 	cred->security = tsp;
 
+<<<<<<< HEAD
 	/* initialize the smack_known_list */
 	init_smack_known_list();
+=======
+	/* initialize the smack_know_list */
+	init_smack_know_list();
+	/*
+	 * Initialize locks
+	 */
+	spin_lock_init(&smack_known_huh.smk_cipsolock);
+	spin_lock_init(&smack_known_hat.smk_cipsolock);
+	spin_lock_init(&smack_known_star.smk_cipsolock);
+	spin_lock_init(&smack_known_floor.smk_cipsolock);
+	spin_lock_init(&smack_known_invalid.smk_cipsolock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Register with LSM

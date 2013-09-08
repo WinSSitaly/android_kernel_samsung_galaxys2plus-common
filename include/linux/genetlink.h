@@ -85,6 +85,7 @@ enum {
 /* All generic netlink requests are serialized by a global lock.  */
 extern void genl_lock(void);
 extern void genl_unlock(void);
+<<<<<<< HEAD
 #ifdef CONFIG_PROVE_LOCKING
 extern int lockdep_genl_is_held(void);
 #endif
@@ -109,6 +110,8 @@ extern int lockdep_genl_is_held(void);
  */
 #define genl_dereference(p)					\
 	rcu_dereference_protected(p, lockdep_genl_is_held())
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __KERNEL__ */
 

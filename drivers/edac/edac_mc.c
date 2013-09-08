@@ -25,6 +25,10 @@
 #include <linux/jiffies.h>
 #include <linux/spinlock.h>
 #include <linux/list.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ctype.h>
 #include <linux/edac.h>
 #include <asm/uaccess.h>
@@ -39,7 +43,11 @@ static LIST_HEAD(mc_devices);
 
 #ifdef CONFIG_EDAC_DEBUG
 
+<<<<<<< HEAD
 static void edac_mc_dump_channel(struct rank_info *chan)
+=======
+static void edac_mc_dump_channel(struct channel_info *chan)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	debugf4("\tchannel = %p\n", chan);
 	debugf4("\tchannel->chan_idx = %d\n", chan->chan_idx);
@@ -156,7 +164,11 @@ struct mem_ctl_info *edac_mc_alloc(unsigned sz_pvt, unsigned nr_csrows,
 {
 	struct mem_ctl_info *mci;
 	struct csrow_info *csi, *csrow;
+<<<<<<< HEAD
 	struct rank_info *chi, *chp, *chan;
+=======
+	struct channel_info *chi, *chp, *chan;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *pvt;
 	unsigned size;
 	int row, chn;
@@ -181,7 +193,11 @@ struct mem_ctl_info *edac_mc_alloc(unsigned sz_pvt, unsigned nr_csrows,
 	 * rather than an imaginary chunk of memory located at address 0.
 	 */
 	csi = (struct csrow_info *)(((char *)mci) + ((unsigned long)csi));
+<<<<<<< HEAD
 	chi = (struct rank_info *)(((char *)mci) + ((unsigned long)chi));
+=======
+	chi = (struct channel_info *)(((char *)mci) + ((unsigned long)chi));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pvt = sz_pvt ? (((char *)mci) + ((unsigned long)pvt)) : NULL;
 
 	/* setup index and various internal pointers */
@@ -620,13 +636,21 @@ static void edac_mc_scrub_block(unsigned long page, unsigned long offset,
 	if (PageHighMem(pg))
 		local_irq_save(flags);
 
+<<<<<<< HEAD
 	virt_addr = kmap_atomic(pg);
+=======
+	virt_addr = kmap_atomic(pg, KM_BOUNCE_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Perform architecture specific atomic scrub operation */
 	atomic_scrub(virt_addr + offset, size);
 
 	/* Unmap and complete */
+<<<<<<< HEAD
 	kunmap_atomic(virt_addr);
+=======
+	kunmap_atomic(virt_addr, KM_BOUNCE_READ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (PageHighMem(pg))
 		local_irq_restore(flags);

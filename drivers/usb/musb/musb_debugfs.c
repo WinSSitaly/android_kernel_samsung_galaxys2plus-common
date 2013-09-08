@@ -33,15 +33,39 @@
 
 #include <linux/module.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/init.h>
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
 
+=======
+#include <linux/sched.h>
+#include <linux/init.h>
+#include <linux/list.h>
+#include <linux/platform_device.h>
+#include <linux/io.h>
+#include <linux/debugfs.h>
+#include <linux/seq_file.h>
+
+#ifdef	CONFIG_ARM
+#include <mach/hardware.h>
+#include <mach/memory.h>
+#include <asm/mach-types.h>
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "musb_core.h"
 #include "musb_debug.h"
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_ARCH_DAVINCI
+#include "davinci.h"
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct musb_register_map {
 	char			*name;
 	unsigned		offset;
@@ -235,29 +259,48 @@ static const struct file_operations musb_test_mode_fops = {
 	.release		= single_release,
 };
 
+<<<<<<< HEAD
 int __devinit musb_init_debugfs(struct musb *musb)
+=======
+int __init musb_init_debugfs(struct musb *musb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dentry		*root;
 	struct dentry		*file;
 	int			ret;
 
 	root = debugfs_create_dir("musb", NULL);
+<<<<<<< HEAD
 	if (!root) {
 		ret = -ENOMEM;
+=======
+	if (IS_ERR(root)) {
+		ret = PTR_ERR(root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err0;
 	}
 
 	file = debugfs_create_file("regdump", S_IRUGO, root, musb,
 			&musb_regdump_fops);
+<<<<<<< HEAD
 	if (!file) {
 		ret = -ENOMEM;
+=======
+	if (IS_ERR(file)) {
+		ret = PTR_ERR(file);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err1;
 	}
 
 	file = debugfs_create_file("testmode", S_IRUGO | S_IWUSR,
 			root, musb, &musb_test_mode_fops);
+<<<<<<< HEAD
 	if (!file) {
 		ret = -ENOMEM;
+=======
+	if (IS_ERR(file)) {
+		ret = PTR_ERR(file);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err1;
 	}
 

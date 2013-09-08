@@ -15,10 +15,17 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+<<<<<<< HEAD
 #include <signal.h>
 #include <unistd.h>
 #include <locale.h>
 
+=======
+#include <unistd.h>
+#include <locale.h>
+
+#define LKC_DIRECT_LINK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "lkc.h"
 #include "lxdialog/dialog.h"
 
@@ -273,7 +280,10 @@ static struct menu *current_menu;
 static int child_count;
 static int single_menu_mode;
 static int show_all_options;
+<<<<<<< HEAD
 static int saved_x, saved_y;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void conf(struct menu *menu);
 static void conf_choice(struct menu *menu);
@@ -794,6 +804,7 @@ static void conf_save(void)
 	}
 }
 
+<<<<<<< HEAD
 static int handle_exit(void)
 {
 	int res;
@@ -844,6 +855,11 @@ static void sig_handler(int signo)
 
 int main(int ac, char **av)
 {
+=======
+int main(int ac, char **av)
+{
+	int saved_x, saved_y;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *mode;
 	int res;
 
@@ -851,8 +867,11 @@ int main(int ac, char **av)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+<<<<<<< HEAD
 	signal(SIGINT, sig_handler);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	conf_parse(av[1]);
 	conf_read(NULL);
 
@@ -874,9 +893,46 @@ int main(int ac, char **av)
 	set_config_filename(conf_get_configname());
 	do {
 		conf(&rootmenu);
+<<<<<<< HEAD
 		res = handle_exit();
 	} while (res == KEY_ESC);
 
 	return res;
+=======
+		dialog_clear();
+		if (conf_get_changed())
+			res = dialog_yesno(NULL,
+					   _("Do you wish to save your "
+					     "new configuration?\n"
+					     "<ESC><ESC> to continue."),
+					   6, 60);
+		else
+			res = -1;
+	} while (res == KEY_ESC);
+	end_dialog(saved_x, saved_y);
+
+	switch (res) {
+	case 0:
+		if (conf_write(filename)) {
+			fprintf(stderr, _("\n\n"
+				"Error while writing of the configuration.\n"
+				"Your configuration changes were NOT saved."
+				"\n\n"));
+			return 1;
+		}
+	case -1:
+		printf(_("\n\n"
+			"*** End of the configuration.\n"
+			"*** Execute 'make' to start the build or try 'make help'."
+			"\n\n"));
+		break;
+	default:
+		fprintf(stderr, _("\n\n"
+			"Your configuration changes were NOT saved."
+			"\n\n"));
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 

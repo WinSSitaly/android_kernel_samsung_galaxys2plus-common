@@ -770,7 +770,11 @@ static int nonstatic_find_io(struct pcmcia_socket *s, unsigned int attr,
 							res->end + num);
 			if (!ret) {
 				ret = adjust_resource(s->io[i].res, res->start,
+<<<<<<< HEAD
 						      resource_size(res) + num);
+=======
+					       res->end - res->start + num + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (ret)
 					continue;
 				*base = try;
@@ -788,8 +792,13 @@ static int nonstatic_find_io(struct pcmcia_socket *s, unsigned int attr,
 							res->end);
 			if (!ret) {
 				ret = adjust_resource(s->io[i].res,
+<<<<<<< HEAD
 						      res->start - num,
 						      resource_size(res) + num);
+=======
+					       res->start - num,
+					       res->end - res->start + num + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				if (ret)
 					continue;
 				*base = try;

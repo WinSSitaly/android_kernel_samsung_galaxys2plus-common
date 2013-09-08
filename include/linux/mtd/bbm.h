@@ -86,6 +86,7 @@ struct nand_bbt_descr {
 #define NAND_BBT_VERSION	0x00000100
 /* Create a bbt if none exists */
 #define NAND_BBT_CREATE		0x00000200
+<<<<<<< HEAD
 /*
  * Create an empty BBT with no vendor information. Vendor's information may be
  * unavailable, for example, if the NAND controller has a different data and OOB
@@ -124,6 +125,26 @@ struct nand_bbt_descr {
  * in nand_chip.bbt_options.
  */
 #define NAND_BBT_DYNAMICSTRUCT	0x80000000
+=======
+/* Search good / bad pattern through all pages of a block */
+#define NAND_BBT_SCANALLPAGES	0x00000400
+/* Scan block empty during good / bad block scan */
+#define NAND_BBT_SCANEMPTY	0x00000800
+/* Write bbt if neccecary */
+#define NAND_BBT_WRITE		0x00001000
+/* Read and write back block contents when writing bbt */
+#define NAND_BBT_SAVECONTENT	0x00002000
+/* Search good / bad pattern on the first and the second page */
+#define NAND_BBT_SCAN2NDPAGE	0x00004000
+/* Search good / bad pattern on the last page of the eraseblock */
+#define NAND_BBT_SCANLASTPAGE	0x00008000
+/* Chip stores bad block marker on BOTH 1st and 6th bytes of OOB */
+#define NAND_BBT_SCANBYTE1AND6 0x00100000
+/* The nand_bbt_descr was created dynamicaly and must be freed */
+#define NAND_BBT_DYNAMICSTRUCT 0x00200000
+/* The bad block table does not OOB for marker */
+#define NAND_BBT_NO_OOB		0x00400000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* The maximum number of blocks to scan for a bbt */
 #define NAND_BBT_SCAN_MAXBLOCKS	4

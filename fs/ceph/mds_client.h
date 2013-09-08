@@ -11,7 +11,10 @@
 #include <linux/ceph/types.h>
 #include <linux/ceph/messenger.h>
 #include <linux/ceph/mdsmap.h>
+<<<<<<< HEAD
 #include <linux/ceph/auth.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Some lock dependencies:
@@ -21,7 +24,11 @@
  *
  *         mdsc->snap_rwsem
  *
+<<<<<<< HEAD
  *         ci->i_ceph_lock
+=======
+ *         inode->i_lock
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *                 mdsc->snap_flush_lock
  *                 mdsc->cap_delay_lock
  *
@@ -114,6 +121,7 @@ struct ceph_mds_session {
 
 	struct ceph_connection s_con;
 
+<<<<<<< HEAD
 	struct ceph_auth_handshake s_auth;
 
 	/* protected by s_gen_ttl_lock */
@@ -123,6 +131,16 @@ struct ceph_mds_session {
 
 	/* protected by s_cap_lock */
 	spinlock_t        s_cap_lock;
+=======
+	struct ceph_authorizer *s_authorizer;
+	void             *s_authorizer_buf, *s_authorizer_reply_buf;
+	size_t            s_authorizer_buf_len, s_authorizer_reply_buf_len;
+
+	/* protected by s_cap_lock */
+	spinlock_t        s_cap_lock;
+	u32               s_cap_gen;  /* inc each time we get mds stale msg */
+	unsigned long     s_cap_ttl;  /* when session caps expire */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head  s_caps;     /* all caps issued by this session */
 	int               s_nr_caps, s_trim_caps;
 	int               s_num_cap_releases;
@@ -173,7 +191,10 @@ struct ceph_mds_request {
 	struct inode *r_inode;              /* arg1 */
 	struct dentry *r_dentry;            /* arg1 */
 	struct dentry *r_old_dentry;        /* arg2: rename from or link from */
+<<<<<<< HEAD
 	struct inode *r_old_dentry_dir;     /* arg2: old dentry's parent dir */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *r_path1, *r_path2;
 	struct ceph_vino r_ino1, r_ino2;
 
@@ -336,7 +357,11 @@ extern void ceph_mdsc_sync(struct ceph_mds_client *mdsc);
 
 extern void ceph_mdsc_lease_release(struct ceph_mds_client *mdsc,
 				    struct inode *inode,
+<<<<<<< HEAD
 				    struct dentry *dn);
+=======
+				    struct dentry *dn, int mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void ceph_invalidate_dir_request(struct ceph_mds_request *req);
 

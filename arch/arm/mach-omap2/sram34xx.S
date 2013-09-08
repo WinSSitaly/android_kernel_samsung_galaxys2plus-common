@@ -26,12 +26,20 @@
  * MA 02111-1307 USA
  */
 #include <linux/linkage.h>
+<<<<<<< HEAD
 
 #include <asm/assembler.h>
 
 #include <mach/hardware.h>
 
 #include "iomap.h"
+=======
+#include <asm/assembler.h>
+#include <mach/hardware.h>
+
+#include <mach/io.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sdrc.h"
 #include "cm2xxx_3xxx.h"
 

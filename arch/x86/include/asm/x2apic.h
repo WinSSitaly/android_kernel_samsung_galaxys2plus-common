@@ -18,11 +18,14 @@ static const struct cpumask *x2apic_target_cpus(void)
 	return cpu_online_mask;
 }
 
+<<<<<<< HEAD
 static int x2apic_apic_id_valid(int apicid)
 {
 	return 1;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int x2apic_apic_id_registered(void)
 {
 	return 1;

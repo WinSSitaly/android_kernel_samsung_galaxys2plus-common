@@ -322,6 +322,7 @@ config MOUSE_SYNAPTICS_I2C
 	  To compile this driver as a module, choose M here: the
 	  module will be called synaptics_i2c.
 
+<<<<<<< HEAD
 config MOUSE_SYNAPTICS_USB
 	tristate "Synaptics USB device support"
 	depends on USB_ARCH_HAS_HCD
@@ -339,4 +340,6 @@ config MOUSE_SYNAPTICS_USB
 	  To compile this driver as a module, choose M here: the
 	  module will be called synaptics_usb.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif

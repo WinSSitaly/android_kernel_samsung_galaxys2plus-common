@@ -12,10 +12,17 @@
  *
  */
 #include <linux/types.h>
+<<<<<<< HEAD
 /*#include <linux/crypto.h>*/
 #include "rtl_crypto.h"
 #include <linux/errno.h>
 #include <linux/scatterlist.h>
+=======
+//#include <linux/crypto.h>
+#include "rtl_crypto.h"
+#include <linux/errno.h>
+#include <asm/scatterlist.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/string.h>
 #include "internal.h"
 

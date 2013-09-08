@@ -247,7 +247,11 @@ static void s3cmci_check_sdio_irq(struct s3cmci_host *host)
 {
 	if (host->sdio_irqen) {
 		if (gpio_get_value(S3C2410_GPE(8)) == 0) {
+<<<<<<< HEAD
 			pr_debug("%s: signalling irq\n", __func__);
+=======
+			printk(KERN_DEBUG "%s: signalling irq\n", __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mmc_signal_sdio_irq(host->mmc);
 		}
 	}
@@ -344,7 +348,11 @@ static void s3cmci_disable_irq(struct s3cmci_host *host, bool transfer)
 
 	local_irq_save(flags);
 
+<<<<<<< HEAD
 	/* pr_debug("%s: transfer %d\n", __func__, transfer); */
+=======
+	//printk(KERN_DEBUG "%s: transfer %d\n", __func__, transfer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->irq_disabled = transfer;
 
@@ -913,9 +921,15 @@ request_done:
 }
 
 static void s3cmci_dma_setup(struct s3cmci_host *host,
+<<<<<<< HEAD
 			     enum dma_data_direction source)
 {
 	static enum dma_data_direction last_source = -1;
+=======
+			     enum s3c2410_dmasrc source)
+{
+	static enum s3c2410_dmasrc last_source = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	static int setup_ok;
 
 	if (last_source == source)
@@ -1087,7 +1101,11 @@ static int s3cmci_prepare_dma(struct s3cmci_host *host, struct mmc_data *data)
 
 	BUG_ON((data->flags & BOTH_DIR) == BOTH_DIR);
 
+<<<<<<< HEAD
 	s3cmci_dma_setup(host, rw ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
+=======
+	s3cmci_dma_setup(host, rw ? S3C2410_DMASRC_MEM : S3C2410_DMASRC_HW);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s3c2410_dma_ctrl(host->dma, S3C2410_DMAOP_FLUSH);
 
 	dma_len = dma_map_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
@@ -1606,7 +1624,11 @@ static int __devinit s3cmci_probe(struct platform_device *pdev)
 	host->mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!host->mem) {
 		dev_err(&pdev->dev,
+<<<<<<< HEAD
 			"failed to get io memory region resource.\n");
+=======
+			"failed to get io memory region resouce.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = -ENOENT;
 		goto probe_free_gpio;
@@ -1630,7 +1652,11 @@ static int __devinit s3cmci_probe(struct platform_device *pdev)
 
 	host->irq = platform_get_irq(pdev, 0);
 	if (host->irq == 0) {
+<<<<<<< HEAD
 		dev_err(&pdev->dev, "failed to get interrupt resource.\n");
+=======
+		dev_err(&pdev->dev, "failed to get interrupt resouce.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EINVAL;
 		goto probe_iounmap;
 	}
@@ -1914,7 +1940,22 @@ static struct platform_driver s3cmci_driver = {
 	.shutdown	= s3cmci_shutdown,
 };
 
+<<<<<<< HEAD
 module_platform_driver(s3cmci_driver);
+=======
+static int __init s3cmci_init(void)
+{
+	return platform_driver_register(&s3cmci_driver);
+}
+
+static void __exit s3cmci_exit(void)
+{
+	platform_driver_unregister(&s3cmci_driver);
+}
+
+module_init(s3cmci_init);
+module_exit(s3cmci_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("Samsung S3C MMC/SD Card Interface driver");
 MODULE_LICENSE("GPL v2");

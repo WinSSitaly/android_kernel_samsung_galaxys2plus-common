@@ -250,8 +250,14 @@
  * USE_MFP:	Use the ST-MFP port (Modem1) for serial debug.
  *
  * Macintosh constants:
+<<<<<<< HEAD
  * MAC_USE_SCC_A: Use SCC port A (modem) for serial debug and early console.
  * MAC_USE_SCC_B: Use SCC port B (printer) for serial debug and early console.
+=======
+ * MAC_SERIAL_DEBUG:	Turns on serial debug output for the Macintosh.
+ * MAC_USE_SCC_A:	Use the SCC port A (modem) for serial debug.
+ * MAC_USE_SCC_B:	Use the SCC port B (printer) for serial debug (default).
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #include <linux/linkage.h>
@@ -267,11 +273,19 @@
 
 #include <asm/machw.h>
 
+<<<<<<< HEAD
+=======
+/*
+ * Macintosh console support
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FRAMEBUFFER_CONSOLE
 #define CONSOLE
 #define CONSOLE_PENGUIN
 #endif
 
+<<<<<<< HEAD
 #ifdef CONFIG_EARLY_PRINTK
 #define SERIAL_DEBUG
 #else
@@ -286,6 +300,26 @@
 
 #undef MMU_PRINT
 #undef MMU_NOCACHE_KERNEL
+=======
+/*
+ * Macintosh serial debug support; outputs boot info to the printer
+ *   and/or modem serial ports
+ */
+#undef MAC_SERIAL_DEBUG
+
+/*
+ * Macintosh serial debug port selection; define one or both;
+ *   requires MAC_SERIAL_DEBUG to be defined
+ */
+#define MAC_USE_SCC_A		/* Macintosh modem serial port */
+#define MAC_USE_SCC_B		/* Macintosh printer serial port */
+
+#endif	/* CONFIG_MAC */
+
+#undef MMU_PRINT
+#undef MMU_NOCACHE_KERNEL
+#define SERIAL_DEBUG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef DEBUG
 
 /*
@@ -646,11 +680,19 @@ ENTRY(__start)
 	lea	%pc@(L(mac_rowbytes)),%a1
 	movel	%a0@,%a1@
 
+<<<<<<< HEAD
 #ifdef SERIAL_DEBUG
 	get_bi_record	BI_MAC_SCCBASE
 	lea	%pc@(L(mac_sccbase)),%a1
 	movel	%a0@,%a1@
 #endif
+=======
+#ifdef MAC_SERIAL_DEBUG
+	get_bi_record	BI_MAC_SCCBASE
+	lea	%pc@(L(mac_sccbase)),%a1
+	movel	%a0@,%a1@
+#endif /* MAC_SERIAL_DEBUG */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if 0
 	/*
@@ -1418,7 +1460,11 @@ L(mmu_fixup_done):
 	subl	%d0,L(console_font)
 	subl	%d0,L(console_font_data)
 #endif
+<<<<<<< HEAD
 #ifdef SERIAL_DEBUG
+=======
+#ifdef MAC_SERIAL_DEBUG
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	orl	#0x50000000,L(mac_sccbase)
 #endif
 1:
@@ -1908,7 +1954,11 @@ mmu_030_print:
 	jbne	30b
 
 mmu_print_done:
+<<<<<<< HEAD
 	puts	"\n"
+=======
+	puts	"\n\n"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 func_return	mmu_print
 
@@ -2752,12 +2802,23 @@ func_return	get_new_page
 #ifdef CONFIG_MAC
 
 L(scc_initable_mac):
+<<<<<<< HEAD
 	.byte	4,0x44		/* x16, 1 stopbit, no parity */
 	.byte	3,0xc0		/* receiver: 8 bpc */
 	.byte	5,0xe2		/* transmitter: 8 bpc, assert dtr/rts */
 	.byte	10,0		/* NRZ */
 	.byte	11,0x50		/* use baud rate generator */
 	.byte	12,1,13,0	/* 38400 baud */
+=======
+	.byte	9,12		/* Reset */
+	.byte	4,0x44		/* x16, 1 stopbit, no parity */
+	.byte	3,0xc0		/* receiver: 8 bpc */
+	.byte	5,0xe2		/* transmitter: 8 bpc, assert dtr/rts */
+	.byte	9,0		/* no interrupts */
+	.byte	10,0		/* NRZ */
+	.byte	11,0x50		/* use baud rate generator */
+	.byte	12,10,13,0	/* 9600 baud */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.byte	14,1		/* Baud rate generator enable */
 	.byte	3,0xc1		/* enable receiver */
 	.byte	5,0xea		/* enable transmitter */
@@ -2895,6 +2956,7 @@ func_start	serial_init,%d0/%d1/%a0/%a1
 #endif
 #ifdef CONFIG_MAC
 	is_not_mac(L(serial_init_not_mac))
+<<<<<<< HEAD
 
 #ifdef SERIAL_DEBUG
 
@@ -2902,11 +2964,18 @@ func_start	serial_init,%d0/%d1/%a0/%a1
 #define MAC_USE_SCC_A /* Modem port */
 #define MAC_USE_SCC_B /* Printer port */
 
+=======
+#ifdef MAC_SERIAL_DEBUG
+#if !defined(MAC_USE_SCC_A) && !defined(MAC_USE_SCC_B)
+#define MAC_USE_SCC_B
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define mac_scc_cha_b_ctrl_offset	0x0
 #define mac_scc_cha_a_ctrl_offset	0x2
 #define mac_scc_cha_b_data_offset	0x4
 #define mac_scc_cha_a_data_offset	0x6
 
+<<<<<<< HEAD
 #if defined(MAC_USE_SCC_A) || defined(MAC_USE_SCC_B)
 	movel	%pc@(L(mac_sccbase)),%a0
 	/* Reset SCC device */
@@ -2922,6 +2991,11 @@ func_start	serial_init,%d0/%d1/%a0/%a1
 
 #ifdef MAC_USE_SCC_A
 	/* Initialize channel A */
+=======
+#ifdef MAC_USE_SCC_A
+	/* Initialize channel A */
+	movel	%pc@(L(mac_sccbase)),%a0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lea	%pc@(L(scc_initable_mac)),%a1
 5:	moveb	%a1@+,%d0
 	jmi	6f
@@ -2933,6 +3007,12 @@ func_start	serial_init,%d0/%d1/%a0/%a1
 
 #ifdef MAC_USE_SCC_B
 	/* Initialize channel B */
+<<<<<<< HEAD
+=======
+#ifndef MAC_USE_SCC_A	/* Load mac_sccbase only if needed */
+	movel	%pc@(L(mac_sccbase)),%a0
+#endif	/* MAC_USE_SCC_A */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	lea	%pc@(L(scc_initable_mac)),%a1
 7:	moveb	%a1@+,%d0
 	jmi	8f
@@ -2941,8 +3021,12 @@ func_start	serial_init,%d0/%d1/%a0/%a1
 	jra	7b
 8:
 #endif	/* MAC_USE_SCC_B */
+<<<<<<< HEAD
 
 #endif	/* SERIAL_DEBUG */
+=======
+#endif	/* MAC_SERIAL_DEBUG */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	jra	L(serial_init_done)
 L(serial_init_not_mac):
@@ -3013,6 +3097,7 @@ func_start	serial_putc,%d0/%d1/%a0/%a1
 #ifdef CONFIG_MAC
 	is_not_mac(5f)
 
+<<<<<<< HEAD
 #ifdef SERIAL_DEBUG
 
 #if defined(MAC_USE_SCC_A) || defined(MAC_USE_SCC_B)
@@ -3020,18 +3105,34 @@ func_start	serial_putc,%d0/%d1/%a0/%a1
 #endif
 
 #ifdef MAC_USE_SCC_A
+=======
+#ifdef MAC_SERIAL_DEBUG
+
+#ifdef MAC_USE_SCC_A
+	movel	%pc@(L(mac_sccbase)),%a1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 3:	btst	#2,%a1@(mac_scc_cha_a_ctrl_offset)
 	jeq	3b
 	moveb	%d0,%a1@(mac_scc_cha_a_data_offset)
 #endif	/* MAC_USE_SCC_A */
 
 #ifdef MAC_USE_SCC_B
+<<<<<<< HEAD
+=======
+#ifndef MAC_USE_SCC_A	/* Load mac_sccbase only if needed */
+	movel	%pc@(L(mac_sccbase)),%a1
+#endif	/* MAC_USE_SCC_A */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 4:	btst	#2,%a1@(mac_scc_cha_b_ctrl_offset)
 	jeq	4b
 	moveb	%d0,%a1@(mac_scc_cha_b_data_offset)
 #endif	/* MAC_USE_SCC_B */
 
+<<<<<<< HEAD
 #endif	/* SERIAL_DEBUG */
+=======
+#endif	/* MAC_SERIAL_DEBUG */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	jra	L(serial_putc_done)
 5:
@@ -3250,6 +3351,7 @@ func_return	putn
 
 #ifdef CONFIG_MAC
 /*
+<<<<<<< HEAD
  *	mac_early_print
  *
  *	This routine takes its parameters on the stack.  It then
@@ -3258,10 +3360,21 @@ func_return	putn
  *
  *	The calling parameters are:
  *		void mac_early_print(const char *str, unsigned length);
+=======
+ *	mac_serial_print
+ *
+ *	This routine takes its parameters on the stack.  It then
+ *	turns around and calls the internal routine.  This routine
+ *	is used until the Linux console driver initializes itself.
+ *
+ *	The calling parameters are:
+ *		void mac_serial_print(const char *str);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	This routine does NOT understand variable arguments only
  *	simple strings!
  */
+<<<<<<< HEAD
 ENTRY(mac_early_print)
 	moveml	%d0/%d1/%a0,%sp@-
 	movew	%sr,%sp@-
@@ -3283,6 +3396,23 @@ ENTRY(mac_early_print)
 3:
 	movew	%sp@+,%sr
 	moveml	%sp@+,%d0/%d1/%a0
+=======
+ENTRY(mac_serial_print)
+	moveml	%d0/%a0,%sp@-
+#if 1
+	move	%sr,%sp@-
+	ori	#0x0700,%sr
+#endif
+	movel	%sp@(10),%a0		/* fetch parameter */
+	jra	2f
+1:	serial_putc	%d0
+2:	moveb	%a0@+,%d0
+	jne	1b
+#if 1
+	move	%sp@+,%sr
+#endif
+	moveml	%sp@+,%d0/%a0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	rts
 #endif /* CONFIG_MAC */
 
@@ -3417,10 +3547,17 @@ func_start	console_put_stats,%a0/%d7
 	 *		a0 = pointer to boot_info
 	 *		d7 = value of boot_info fields
 	 */
+<<<<<<< HEAD
 	puts	"\nMacLinux\n"
 
 #ifdef SERIAL_DEBUG
 	puts	"\n vidaddr:"
+=======
+	puts	"\nMacLinux\n\n"
+
+#ifdef SERIAL_DEBUG
+	puts	" vidaddr:"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	putn	%pc@(L(mac_videobase))		/* video addr. */
 
 	puts	"\n  _stext:"
@@ -3431,6 +3568,7 @@ func_start	console_put_stats,%a0/%d7
 	lea	%pc@(_end),%a0
 	putn	%a0
 
+<<<<<<< HEAD
 	puts	"\n   cpuid:"
 	putn	%pc@(L(cputype))
 
@@ -3446,6 +3584,21 @@ func_start	console_put_stats,%a0/%d7
 
 	putc	'\n'
 
+=======
+	puts	"\ncpuid:"
+	putn	%pc@(L(cputype))
+	putc	'\n'
+
+#ifdef MAC_SERIAL_DEBUG
+	putn	%pc@(L(mac_sccbase))
+	putc	'\n'
+#endif
+#  if defined(MMU_PRINT)
+	jbsr	mmu_print_machine_cpu_types
+#  endif /* MMU_PRINT */
+#endif /* SERIAL_DEBUG */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 func_return	console_put_stats
 
 #ifdef CONSOLE_PENGUIN
@@ -3906,11 +4059,19 @@ L(mac_dimensions):
 	.long	0
 L(mac_rowbytes):
 	.long	0
+<<<<<<< HEAD
 #ifdef SERIAL_DEBUG
 L(mac_sccbase):
 	.long	0
 #endif
 #endif /* CONFIG_MAC */
+=======
+#ifdef MAC_SERIAL_DEBUG
+L(mac_sccbase):
+	.long	0
+#endif /* MAC_SERIAL_DEBUG */
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #if defined (CONFIG_APOLLO)
 LSRB0        = 0x10412

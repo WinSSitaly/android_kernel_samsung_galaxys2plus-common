@@ -29,8 +29,11 @@
 #ifndef __TTYPE_H__
 #define __TTYPE_H__
 
+<<<<<<< HEAD
 #include <linux/types.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /******* Common definitions and typedefs ***********************************/
 
 typedef int             BOOL;
@@ -44,17 +47,28 @@ typedef int             BOOL;
 
 /****** Simple typedefs  ***************************************************/
 
+<<<<<<< HEAD
 typedef u8 BYTE;
 typedef u16 WORD;
 typedef u32 DWORD;
+=======
+typedef unsigned char   BYTE;           //  8-bit
+typedef unsigned short  WORD;           // 16-bit
+typedef unsigned long   DWORD;          // 32-bit
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 // QWORD is for those situation that we want
 // an 8-byte-aligned 8 byte long structure
 // which is NOT really a floating point number.
 typedef union tagUQuadWord {
     struct {
+<<<<<<< HEAD
 	u32 dwLowDword;
 	u32 dwHighDword;
+=======
+        DWORD   dwLowDword;
+        DWORD   dwHighDword;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     } u;
     double      DoNotUseThisField;
 } UQuadWord;
@@ -62,8 +76,13 @@ typedef UQuadWord       QWORD;          // 64-bit
 
 /****** Common pointer types ***********************************************/
 
+<<<<<<< HEAD
 typedef u32 ULONG_PTR;
 typedef u32 DWORD_PTR;
+=======
+typedef unsigned long   ULONG_PTR;      // 32-bit
+typedef unsigned long   DWORD_PTR;      // 32-bit
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 // boolean pointer
 

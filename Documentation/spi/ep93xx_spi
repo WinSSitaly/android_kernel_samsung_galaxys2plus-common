@@ -88,6 +88,7 @@ static void __init ts72xx_init_machine(void)
 			    ARRAY_SIZE(ts72xx_spi_devices));
 }
 
+<<<<<<< HEAD
 The driver can use DMA for the transfers also. In this case ts72xx_spi_info
 becomes:
 
@@ -98,6 +99,8 @@ static struct ep93xx_spi_info ts72xx_spi_info = {
 
 Note that CONFIG_EP93XX_DMA should be enabled as well.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 Thanks to
 =========
 Martin Guy, H. Hartley Sweeten and others who helped me during development of

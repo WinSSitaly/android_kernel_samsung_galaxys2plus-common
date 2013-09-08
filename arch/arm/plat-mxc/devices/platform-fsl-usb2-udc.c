@@ -6,7 +6,10 @@
  * the terms of the GNU General Public License version 2 as published by the
  * Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/dma-mapping.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/hardware.h>
 #include <mach/devices-common.h>
 
@@ -36,11 +39,14 @@ const struct imx_fsl_usb2_udc_data imx35_fsl_usb2_udc_data __initconst =
 	imx_fsl_usb2_udc_data_entry_single(MX35);
 #endif /* ifdef CONFIG_SOC_IMX35 */
 
+<<<<<<< HEAD
 #ifdef CONFIG_SOC_IMX51
 const struct imx_fsl_usb2_udc_data imx51_fsl_usb2_udc_data __initconst =
 	imx_fsl_usb2_udc_data_entry_single(MX51);
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct platform_device *__init imx_add_fsl_usb2_udc(
 		const struct imx_fsl_usb2_udc_data *data,
 		const struct fsl_usb2_platform_data *pdata)

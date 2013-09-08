@@ -17,7 +17,10 @@
 #include <linux/io.h>
 
 #include <asm/mach/irq.h>
+<<<<<<< HEAD
 #include <asm/exception.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <mach/common.h>
@@ -43,15 +46,22 @@
 #define TZIC_SRCCLAR0	0x0280	/* Source Clear Register 0 */
 #define TZIC_PRIORITY0	0x0400	/* Priority Register 0 */
 #define TZIC_PND0	0x0D00	/* Pending Register 0 */
+<<<<<<< HEAD
 #define TZIC_HIPND(i)	(0x0D80+ ((i) << 2))	/* High Priority Pending Register */
+=======
+#define TZIC_HIPND0	0x0D80	/* High Priority Pending Register */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define TZIC_WAKEUP0(i)	(0x0E00 + ((i) << 2))	/* Wakeup Config Register */
 #define TZIC_SWINT	0x0F00	/* Software Interrupt Rigger Register */
 #define TZIC_ID0	0x0FD0	/* Indentification Register 0 */
 
 void __iomem *tzic_base; /* Used as irq controller base in entry-macro.S */
 
+<<<<<<< HEAD
 #define TZIC_NUM_IRQS 128
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FIQ
 static int tzic_set_irq_fiq(unsigned int irq, unsigned int type)
 {
@@ -69,6 +79,7 @@ static int tzic_set_irq_fiq(unsigned int irq, unsigned int type)
 
 	return 0;
 }
+<<<<<<< HEAD
 #else
 #define tzic_set_irq_fiq NULL
 #endif
@@ -97,11 +108,81 @@ static void tzic_irq_resume(struct irq_data *d)
 #endif
 
 static struct mxc_extra_irq tzic_extra_irq = {
+=======
+#endif
+
+/**
+ * tzic_mask_irq() - Disable interrupt source "d" in the TZIC
+ *
+ * @param  d            interrupt source
+ */
+static void tzic_mask_irq(struct irq_data *d)
+{
+	int index, off;
+
+	index = d->irq >> 5;
+	off = d->irq & 0x1F;
+	__raw_writel(1 << off, tzic_base + TZIC_ENCLEAR0(index));
+}
+
+/**
+ * tzic_unmask_irq() - Enable interrupt source "d" in the TZIC
+ *
+ * @param  d            interrupt source
+ */
+static void tzic_unmask_irq(struct irq_data *d)
+{
+	int index, off;
+
+	index = d->irq >> 5;
+	off = d->irq & 0x1F;
+	__raw_writel(1 << off, tzic_base + TZIC_ENSET0(index));
+}
+
+static unsigned int wakeup_intr[4];
+
+/**
+ * tzic_set_wake_irq() - Set interrupt source "d" in the TZIC as a wake-up source.
+ *
+ * @param  d            interrupt source
+ * @param  enable       enable as wake-up if equal to non-zero
+ * 			disble as wake-up if equal to zero
+ *
+ * @return       This function returns 0 on success.
+ */
+static int tzic_set_wake_irq(struct irq_data *d, unsigned int enable)
+{
+	unsigned int index, off;
+
+	index = d->irq >> 5;
+	off = d->irq & 0x1F;
+
+	if (index > 3)
+		return -EINVAL;
+
+	if (enable)
+		wakeup_intr[index] |= (1 << off);
+	else
+		wakeup_intr[index] &= ~(1 << off);
+
+	return 0;
+}
+
+static struct mxc_irq_chip mxc_tzic_chip = {
+	.base = {
+		.name = "MXC_TZIC",
+		.irq_ack = tzic_mask_irq,
+		.irq_mask = tzic_mask_irq,
+		.irq_unmask = tzic_unmask_irq,
+		.irq_set_wake = tzic_set_wake_irq,
+	},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_FIQ
 	.set_irq_fiq = tzic_set_irq_fiq,
 #endif
 };
 
+<<<<<<< HEAD
 static __init void tzic_init_gc(unsigned int irq_start)
 {
 	struct irq_chip_generic *gc;
@@ -147,6 +228,8 @@ asmlinkage void __exception_irq_entry tzic_handle_irq(struct pt_regs *regs)
 	} while (handled);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * This function initializes the TZIC hardware and disables all the
  * interrupts. It registers the interrupt enable and disable functions
@@ -175,8 +258,16 @@ void __init tzic_init_irq(void __iomem *irqbase)
 
 	/* all IRQ no FIQ Warning :: No selection */
 
+<<<<<<< HEAD
 	for (i = 0; i < TZIC_NUM_IRQS; i += 32)
 		tzic_init_gc(i);
+=======
+	for (i = 0; i < MXC_INTERNAL_IRQS; i++) {
+		irq_set_chip_and_handler(i, &mxc_tzic_chip.base,
+					 handle_level_irq);
+		set_irq_flags(i, IRQF_VALID);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_FIQ
 	/* Initialize FIQ */
@@ -189,19 +280,37 @@ void __init tzic_init_irq(void __iomem *irqbase)
 /**
  * tzic_enable_wake() - enable wakeup interrupt
  *
+<<<<<<< HEAD
  * @return			0 if successful; non-zero otherwise
  */
 int tzic_enable_wake(void)
 {
 	unsigned int i;
+=======
+ * @param is_idle		1 if called in idle loop (ENSET0 register);
+ *				0 to be used when called from low power entry
+ * @return			0 if successful; non-zero otherwise
+ */
+int tzic_enable_wake(int is_idle)
+{
+	unsigned int i, v;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	__raw_writel(1, tzic_base + TZIC_DSMINT);
 	if (unlikely(__raw_readl(tzic_base + TZIC_DSMINT) == 0))
 		return -EAGAIN;
 
+<<<<<<< HEAD
 	for (i = 0; i < 4; i++)
 		__raw_writel(__raw_readl(tzic_base + TZIC_ENSET0(i)),
 			     tzic_base + TZIC_WAKEUP0(i));
+=======
+	for (i = 0; i < 4; i++) {
+		v = is_idle ? __raw_readl(tzic_base + TZIC_ENSET0(i)) :
+			wakeup_intr[i];
+		__raw_writel(v, tzic_base + TZIC_WAKEUP0(i));
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

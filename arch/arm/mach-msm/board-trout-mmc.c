@@ -1,7 +1,11 @@
 /* linux/arch/arm/mach-msm/board-trout-mmc.c
 ** Author: Brian Swetland <swetland@google.com>
 */
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
@@ -11,6 +15,10 @@
 #include <linux/err.h>
 #include <linux/debugfs.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 
 #include <mach/vreg.h>

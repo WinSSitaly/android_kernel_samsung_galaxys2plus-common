@@ -42,6 +42,10 @@ static int load_em86(struct linux_binprm *bprm,struct pt_regs *regs)
 			return -ENOEXEC;
 	}
 
+<<<<<<< HEAD
+=======
+	bprm->recursion_depth++; /* Well, the bang-shell is implicit... */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	allow_write_access(bprm->file);
 	fput(bprm->file);
 	bprm->file = NULL;
@@ -99,8 +103,12 @@ static struct linux_binfmt em86_format = {
 
 static int __init init_em86_binfmt(void)
 {
+<<<<<<< HEAD
 	register_binfmt(&em86_format);
 	return 0;
+=======
+	return register_binfmt(&em86_format);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __exit exit_em86_binfmt(void)

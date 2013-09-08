@@ -404,9 +404,12 @@ void dm_rh_mark_nosync(struct dm_region_hash *rh, struct bio *bio)
 		return;
 	}
 
+<<<<<<< HEAD
 	if (bio->bi_rw & REQ_DISCARD)
 		return;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* We must inform the log that the sync count has changed. */
 	log->type->set_region_sync(log, region, 0);
 
@@ -527,7 +530,11 @@ void dm_rh_inc_pending(struct dm_region_hash *rh, struct bio_list *bios)
 	struct bio *bio;
 
 	for (bio = bios->head; bio; bio = bio->bi_next) {
+<<<<<<< HEAD
 		if (bio->bi_rw & (REQ_FLUSH | REQ_DISCARD))
+=======
+		if (bio->bi_rw & REQ_FLUSH)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			continue;
 		rh_inc(rh, dm_rh_bio_to_region(rh, bio));
 	}

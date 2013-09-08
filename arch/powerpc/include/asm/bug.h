@@ -126,6 +126,7 @@
 
 #include <asm-generic/bug.h>
 
+<<<<<<< HEAD
 #ifndef __ASSEMBLY__
 
 struct pt_regs;
@@ -137,5 +138,7 @@ extern void print_backtrace(unsigned long *);
 
 #endif /* !__ASSEMBLY__ */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* __KERNEL__ */
 #endif /* _ASM_POWERPC_BUG_H */

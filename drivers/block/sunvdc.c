@@ -461,7 +461,11 @@ static int generic_request(struct vdc_port *port, u8 op, void *buf, int len)
 	int op_len, err;
 	void *req_buf;
 
+<<<<<<< HEAD
 	if (!(((u64)1 << (u64)op) & port->operations))
+=======
+	if (!(((u64)1 << ((u64)op - 1)) & port->operations))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EOPNOTSUPP;
 
 	switch (op) {
@@ -839,7 +843,14 @@ static struct vio_driver vdc_port_driver = {
 	.id_table	= vdc_port_match,
 	.probe		= vdc_port_probe,
 	.remove		= vdc_port_remove,
+<<<<<<< HEAD
 	.name		= "vdc_port",
+=======
+	.driver		= {
+		.name	= "vdc_port",
+		.owner	= THIS_MODULE,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init vdc_init(void)

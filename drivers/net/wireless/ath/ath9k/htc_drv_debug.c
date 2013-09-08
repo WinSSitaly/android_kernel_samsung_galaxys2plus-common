@@ -16,6 +16,15 @@
 
 #include "htc.h"
 
+<<<<<<< HEAD
+=======
+static int ath9k_debugfs_open(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t read_file_tgt_int_stats(struct file *file, char __user *user_buf,
 				       size_t count, loff_t *ppos)
 {
@@ -69,7 +78,11 @@ static ssize_t read_file_tgt_int_stats(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_tgt_int_stats = {
 	.read = read_file_tgt_int_stats,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -139,7 +152,11 @@ static ssize_t read_file_tgt_tx_stats(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_tgt_tx_stats = {
 	.read = read_file_tgt_tx_stats,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -185,7 +202,11 @@ static ssize_t read_file_tgt_rx_stats(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_tgt_rx_stats = {
 	.read = read_file_tgt_rx_stats,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -237,7 +258,11 @@ static ssize_t read_file_xmit(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_xmit = {
 	.read = read_file_xmit,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -358,7 +383,11 @@ static ssize_t read_file_recv(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_recv = {
 	.read = read_file_recv,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -393,7 +422,11 @@ static ssize_t read_file_slot(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_slot = {
 	.read = read_file_slot,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -440,7 +473,11 @@ static ssize_t read_file_queue(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_queue = {
 	.read = read_file_queue,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -481,7 +518,11 @@ static ssize_t write_file_debug(struct file *file, const char __user *user_buf,
 static const struct file_operations fops_debug = {
 	.read = read_file_debug,
 	.write = write_file_debug,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -617,8 +658,16 @@ static ssize_t read_file_base_eeprom(struct file *file, char __user *user_buf,
 				pBase9287->openLoopPwrCntl);
 	}
 
+<<<<<<< HEAD
 	len += snprintf(buf + len, size - len, "%20s : %pM\n", "MacAddress",
 			pBase->macAddr);
+=======
+	len += snprintf(buf + len, size - len,
+			"%20s : %02X:%02X:%02X:%02X:%02X:%02X\n",
+			"MacAddress",
+			pBase->macAddr[0], pBase->macAddr[1], pBase->macAddr[2],
+			pBase->macAddr[3], pBase->macAddr[4], pBase->macAddr[5]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (len > size)
 		len = size;
 
@@ -630,7 +679,11 @@ static ssize_t read_file_base_eeprom(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_base_eeprom = {
 	.read = read_file_base_eeprom,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };
@@ -911,7 +964,11 @@ static ssize_t read_file_modal_eeprom(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_modal_eeprom = {
 	.read = read_file_modal_eeprom,
+<<<<<<< HEAD
 	.open = simple_open,
+=======
+	.open = ath9k_debugfs_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.owner = THIS_MODULE,
 	.llseek = default_llseek,
 };

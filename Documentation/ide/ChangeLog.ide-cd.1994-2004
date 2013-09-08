@@ -175,7 +175,11 @@
  *                         since the .pdf version doesn't seem to work...
  *                     -- Updated the TODO list to something more current.
  *
+<<<<<<< HEAD
  * 4.15  Aug 25, 1998  -- Updated ide-cd.h to respect machine endianness,
+=======
+ * 4.15  Aug 25, 1998  -- Updated ide-cd.h to respect mechine endianess,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *                         patch thanks to "Eddie C. Dost" <ecd@skynet.be>
  *
  * 4.50  Oct 19, 1998  -- New maintainers!

@@ -1577,9 +1577,15 @@ int stv0367ter_init(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int stv0367ter_algo(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int stv0367ter_algo(struct dvb_frontend *fe,
+				struct dvb_frontend_parameters *param)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stv0367_state *state = fe->demodulator_priv;
 	struct stv0367ter_state *ter_state = state->ter_state;
 	int offset = 0, tempo = 0;
@@ -1591,7 +1597,11 @@ static int stv0367ter_algo(struct dvb_frontend *fe)
 
 	dprintk("%s:\n", __func__);
 
+<<<<<<< HEAD
 	ter_state->frequency = p->frequency;
+=======
+	ter_state->frequency = param->frequency;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ter_state->force = FE_TER_FORCENONE
 			+ stv0367_readbits(state, F367TER_FORCE) * 2;
 	ter_state->if_iq_mode = state->config->if_iq_mode;
@@ -1620,7 +1630,11 @@ static int stv0367ter_algo(struct dvb_frontend *fe)
 
 	usleep_range(5000, 7000);
 
+<<<<<<< HEAD
 	switch (p->inversion) {
+=======
+	switch (param->inversion) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case INVERSION_AUTO:
 	default:
 		dprintk("%s: inversion AUTO\n", __func__);
@@ -1636,10 +1650,17 @@ static int stv0367ter_algo(struct dvb_frontend *fe)
 	case INVERSION_OFF:
 		if (ter_state->if_iq_mode == FE_TER_IQ_TUNER)
 			stv0367_writebits(state, F367TER_IQ_INVERT,
+<<<<<<< HEAD
 						p->inversion);
 		else
 			stv0367_writebits(state, F367TER_INV_SPECTR,
 						p->inversion);
+=======
+						param->inversion);
+		else
+			stv0367_writebits(state, F367TER_INV_SPECTR,
+						param->inversion);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		break;
 	}
@@ -1806,9 +1827,16 @@ static int stv0367ter_algo(struct dvb_frontend *fe)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int stv0367ter_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int stv0367ter_set_frontend(struct dvb_frontend *fe,
+				struct dvb_frontend_parameters *param)
+{
+	struct dvb_ofdm_parameters *op = &param->u.ofdm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stv0367_state *state = fe->demodulator_priv;
 	struct stv0367ter_state *ter_state = state->ter_state;
 
@@ -1821,12 +1849,20 @@ static int stv0367ter_set_frontend(struct dvb_frontend *fe)
 	if (fe->ops.tuner_ops.set_params) {
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1);
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 0);
 	}
 
+<<<<<<< HEAD
 	switch (p->transmission_mode) {
+=======
+	switch (op->transmission_mode) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 	case TRANSMISSION_MODE_AUTO:
 	case TRANSMISSION_MODE_2K:
@@ -1840,19 +1876,28 @@ static int stv0367ter_set_frontend(struct dvb_frontend *fe)
 		break;
 	}
 
+<<<<<<< HEAD
 	switch (p->guard_interval) {
+=======
+	switch (op->guard_interval) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 	case GUARD_INTERVAL_1_32:
 	case GUARD_INTERVAL_1_16:
 	case GUARD_INTERVAL_1_8:
 	case GUARD_INTERVAL_1_4:
+<<<<<<< HEAD
 		ter_state->guard = p->guard_interval;
+=======
+		ter_state->guard = op->guard_interval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case GUARD_INTERVAL_AUTO:
 		ter_state->guard = GUARD_INTERVAL_1_32;
 		break;
 	}
 
+<<<<<<< HEAD
 	switch (p->bandwidth_hz) {
 	case 6000000:
 		ter_state->bw = FE_TER_CHAN_BW_6M;
@@ -1861,13 +1906,27 @@ static int stv0367ter_set_frontend(struct dvb_frontend *fe)
 		ter_state->bw = FE_TER_CHAN_BW_7M;
 		break;
 	case 8000000:
+=======
+	switch (op->bandwidth) {
+	case BANDWIDTH_6_MHZ:
+		ter_state->bw = FE_TER_CHAN_BW_6M;
+		break;
+	case BANDWIDTH_7_MHZ:
+		ter_state->bw = FE_TER_CHAN_BW_7M;
+		break;
+	case BANDWIDTH_8_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		ter_state->bw = FE_TER_CHAN_BW_8M;
 	}
 
 	ter_state->hierarchy = FE_TER_HIER_NONE;
 
+<<<<<<< HEAD
 	switch (p->inversion) {
+=======
+	switch (param->inversion) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case INVERSION_OFF:
 	case INVERSION_ON:
 		num_trials = 1;
@@ -1884,6 +1943,7 @@ static int stv0367ter_set_frontend(struct dvb_frontend *fe)
 
 	while (((index) < num_trials) && (ter_state->state != FE_TER_LOCKOK)) {
 		if (!ter_state->first_lock) {
+<<<<<<< HEAD
 			if (p->inversion == INVERSION_AUTO)
 				ter_state->sense = SenseTrials[index];
 
@@ -1892,6 +1952,16 @@ static int stv0367ter_set_frontend(struct dvb_frontend *fe)
 
 		if ((ter_state->state == FE_TER_LOCKOK) &&
 				(p->inversion == INVERSION_AUTO) &&
+=======
+			if (param->inversion == INVERSION_AUTO)
+				ter_state->sense = SenseTrials[index];
+
+		}
+		stv0367ter_algo(fe,/* &pLook, result,*/ param);
+
+		if ((ter_state->state == FE_TER_LOCKOK) &&
+				(param->inversion == INVERSION_AUTO) &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 								(index == 1)) {
 			/* invert spectrum sense */
 			SenseTrials[index] = SenseTrials[0];
@@ -1926,16 +1996,27 @@ static int stv0367ter_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int stv0367ter_get_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 	struct stv0367_state *state = fe->demodulator_priv;
 	struct stv0367ter_state *ter_state = state->ter_state;
+=======
+static int stv0367ter_get_frontend(struct dvb_frontend *fe,
+				  struct dvb_frontend_parameters *param)
+{
+	struct stv0367_state *state = fe->demodulator_priv;
+	struct stv0367ter_state *ter_state = state->ter_state;
+	struct dvb_ofdm_parameters *op = &param->u.ofdm;
+	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	int error = 0;
 	enum stv0367_ter_mode mode;
 	int constell = 0,/* snr = 0,*/ Data = 0;
 
+<<<<<<< HEAD
 	p->frequency = stv0367_get_tuner_freq(fe);
 	if ((int)p->frequency < 0)
 		p->frequency = -p->frequency;
@@ -1949,12 +2030,28 @@ static int stv0367ter_get_frontend(struct dvb_frontend *fe)
 		p->modulation = QAM_64;
 
 	p->inversion = stv0367_readbits(state, F367TER_INV_SPECTR);
+=======
+	param->frequency = stv0367_get_tuner_freq(fe);
+	if ((int)param->frequency < 0)
+		param->frequency = c->frequency;
+
+	constell = stv0367_readbits(state, F367TER_TPS_CONST);
+	if (constell == 0)
+		op->constellation = QPSK;
+	else if (constell == 1)
+		op->constellation = QAM_16;
+	else
+		op->constellation = QAM_64;
+
+	param->inversion = stv0367_readbits(state, F367TER_INV_SPECTR);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Get the Hierarchical mode */
 	Data = stv0367_readbits(state, F367TER_TPS_HIERMODE);
 
 	switch (Data) {
 	case 0:
+<<<<<<< HEAD
 		p->hierarchy = HIERARCHY_NONE;
 		break;
 	case 1:
@@ -1968,6 +2065,21 @@ static int stv0367ter_get_frontend(struct dvb_frontend *fe)
 		break;
 	default:
 		p->hierarchy = HIERARCHY_AUTO;
+=======
+		op->hierarchy_information = HIERARCHY_NONE;
+		break;
+	case 1:
+		op->hierarchy_information = HIERARCHY_1;
+		break;
+	case 2:
+		op->hierarchy_information = HIERARCHY_2;
+		break;
+	case 3:
+		op->hierarchy_information = HIERARCHY_4;
+		break;
+	default:
+		op->hierarchy_information = HIERARCHY_AUTO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break; /* error */
 	}
 
@@ -1979,6 +2091,7 @@ static int stv0367ter_get_frontend(struct dvb_frontend *fe)
 
 	switch (Data) {
 	case 0:
+<<<<<<< HEAD
 		p->code_rate_HP = FEC_1_2;
 		break;
 	case 1:
@@ -1995,6 +2108,24 @@ static int stv0367ter_get_frontend(struct dvb_frontend *fe)
 		break;
 	default:
 		p->code_rate_HP = FEC_AUTO;
+=======
+		op->code_rate_HP = FEC_1_2;
+		break;
+	case 1:
+		op->code_rate_HP = FEC_2_3;
+		break;
+	case 2:
+		op->code_rate_HP = FEC_3_4;
+		break;
+	case 3:
+		op->code_rate_HP = FEC_5_6;
+		break;
+	case 4:
+		op->code_rate_HP = FEC_7_8;
+		break;
+	default:
+		op->code_rate_HP = FEC_AUTO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break; /* error */
 	}
 
@@ -2002,6 +2133,7 @@ static int stv0367ter_get_frontend(struct dvb_frontend *fe)
 
 	switch (mode) {
 	case FE_TER_MODE_2K:
+<<<<<<< HEAD
 		p->transmission_mode = TRANSMISSION_MODE_2K;
 		break;
 /*	case FE_TER_MODE_4K:
@@ -2015,6 +2147,21 @@ static int stv0367ter_get_frontend(struct dvb_frontend *fe)
 	}
 
 	p->guard_interval = stv0367_readbits(state, F367TER_SYR_GUARD);
+=======
+		op->transmission_mode = TRANSMISSION_MODE_2K;
+		break;
+/*	case FE_TER_MODE_4K:
+		op->transmission_mode = TRANSMISSION_MODE_4K;
+		break;*/
+	case FE_TER_MODE_8K:
+		op->transmission_mode = TRANSMISSION_MODE_8K;
+		break;
+	default:
+		op->transmission_mode = TRANSMISSION_MODE_AUTO;
+	}
+
+	op->guard_interval = stv0367_readbits(state, F367TER_SYR_GUARD);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
@@ -2262,9 +2409,15 @@ static void stv0367_release(struct dvb_frontend *fe)
 }
 
 static struct dvb_frontend_ops stv0367ter_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBT },
 	.info = {
 		.name			= "ST STV0367 DVB-T",
+=======
+	.info = {
+		.name			= "ST STV0367 DVB-T",
+		.type			= FE_OFDM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min		= 47000000,
 		.frequency_max		= 862000000,
 		.frequency_stepsize	= 15625,
@@ -2819,8 +2972,14 @@ int stv0367cab_init(struct dvb_frontend *fe)
 }
 static
 enum stv0367_cab_signal_type stv0367cab_algo(struct stv0367_state *state,
+<<<<<<< HEAD
 					     struct dtv_frontend_properties *p)
 {
+=======
+				struct dvb_frontend_parameters *param)
+{
+	struct dvb_qam_parameters *op = &param->u.qam;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct stv0367cab_state *cab_state = state->cab_state;
 	enum stv0367_cab_signal_type signalType = FE_CAB_NOAGC;
 	u32	QAMFEC_Lock, QAM_Lock, u32_tmp,
@@ -2835,7 +2994,11 @@ enum stv0367_cab_signal_type stv0367cab_algo(struct stv0367_state *state,
 	/* A max lock time of 25 ms is allowed for delayed AGC */
 	AGCTimeOut = 25;
 	/* 100000 symbols needed by the TRL as a maximum value */
+<<<<<<< HEAD
 	TRLTimeOut = 100000000 / p->symbol_rate;
+=======
+	TRLTimeOut = 100000000 / op->symbol_rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* CRLSymbols is the needed number of symbols to achieve a lock
 	   within [-4%, +4%] of the symbol rate.
 	   CRL timeout is calculated
@@ -2845,7 +3008,11 @@ enum stv0367_cab_signal_type stv0367cab_algo(struct stv0367_state *state,
 	   A characterization must be performed
 	   with these echoes to get new timeout values.
 	*/
+<<<<<<< HEAD
 	switch (p->modulation) {
+=======
+	switch (op->modulation) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case QAM_16:
 		CRLSymbols = 150000;
 		EQLTimeOut = 100;
@@ -2879,9 +3046,15 @@ enum stv0367_cab_signal_type stv0367cab_algo(struct stv0367_state *state,
 	} else
 #endif
 	CRLTimeOut = (25 * CRLSymbols * (cab_state->search_range / 1000)) /
+<<<<<<< HEAD
 					(p->symbol_rate / 1000);
 
 	CRLTimeOut = (1000 * CRLTimeOut) / p->symbol_rate;
+=======
+					(op->symbol_rate / 1000);
+
+	CRLTimeOut = (1000 * CRLTimeOut) / op->symbol_rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Timeouts below 50ms are coerced */
 	if (CRLTimeOut < 50)
 		CRLTimeOut = 50;
@@ -2911,7 +3084,11 @@ enum stv0367_cab_signal_type stv0367cab_algo(struct stv0367_state *state,
 	stv0367cab_set_derot_freq(state, cab_state->adc_clk,
 		(1000 * (s32)state->config->if_khz + cab_state->derot_offset));
 	/* Disable the Allpass Filter when the symbol rate is out of range */
+<<<<<<< HEAD
 	if ((p->symbol_rate > 10800000) | (p->symbol_rate < 1800000)) {
+=======
+	if ((op->symbol_rate > 10800000) | (op->symbol_rate < 1800000)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		stv0367_writebits(state, F367CAB_ADJ_EN, 0);
 		stv0367_writebits(state, F367CAB_ALLPASSFILT_EN, 0);
 	}
@@ -2995,7 +3172,11 @@ enum stv0367_cab_signal_type stv0367cab_algo(struct stv0367_state *state,
 
 	if (QAMFEC_Lock) {
 		signalType = FE_CAB_DATAOK;
+<<<<<<< HEAD
 		cab_state->modulation = p->modulation;
+=======
+		cab_state->modulation = op->modulation;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cab_state->spect_inv = stv0367_readbits(state,
 							F367CAB_QUAD_INV);
 #if 0
@@ -3077,6 +3258,7 @@ enum stv0367_cab_signal_type stv0367cab_algo(struct stv0367_state *state,
 	return signalType;
 }
 
+<<<<<<< HEAD
 static int stv0367cab_set_frontend(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
@@ -3090,6 +3272,22 @@ static int stv0367cab_set_frontend(struct dvb_frontend *fe)
 	cab_state->derot_offset = 0;
 
 	switch (p->modulation) {
+=======
+static int stv0367cab_set_frontend(struct dvb_frontend *fe,
+				struct dvb_frontend_parameters *param)
+{
+	struct stv0367_state *state = fe->demodulator_priv;
+	struct stv0367cab_state *cab_state = state->cab_state;
+	struct dvb_qam_parameters *op = &param->u.qam;
+	enum stv0367cab_mod QAMSize = 0;
+
+	dprintk("%s: freq = %d, srate = %d\n", __func__,
+					param->frequency, op->symbol_rate);
+
+	cab_state->derot_offset = 0;
+
+	switch (op->modulation) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case QAM_16:
 		QAMSize = FE_CAB_MOD_QAM16;
 		break;
@@ -3115,19 +3313,28 @@ static int stv0367cab_set_frontend(struct dvb_frontend *fe)
 	if (fe->ops.tuner_ops.set_params) {
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1);
+<<<<<<< HEAD
 		fe->ops.tuner_ops.set_params(fe);
+=======
+		fe->ops.tuner_ops.set_params(fe, param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 0);
 	}
 
 	stv0367cab_SetQamSize(
 			state,
+<<<<<<< HEAD
 			p->symbol_rate,
+=======
+			op->symbol_rate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			QAMSize);
 
 	stv0367cab_set_srate(state,
 			cab_state->adc_clk,
 			cab_state->mclk,
+<<<<<<< HEAD
 			p->symbol_rate,
 			QAMSize);
 	/* Search algorithm launch, [-1.1*RangeOffset, +1.1*RangeOffset] scan */
@@ -3140,16 +3347,36 @@ static int stv0367cab_get_frontend(struct dvb_frontend *fe)
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
 	struct stv0367_state *state = fe->demodulator_priv;
 	struct stv0367cab_state *cab_state = state->cab_state;
+=======
+			op->symbol_rate,
+			QAMSize);
+	/* Search algorithm launch, [-1.1*RangeOffset, +1.1*RangeOffset] scan */
+	cab_state->state = stv0367cab_algo(state, param);
+	return 0;
+}
+
+static int stv0367cab_get_frontend(struct dvb_frontend *fe,
+				  struct dvb_frontend_parameters *param)
+{
+	struct stv0367_state *state = fe->demodulator_priv;
+	struct stv0367cab_state *cab_state = state->cab_state;
+	struct dvb_qam_parameters *op = &param->u.qam;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	enum stv0367cab_mod QAMSize;
 
 	dprintk("%s:\n", __func__);
 
+<<<<<<< HEAD
 	p->symbol_rate = stv0367cab_GetSymbolRate(state, cab_state->mclk);
+=======
+	op->symbol_rate = stv0367cab_GetSymbolRate(state, cab_state->mclk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	QAMSize = stv0367_readbits(state, F367CAB_QAM_MODE);
 	switch (QAMSize) {
 	case FE_CAB_MOD_QAM16:
+<<<<<<< HEAD
 		p->modulation = QAM_16;
 		break;
 	case FE_CAB_MOD_QAM32:
@@ -3163,28 +3390,60 @@ static int stv0367cab_get_frontend(struct dvb_frontend *fe)
 		break;
 	case QAM_256:
 		p->modulation = QAM_256;
+=======
+		op->modulation = QAM_16;
+		break;
+	case FE_CAB_MOD_QAM32:
+		op->modulation = QAM_32;
+		break;
+	case FE_CAB_MOD_QAM64:
+		op->modulation = QAM_64;
+		break;
+	case FE_CAB_MOD_QAM128:
+		op->modulation = QAM_128;
+		break;
+	case QAM_256:
+		op->modulation = QAM_256;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		break;
 	}
 
+<<<<<<< HEAD
 	p->frequency = stv0367_get_tuner_freq(fe);
 
 	dprintk("%s: tuner frequency = %d\n", __func__, p->frequency);
 
 	if (state->config->if_khz == 0) {
 		p->frequency +=
+=======
+	param->frequency = stv0367_get_tuner_freq(fe);
+
+	dprintk("%s: tuner frequency = %d\n", __func__, param->frequency);
+
+	if (state->config->if_khz == 0) {
+		param->frequency +=
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			(stv0367cab_get_derot_freq(state, cab_state->adc_clk) -
 			cab_state->adc_clk / 4000);
 		return 0;
 	}
 
 	if (state->config->if_khz > cab_state->adc_clk / 1000)
+<<<<<<< HEAD
 		p->frequency += (state->config->if_khz
 			- stv0367cab_get_derot_freq(state, cab_state->adc_clk)
 			- cab_state->adc_clk / 1000);
 	else
 		p->frequency += (state->config->if_khz
+=======
+		param->frequency += (state->config->if_khz
+			- stv0367cab_get_derot_freq(state, cab_state->adc_clk)
+			- cab_state->adc_clk / 1000);
+	else
+		param->frequency += (state->config->if_khz
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			- stv0367cab_get_derot_freq(state, cab_state->adc_clk));
 
 	return 0;
@@ -3380,9 +3639,15 @@ static int stv0367cab_read_ucblcks(struct dvb_frontend *fe, u32 *ucblocks)
 };
 
 static struct dvb_frontend_ops stv0367cab_ops = {
+<<<<<<< HEAD
 	.delsys = { SYS_DVBC_ANNEX_A },
 	.info = {
 		.name = "ST STV0367 DVB-C",
+=======
+	.info = {
+		.name = "ST STV0367 DVB-C",
+		.type = FE_QAM,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.frequency_min = 47000000,
 		.frequency_max = 862000000,
 		.frequency_stepsize = 62500,

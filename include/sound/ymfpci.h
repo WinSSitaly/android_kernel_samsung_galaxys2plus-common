@@ -366,8 +366,11 @@ struct snd_ymfpci {
 #ifdef CONFIG_PM
 	u32 *saved_regs;
 	u32 saved_ydsxgr_mode;
+<<<<<<< HEAD
 	u16 saved_dsxg_legacy;
 	u16 saved_dsxg_elegacy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 };
 

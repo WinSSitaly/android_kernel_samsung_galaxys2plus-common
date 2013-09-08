@@ -14,7 +14,10 @@
 #include "dm-path-selector.h"
 
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DM_MSG_PREFIX "multipath round-robin"
 
@@ -114,7 +117,10 @@ static int rr_add_path(struct path_selector *ps, struct dm_path *path,
 	struct selector *s = (struct selector *) ps->context;
 	struct path_info *pi;
 	unsigned repeat_count = RR_MIN_IO;
+<<<<<<< HEAD
 	char dummy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (argc > 1) {
 		*error = "round-robin ps: incorrect number of arguments";
@@ -122,7 +128,11 @@ static int rr_add_path(struct path_selector *ps, struct dm_path *path,
 	}
 
 	/* First path argument is number of I/Os before switching path */
+<<<<<<< HEAD
 	if ((argc == 1) && (sscanf(argv[0], "%u%c", &repeat_count, &dummy) != 1)) {
+=======
+	if ((argc == 1) && (sscanf(argv[0], "%u", &repeat_count) != 1)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		*error = "round-robin ps: invalid repeat count";
 		return -EINVAL;
 	}

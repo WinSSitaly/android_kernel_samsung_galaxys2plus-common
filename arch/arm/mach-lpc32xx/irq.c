@@ -150,10 +150,13 @@ static const struct lpc32xx_event_info lpc32xx_events[NR_IRQS] = {
 		.event_group = &lpc32xx_event_int_regs,
 		.mask = LPC32XX_CLKPWR_INTSRC_KEY_BIT,
 	},
+<<<<<<< HEAD
 	[IRQ_LPC32XX_ETHERNET] = {
 		.event_group = &lpc32xx_event_int_regs,
 		.mask = LPC32XX_CLKPWR_INTSRC_MAC_BIT,
 	},
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[IRQ_LPC32XX_USB_OTG_ATX] = {
 		.event_group = &lpc32xx_event_int_regs,
 		.mask = LPC32XX_CLKPWR_INTSRC_USBATXINT_BIT,

@@ -42,7 +42,10 @@ enum snd_jack_types {
 	SND_JACK_MECHANICAL	= 0x0008, /* If detected separately */
 	SND_JACK_VIDEOOUT	= 0x0010,
 	SND_JACK_AVOUT		= SND_JACK_LINEOUT | SND_JACK_VIDEOOUT,
+<<<<<<< HEAD
 	SND_JACK_LINEIN		= 0x0020,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Kept separate from switches to facilitate implementation */
 	SND_JACK_BTN_0		= 0x4000,
@@ -53,9 +56,12 @@ enum snd_jack_types {
 	SND_JACK_BTN_5		= 0x0200,
 };
 
+<<<<<<< HEAD
 /* Keep in sync with definitions above */
 #define SND_JACK_SWITCH_TYPES 6
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct snd_jack {
 	struct input_dev *input_dev;
 	int registered;

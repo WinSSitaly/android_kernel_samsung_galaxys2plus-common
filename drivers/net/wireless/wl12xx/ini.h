@@ -24,9 +24,12 @@
 #ifndef __INI_H__
 #define __INI_H__
 
+<<<<<<< HEAD
 #define GENERAL_SETTINGS_DRPW_LPD 0xc0
 #define SCRATCH_ENABLE_LPD        BIT(25)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WL1271_INI_MAX_SMART_REFLEX_PARAM 16
 
 struct wl1271_ini_general_params {

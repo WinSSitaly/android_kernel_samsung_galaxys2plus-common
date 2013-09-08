@@ -320,6 +320,10 @@ static void print_page(WINDOW * win, int height, int width)
  */
 static void print_line(WINDOW * win, int row, int width)
 {
+<<<<<<< HEAD
+=======
+	int y, x;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *line;
 
 	line = get_line();
@@ -328,10 +332,17 @@ static void print_line(WINDOW * win, int row, int width)
 	waddch(win, ' ');
 	waddnstr(win, line, MIN(strlen(line), width - 2));
 
+<<<<<<< HEAD
 	/* Clear 'residue' of previous line */
 #if OLD_NCURSES
 	{
 		int x = getcurx(win);
+=======
+	getyx(win, y, x);
+	/* Clear 'residue' of previous line */
+#if OLD_NCURSES
+	{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		int i;
 		for (i = 0; i < width - x; i++)
 			waddch(win, ' ');

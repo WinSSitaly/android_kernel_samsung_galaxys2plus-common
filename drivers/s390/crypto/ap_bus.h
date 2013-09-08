@@ -6,7 +6,10 @@
  *	      Martin Schwidefsky <schwidefsky@de.ibm.com>
  *	      Ralph Wuerthner <rwuerthn@de.ibm.com>
  *	      Felix Beck <felix.beck@de.ibm.com>
+<<<<<<< HEAD
  *	      Holger Dengler <hd@linux.vnet.ibm.com>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Adjunct processor bus header file.
  *
@@ -73,6 +76,7 @@ struct ap_queue_status {
 	unsigned int int_enabled	: 1;
 	unsigned int response_code	: 8;
 	unsigned int pad2		: 16;
+<<<<<<< HEAD
 } __packed;
 
 #define AP_QUEUE_STATUS_INVALID \
@@ -93,6 +97,9 @@ static inline int test_ap_facility(unsigned int function, unsigned int nr)
 		return 0;
 	return function & (unsigned int)(0x80000000 >> nr);
 }
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define AP_RESPONSE_NORMAL		0x00
 #define AP_RESPONSE_Q_NOT_AVAIL		0x01

@@ -27,6 +27,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+<<<<<<< HEAD
  *
  * TODO:
  *
@@ -42,12 +43,22 @@
 #include <linux/slab.h>
 #include <linux/console.h>
 #include <linux/module.h>
+=======
+ */
+
+#include <linux/types.h>
+#include <linux/init.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/hvconsole.h>
 #include <asm/vio.h>
 #include <asm/prom.h>
+<<<<<<< HEAD
 #include <asm/hvsi.h>
 #include <asm/udbg.h>
+=======
+#include <asm/firmware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "hvc_console.h"
 
@@ -55,13 +66,17 @@ static const char hvc_driver_name[] = "hvc_console";
 
 static struct vio_device_id hvc_driver_table[] __devinitdata = {
 	{"serial", "hvterm1"},
+<<<<<<< HEAD
 #ifndef HVC_OLD_HVSI
 	{"serial", "hvterm-protocol"},
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{ "", "" }
 };
 MODULE_DEVICE_TABLE(vio, hvc_driver_table);
 
+<<<<<<< HEAD
 typedef enum hv_protocol {
 	HV_PROTOCOL_RAW,
 	HV_PROTOCOL_HVSI
@@ -134,11 +149,47 @@ static int hvterm_raw_put_chars(uint32_t vtermno, const char *buf, int count)
 static const struct hv_ops hvterm_raw_ops = {
 	.get_chars = hvterm_raw_get_chars,
 	.put_chars = hvterm_raw_put_chars,
+=======
+static int filtered_get_chars(uint32_t vtermno, char *buf, int count)
+{
+	unsigned long got;
+	int i;
+
+	/*
+	 * Vio firmware will read up to SIZE_VIO_GET_CHARS at its own discretion
+	 * so we play safe and avoid the situation where got > count which could
+	 * overload the flip buffer.
+	 */
+	if (count < SIZE_VIO_GET_CHARS)
+		return -EAGAIN;
+
+	got = hvc_get_chars(vtermno, buf, count);
+
+	/*
+	 * Work around a HV bug where it gives us a null
+	 * after every \r.  -- paulus
+	 */
+	for (i = 1; i < got; ++i) {
+		if (buf[i] == 0 && buf[i-1] == '\r') {
+			--got;
+			if (i < got)
+				memmove(&buf[i], &buf[i+1],
+					got - i);
+		}
+	}
+	return got;
+}
+
+static const struct hv_ops hvc_get_put_ops = {
+	.get_chars = filtered_get_chars,
+	.put_chars = hvc_put_chars,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.notifier_add = notifier_add_irq,
 	.notifier_del = notifier_del_irq,
 	.notifier_hangup = notifier_hangup_irq,
 };
 
+<<<<<<< HEAD
 static int hvterm_hvsi_get_chars(uint32_t vtermno, char *buf, int count)
 {
 	struct hvterm_priv *pv = hvterm_privs[vtermno];
@@ -238,11 +289,18 @@ static int __devinit hvc_vio_probe(struct vio_dev *vdev,
 	struct hvterm_priv *pv;
 	hv_protocol_t proto;
 	int i, termno = -1;
+=======
+static int __devinit hvc_vio_probe(struct vio_dev *vdev,
+				const struct vio_device_id *id)
+{
+	struct hvc_struct *hp;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* probed with invalid parameters. */
 	if (!vdev || !id)
 		return -EPERM;
 
+<<<<<<< HEAD
 	if (of_device_is_compatible(vdev->dev.of_node, "hvterm1")) {
 		proto = HV_PROTOCOL_RAW;
 		ops = &hvterm_raw_ops;
@@ -285,6 +343,10 @@ static int __devinit hvc_vio_probe(struct vio_dev *vdev,
 	}
 
 	hp = hvc_alloc(termno, vdev->irq, ops, MAX_VIO_PUT_CHARS);
+=======
+	hp = hvc_alloc(vdev->unit_address, vdev->irq, &hvc_get_put_ops,
+			MAX_VIO_PUT_CHARS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(hp))
 		return PTR_ERR(hp);
 	dev_set_drvdata(&vdev->dev, hp);
@@ -295,6 +357,7 @@ static int __devinit hvc_vio_probe(struct vio_dev *vdev,
 static int __devexit hvc_vio_remove(struct vio_dev *vdev)
 {
 	struct hvc_struct *hp = dev_get_drvdata(&vdev->dev);
+<<<<<<< HEAD
 	int rc, termno;
 
 	termno = hp->vtermno;
@@ -305,19 +368,37 @@ static int __devexit hvc_vio_remove(struct vio_dev *vdev)
 		hvterm_privs[termno] = NULL;
 	}
 	return rc;
+=======
+
+	return hvc_remove(hp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct vio_driver hvc_vio_driver = {
 	.id_table	= hvc_driver_table,
 	.probe		= hvc_vio_probe,
+<<<<<<< HEAD
 	.remove		= hvc_vio_remove,
 	.name		= hvc_driver_name,
+=======
+	.remove		= __devexit_p(hvc_vio_remove),
+	.driver		= {
+		.name	= hvc_driver_name,
+		.owner	= THIS_MODULE,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init hvc_vio_init(void)
 {
 	int rc;
 
+<<<<<<< HEAD
+=======
+	if (firmware_has_feature(FW_FEATURE_ISERIES))
+		return -EIO;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Register as a vio device to receive callbacks */
 	rc = vio_register_driver(&hvc_vio_driver);
 
@@ -331,6 +412,7 @@ static void __exit hvc_vio_exit(void)
 }
 module_exit(hvc_vio_exit);
 
+<<<<<<< HEAD
 static void udbg_hvc_putc(char c)
 {
 	int count = -1;
@@ -477,3 +559,36 @@ void __init udbg_init_debug_lpar_hvsi(void)
 	hvsilib_establish(&hvterm_priv0.hvsi);
 }
 #endif /* CONFIG_PPC_EARLY_DEBUG_LPAR_HVSI */
+=======
+/* the device tree order defines our numbering */
+static int hvc_find_vtys(void)
+{
+	struct device_node *vty;
+	int num_found = 0;
+
+	for (vty = of_find_node_by_name(NULL, "vty"); vty != NULL;
+			vty = of_find_node_by_name(vty, "vty")) {
+		const uint32_t *vtermno;
+
+		/* We have statically defined space for only a certain number
+		 * of console adapters.
+		 */
+		if (num_found >= MAX_NR_HVC_CONSOLES) {
+			of_node_put(vty);
+			break;
+		}
+
+		vtermno = of_get_property(vty, "reg", NULL);
+		if (!vtermno)
+			continue;
+
+		if (of_device_is_compatible(vty, "hvterm1")) {
+			hvc_instantiate(*vtermno, num_found, &hvc_get_put_ops);
+			++num_found;
+		}
+	}
+
+	return num_found;
+}
+console_initcall(hvc_find_vtys);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

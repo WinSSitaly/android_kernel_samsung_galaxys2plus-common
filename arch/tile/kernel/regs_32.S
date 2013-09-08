@@ -13,11 +13,18 @@
  */
 
 #include <linux/linkage.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/ptrace.h>
 #include <asm/asm-offsets.h>
 #include <arch/spr_def.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * See <asm/system.h>; called with prev and next task_struct pointers.

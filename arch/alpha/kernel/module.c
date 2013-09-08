@@ -29,6 +29,23 @@
 #define DEBUGP(fmt...)
 #endif
 
+<<<<<<< HEAD
+=======
+void *
+module_alloc(unsigned long size)
+{
+	if (size == 0)
+		return NULL;
+	return vmalloc(size);
+}
+
+void
+module_free(struct module *mod, void *module_region)
+{
+	vfree(module_region);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Allocate the GOT at the end of the core sections.  */
 
 struct got_entry {
@@ -142,6 +159,17 @@ module_frob_arch_sections(Elf64_Ehdr *hdr, Elf64_Shdr *sechdrs,
 }
 
 int
+<<<<<<< HEAD
+=======
+apply_relocate(Elf64_Shdr *sechdrs, const char *strtab, unsigned int symindex,
+	       unsigned int relsec, struct module *me)
+{
+	printk(KERN_ERR "module %s: REL relocation unsupported\n", me->name);
+	return -ENOEXEC;
+}
+
+int
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 apply_relocate_add(Elf64_Shdr *sechdrs, const char *strtab,
 		   unsigned int symindex, unsigned int relsec,
 		   struct module *me)
@@ -280,3 +308,18 @@ apply_relocate_add(Elf64_Shdr *sechdrs, const char *strtab,
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+
+int
+module_finalize(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
+		struct module *me)
+{
+	return 0;
+}
+
+void
+module_arch_cleanup(struct module *mod)
+{
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

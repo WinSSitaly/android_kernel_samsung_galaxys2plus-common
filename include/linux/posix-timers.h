@@ -81,10 +81,14 @@ struct k_itimer {
 			unsigned long incr;
 			unsigned long expires;
 		} mmtimer;
+<<<<<<< HEAD
 		struct {
 			struct alarm alarmtimer;
 			ktime_t interval;
 		} alarm;
+=======
+		struct alarm alarmtimer;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		struct rcu_head rcu;
 	} it;
 };

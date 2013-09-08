@@ -5,6 +5,10 @@
  *
  * Written by Hitoshi Mitake <mitake@dcl.info.waseda.ac.jp>
  */
+<<<<<<< HEAD
+=======
+#include <ctype.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "../perf.h"
 #include "../util/util.h"
@@ -23,7 +27,10 @@
 
 static const char	*length_str	= "1MB";
 static const char	*routine	= "default";
+<<<<<<< HEAD
 static int		iterations	= 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool		use_clock;
 static int		clock_fd;
 static bool		only_prefault;
@@ -35,8 +42,11 @@ static const struct option options[] = {
 		    "available unit: B, MB, GB (upper and lower)"),
 	OPT_STRING('r', "routine", &routine, "default",
 		    "Specify routine to copy"),
+<<<<<<< HEAD
 	OPT_INTEGER('i', "iterations", &iterations,
 		    "repeat memcpy() invocation this number of times"),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OPT_BOOLEAN('c', "clock", &use_clock,
 		    "Use CPU clock for measuring"),
 	OPT_BOOLEAN('o', "only-prefault", &only_prefault,
@@ -123,7 +133,10 @@ static u64 do_memcpy_clock(memcpy_t fn, size_t len, bool prefault)
 {
 	u64 clock_start = 0ULL, clock_end = 0ULL;
 	void *src = NULL, *dst = NULL;
+<<<<<<< HEAD
 	int i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	alloc_mem(&src, &dst, len);
 
@@ -131,8 +144,12 @@ static u64 do_memcpy_clock(memcpy_t fn, size_t len, bool prefault)
 		fn(dst, src, len);
 
 	clock_start = get_clock();
+<<<<<<< HEAD
 	for (i = 0; i < iterations; ++i)
 		fn(dst, src, len);
+=======
+	fn(dst, src, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clock_end = get_clock();
 
 	free(src);
@@ -144,7 +161,10 @@ static double do_memcpy_gettimeofday(memcpy_t fn, size_t len, bool prefault)
 {
 	struct timeval tv_start, tv_end, tv_diff;
 	void *src = NULL, *dst = NULL;
+<<<<<<< HEAD
 	int i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	alloc_mem(&src, &dst, len);
 
@@ -152,8 +172,12 @@ static double do_memcpy_gettimeofday(memcpy_t fn, size_t len, bool prefault)
 		fn(dst, src, len);
 
 	BUG_ON(gettimeofday(&tv_start, NULL));
+<<<<<<< HEAD
 	for (i = 0; i < iterations; ++i)
 		fn(dst, src, len);
+=======
+	fn(dst, src, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(gettimeofday(&tv_end, NULL));
 
 	timersub(&tv_end, &tv_start, &tv_diff);

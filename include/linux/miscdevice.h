@@ -1,8 +1,13 @@
 #ifndef _LINUX_MISCDEVICE_H
 #define _LINUX_MISCDEVICE_H
+<<<<<<< HEAD
 #include <linux/major.h>
 #include <linux/list.h>
 #include <linux/types.h>
+=======
+#include <linux/module.h>
+#include <linux/major.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *	These allocations are managed by device@lanana.org. If you use an
@@ -41,8 +46,11 @@
 #define BTRFS_MINOR		234
 #define AUTOFS_MINOR		235
 #define MAPPER_CTRL_MINOR	236
+<<<<<<< HEAD
 #define LOOP_CTRL_MINOR		237
 #define VHOST_NET_MINOR		238
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MISC_DYNAMIC_MINOR	255
 
 struct device;
@@ -55,7 +63,11 @@ struct miscdevice  {
 	struct device *parent;
 	struct device *this_device;
 	const char *nodename;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	mode_t mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 extern int misc_register(struct miscdevice * misc);

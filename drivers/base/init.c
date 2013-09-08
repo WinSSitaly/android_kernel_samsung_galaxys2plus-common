@@ -31,6 +31,10 @@ void __init driver_init(void)
 	 * core core pieces.
 	 */
 	platform_bus_init();
+<<<<<<< HEAD
+=======
+	system_bus_init();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpu_dev_init();
 	memory_dev_init();
 }

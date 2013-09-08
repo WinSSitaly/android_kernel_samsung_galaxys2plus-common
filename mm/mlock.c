@@ -14,7 +14,11 @@
 #include <linux/mempolicy.h>
 #include <linux/syscalls.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/rmap.h>
 #include <linux/mmzone.h>
 #include <linux/hugetlb.h>
@@ -110,6 +114,7 @@ void munlock_vma_page(struct page *page)
 	if (TestClearPageMlocked(page)) {
 		dec_zone_page_state(page, NR_MLOCK);
 		if (!isolate_lru_page(page)) {
+<<<<<<< HEAD
 			int ret = SWAP_AGAIN;
 
 			/*
@@ -119,6 +124,9 @@ void munlock_vma_page(struct page *page)
 			 */
 			if (page_mapcount(page) > 1)
 				ret = try_to_munlock(page);
+=======
+			int ret = try_to_munlock(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * did try_to_unlock() succeed or punt?
 			 */
@@ -385,11 +393,18 @@ static int do_mlock(unsigned long start, size_t len, int on)
 		return -EINVAL;
 	if (end == start)
 		return 0;
+<<<<<<< HEAD
 	vma = find_vma(current->mm, start);
 	if (!vma || vma->vm_start > start)
 		return -ENOMEM;
 
 	prev = vma->vm_prev;
+=======
+	vma = find_vma_prev(current->mm, start, &prev);
+	if (!vma || vma->vm_start > start)
+		return -ENOMEM;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (start > vma->vm_start)
 		prev = vma;
 
@@ -558,8 +573,12 @@ SYSCALL_DEFINE1(mlockall, int, flags)
 	if (!can_do_mlock())
 		goto out;
 
+<<<<<<< HEAD
 	if (flags & MCL_CURRENT)
 		lru_add_drain_all();	/* flush pagevec */
+=======
+	lru_add_drain_all();	/* flush pagevec */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	down_write(&current->mm->mmap_sem);
 

@@ -172,14 +172,27 @@ static inline int atomic_add_negative(int i, atomic_t *v)
  */
 static inline int atomic_add_return(int i, atomic_t *v)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_M386
 	int __i;
+=======
+	int __i;
+#ifdef CONFIG_M386
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 	if (unlikely(boot_cpu_data.x86 <= 3))
 		goto no_xadd;
 #endif
 	/* Modern 486+ processor */
+<<<<<<< HEAD
 	return i + xadd(&v->counter, i);
+=======
+	__i = i;
+	asm volatile(LOCK_PREFIX "xaddl %0, %1"
+		     : "+r" (i), "+m" (v->counter)
+		     : : "memory");
+	return i + __i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_M386
 no_xadd: /* Legacy 386 processor */
@@ -217,15 +230,25 @@ static inline int atomic_xchg(atomic_t *v, int new)
 }
 
 /**
+<<<<<<< HEAD
  * __atomic_add_unless - add unless the number is already a given value
+=======
+ * atomic_add_unless - add unless the number is already a given value
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @v: pointer of type atomic_t
  * @a: the amount to add to v...
  * @u: ...unless v is equal to u.
  *
  * Atomically adds @a to @v, so long as @v was not already @u.
+<<<<<<< HEAD
  * Returns the old value of @v.
  */
 static inline int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+ * Returns non-zero if @v was not @u, and zero otherwise.
+ */
+static inline int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int c, old;
 	c = atomic_read(v);
@@ -237,9 +260,16 @@ static inline int __atomic_add_unless(atomic_t *v, int a, int u)
 			break;
 		c = old;
 	}
+<<<<<<< HEAD
 	return c;
 }
 
+=======
+	return c != (u);
+}
+
+#define atomic_inc_not_zero(v) atomic_add_unless((v), 1, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * atomic_dec_if_positive - decrement by 1 if old value positive
@@ -314,4 +344,8 @@ static inline void atomic_or_long(unsigned long *v1, unsigned long v2)
 # include "atomic64_64.h"
 #endif
 
+<<<<<<< HEAD
+=======
+#include <asm-generic/atomic-long.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_X86_ATOMIC_H */

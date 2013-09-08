@@ -11,8 +11,11 @@
 #include <linux/init.h>
 #include <linux/amba/bus.h>
 
+<<<<<<< HEAD
 extern struct device mxs_apbh_bus;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct platform_device *mxs_add_platform_device_dmamask(
 		const char *name, int id,
 		const struct resource *res, unsigned int num_resources,
@@ -66,6 +69,7 @@ struct platform_device *__init mxs_add_flexcan(
 		const struct mxs_flexcan_data *data,
 		const struct flexcan_platform_data *pdata);
 
+<<<<<<< HEAD
 /* gpmi-nand */
 #include <linux/mtd/gpmi-nand.h>
 struct mxs_gpmi_nand_data {
@@ -76,6 +80,8 @@ struct platform_device *__init
 mxs_add_gpmi_nand(const struct gpmi_nand_platform_data *pdata,
 		const struct mxs_gpmi_nand_data *data);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* i2c */
 struct mxs_mxs_i2c_data {
 	int id;
@@ -102,6 +108,7 @@ struct platform_device *__init mxs_add_mxs_mmc(
 /* pwm */
 struct platform_device *__init mxs_add_mxs_pwm(
 		resource_size_t iobase, int id);
+<<<<<<< HEAD
 
 /* saif */
 #include <sound/saif.h>
@@ -116,3 +123,5 @@ struct mxs_saif_data {
 struct platform_device *__init mxs_add_saif(
 		const struct mxs_saif_data *data,
 		const struct mxs_saif_platform_data *pdata);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

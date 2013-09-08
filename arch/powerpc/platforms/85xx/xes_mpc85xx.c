@@ -21,6 +21,10 @@
 #include <linux/interrupt.h>
 #include <linux/of_platform.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/time.h>
 #include <asm/machdep.h>
 #include <asm/pci-bridge.h>
@@ -31,9 +35,12 @@
 
 #include <sysdev/fsl_soc.h>
 #include <sysdev/fsl_pci.h>
+<<<<<<< HEAD
 #include "smp.h"
 
 #include "mpc85xx.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* A few bit definitions needed for fixups on some boards */
 #define MPC85xx_L2CTL_L2E		0x80000000 /* L2 enable */
@@ -42,9 +49,35 @@
 
 void __init xes_mpc85xx_pic_init(void)
 {
+<<<<<<< HEAD
 	struct mpic *mpic = mpic_alloc(NULL, 0, MPIC_BIG_ENDIAN,
 			0, 256, " OpenPIC  ");
 	BUG_ON(mpic == NULL);
+=======
+	struct mpic *mpic;
+	struct resource r;
+	struct device_node *np;
+
+	np = of_find_node_by_type(NULL, "open-pic");
+	if (np == NULL) {
+		printk(KERN_ERR "Could not find open-pic node\n");
+		return;
+	}
+
+	if (of_address_to_resource(np, 0, &r)) {
+		printk(KERN_ERR "Failed to map mpic register space\n");
+		of_node_put(np);
+		return;
+	}
+
+	mpic = mpic_alloc(np, r.start,
+			  MPIC_PRIMARY | MPIC_WANTS_RESET |
+			  MPIC_BIG_ENDIAN | MPIC_BROKEN_FRR_NIRQS,
+			0, 256, " OpenPIC  ");
+	BUG_ON(mpic == NULL);
+	of_node_put(np);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mpic_init(mpic);
 }
 
@@ -105,7 +138,11 @@ static void xes_mpc85xx_fixups(void)
 			continue;
 		}
 
+<<<<<<< HEAD
 		l2_base = ioremap(r[0].start, resource_size(&r[0]));
+=======
+		l2_base = ioremap(r[0].start, r[0].end - r[0].start + 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		xes_mpc85xx_configure_l2(l2_base);
 	}
@@ -118,6 +155,12 @@ static int primary_phb_addr;
 /*
  * Setup the architecture
  */
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SMP
+extern void __init mpc85xx_smp_init(void);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init xes_mpc85xx_setup_arch(void)
 {
 #ifdef CONFIG_PCI
@@ -151,12 +194,35 @@ static void __init xes_mpc85xx_setup_arch(void)
 	}
 #endif
 
+<<<<<<< HEAD
 	mpc85xx_smp_init();
 }
 
 machine_device_initcall(xes_mpc8572, mpc85xx_common_publish_devices);
 machine_device_initcall(xes_mpc8548, mpc85xx_common_publish_devices);
 machine_device_initcall(xes_mpc8540, mpc85xx_common_publish_devices);
+=======
+#ifdef CONFIG_SMP
+	mpc85xx_smp_init();
+#endif
+}
+
+static struct of_device_id __initdata xes_mpc85xx_ids[] = {
+	{ .type = "soc", },
+	{ .compatible = "soc", },
+	{ .compatible = "simple-bus", },
+	{ .compatible = "gianfar", },
+	{},
+};
+
+static int __init xes_mpc85xx_publish_devices(void)
+{
+	return of_platform_bus_probe(NULL, xes_mpc85xx_ids, NULL);
+}
+machine_device_initcall(xes_mpc8572, xes_mpc85xx_publish_devices);
+machine_device_initcall(xes_mpc8548, xes_mpc85xx_publish_devices);
+machine_device_initcall(xes_mpc8540, xes_mpc85xx_publish_devices);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Called very early, device-tree isn't unflattened

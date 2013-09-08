@@ -1,4 +1,5 @@
 #include "misc.h"
+<<<<<<< HEAD
 
 int memcmp(const void *s1, const void *s2, size_t len)
 {
@@ -8,4 +9,6 @@ int memcmp(const void *s1, const void *s2, size_t len)
 	return diff;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "../string.c"

@@ -51,6 +51,9 @@ do {						\
 
 #include <asm-generic/bug.h>
 
+<<<<<<< HEAD
 extern void die_if_kernel(const char *, ...) __attribute__((format(printf, 1, 2)));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

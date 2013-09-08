@@ -31,7 +31,10 @@
 #include <asm/processor.h>
 #include <asm/msr.h>
 #include <asm/timer.h>
+<<<<<<< HEAD
 #include <asm/cpu_device_id.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "speedstep-lib.h"
 
@@ -290,6 +293,7 @@ static struct cpufreq_driver p4clockmod_driver = {
 	.attr		= p4clockmod_attr,
 };
 
+<<<<<<< HEAD
 static const struct x86_cpu_id cpufreq_p4_id[] = {
 	{ X86_VENDOR_INTEL, X86_FAMILY_ANY, X86_MODEL_ANY, X86_FEATURE_ACC },
 	{}
@@ -302,13 +306,27 @@ static const struct x86_cpu_id cpufreq_p4_id[] = {
 
 static int __init cpufreq_p4_init(void)
 {
+=======
+
+static int __init cpufreq_p4_init(void)
+{
+	struct cpuinfo_x86 *c = &cpu_data(0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	/*
 	 * THERM_CONTROL is architectural for IA32 now, so
 	 * we can rely on the capability checks
 	 */
+<<<<<<< HEAD
 	if (!x86_match_cpu(cpufreq_p4_id) || !boot_cpu_has(X86_FEATURE_ACPI))
+=======
+	if (c->x86_vendor != X86_VENDOR_INTEL)
+		return -ENODEV;
+
+	if (!test_cpu_cap(c, X86_FEATURE_ACPI) ||
+				!test_cpu_cap(c, X86_FEATURE_ACC))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	ret = cpufreq_register_driver(&p4clockmod_driver);

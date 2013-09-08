@@ -2,7 +2,10 @@
  * Driver for keys on GPIO lines capable of generating interrupts.
  *
  * Copyright 2005 Phil Blundell
+<<<<<<< HEAD
  * Copyright 2010, 2011 David Jander <david@protonic.nl>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -26,6 +29,7 @@
 #include <linux/gpio_keys.h>
 #include <linux/workqueue.h>
 #include <linux/gpio.h>
+<<<<<<< HEAD
 #include <linux/of_platform.h>
 #include <linux/of_gpio.h>
 #include <linux/spinlock.h>
@@ -40,6 +44,16 @@ struct gpio_button_data {
 	spinlock_t lock;
 	bool disabled;
 	bool key_pressed;
+=======
+
+struct gpio_button_data {
+	struct gpio_keys_button *button;
+	struct input_dev *input;
+	struct timer_list timer;
+	struct work_struct work;
+	int timer_debounce;	/* in msecs */
+	bool disabled;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct gpio_keys_drvdata {
@@ -118,7 +132,11 @@ static void gpio_keys_disable_button(struct gpio_button_data *bdata)
 		/*
 		 * Disable IRQ and possible debouncing timer.
 		 */
+<<<<<<< HEAD
 		disable_irq(bdata->irq);
+=======
+		disable_irq(gpio_to_irq(bdata->button->gpio));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (bdata->timer_debounce)
 			del_timer_sync(&bdata->timer);
 
@@ -139,7 +157,11 @@ static void gpio_keys_disable_button(struct gpio_button_data *bdata)
 static void gpio_keys_enable_button(struct gpio_button_data *bdata)
 {
 	if (bdata->disabled) {
+<<<<<<< HEAD
 		enable_irq(bdata->irq);
+=======
+		enable_irq(gpio_to_irq(bdata->button->gpio));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bdata->disabled = false;
 	}
 }
@@ -199,7 +221,11 @@ static ssize_t gpio_keys_attr_show_helper(struct gpio_keys_drvdata *ddata,
  * @type: button type (%EV_KEY, %EV_SW)
  *
  * This function parses stringified bitmap from @buf and disables/enables
+<<<<<<< HEAD
  * GPIO buttons accordingly. Returns 0 on success and negative error
+=======
+ * GPIO buttons accordinly. Returns 0 on success and negative error
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * on failure.
  */
 static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
@@ -305,6 +331,49 @@ ATTR_STORE_FN(disabled_switches, EV_SW);
  * /sys/devices/platform/gpio-keys/disabled_keys [rw]
  * /sys/devices/platform/gpio-keys/disables_switches [rw]
  */
+<<<<<<< HEAD
+=======
+
+ /* sys fs  */
+struct class *key_class;
+EXPORT_SYMBOL(key_class);
+struct device *key_dev;
+EXPORT_SYMBOL(key_dev);
+
+extern unsigned int bcmpmu_get_ponkey_state(void);
+
+static int keyreadstatus=0;
+
+static ssize_t key_show(struct device *dev, struct device_attribute *attr, char *buf);
+static DEVICE_ATTR(keyshort, S_IRUGO, key_show, NULL);
+
+static ssize_t key_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+    uint8_t keys_pressed;
+    uint32_t onkey_pressed = 0;
+
+    onkey_pressed = bcmpmu_get_ponkey_state();
+
+	printk("[GPIO_KEY] %s, keyreadstatus%d\n", __func__, keyreadstatus);
+
+	if(keyreadstatus || onkey_pressed)
+    {
+        /* key press */
+        keys_pressed = 1;
+        
+    } 
+    else 
+    {
+        /* key release */
+        keys_pressed = 0;                        
+    }
+
+     return sprintf(buf, "%d\n", keys_pressed );
+}
+/* sys fs */
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEVICE_ATTR(disabled_keys, S_IWUSR | S_IRUGO,
 		   gpio_keys_show_disabled_keys,
 		   gpio_keys_store_disabled_keys);
@@ -324,9 +393,15 @@ static struct attribute_group gpio_keys_attr_group = {
 	.attrs = gpio_keys_attrs,
 };
 
+<<<<<<< HEAD
 static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 {
 	const struct gpio_keys_button *button = bdata->button;
+=======
+static void gpio_keys_report_event(struct gpio_button_data *bdata)
+{
+	struct gpio_keys_button *button = bdata->button;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct input_dev *input = bdata->input;
 	unsigned int type = button->type ?: EV_KEY;
 	int state = (gpio_get_value_cansleep(button->gpio) ? 1 : 0) ^ button->active_low;
@@ -335,16 +410,39 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		if (state)
 			input_event(input, type, button->code, button->value);
 	} else {
+<<<<<<< HEAD
 		input_event(input, type, button->code, !!state);
+=======
+		if ( state && button->wakeup == 1 && button->suspend_resume_state == 2)	{	
+			printk("\n gpio_keys_report_event state =1, reset flag \n");
+			button->suspend_resume_state = 0;
+		}
+		else if (state == 0 && button->wakeup == 1 && button->suspend_resume_state == 2) {
+             		input_event(input, type, button->code, 1);
+			input_sync(input);
+			printk("\n gpio_keys_report_event state =0, reset flag \n");
+			button->suspend_resume_state = 0;	
+		}	
+                input_event(input, type, button->code, !!state);
+
+		printk("[GPIO_KEY] code=%d, key state=%d\n",button->code, !!state);
+
+		keyreadstatus = !!state;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	input_sync(input);
 }
 
+<<<<<<< HEAD
 static void gpio_keys_gpio_work_func(struct work_struct *work)
+=======
+static void gpio_keys_work_func(struct work_struct *work)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct gpio_button_data *bdata =
 		container_of(work, struct gpio_button_data, work);
 
+<<<<<<< HEAD
 	gpio_keys_gpio_report_event(bdata);
 }
 
@@ -361,6 +459,28 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
 
 	BUG_ON(irq != bdata->irq);
 
+=======
+	gpio_keys_report_event(bdata);
+}
+
+static void gpio_keys_timer(unsigned long _data)
+{
+	struct gpio_button_data *data = (struct gpio_button_data *)_data;
+
+	schedule_work(&data->work);
+}
+
+static irqreturn_t gpio_keys_isr(int irq, void *dev_id)
+{
+	struct gpio_button_data *bdata = dev_id;
+	struct gpio_keys_button *button = bdata->button;
+	printk("\n Debug: gpio_keys_isr called \n");
+	BUG_ON(irq != gpio_to_irq(button->gpio));
+
+	if ( button->wakeup == 1 && button->suspend_resume_state == 1)
+		button->suspend_resume_state = 2;
+	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (bdata->timer_debounce)
 		mod_timer(&bdata->timer,
 			jiffies + msecs_to_jiffies(bdata->timer_debounce));
@@ -370,6 +490,7 @@ static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static void gpio_keys_irq_timer(unsigned long _data)
 {
 	struct gpio_button_data *bdata = (struct gpio_button_data *)_data;
@@ -497,6 +618,52 @@ static int __devinit gpio_keys_setup_key(struct platform_device *pdev,
 
 	input_set_capability(input, button->type ?: EV_KEY, button->code);
 
+=======
+static int __devinit gpio_keys_setup_key(struct platform_device *pdev,
+					 struct gpio_button_data *bdata,
+					 struct gpio_keys_button *button)
+{
+	const char *desc = button->desc ? button->desc : "gpio_keys";
+	struct device *dev = &pdev->dev;
+	unsigned long irqflags;
+	int irq, error;
+
+	setup_timer(&bdata->timer, gpio_keys_timer, (unsigned long)bdata);
+	INIT_WORK(&bdata->work, gpio_keys_work_func);
+
+	error = gpio_request(button->gpio, desc);
+	if (error < 0) {
+		dev_err(dev, "failed to request GPIO %d, error %d\n",
+			button->gpio, error);
+		goto fail2;
+	}
+
+	error = gpio_direction_input(button->gpio);
+	if (error < 0) {
+		dev_err(dev, "failed to configure"
+			" direction for GPIO %d, error %d\n",
+			button->gpio, error);
+		goto fail3;
+	}
+
+	if (button->debounce_interval) {
+		error = gpio_set_debounce(button->gpio,
+					  button->debounce_interval * 1000);
+		/* use timer if gpiolib doesn't provide debounce */
+		if (error < 0)
+			bdata->timer_debounce = button->debounce_interval;
+	}
+
+	irq = gpio_to_irq(button->gpio);
+	if (irq < 0) {
+		error = irq;
+		dev_err(dev, "Unable to get irq number for GPIO %d, error %d\n",
+			button->gpio, error);
+		goto fail3;
+	}
+
+	irqflags = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING | IRQF_NO_SUSPEND;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If platform has specified that the button can be disabled,
 	 * we don't want it to share the interrupt line.
@@ -504,19 +671,33 @@ static int __devinit gpio_keys_setup_key(struct platform_device *pdev,
 	if (!button->can_disable)
 		irqflags |= IRQF_SHARED;
 
+<<<<<<< HEAD
 	error = request_any_context_irq(bdata->irq, isr, irqflags, desc, bdata);
 	if (error < 0) {
 		dev_err(dev, "Unable to claim irq %d; error %d\n",
 			bdata->irq, error);
 		goto fail;
+=======
+	error = request_any_context_irq(irq, gpio_keys_isr, irqflags, desc, bdata);
+	if (error < 0) {
+		dev_err(dev, "Unable to claim irq %d; error %d\n",
+			irq, error);
+		goto fail3;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 
+<<<<<<< HEAD
 fail:
 	if (gpio_is_valid(button->gpio))
 		gpio_free(button->gpio);
 
+=======
+fail3:
+	gpio_free(button->gpio);
+fail2:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return error;
 }
 
@@ -535,6 +716,7 @@ static void gpio_keys_close(struct input_dev *input)
 		ddata->disable(input->dev.parent);
 }
 
+<<<<<<< HEAD
 /*
  * Handlers for alternative sources of platform_data
  */
@@ -650,10 +832,18 @@ static int __devinit gpio_keys_probe(struct platform_device *pdev)
 	struct gpio_keys_drvdata *ddata;
 	struct device *dev = &pdev->dev;
 	struct gpio_keys_platform_data alt_pdata;
+=======
+static int __devinit gpio_keys_probe(struct platform_device *pdev)
+{
+	struct gpio_keys_platform_data *pdata = pdev->dev.platform_data;
+	struct gpio_keys_drvdata *ddata;
+	struct device *dev = &pdev->dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct input_dev *input;
 	int i, error;
 	int wakeup = 0;
 
+<<<<<<< HEAD
 	if (!pdata) {
 		error = gpio_keys_get_devtree_pdata(dev, &alt_pdata);
 		if (error)
@@ -661,6 +851,8 @@ static int __devinit gpio_keys_probe(struct platform_device *pdev)
 		pdata = &alt_pdata;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ddata = kzalloc(sizeof(struct gpio_keys_drvdata) +
 			pdata->nbuttons * sizeof(struct gpio_button_data),
 			GFP_KERNEL);
@@ -696,15 +888,31 @@ static int __devinit gpio_keys_probe(struct platform_device *pdev)
 		__set_bit(EV_REP, input->evbit);
 
 	for (i = 0; i < pdata->nbuttons; i++) {
+<<<<<<< HEAD
 		const struct gpio_keys_button *button = &pdata->buttons[i];
 		struct gpio_button_data *bdata = &ddata->data[i];
 
 		error = gpio_keys_setup_key(pdev, input, bdata, button);
+=======
+		struct gpio_keys_button *button = &pdata->buttons[i];
+		struct gpio_button_data *bdata = &ddata->data[i];
+		unsigned int type = button->type ?: EV_KEY;
+
+		bdata->input = input;
+		bdata->button = button;
+
+		error = gpio_keys_setup_key(pdev, bdata, button);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (error)
 			goto fail2;
 
 		if (button->wakeup)
 			wakeup = 1;
+<<<<<<< HEAD
+=======
+
+		input_set_capability(input, type, button->code);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	error = sysfs_create_group(&pdev->dev.kobj, &gpio_keys_attr_group);
@@ -721,37 +929,79 @@ static int __devinit gpio_keys_probe(struct platform_device *pdev)
 		goto fail3;
 	}
 
+<<<<<<< HEAD
 	/* get current state of buttons that are connected to GPIOs */
 	for (i = 0; i < pdata->nbuttons; i++) {
 		struct gpio_button_data *bdata = &ddata->data[i];
 		if (gpio_is_valid(bdata->button->gpio))
 			gpio_keys_gpio_report_event(bdata);
 	}
+=======
+	/* get current state of buttons */
+	for (i = 0; i < pdata->nbuttons; i++)
+		gpio_keys_report_event(&ddata->data[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	input_sync(input);
 
 	device_init_wakeup(&pdev->dev, wakeup);
 
+<<<<<<< HEAD
+=======
+
+     /* sys fs */
+	key_class = class_create(THIS_MODULE, "keyclass");
+	if (IS_ERR(key_class))
+		pr_err("Failed to create class(key)!\n");
+
+	key_dev = device_create(key_class, NULL, 0, NULL, "keypad");
+	if (IS_ERR(key_dev))
+		pr_err("Failed to create device(key)!\n");
+
+	if (device_create_file(key_dev, &dev_attr_keyshort) < 0)
+		pr_err("Failed to create device file(%s)!\n", dev_attr_keyshort.attr.name); 
+	/* sys fs */
+
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
  fail3:
 	sysfs_remove_group(&pdev->dev.kobj, &gpio_keys_attr_group);
  fail2:
+<<<<<<< HEAD
 	while (--i >= 0)
 		gpio_remove_key(&ddata->data[i]);
+=======
+	while (--i >= 0) {
+		free_irq(gpio_to_irq(pdata->buttons[i].gpio), &ddata->data[i]);
+		if (ddata->data[i].timer_debounce)
+			del_timer_sync(&ddata->data[i].timer);
+		cancel_work_sync(&ddata->data[i].work);
+		gpio_free(pdata->buttons[i].gpio);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	platform_set_drvdata(pdev, NULL);
  fail1:
 	input_free_device(input);
 	kfree(ddata);
+<<<<<<< HEAD
 	/* If we have no platform_data, we allocated buttons dynamically. */
 	if (!pdev->dev.platform_data)
 		kfree(pdata->buttons);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return error;
 }
 
 static int __devexit gpio_keys_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
+=======
+	struct gpio_keys_platform_data *pdata = pdev->dev.platform_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct gpio_keys_drvdata *ddata = platform_get_drvdata(pdev);
 	struct input_dev *input = ddata->input;
 	int i;
@@ -760,6 +1010,7 @@ static int __devexit gpio_keys_remove(struct platform_device *pdev)
 
 	device_init_wakeup(&pdev->dev, 0);
 
+<<<<<<< HEAD
 	for (i = 0; i < ddata->n_buttons; i++)
 		gpio_remove_key(&ddata->data[i]);
 
@@ -792,11 +1043,50 @@ static int gpio_keys_suspend(struct device *dev)
 		}
 	}
 
+=======
+	for (i = 0; i < pdata->nbuttons; i++) {
+		int irq = gpio_to_irq(pdata->buttons[i].gpio);
+		free_irq(irq, &ddata->data[i]);
+		if (ddata->data[i].timer_debounce)
+			del_timer_sync(&ddata->data[i].timer);
+		cancel_work_sync(&ddata->data[i].work);
+		gpio_free(pdata->buttons[i].gpio);
+	}
+
+	input_unregister_device(input);
+
+	return 0;
+}
+
+
+#ifdef CONFIG_PM
+static int gpio_keys_suspend(struct device *dev)
+{
+	struct platform_device *pdev = to_platform_device(dev);
+	struct gpio_keys_platform_data *pdata = pdev->dev.platform_data;
+	int i;
+	
+	
+	if (device_may_wakeup(&pdev->dev)) {
+		for (i = 0; i < pdata->nbuttons; i++) {
+			struct gpio_keys_button *button = &pdata->buttons[i];
+			if (button->wakeup) {
+				int irq = gpio_to_irq(button->gpio);
+				//enable_irq_wake(irq);
+			}
+			if (button->wakeup == 1 && button->suspend_resume_state == 0 )
+        		{
+            			button->suspend_resume_state = 1;
+        		}
+		}
+	}	
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int gpio_keys_resume(struct device *dev)
 {
+<<<<<<< HEAD
 	struct gpio_keys_drvdata *ddata = dev_get_drvdata(dev);
 	int i;
 
@@ -807,14 +1097,38 @@ static int gpio_keys_resume(struct device *dev)
 
 		if (gpio_is_valid(bdata->button->gpio))
 			gpio_keys_gpio_report_event(bdata);
+=======
+	struct platform_device *pdev = to_platform_device(dev);
+	struct gpio_keys_drvdata *ddata = platform_get_drvdata(pdev);
+	struct gpio_keys_platform_data *pdata = pdev->dev.platform_data;
+	int i;
+
+	for (i = 0; i < pdata->nbuttons; i++) {
+
+		struct gpio_keys_button *button = &pdata->buttons[i];
+		if (button->wakeup && device_may_wakeup(&pdev->dev)) {
+			int irq = gpio_to_irq(button->gpio);
+			//disable_irq_wake(irq);
+		}
+		gpio_keys_report_event(&ddata->data[i]);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	input_sync(ddata->input);
 
 	return 0;
 }
+<<<<<<< HEAD
 #endif
 
 static SIMPLE_DEV_PM_OPS(gpio_keys_pm_ops, gpio_keys_suspend, gpio_keys_resume);
+=======
+
+static const struct dev_pm_ops gpio_keys_pm_ops = {
+	.suspend	= gpio_keys_suspend,
+	.resume		= gpio_keys_resume,
+};
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct platform_driver gpio_keys_device_driver = {
 	.probe		= gpio_keys_probe,
@@ -822,8 +1136,14 @@ static struct platform_driver gpio_keys_device_driver = {
 	.driver		= {
 		.name	= "gpio-keys",
 		.owner	= THIS_MODULE,
+<<<<<<< HEAD
 		.pm	= &gpio_keys_pm_ops,
 		.of_match_table = gpio_keys_of_match,
+=======
+#ifdef CONFIG_PM
+		.pm	= &gpio_keys_pm_ops,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 };
 
@@ -837,10 +1157,18 @@ static void __exit gpio_keys_exit(void)
 	platform_driver_unregister(&gpio_keys_device_driver);
 }
 
+<<<<<<< HEAD
 late_initcall(gpio_keys_init);
+=======
+module_init(gpio_keys_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_exit(gpio_keys_exit);
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Phil Blundell <pb@handhelds.org>");
+<<<<<<< HEAD
 MODULE_DESCRIPTION("Keyboard driver for GPIOs");
+=======
+MODULE_DESCRIPTION("Keyboard driver for CPU GPIOs");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_ALIAS("platform:gpio-keys");

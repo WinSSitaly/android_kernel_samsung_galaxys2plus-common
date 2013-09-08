@@ -151,8 +151,12 @@ static int __devinit tps6105x_regulator_probe(struct platform_device *pdev)
 	/* Register regulator with framework */
 	tps6105x->regulator = regulator_register(&tps6105x_regulator_desc,
 					     &tps6105x->client->dev,
+<<<<<<< HEAD
 					     pdata->regulator_data, tps6105x,
 					     NULL);
+=======
+					     pdata->regulator_data, tps6105x);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(tps6105x->regulator)) {
 		ret = PTR_ERR(tps6105x->regulator);
 		dev_err(&tps6105x->client->dev,

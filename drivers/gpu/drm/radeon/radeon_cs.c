@@ -58,7 +58,11 @@ int radeon_cs_parser_relocs(struct radeon_cs_parser *p)
 
 		duplicate = false;
 		r = (struct drm_radeon_cs_reloc *)&chunk->kdata[i*4];
+<<<<<<< HEAD
 		for (j = 0; j < i; j++) {
+=======
+		for (j = 0; j < p->nrelocs; j++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (r->handle == p->relocs[j].handle) {
 				p->relocs_ptr[i] = &p->relocs[j];
 				duplicate = true;
@@ -84,6 +88,7 @@ int radeon_cs_parser_relocs(struct radeon_cs_parser *p)
 			p->relocs[i].flags = r->flags;
 			radeon_bo_list_add_object(&p->relocs[i].lobj,
 						  &p->validated);
+<<<<<<< HEAD
 
 		} else
 			p->relocs[i].handle = 0;
@@ -159,13 +164,23 @@ static int radeon_cs_sync_rings(struct radeon_cs_parser *p)
 }
 
 /* XXX: note that this is called from the legacy UMS CS ioctl as well */
+=======
+		}
+	}
+	return radeon_bo_list_validate(&p->validated);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int radeon_cs_parser_init(struct radeon_cs_parser *p, void *data)
 {
 	struct drm_radeon_cs *cs = data;
 	uint64_t *chunk_array_ptr;
 	unsigned size, i;
+<<<<<<< HEAD
 	u32 ring = RADEON_CS_RING_GFX;
 	s32 priority = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!cs->num_chunks) {
 		return 0;
@@ -175,8 +190,11 @@ int radeon_cs_parser_init(struct radeon_cs_parser *p, void *data)
 	p->idx = 0;
 	p->chunk_ib_idx = -1;
 	p->chunk_relocs_idx = -1;
+<<<<<<< HEAD
 	p->chunk_flags_idx = -1;
 	p->chunk_const_ib_idx = -1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p->chunks_array = kcalloc(cs->num_chunks, sizeof(uint64_t), GFP_KERNEL);
 	if (p->chunks_array == NULL) {
 		return -ENOMEM;
@@ -186,7 +204,10 @@ int radeon_cs_parser_init(struct radeon_cs_parser *p, void *data)
 			       sizeof(uint64_t)*cs->num_chunks)) {
 		return -EFAULT;
 	}
+<<<<<<< HEAD
 	p->cs_flags = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	p->nchunks = cs->num_chunks;
 	p->chunks = kcalloc(p->nchunks, sizeof(struct radeon_cs_chunk), GFP_KERNEL);
 	if (p->chunks == NULL) {
@@ -215,6 +236,7 @@ int radeon_cs_parser_init(struct radeon_cs_parser *p, void *data)
 			if (p->chunks[i].length_dw == 0)
 				return -EINVAL;
 		}
+<<<<<<< HEAD
 		if (p->chunks[i].chunk_id == RADEON_CHUNK_ID_CONST_IB) {
 			p->chunk_const_ib_idx = i;
 			/* zero length CONST IB isn't useful */
@@ -227,13 +249,19 @@ int radeon_cs_parser_init(struct radeon_cs_parser *p, void *data)
 			if (p->chunks[i].length_dw == 0)
 				return -EINVAL;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		p->chunks[i].length_dw = user_chunk.length_dw;
 		p->chunks[i].user_ptr = (void __user *)(unsigned long)user_chunk.chunk_data;
 
 		cdata = (uint32_t *)(unsigned long)user_chunk.chunk_data;
+<<<<<<< HEAD
 		if ((p->chunks[i].chunk_id == RADEON_CHUNK_ID_RELOCS) ||
 		    (p->chunks[i].chunk_id == RADEON_CHUNK_ID_FLAGS)) {
+=======
+		if (p->chunks[i].chunk_id != RADEON_CHUNK_ID_IB) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			size = p->chunks[i].length_dw * sizeof(uint32_t);
 			p->chunks[i].kdata = kmalloc(size, GFP_KERNEL);
 			if (p->chunks[i].kdata == NULL) {
@@ -243,6 +271,7 @@ int radeon_cs_parser_init(struct radeon_cs_parser *p, void *data)
 					       p->chunks[i].user_ptr, size)) {
 				return -EFAULT;
 			}
+<<<<<<< HEAD
 			if (p->chunks[i].chunk_id == RADEON_CHUNK_ID_FLAGS) {
 				p->cs_flags = p->chunks[i].kdata[0];
 				if (p->chunks[i].length_dw > 1)
@@ -293,6 +322,27 @@ int radeon_cs_parser_init(struct radeon_cs_parser *p, void *data)
 			((p->chunks[p->chunk_ib_idx].length_dw * 4) - 1) / PAGE_SIZE;
 	}
 
+=======
+		} else {
+			p->chunks[i].kpage[0] = kmalloc(PAGE_SIZE, GFP_KERNEL);
+			p->chunks[i].kpage[1] = kmalloc(PAGE_SIZE, GFP_KERNEL);
+			if (p->chunks[i].kpage[0] == NULL || p->chunks[i].kpage[1] == NULL) {
+				kfree(p->chunks[i].kpage[0]);
+				kfree(p->chunks[i].kpage[1]);
+				return -ENOMEM;
+			}
+			p->chunks[i].kpage_idx[0] = -1;
+			p->chunks[i].kpage_idx[1] = -1;
+			p->chunks[i].last_copied_page = -1;
+			p->chunks[i].last_page_index = ((p->chunks[i].length_dw * 4) - 1) / PAGE_SIZE;
+		}
+	}
+	if (p->chunks[p->chunk_ib_idx].length_dw > (16 * 1024)) {
+		DRM_ERROR("cs IB too big: %d\n",
+			  p->chunks[p->chunk_ib_idx].length_dw);
+		return -EINVAL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -334,6 +384,7 @@ static void radeon_cs_parser_fini(struct radeon_cs_parser *parser, int error)
 	radeon_ib_free(parser->rdev, &parser->ib);
 }
 
+<<<<<<< HEAD
 static int radeon_cs_ib_chunk(struct radeon_device *rdev,
 			      struct radeon_cs_parser *parser)
 {
@@ -503,10 +554,13 @@ out:
 	return r;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int radeon_cs_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 {
 	struct radeon_device *rdev = dev->dev_private;
 	struct radeon_cs_parser parser;
+<<<<<<< HEAD
 	int r;
 
 	radeon_mutex_lock(&rdev->cs_mutex);
@@ -514,6 +568,12 @@ int radeon_cs_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 		radeon_mutex_unlock(&rdev->cs_mutex);
 		return -EBUSY;
 	}
+=======
+	struct radeon_cs_chunk *ib_chunk;
+	int r;
+
+	mutex_lock(&rdev->cs_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* initialize parser */
 	memset(&parser, 0, sizeof(struct radeon_cs_parser));
 	parser.filp = filp;
@@ -524,7 +584,18 @@ int radeon_cs_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 	if (r) {
 		DRM_ERROR("Failed to initialize parser !\n");
 		radeon_cs_parser_fini(&parser, r);
+<<<<<<< HEAD
 		radeon_mutex_unlock(&rdev->cs_mutex);
+=======
+		mutex_unlock(&rdev->cs_mutex);
+		return r;
+	}
+	r =  radeon_ib_get(rdev, &parser.ib);
+	if (r) {
+		DRM_ERROR("Failed to get ib !\n");
+		radeon_cs_parser_fini(&parser, r);
+		mutex_unlock(&rdev->cs_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return r;
 	}
 	r = radeon_cs_parser_relocs(&parser);
@@ -532,6 +603,7 @@ int radeon_cs_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 		if (r != -ERESTARTSYS)
 			DRM_ERROR("Failed to parse relocation %d!\n", r);
 		radeon_cs_parser_fini(&parser, r);
+<<<<<<< HEAD
 		radeon_mutex_unlock(&rdev->cs_mutex);
 		return r;
 	}
@@ -546,6 +618,36 @@ int radeon_cs_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
 out:
 	radeon_cs_parser_fini(&parser, r);
 	radeon_mutex_unlock(&rdev->cs_mutex);
+=======
+		mutex_unlock(&rdev->cs_mutex);
+		return r;
+	}
+	/* Copy the packet into the IB, the parser will read from the
+	 * input memory (cached) and write to the IB (which can be
+	 * uncached). */
+	ib_chunk = &parser.chunks[parser.chunk_ib_idx];
+	parser.ib->length_dw = ib_chunk->length_dw;
+	r = radeon_cs_parse(&parser);
+	if (r || parser.parser_error) {
+		DRM_ERROR("Invalid command stream !\n");
+		radeon_cs_parser_fini(&parser, r);
+		mutex_unlock(&rdev->cs_mutex);
+		return r;
+	}
+	r = radeon_cs_finish_pages(&parser);
+	if (r) {
+		DRM_ERROR("Invalid command stream !\n");
+		radeon_cs_parser_fini(&parser, r);
+		mutex_unlock(&rdev->cs_mutex);
+		return r;
+	}
+	r = radeon_ib_schedule(rdev, parser.ib);
+	if (r) {
+		DRM_ERROR("Failed to schedule IB !\n");
+	}
+	radeon_cs_parser_fini(&parser, r);
+	mutex_unlock(&rdev->cs_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return r;
 }
 

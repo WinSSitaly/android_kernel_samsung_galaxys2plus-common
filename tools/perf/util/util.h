@@ -40,6 +40,10 @@
 #define decimal_length(x)	((int)(sizeof(x) * 2.56 + 0.5) + 1)
 
 #define _ALL_SOURCE 1
+<<<<<<< HEAD
+=======
+#define _GNU_SOURCE 1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define _BSD_SOURCE 1
 #define HAS_BOOL
 
@@ -199,8 +203,11 @@ static inline int has_extension(const char *filename, const char *ext)
 #undef isalpha
 #undef isprint
 #undef isalnum
+<<<<<<< HEAD
 #undef islower
 #undef isupper
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #undef tolower
 #undef toupper
 
@@ -221,8 +228,11 @@ extern unsigned char sane_ctype[256];
 #define isalpha(x) sane_istest(x,GIT_ALPHA)
 #define isalnum(x) sane_istest(x,GIT_ALPHA | GIT_DIGIT)
 #define isprint(x) sane_istest(x,GIT_PRINT)
+<<<<<<< HEAD
 #define islower(x) (sane_istest(x,GIT_ALPHA) && sane_istest(x,0x20))
 #define isupper(x) (sane_istest(x,GIT_ALPHA) && !sane_istest(x,0x20))
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define tolower(x) sane_case((unsigned char)(x), 0x20)
 #define toupper(x) sane_case((unsigned char)(x), 0)
 
@@ -241,6 +251,7 @@ char **argv_split(const char *str, int *argcp);
 void argv_free(char **argv);
 bool strglobmatch(const char *str, const char *pat);
 bool strlazymatch(const char *str, const char *pat);
+<<<<<<< HEAD
 int strtailcmp(const char *s1, const char *s2);
 unsigned long convert_unit(unsigned long value, char *unit);
 int readn(int fd, void *buf, size_t size);
@@ -265,4 +276,12 @@ bool is_power_of_2(unsigned long n)
 	return (n != 0 && ((n & (n - 1)) == 0));
 }
 
+=======
+unsigned long convert_unit(unsigned long value, char *unit);
+int readn(int fd, void *buf, size_t size);
+
+#define _STR(x) #x
+#define STR(x) _STR(x)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

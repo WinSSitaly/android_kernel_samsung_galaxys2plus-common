@@ -36,11 +36,19 @@
 #include <linux/mii.h>
 #include <linux/usb.h>
 #include <linux/usb/cdc.h>
+<<<<<<< HEAD
+=======
+#include <linux/wireless.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/ieee80211.h>
 #include <linux/if_arp.h>
 #include <linux/ctype.h>
 #include <linux/spinlock.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
+=======
+#include <net/iw_handler.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/cfg80211.h>
 #include <linux/usb/usbnet.h>
 #include <linux/usb/rndis_host.h>
@@ -244,10 +252,13 @@ enum ndis_80211_power_mode {
 	NDIS_80211_POWER_MODE_FAST_PSP,
 };
 
+<<<<<<< HEAD
 enum ndis_80211_pmkid_cand_list_flag_bits {
 	NDIS_80211_PMKID_CAND_PREAUTH = cpu_to_le32(1 << 0)
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ndis_80211_auth_request {
 	__le32 length;
 	u8 bssid[6];
@@ -391,17 +402,30 @@ struct ndis_80211_capability {
 struct ndis_80211_bssid_info {
 	u8 bssid[6];
 	u8 pmkid[16];
+<<<<<<< HEAD
 } __packed;
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct ndis_80211_pmkid {
 	__le32 length;
 	__le32 bssid_info_count;
 	struct ndis_80211_bssid_info bssid_info[0];
+<<<<<<< HEAD
 } __packed;
+=======
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  *  private data
  */
+<<<<<<< HEAD
+=======
+#define NET_TYPE_11FB	0
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define CAP_MODE_80211A		1
 #define CAP_MODE_80211B		2
 #define CAP_MODE_80211G		4
@@ -416,7 +440,10 @@ struct ndis_80211_pmkid {
 #define RNDIS_WLAN_ALG_TKIP	(1<<1)
 #define RNDIS_WLAN_ALG_CCMP	(1<<2)
 
+<<<<<<< HEAD
 #define RNDIS_WLAN_NUM_KEYS		4
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RNDIS_WLAN_KEY_MGMT_NONE	0
 #define RNDIS_WLAN_KEY_MGMT_802_1X	(1<<0)
 #define RNDIS_WLAN_KEY_MGMT_PSK		(1<<1)
@@ -518,8 +545,13 @@ struct rndis_wlan_private {
 	__le32 current_command_oid;
 
 	/* encryption stuff */
+<<<<<<< HEAD
 	u8 encr_tx_key_index;
 	struct rndis_wlan_encr_key encr_keys[RNDIS_WLAN_NUM_KEYS];
+=======
+	int  encr_tx_key_index;
+	struct rndis_wlan_encr_key encr_keys[4];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int  wpa_version;
 
 	u8 command_buffer[COMMAND_BUFFER_SIZE];
@@ -634,7 +666,11 @@ static u32 get_bcm4320_power_dbm(struct rndis_wlan_private *priv)
 	}
 }
 
+<<<<<<< HEAD
 static bool is_wpa_key(struct rndis_wlan_private *priv, u8 idx)
+=======
+static bool is_wpa_key(struct rndis_wlan_private *priv, int idx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int cipher = priv->encr_keys[idx].cipher;
 
@@ -1349,6 +1385,7 @@ static int set_channel(struct usbnet *usbdev, int channel)
 	return ret;
 }
 
+<<<<<<< HEAD
 static struct ieee80211_channel *get_current_channel(struct usbnet *usbdev,
 						     u32 *beacon_period)
 {
@@ -1378,6 +1415,11 @@ static struct ieee80211_channel *get_current_channel(struct usbnet *usbdev,
 /* index must be 0 - N, as per NDIS  */
 static int add_wep_key(struct usbnet *usbdev, const u8 *key, int key_len,
 								u8 index)
+=======
+/* index must be 0 - N, as per NDIS  */
+static int add_wep_key(struct usbnet *usbdev, const u8 *key, int key_len,
+								int index)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
 	struct ndis_80211_wep_key ndis_key;
@@ -1387,15 +1429,24 @@ static int add_wep_key(struct usbnet *usbdev, const u8 *key, int key_len,
 	netdev_dbg(usbdev->net, "%s(idx: %d, len: %d)\n",
 		   __func__, index, key_len);
 
+<<<<<<< HEAD
 	if (index >= RNDIS_WLAN_NUM_KEYS)
+=======
+	if ((key_len != 5 && key_len != 13) || index < 0 || index > 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (key_len == 5)
 		cipher = WLAN_CIPHER_SUITE_WEP40;
+<<<<<<< HEAD
 	else if (key_len == 13)
 		cipher = WLAN_CIPHER_SUITE_WEP104;
 	else
 		return -EINVAL;
+=======
+	else
+		cipher = WLAN_CIPHER_SUITE_WEP104;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(&ndis_key, 0, sizeof(ndis_key));
 
@@ -1430,7 +1481,11 @@ static int add_wep_key(struct usbnet *usbdev, const u8 *key, int key_len,
 }
 
 static int add_wpa_key(struct usbnet *usbdev, const u8 *key, int key_len,
+<<<<<<< HEAD
 			u8 index, const u8 *addr, const u8 *rx_seq,
+=======
+			int index, const u8 *addr, const u8 *rx_seq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			int seq_len, u32 cipher, __le32 flags)
 {
 	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
@@ -1438,7 +1493,11 @@ static int add_wpa_key(struct usbnet *usbdev, const u8 *key, int key_len,
 	bool is_addr_ok;
 	int ret;
 
+<<<<<<< HEAD
 	if (index >= RNDIS_WLAN_NUM_KEYS) {
+=======
+	if (index < 0 || index >= 4) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netdev_dbg(usbdev->net, "%s(): index out of range (%i)\n",
 			   __func__, index);
 		return -EINVAL;
@@ -1526,7 +1585,11 @@ static int add_wpa_key(struct usbnet *usbdev, const u8 *key, int key_len,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int restore_key(struct usbnet *usbdev, u8 key_idx)
+=======
+static int restore_key(struct usbnet *usbdev, int key_idx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
 	struct rndis_wlan_encr_key key;
@@ -1552,13 +1615,21 @@ static void restore_keys(struct usbnet *usbdev)
 		restore_key(usbdev, i);
 }
 
+<<<<<<< HEAD
 static void clear_key(struct rndis_wlan_private *priv, u8 idx)
+=======
+static void clear_key(struct rndis_wlan_private *priv, int idx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	memset(&priv->encr_keys[idx], 0, sizeof(priv->encr_keys[idx]));
 }
 
 /* remove_key is for both wep and wpa */
+<<<<<<< HEAD
 static int remove_key(struct usbnet *usbdev, u8 index, const u8 *bssid)
+=======
+static int remove_key(struct usbnet *usbdev, int index, const u8 *bssid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
 	struct ndis_80211_remove_key remove_key;
@@ -1566,9 +1637,12 @@ static int remove_key(struct usbnet *usbdev, u8 index, const u8 *bssid)
 	bool is_wpa;
 	int ret;
 
+<<<<<<< HEAD
 	if (index >= RNDIS_WLAN_NUM_KEYS)
 		return -ENOENT;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (priv->encr_keys[index].len == 0)
 		return 0;
 
@@ -1792,9 +1866,15 @@ static struct ndis_80211_pmkid *remove_pmkid(struct usbnet *usbdev,
 						struct cfg80211_pmksa *pmksa,
 						int max_pmkids)
 {
+<<<<<<< HEAD
 	int i, newlen, err;
 	unsigned int count;
 
+=======
+	int i, len, count, newlen, err;
+
+	len = le32_to_cpu(pmkids->length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	count = le32_to_cpu(pmkids->bssid_info_count);
 
 	if (count > max_pmkids)
@@ -1833,9 +1913,15 @@ static struct ndis_80211_pmkid *update_pmkid(struct usbnet *usbdev,
 						struct cfg80211_pmksa *pmksa,
 						int max_pmkids)
 {
+<<<<<<< HEAD
 	int i, err, newlen;
 	unsigned int count;
 
+=======
+	int i, err, len, count, newlen;
+
+	len = le32_to_cpu(pmkids->length);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	count = le32_to_cpu(pmkids->bssid_info_count);
 
 	if (count > max_pmkids)
@@ -2006,12 +2092,20 @@ static int rndis_scan(struct wiphy *wiphy, struct net_device *dev,
 	return ret;
 }
 
+<<<<<<< HEAD
 static bool rndis_bss_info_update(struct usbnet *usbdev,
 				  struct ndis_80211_bssid_ex *bssid)
 {
 	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
 	struct ieee80211_channel *channel;
 	struct cfg80211_bss *bss;
+=======
+static struct cfg80211_bss *rndis_bss_info_update(struct usbnet *usbdev,
+					struct ndis_80211_bssid_ex *bssid)
+{
+	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
+	struct ieee80211_channel *channel;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	s32 signal;
 	u64 timestamp;
 	u16 capability;
@@ -2050,12 +2144,18 @@ static bool rndis_bss_info_update(struct usbnet *usbdev,
 	capability = le16_to_cpu(fixed->capabilities);
 	beacon_interval = le16_to_cpu(fixed->beacon_interval);
 
+<<<<<<< HEAD
 	bss = cfg80211_inform_bss(priv->wdev.wiphy, channel, bssid->mac,
 		timestamp, capability, beacon_interval, ie, ie_len, signal,
 		GFP_KERNEL);
 	cfg80211_put_bss(bss);
 
 	return (bss != NULL);
+=======
+	return cfg80211_inform_bss(priv->wdev.wiphy, channel, bssid->mac,
+		timestamp, capability, beacon_interval, ie, ie_len, signal,
+		GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct ndis_80211_bssid_ex *next_bssid_list_item(
@@ -2489,9 +2589,12 @@ static int rndis_set_default_key(struct wiphy *wiphy, struct net_device *netdev,
 
 	netdev_dbg(usbdev->net, "%s(%i)\n", __func__, key_index);
 
+<<<<<<< HEAD
 	if (key_index >= RNDIS_WLAN_NUM_KEYS)
 		return -ENOENT;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->encr_tx_key_index = key_index;
 
 	if (is_wpa_key(priv, key_index))
@@ -2680,12 +2783,21 @@ static void rndis_wlan_craft_connected_bss(struct usbnet *usbdev, u8 *bssid,
 {
 	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
 	struct ieee80211_channel *channel;
+<<<<<<< HEAD
 	struct ndis_80211_ssid ssid;
 	struct cfg80211_bss *bss;
 	s32 signal;
 	u64 timestamp;
 	u16 capability;
 	u32 beacon_period = 0;
+=======
+	struct ndis_80211_conf config;
+	struct ndis_80211_ssid ssid;
+	s32 signal;
+	u64 timestamp;
+	u16 capability;
+	u16 beacon_interval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__le32 rssi;
 	u8 ie_buf[34];
 	int len, ret, ie_len;
@@ -2710,10 +2822,29 @@ static void rndis_wlan_craft_connected_bss(struct usbnet *usbdev, u8 *bssid,
 	}
 
 	/* Get channel and beacon interval */
+<<<<<<< HEAD
 	channel = get_current_channel(usbdev, &beacon_period);
 	if (!channel) {
 		netdev_warn(usbdev->net, "%s(): could not get channel.\n",
 					__func__);
+=======
+	len = sizeof(config);
+	ret = rndis_query_oid(usbdev, OID_802_11_CONFIGURATION, &config, &len);
+	netdev_dbg(usbdev->net, "%s(): OID_802_11_CONFIGURATION -> %d\n",
+				__func__, ret);
+	if (ret >= 0) {
+		beacon_interval = le16_to_cpu(config.beacon_period);
+		channel = ieee80211_get_channel(priv->wdev.wiphy,
+				KHZ_TO_MHZ(le32_to_cpu(config.ds_config)));
+		if (!channel) {
+			netdev_warn(usbdev->net, "%s(): could not get channel."
+						 "\n", __func__);
+			return;
+		}
+	} else {
+		netdev_warn(usbdev->net, "%s(): could not get configuration.\n",
+					 __func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -2740,6 +2871,7 @@ static void rndis_wlan_craft_connected_bss(struct usbnet *usbdev, u8 *bssid,
 	netdev_dbg(usbdev->net, "%s(): channel:%d(freq), bssid:[%pM], tsf:%d, "
 		"capa:%x, beacon int:%d, resp_ie(len:%d, essid:'%.32s'), "
 		"signal:%d\n", __func__, (channel ? channel->center_freq : -1),
+<<<<<<< HEAD
 		bssid, (u32)timestamp, capability, beacon_period, ie_len,
 		ssid.essid, signal);
 
@@ -2747,6 +2879,14 @@ static void rndis_wlan_craft_connected_bss(struct usbnet *usbdev, u8 *bssid,
 		timestamp, capability, beacon_period, ie_buf, ie_len,
 		signal, GFP_KERNEL);
 	cfg80211_put_bss(bss);
+=======
+		bssid, (u32)timestamp, capability, beacon_interval, ie_len,
+		ssid.essid, signal);
+
+	cfg80211_inform_bss(priv->wdev.wiphy, channel, bssid,
+		timestamp, capability, beacon_interval, ie_buf, ie_len,
+		signal, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -2757,10 +2897,16 @@ static void rndis_wlan_do_link_up_work(struct usbnet *usbdev)
 	struct rndis_wlan_private *priv = get_rndis_wlan_priv(usbdev);
 	struct ndis_80211_assoc_info *info = NULL;
 	u8 bssid[ETH_ALEN];
+<<<<<<< HEAD
 	unsigned int resp_ie_len, req_ie_len;
 	unsigned int offset;
 	u8 *req_ie, *resp_ie;
 	int ret;
+=======
+	int resp_ie_len, req_ie_len;
+	u8 *req_ie, *resp_ie;
+	int ret, offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bool roamed = false;
 	bool match_bss;
 
@@ -2788,9 +2934,13 @@ static void rndis_wlan_do_link_up_work(struct usbnet *usbdev)
 		ret = get_association_info(usbdev, info, CONTROL_BUFFER_SIZE);
 		if (!ret) {
 			req_ie_len = le32_to_cpu(info->req_ie_length);
+<<<<<<< HEAD
 			if (req_ie_len > CONTROL_BUFFER_SIZE)
 				req_ie_len = CONTROL_BUFFER_SIZE;
 			if (req_ie_len != 0) {
+=======
+			if (req_ie_len > 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				offset = le32_to_cpu(info->offset_req_ies);
 
 				if (offset > CONTROL_BUFFER_SIZE)
@@ -2804,9 +2954,13 @@ static void rndis_wlan_do_link_up_work(struct usbnet *usbdev)
 			}
 
 			resp_ie_len = le32_to_cpu(info->resp_ie_length);
+<<<<<<< HEAD
 			if (resp_ie_len > CONTROL_BUFFER_SIZE)
 				resp_ie_len = CONTROL_BUFFER_SIZE;
 			if (resp_ie_len != 0) {
+=======
+			if (resp_ie_len > 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				offset = le32_to_cpu(info->offset_resp_ies);
 
 				if (offset > CONTROL_BUFFER_SIZE)
@@ -2863,9 +3017,14 @@ static void rndis_wlan_do_link_up_work(struct usbnet *usbdev)
 						req_ie_len, resp_ie,
 						resp_ie_len, 0, GFP_KERNEL);
 		else
+<<<<<<< HEAD
 			cfg80211_roamed(usbdev->net,
 					get_current_channel(usbdev, NULL),
 					bssid, req_ie, req_ie_len,
+=======
+			cfg80211_roamed(usbdev->net, NULL, bssid,
+					req_ie, req_ie_len,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					resp_ie, resp_ie_len, GFP_KERNEL);
 	} else if (priv->infra_mode == NDIS_80211_INFRA_ADHOC)
 		cfg80211_ibss_joined(usbdev->net, bssid, GFP_KERNEL);
@@ -3031,6 +3190,7 @@ static void rndis_wlan_pmkid_cand_list_indication(struct usbnet *usbdev,
 	for (i = 0; i < le32_to_cpu(cand_list->num_candidates); i++) {
 		struct ndis_80211_pmkid_candidate *cand =
 						&cand_list->candidate_list[i];
+<<<<<<< HEAD
 		bool preauth = !!(cand->flags & NDIS_80211_PMKID_CAND_PREAUTH);
 
 		netdev_dbg(usbdev->net, "cand[%i]: flags: 0x%08x, preauth: %d, bssid: %pM\n",
@@ -3038,6 +3198,27 @@ static void rndis_wlan_pmkid_cand_list_indication(struct usbnet *usbdev,
 
 		cfg80211_pmksa_candidate_notify(usbdev->net, i, cand->bssid,
 						preauth, GFP_ATOMIC);
+=======
+
+		netdev_dbg(usbdev->net, "cand[%i]: flags: 0x%08x, bssid: %pM\n",
+			   i, le32_to_cpu(cand->flags), cand->bssid);
+
+#if 0
+		struct iw_pmkid_cand pcand;
+		union iwreq_data wrqu;
+
+		memset(&pcand, 0, sizeof(pcand));
+		if (le32_to_cpu(cand->flags) & 0x01)
+			pcand.flags |= IW_PMKID_CAND_PREAUTH;
+		pcand.index = i;
+		memcpy(pcand.bssid.sa_data, cand->bssid, ETH_ALEN);
+
+		memset(&wrqu, 0, sizeof(wrqu));
+		wrqu.data.length = sizeof(pcand);
+		wireless_send_event(usbdev->net, IWEVPMKIDCAND, &wrqu,
+								(u8 *)&pcand);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -3045,7 +3226,11 @@ static void rndis_wlan_media_specific_indication(struct usbnet *usbdev,
 			struct rndis_indicate *msg, int buflen)
 {
 	struct ndis_80211_status_indication *indication;
+<<<<<<< HEAD
 	unsigned int len, offset;
+=======
+	int len, offset;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	offset = offsetof(struct rndis_indicate, status) +
 			le32_to_cpu(msg->offset);
@@ -3057,7 +3242,11 @@ static void rndis_wlan_media_specific_indication(struct usbnet *usbdev,
 		return;
 	}
 
+<<<<<<< HEAD
 	if (len > buflen || offset > buflen || offset + len > buflen) {
+=======
+	if (offset + len > buflen) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		netdev_info(usbdev->net, "media specific indication, too large to fit to buffer (%i > %i)\n",
 			    offset + len, buflen);
 		return;
@@ -3414,7 +3603,11 @@ static const struct net_device_ops rndis_wlan_netdev_ops = {
 	.ndo_tx_timeout		= usbnet_tx_timeout,
 	.ndo_set_mac_address 	= eth_mac_addr,
 	.ndo_validate_addr	= eth_validate_addr,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= rndis_wlan_set_multicast_list,
+=======
+	.ndo_set_multicast_list	= rndis_wlan_set_multicast_list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int rndis_wlan_bind(struct usbnet *usbdev, struct usb_interface *intf)
@@ -3778,7 +3971,21 @@ static struct usb_driver rndis_wlan_driver = {
 	.resume =	usbnet_resume,
 };
 
+<<<<<<< HEAD
 module_usb_driver(rndis_wlan_driver);
+=======
+static int __init rndis_wlan_init(void)
+{
+	return usb_register(&rndis_wlan_driver);
+}
+module_init(rndis_wlan_init);
+
+static void __exit rndis_wlan_exit(void)
+{
+	usb_deregister(&rndis_wlan_driver);
+}
+module_exit(rndis_wlan_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Bjorge Dijkstra");
 MODULE_AUTHOR("Jussi Kivilinna");

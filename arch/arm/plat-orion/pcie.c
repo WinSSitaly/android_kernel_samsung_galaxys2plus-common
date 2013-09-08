@@ -13,7 +13,10 @@
 #include <linux/mbus.h>
 #include <asm/mach/pci.h>
 #include <plat/pcie.h>
+<<<<<<< HEAD
 #include <plat/addr-map.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/delay.h>
 
 /*
@@ -176,7 +179,12 @@ static void __init orion_pcie_setup_wins(void __iomem *base,
 	writel(((size - 1) & 0xffff0000) | 1, base + PCIE_BAR_CTRL_OFF(1));
 }
 
+<<<<<<< HEAD
 void __init orion_pcie_setup(void __iomem *base)
+=======
+void __init orion_pcie_setup(void __iomem *base,
+			     struct mbus_dram_target_info *dram)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u16 cmd;
 	u32 mask;
@@ -184,7 +192,11 @@ void __init orion_pcie_setup(void __iomem *base)
 	/*
 	 * Point PCIe unit MBUS decode windows to DRAM space.
 	 */
+<<<<<<< HEAD
 	orion_pcie_setup_wins(base, &orion_mbus_dram_info);
+=======
+	orion_pcie_setup_wins(base, dram);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Master + slave enable.

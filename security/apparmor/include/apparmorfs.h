@@ -15,6 +15,7 @@
 #ifndef __AA_APPARMORFS_H
 #define __AA_APPARMORFS_H
 
+<<<<<<< HEAD
 enum aa_fs_type {
 	AA_FS_TYPE_BOOLEAN,
 	AA_FS_TYPE_STRING,
@@ -59,6 +60,8 @@ extern const struct file_operations aa_fs_seq_file_ops;
 #define AA_FS_DIR(_name, _value) \
 	{ .name = (_name), .v_type = AA_FS_TYPE_DIR, .v.files = (_value) }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void __init aa_destroy_aafs(void);
 
 #endif /* __AA_APPARMORFS_H */

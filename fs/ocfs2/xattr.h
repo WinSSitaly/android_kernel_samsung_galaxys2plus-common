@@ -68,7 +68,11 @@ int ocfs2_calc_security_init(struct inode *,
 			     struct ocfs2_security_xattr_info *,
 			     int *, int *, struct ocfs2_alloc_context **);
 int ocfs2_calc_xattr_init(struct inode *, struct buffer_head *,
+<<<<<<< HEAD
 			  umode_t, struct ocfs2_security_xattr_info *,
+=======
+			  int, struct ocfs2_security_xattr_info *,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  int *, int *, int *);
 
 /*

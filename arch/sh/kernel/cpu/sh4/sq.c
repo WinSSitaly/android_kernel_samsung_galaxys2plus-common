@@ -13,7 +13,11 @@
 #include <linux/init.h>
 #include <linux/cpu.h>
 #include <linux/bitmap.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/slab.h>
@@ -337,9 +341,15 @@ static struct kobj_type ktype_percpu_entry = {
 	.default_attrs	= sq_sysfs_attrs,
 };
 
+<<<<<<< HEAD
 static int sq_dev_add(struct device *dev, struct subsys_interface *sif)
 {
 	unsigned int cpu = dev->id;
+=======
+static int __devinit sq_sysdev_add(struct sys_device *sysdev)
+{
+	unsigned int cpu = sysdev->id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kobject *kobj;
 	int error;
 
@@ -348,27 +358,43 @@ static int sq_dev_add(struct device *dev, struct subsys_interface *sif)
 		return -ENOMEM;
 
 	kobj = sq_kobject[cpu];
+<<<<<<< HEAD
 	error = kobject_init_and_add(kobj, &ktype_percpu_entry, &dev->kobj,
+=======
+	error = kobject_init_and_add(kobj, &ktype_percpu_entry, &sysdev->kobj,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     "%s", "sq");
 	if (!error)
 		kobject_uevent(kobj, KOBJ_ADD);
 	return error;
 }
 
+<<<<<<< HEAD
 static int sq_dev_remove(struct device *dev, struct subsys_interface *sif)
 {
 	unsigned int cpu = dev->id;
+=======
+static int __devexit sq_sysdev_remove(struct sys_device *sysdev)
+{
+	unsigned int cpu = sysdev->id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct kobject *kobj = sq_kobject[cpu];
 
 	kobject_put(kobj);
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct subsys_interface sq_interface = {
 	.name		= "sq",
 	.subsys		= &cpu_subsys,
 	.add_dev	= sq_dev_add,
 	.remove_dev	= sq_dev_remove,
+=======
+static struct sysdev_driver sq_sysdev_driver = {
+	.add		= sq_sysdev_add,
+	.remove		= __devexit_p(sq_sysdev_remove),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __init sq_api_init(void)
@@ -388,7 +414,11 @@ static int __init sq_api_init(void)
 	if (unlikely(!sq_bitmap))
 		goto out;
 
+<<<<<<< HEAD
 	ret = subsys_interface_register(&sq_interface);
+=======
+	ret = sysdev_driver_register(&cpu_sysdev_class, &sq_sysdev_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(ret != 0))
 		goto out;
 
@@ -403,7 +433,11 @@ out:
 
 static void __exit sq_api_exit(void)
 {
+<<<<<<< HEAD
 	subsys_interface_unregister(&sq_interface);
+=======
+	sysdev_driver_unregister(&cpu_sysdev_class, &sq_sysdev_driver);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(sq_bitmap);
 	kmem_cache_destroy(sq_cache);
 }

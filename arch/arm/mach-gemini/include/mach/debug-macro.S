@@ -11,7 +11,11 @@
  */
 #include <mach/hardware.h>
 
+<<<<<<< HEAD
 	.macro	addruart, rp, rv, tmp
+=======
+	.macro	addruart, rp, rv
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ldr	\rp, =GEMINI_UART_BASE			@ physical
 	ldr	\rv, =IO_ADDRESS(GEMINI_UART_BASE)	@ virtual
 	.endm

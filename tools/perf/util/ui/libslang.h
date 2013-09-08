@@ -24,6 +24,9 @@
 #define sltt_set_color SLtt_set_color
 #endif
 
+<<<<<<< HEAD
 #define SL_KEY_UNTAB 0x1000
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _PERF_UI_SLANG_H_ */

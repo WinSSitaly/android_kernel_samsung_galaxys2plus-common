@@ -15,11 +15,17 @@
 
 #include <linux/module.h>
 #include <linux/fs.h>
+<<<<<<< HEAD
 #include <linux/seq_file.h>
 #include <linux/pagemap.h>
 #include <linux/namei.h>
 #include <linux/debugfs.h>
 #include <linux/io.h>
+=======
+#include <linux/pagemap.h>
+#include <linux/namei.h>
+#include <linux/debugfs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static ssize_t default_read_file(struct file *file, char __user *buf,
 				 size_t count, loff_t *ppos)
@@ -33,10 +39,25 @@ static ssize_t default_write_file(struct file *file, const char __user *buf,
 	return count;
 }
 
+<<<<<<< HEAD
 const struct file_operations debugfs_file_operations = {
 	.read =		default_read_file,
 	.write =	default_write_file,
 	.open =		simple_open,
+=======
+static int default_open(struct inode *inode, struct file *file)
+{
+	if (inode->i_private)
+		file->private_data = inode->i_private;
+
+	return 0;
+}
+
+const struct file_operations debugfs_file_operations = {
+	.read =		default_read_file,
+	.write =	default_write_file,
+	.open =		default_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek =	noop_llseek,
 };
 
@@ -89,7 +110,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_u8_wo, NULL, debugfs_u8_set, "%llu\n");
  * %NULL or !%NULL instead as to eliminate the need for #ifdef in the calling
  * code.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_u8(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_u8(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct dentry *parent, u8 *value)
 {
 	/* if there are no write bits set, make read only */
@@ -141,7 +166,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_u16_wo, NULL, debugfs_u16_set, "%llu\n");
  * %NULL or !%NULL instead as to eliminate the need for #ifdef in the calling
  * code.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_u16(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_u16(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  struct dentry *parent, u16 *value)
 {
 	/* if there are no write bits set, make read only */
@@ -193,7 +222,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_u32_wo, NULL, debugfs_u32_set, "%llu\n");
  * %NULL or !%NULL instead as to eliminate the need for #ifdef in the calling
  * code.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_u32(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_u32(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct dentry *parent, u32 *value)
 {
 	/* if there are no write bits set, make read only */
@@ -246,7 +279,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_u64_wo, NULL, debugfs_u64_set, "%llu\n");
  * %NULL or !%NULL instead as to eliminate the need for #ifdef in the calling
  * code.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_u64(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_u64(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct dentry *parent, u64 *value)
 {
 	/* if there are no write bits set, make read only */
@@ -292,7 +329,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_x64, debugfs_u64_get, debugfs_u64_set, "0x%016llx\n
  * @value: a pointer to the variable that the file should read to and write
  *         from.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_x8(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_x8(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct dentry *parent, u8 *value)
 {
 	/* if there are no write bits set, make read only */
@@ -316,7 +357,11 @@ EXPORT_SYMBOL_GPL(debugfs_create_x8);
  * @value: a pointer to the variable that the file should read to and write
  *         from.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_x16(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_x16(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct dentry *parent, u16 *value)
 {
 	/* if there are no write bits set, make read only */
@@ -340,7 +385,11 @@ EXPORT_SYMBOL_GPL(debugfs_create_x16);
  * @value: a pointer to the variable that the file should read to and write
  *         from.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_x32(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_x32(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct dentry *parent, u32 *value)
 {
 	/* if there are no write bits set, make read only */
@@ -364,7 +413,11 @@ EXPORT_SYMBOL_GPL(debugfs_create_x32);
  * @value: a pointer to the variable that the file should read to and write
  *         from.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_x64(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_x64(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct dentry *parent, u64 *value)
 {
 	return debugfs_create_file(name, mode, parent, value, &fops_x64);
@@ -395,7 +448,11 @@ DEFINE_SIMPLE_ATTRIBUTE(fops_size_t, debugfs_size_t_get, debugfs_size_t_set,
  * @value: a pointer to the variable that the file should read to and write
  *         from.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_size_t(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_size_t(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     struct dentry *parent, size_t *value)
 {
 	return debugfs_create_file(name, mode, parent, value, &fops_size_t);
@@ -439,7 +496,11 @@ static ssize_t write_file_bool(struct file *file, const char __user *user_buf,
 static const struct file_operations fops_bool = {
 	.read =		read_file_bool,
 	.write =	write_file_bool,
+<<<<<<< HEAD
 	.open =		simple_open,
+=======
+	.open =		default_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek =	default_llseek,
 };
 
@@ -467,7 +528,11 @@ static const struct file_operations fops_bool = {
  * %NULL or !%NULL instead as to eliminate the need for #ifdef in the calling
  * code.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_bool(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_bool(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   struct dentry *parent, u32 *value)
 {
 	return debugfs_create_file(name, mode, parent, value, &fops_bool);
@@ -484,7 +549,11 @@ static ssize_t read_file_blob(struct file *file, char __user *user_buf,
 
 static const struct file_operations fops_blob = {
 	.read =		read_file_blob,
+<<<<<<< HEAD
 	.open =		simple_open,
+=======
+	.open =		default_open,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.llseek =	default_llseek,
 };
 
@@ -512,13 +581,18 @@ static const struct file_operations fops_blob = {
  * %NULL or !%NULL instead as to eliminate the need for #ifdef in the calling
  * code.
  */
+<<<<<<< HEAD
 struct dentry *debugfs_create_blob(const char *name, umode_t mode,
+=======
+struct dentry *debugfs_create_blob(const char *name, mode_t mode,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   struct dentry *parent,
 				   struct debugfs_blob_wrapper *blob)
 {
 	return debugfs_create_file(name, mode, parent, blob, &fops_blob);
 }
 EXPORT_SYMBOL_GPL(debugfs_create_blob);
+<<<<<<< HEAD
 
 #ifdef CONFIG_HAS_IOMEM
 
@@ -612,3 +686,5 @@ struct dentry *debugfs_create_regset32(const char *name, umode_t mode,
 EXPORT_SYMBOL_GPL(debugfs_create_regset32);
 
 #endif /* CONFIG_HAS_IOMEM */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

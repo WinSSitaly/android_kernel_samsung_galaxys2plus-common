@@ -155,10 +155,21 @@ static int setup_vsync(struct panel_info *panel, int init)
 		ret = 0;
 		goto uninit;
 	}
+<<<<<<< HEAD
 	ret = gpio_request_one(gpio, GPIOF_IN, "vsync");
 	if (ret)
 		goto err_request_gpio_failed;
 
+=======
+	ret = gpio_request(gpio, "vsync");
+	if (ret)
+		goto err_request_gpio_failed;
+
+	ret = gpio_direction_input(gpio);
+	if (ret)
+		goto err_gpio_direction_input_failed;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = irq = gpio_to_irq(gpio);
 	if (ret < 0)
 		goto err_get_irq_num_failed;
@@ -176,6 +187,10 @@ uninit:
 	free_irq(gpio_to_irq(gpio), panel->client_data);
 err_request_irq_failed:
 err_get_irq_num_failed:
+<<<<<<< HEAD
+=======
+err_gpio_direction_input_failed:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	gpio_free(gpio);
 err_request_gpio_failed:
 	return ret;

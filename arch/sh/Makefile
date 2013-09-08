@@ -80,7 +80,10 @@ defaultimage-$(CONFIG_SH_RSK)			:= uImage
 defaultimage-$(CONFIG_SH_URQUELL)		:= uImage
 defaultimage-$(CONFIG_SH_MIGOR)			:= uImage
 defaultimage-$(CONFIG_SH_AP325RXA)		:= uImage
+<<<<<<< HEAD
 defaultimage-$(CONFIG_SH_SH7757LCR)		:= uImage
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 defaultimage-$(CONFIG_SH_7724_SOLUTION_ENGINE)	:= uImage
 defaultimage-$(CONFIG_SH_7206_SOLUTION_ENGINE)	:= vmlinux
 defaultimage-$(CONFIG_SH_7619_SOLUTION_ENGINE)	:= vmlinux
@@ -174,7 +177,10 @@ core-$(CONFIG_HD6446X_SERIES)	+= arch/sh/cchips/hd6446x/
 cpuincdir-$(CONFIG_CPU_SH2A)	+= cpu-sh2a
 cpuincdir-$(CONFIG_CPU_SH2)	+= cpu-sh2
 cpuincdir-$(CONFIG_CPU_SH3)	+= cpu-sh3
+<<<<<<< HEAD
 cpuincdir-$(CONFIG_CPU_SH4A)	+= cpu-sh4a
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 cpuincdir-$(CONFIG_CPU_SH4)	+= cpu-sh4
 cpuincdir-$(CONFIG_CPU_SH5)	+= cpu-sh5
 cpuincdir-y			+= cpu-common	# Must be last

@@ -620,7 +620,10 @@ static int cpqarray_pci_init(ctlr_info_t *c, struct pci_dev *pdev)
 	}
 	vendor_id = pdev->vendor;
 	device_id = pdev->device;
+<<<<<<< HEAD
 	revision  = pdev->revision;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	irq = pdev->irq;
 
 	for(i=0; i<6; i++)
@@ -633,6 +636,10 @@ static int cpqarray_pci_init(ctlr_info_t *c, struct pci_dev *pdev)
 	}
 
 	pci_read_config_word(pdev, PCI_COMMAND, &command);
+<<<<<<< HEAD
+=======
+	pci_read_config_byte(pdev, PCI_CLASS_REVISION, &revision);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pci_read_config_byte(pdev, PCI_CACHE_LINE_SIZE, &cache_line_size);
 	pci_read_config_byte(pdev, PCI_LATENCY_TIMER, &latency_timer);
 

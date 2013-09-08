@@ -17,6 +17,13 @@
 #ifndef MAC_H
 #define MAC_H
 
+<<<<<<< HEAD
+=======
+#define RXSTATUS_RATE(ah, ads) (AR_SREV_5416_20_OR_LATER(ah) ?		\
+				MS(ads->ds_rxstatus0, AR_RxRate) :	\
+				(ads->ds_rxstatus3 >> 2) & 0xFF)
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define set11nTries(_series, _index) \
 	(SM((_series)[_index].Tries, AR_XmitDataTries##_index))
 
@@ -75,10 +82,16 @@
 #define ATH9K_TXERR_XTXOP          0x08
 #define ATH9K_TXERR_TIMER_EXPIRED  0x10
 #define ATH9K_TX_ACKED		   0x20
+<<<<<<< HEAD
 #define ATH9K_TX_FLUSH		   0x40
 #define ATH9K_TXERR_MASK						\
 	(ATH9K_TXERR_XRETRY | ATH9K_TXERR_FILT | ATH9K_TXERR_FIFO |	\
 	 ATH9K_TXERR_XTXOP | ATH9K_TXERR_TIMER_EXPIRED | ATH9K_TX_FLUSH)
+=======
+#define ATH9K_TXERR_MASK						\
+	(ATH9K_TXERR_XRETRY | ATH9K_TXERR_FILT | ATH9K_TXERR_FIFO |	\
+	 ATH9K_TXERR_XTXOP | ATH9K_TXERR_TIMER_EXPIRED)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ATH9K_TX_BA                0x01
 #define ATH9K_TX_PWRMGMT           0x02
@@ -143,7 +156,10 @@ struct ath_rx_status {
 	u8 rs_moreaggr;
 	u8 rs_num_delims;
 	u8 rs_flags;
+<<<<<<< HEAD
 	bool is_mybeacon;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 evm0;
 	u32 evm1;
 	u32 evm2;
@@ -182,7 +198,10 @@ struct ath_htc_rx_status {
 #define ATH9K_RXERR_FIFO          0x04
 #define ATH9K_RXERR_DECRYPT       0x08
 #define ATH9K_RXERR_MIC           0x10
+<<<<<<< HEAD
 #define ATH9K_RXERR_KEYMISS       0x20
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ATH9K_RX_MORE             0x01
 #define ATH9K_RX_MORE_AGGR        0x02
@@ -193,7 +212,11 @@ struct ath_htc_rx_status {
 #define ATH9K_RX_DECRYPT_BUSY     0x40
 
 #define ATH9K_RXKEYIX_INVALID	((u8)-1)
+<<<<<<< HEAD
 #define ATH9K_TXKEYIX_INVALID	((u8)-1)
+=======
+#define ATH9K_TXKEYIX_INVALID	((u32)-1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 enum ath9k_phyerr {
 	ATH9K_PHYERR_UNDERRUN             = 0,  /* Transmit underrun */
@@ -261,11 +284,15 @@ struct ath_desc {
 #define ATH9K_TXDESC_VMF		0x0100
 #define ATH9K_TXDESC_FRAG_IS_ON 	0x0200
 #define ATH9K_TXDESC_LOWRXCHAIN		0x0400
+<<<<<<< HEAD
 #define ATH9K_TXDESC_LDPC		0x0800
 #define ATH9K_TXDESC_CLRDMASK		0x1000
 
 #define ATH9K_TXDESC_PAPRD		0x70000
 #define ATH9K_TXDESC_PAPRD_S		16
+=======
+#define ATH9K_TXDESC_LDPC		0x00010000
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ATH9K_RXDESC_INTREQ		0x0020
 
@@ -583,7 +610,12 @@ enum ath9k_tx_queue {
 #define ATH9K_WME_UPSD	4
 
 enum ath9k_tx_queue_flags {
+<<<<<<< HEAD
 	TXQ_FLAG_TXINT_ENABLE = 0x0001,
+=======
+	TXQ_FLAG_TXOKINT_ENABLE = 0x0001,
+	TXQ_FLAG_TXERRINT_ENABLE = 0x0001,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	TXQ_FLAG_TXDESCINT_ENABLE = 0x0002,
 	TXQ_FLAG_TXEOLINT_ENABLE = 0x0004,
 	TXQ_FLAG_TXURNINT_ENABLE = 0x0008,
@@ -645,7 +677,10 @@ enum ath9k_rx_filter {
 	ATH9K_RX_FILTER_PSPOLL = 0x00004000,
 	ATH9K_RX_FILTER_PHYRADAR = 0x00002000,
 	ATH9K_RX_FILTER_MCAST_BCAST_ALL = 0x00008000,
+<<<<<<< HEAD
 	ATH9K_RX_FILTER_CONTROL_WRAPPER = 0x00080000,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define ATH9K_RATESERIES_RTS_CTS  0x0001
@@ -661,6 +696,7 @@ struct ath9k_11n_rate_series {
 	u32 RateFlags;
 };
 
+<<<<<<< HEAD
 enum aggr_type {
 	AGGR_BUF_NONE,
 	AGGR_BUF_FIRST,
@@ -668,6 +704,8 @@ enum aggr_type {
 	AGGR_BUF_LAST,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum ath9k_key_type {
 	ATH9K_KEY_TYPE_CLEAR,
 	ATH9K_KEY_TYPE_WEP,
@@ -675,6 +713,7 @@ enum ath9k_key_type {
 	ATH9K_KEY_TYPE_TKIP,
 };
 
+<<<<<<< HEAD
 struct ath_tx_info {
 	u8 qcu;
 
@@ -702,6 +741,8 @@ struct ath_tx_info {
 	u8 txpower;
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct ath_hw;
 struct ath9k_channel;
 enum ath9k_int;
@@ -709,10 +750,18 @@ enum ath9k_int;
 u32 ath9k_hw_gettxbuf(struct ath_hw *ah, u32 q);
 void ath9k_hw_puttxbuf(struct ath_hw *ah, u32 q, u32 txdp);
 void ath9k_hw_txstart(struct ath_hw *ah, u32 q);
+<<<<<<< HEAD
+=======
+void ath9k_hw_cleartxdesc(struct ath_hw *ah, void *ds);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 u32 ath9k_hw_numtxpending(struct ath_hw *ah, u32 q);
 bool ath9k_hw_updatetxtriglevel(struct ath_hw *ah, bool bIncTrigLevel);
 bool ath9k_hw_stop_dma_queue(struct ath_hw *ah, u32 q);
 void ath9k_hw_abort_tx_dma(struct ath_hw *ah);
+<<<<<<< HEAD
+=======
+void ath9k_hw_gettxintrtxqs(struct ath_hw *ah, u32 *txqs);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 bool ath9k_hw_set_txq_props(struct ath_hw *ah, int q,
 			    const struct ath9k_tx_queue_info *qinfo);
 bool ath9k_hw_get_txq_props(struct ath_hw *ah, int q,
@@ -722,7 +771,11 @@ int ath9k_hw_setuptxqueue(struct ath_hw *ah, enum ath9k_tx_queue type,
 bool ath9k_hw_releasetxqueue(struct ath_hw *ah, u32 q);
 bool ath9k_hw_resettxqueue(struct ath_hw *ah, u32 q);
 int ath9k_hw_rxprocdesc(struct ath_hw *ah, struct ath_desc *ds,
+<<<<<<< HEAD
 			struct ath_rx_status *rs);
+=======
+			struct ath_rx_status *rs, u64 tsf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ath9k_hw_setuprxdesc(struct ath_hw *ah, struct ath_desc *ds,
 			  u32 size, u32 flags);
 bool ath9k_hw_setrxabort(struct ath_hw *ah, bool set);
@@ -734,7 +787,11 @@ int ath9k_hw_beaconq_setup(struct ath_hw *ah);
 
 /* Interrupt Handling */
 bool ath9k_hw_intrpend(struct ath_hw *ah);
+<<<<<<< HEAD
 void ath9k_hw_set_interrupts(struct ath_hw *ah);
+=======
+void ath9k_hw_set_interrupts(struct ath_hw *ah, enum ath9k_int ints);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ath9k_hw_enable_interrupts(struct ath_hw *ah);
 void ath9k_hw_disable_interrupts(struct ath_hw *ah);
 

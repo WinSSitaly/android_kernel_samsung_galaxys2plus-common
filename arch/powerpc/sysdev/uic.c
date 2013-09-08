@@ -18,6 +18,10 @@
 #include <linux/stddef.h>
 #include <linux/sched.h>
 #include <linux/signal.h>
+<<<<<<< HEAD
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/device.h>
 #include <linux/bootmem.h>
 #include <linux/spinlock.h>
@@ -46,10 +50,17 @@ struct uic {
 	int index;
 	int dcrbase;
 
+<<<<<<< HEAD
 	raw_spinlock_t lock;
 
 	/* The remapper for this UIC */
 	struct irq_domain	*irqhost;
+=======
+	spinlock_t lock;
+
+	/* The remapper for this UIC */
+	struct irq_host	*irqhost;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void uic_unmask_irq(struct irq_data *d)
@@ -60,14 +71,22 @@ static void uic_unmask_irq(struct irq_data *d)
 	u32 er, sr;
 
 	sr = 1 << (31-src);
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&uic->lock, flags);
+=======
+	spin_lock_irqsave(&uic->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* ack level-triggered interrupts here */
 	if (irqd_is_level_type(d))
 		mtdcr(uic->dcrbase + UIC_SR, sr);
 	er = mfdcr(uic->dcrbase + UIC_ER);
 	er |= sr;
 	mtdcr(uic->dcrbase + UIC_ER, er);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&uic->lock, flags);
+=======
+	spin_unlock_irqrestore(&uic->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void uic_mask_irq(struct irq_data *d)
@@ -77,11 +96,19 @@ static void uic_mask_irq(struct irq_data *d)
 	unsigned long flags;
 	u32 er;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&uic->lock, flags);
 	er = mfdcr(uic->dcrbase + UIC_ER);
 	er &= ~(1 << (31 - src));
 	mtdcr(uic->dcrbase + UIC_ER, er);
 	raw_spin_unlock_irqrestore(&uic->lock, flags);
+=======
+	spin_lock_irqsave(&uic->lock, flags);
+	er = mfdcr(uic->dcrbase + UIC_ER);
+	er &= ~(1 << (31 - src));
+	mtdcr(uic->dcrbase + UIC_ER, er);
+	spin_unlock_irqrestore(&uic->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void uic_ack_irq(struct irq_data *d)
@@ -90,9 +117,15 @@ static void uic_ack_irq(struct irq_data *d)
 	unsigned int src = irqd_to_hwirq(d);
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&uic->lock, flags);
 	mtdcr(uic->dcrbase + UIC_SR, 1 << (31-src));
 	raw_spin_unlock_irqrestore(&uic->lock, flags);
+=======
+	spin_lock_irqsave(&uic->lock, flags);
+	mtdcr(uic->dcrbase + UIC_SR, 1 << (31-src));
+	spin_unlock_irqrestore(&uic->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void uic_mask_ack_irq(struct irq_data *d)
@@ -103,7 +136,11 @@ static void uic_mask_ack_irq(struct irq_data *d)
 	u32 er, sr;
 
 	sr = 1 << (31-src);
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&uic->lock, flags);
+=======
+	spin_lock_irqsave(&uic->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	er = mfdcr(uic->dcrbase + UIC_ER);
 	er &= ~sr;
 	mtdcr(uic->dcrbase + UIC_ER, er);
@@ -117,7 +154,11 @@ static void uic_mask_ack_irq(struct irq_data *d)
 	 */
 	if (!irqd_is_level_type(d))
 		mtdcr(uic->dcrbase + UIC_SR, sr);
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&uic->lock, flags);
+=======
+	spin_unlock_irqrestore(&uic->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int uic_set_irq_type(struct irq_data *d, unsigned int flow_type)
@@ -151,7 +192,11 @@ static int uic_set_irq_type(struct irq_data *d, unsigned int flow_type)
 
 	mask = ~(1 << (31 - src));
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&uic->lock, flags);
+=======
+	spin_lock_irqsave(&uic->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tr = mfdcr(uic->dcrbase + UIC_TR);
 	pr = mfdcr(uic->dcrbase + UIC_PR);
 	tr = (tr & mask) | (trigger << (31-src));
@@ -160,7 +205,11 @@ static int uic_set_irq_type(struct irq_data *d, unsigned int flow_type)
 	mtdcr(uic->dcrbase + UIC_PR, pr);
 	mtdcr(uic->dcrbase + UIC_TR, tr);
 
+<<<<<<< HEAD
 	raw_spin_unlock_irqrestore(&uic->lock, flags);
+=======
+	spin_unlock_irqrestore(&uic->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -174,7 +223,11 @@ static struct irq_chip uic_irq_chip = {
 	.irq_set_type	= uic_set_irq_type,
 };
 
+<<<<<<< HEAD
 static int uic_host_map(struct irq_domain *h, unsigned int virq,
+=======
+static int uic_host_map(struct irq_host *h, unsigned int virq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			irq_hw_number_t hw)
 {
 	struct uic *uic = h->host_data;
@@ -190,9 +243,27 @@ static int uic_host_map(struct irq_domain *h, unsigned int virq,
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct irq_domain_ops uic_host_ops = {
 	.map	= uic_host_map,
 	.xlate	= irq_domain_xlate_twocell,
+=======
+static int uic_host_xlate(struct irq_host *h, struct device_node *ct,
+			  const u32 *intspec, unsigned int intsize,
+			  irq_hw_number_t *out_hwirq, unsigned int *out_type)
+
+{
+	/* UIC intspecs must have 2 cells */
+	BUG_ON(intsize != 2);
+	*out_hwirq = intspec[0];
+	*out_type = intspec[1];
+	return 0;
+}
+
+static struct irq_host_ops uic_host_ops = {
+	.map	= uic_host_map,
+	.xlate	= uic_host_xlate,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void uic_irq_cascade(unsigned int virq, struct irq_desc *desc)
@@ -241,7 +312,11 @@ static struct uic * __init uic_init_one(struct device_node *node)
 	if (! uic)
 		return NULL; /* FIXME: panic? */
 
+<<<<<<< HEAD
 	raw_spin_lock_init(&uic->lock);
+=======
+	spin_lock_init(&uic->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	indexp = of_get_property(node, "cell-index", &len);
 	if (!indexp || (len != sizeof(u32))) {
 		printk(KERN_ERR "uic: Device node %s has missing or invalid "
@@ -258,11 +333,21 @@ static struct uic * __init uic_init_one(struct device_node *node)
 	}
 	uic->dcrbase = *dcrreg;
 
+<<<<<<< HEAD
 	uic->irqhost = irq_domain_add_linear(node, NR_UIC_INTS, &uic_host_ops,
 					     uic);
 	if (! uic->irqhost)
 		return NULL; /* FIXME: panic? */
 
+=======
+	uic->irqhost = irq_alloc_host(node, IRQ_HOST_MAP_LINEAR,
+				      NR_UIC_INTS, &uic_host_ops, -1);
+	if (! uic->irqhost)
+		return NULL; /* FIXME: panic? */
+
+	uic->irqhost->host_data = uic;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Start with all interrupts disabled, level and non-critical */
 	mtdcr(uic->dcrbase + UIC_ER, 0);
 	mtdcr(uic->dcrbase + UIC_CR, 0);

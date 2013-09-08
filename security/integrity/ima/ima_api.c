@@ -126,8 +126,12 @@ int ima_must_measure(struct inode *inode, int mask, int function)
  *
  * Return 0 on success, error code otherwise
  */
+<<<<<<< HEAD
 int ima_collect_measurement(struct integrity_iint_cache *iint,
 			    struct file *file)
+=======
+int ima_collect_measurement(struct ima_iint_cache *iint, struct file *file)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int result = -EEXIST;
 
@@ -157,8 +161,13 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
  *
  * Must be called with iint->mutex held.
  */
+<<<<<<< HEAD
 void ima_store_measurement(struct integrity_iint_cache *iint,
 			   struct file *file, const unsigned char *filename)
+=======
+void ima_store_measurement(struct ima_iint_cache *iint, struct file *file,
+			   const unsigned char *filename)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	const char *op = "add_template_measure";
 	const char *audit_cause = "ENOMEM";

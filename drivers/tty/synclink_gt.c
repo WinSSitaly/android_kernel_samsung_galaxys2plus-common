@@ -73,6 +73,10 @@
 #include <linux/hdlc.h>
 #include <linux/synclink.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/irq.h>
 #include <asm/dma.h>
@@ -653,7 +657,11 @@ static int open(struct tty_struct *tty, struct file *filp)
 	unsigned long flags;
 
 	line = tty->index;
+<<<<<<< HEAD
 	if (line >= slgt_device_count) {
+=======
+	if ((line < 0) || (line >= slgt_device_count)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		DBGERR(("%s: open with invalid line #%d.\n", driver_name, line));
 		return -ENODEV;
 	}
@@ -3794,6 +3802,10 @@ static int __init slgt_init(void)
 
 	/* Initialize the tty_driver structure */
 
+<<<<<<< HEAD
+=======
+	serial_driver->owner = THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	serial_driver->driver_name = tty_driver_name;
 	serial_driver->name = tty_dev_prefix;
 	serial_driver->major = ttymajor;
@@ -3922,7 +3934,11 @@ static void tdma_reset(struct slgt_info *info)
  */
 static void enable_loopback(struct slgt_info *info)
 {
+<<<<<<< HEAD
 	/* SCR (serial control) BIT2=loopback enable */
+=======
+	/* SCR (serial control) BIT2=looopback enable */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wr_reg16(info, SCR, (unsigned short)(rd_reg16(info, SCR) | BIT2));
 
 	if (info->params.mode != MGSL_MODE_ASYNC) {

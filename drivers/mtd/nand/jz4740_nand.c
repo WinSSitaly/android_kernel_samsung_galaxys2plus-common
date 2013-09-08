@@ -251,6 +251,13 @@ static int jz_nand_correct_ecc_rs(struct mtd_info *mtd, uint8_t *dat,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+static const char *part_probes[] = {"cmdline", NULL};
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int jz_nand_ioremap_resource(struct platform_device *pdev,
 	const char *name, struct resource **res, void __iomem **base)
 {
@@ -295,6 +302,11 @@ static int __devinit jz_nand_probe(struct platform_device *pdev)
 	struct nand_chip *chip;
 	struct mtd_info *mtd;
 	struct jz_nand_platform_data *pdata = pdev->dev.platform_data;
+<<<<<<< HEAD
+=======
+	struct mtd_partition *partition_info;
+	int num_partitions = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	nand = kzalloc(sizeof(*nand), GFP_KERNEL);
 	if (!nand) {
@@ -332,11 +344,14 @@ static int __devinit jz_nand_probe(struct platform_device *pdev)
 	chip->ecc.mode		= NAND_ECC_HW_OOB_FIRST;
 	chip->ecc.size		= 512;
 	chip->ecc.bytes		= 9;
+<<<<<<< HEAD
 	chip->ecc.strength	= 2;
 	/*
 	 * FIXME: ecc_strength value of 2 bits per 512 bytes of data is a
 	 * conservative guess, given 9 ecc bytes and reed-solomon alg.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pdata)
 		chip->ecc.layout = pdata->ecc_layout;
@@ -372,9 +387,21 @@ static int __devinit jz_nand_probe(struct platform_device *pdev)
 		goto err_gpio_free;
 	}
 
+<<<<<<< HEAD
 	ret = mtd_device_parse_register(mtd, NULL, NULL,
 					pdata ? pdata->partitions : NULL,
 					pdata ? pdata->num_partitions : 0);
+=======
+#ifdef CONFIG_MTD_CMDLINE_PARTS
+	num_partitions = parse_mtd_partitions(mtd, part_probes,
+						&partition_info, 0);
+#endif
+	if (num_partitions <= 0 && pdata) {
+		num_partitions = pdata->num_partitions;
+		partition_info = pdata->partitions;
+	}
+	ret = mtd_device_register(mtd, partition_info, num_partitions);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ret) {
 		dev_err(&pdev->dev, "Failed to add mtd device\n");
@@ -428,7 +455,21 @@ static struct platform_driver jz_nand_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(jz_nand_driver);
+=======
+static int __init jz_nand_init(void)
+{
+	return platform_driver_register(&jz_nand_driver);
+}
+module_init(jz_nand_init);
+
+static void __exit jz_nand_exit(void)
+{
+	platform_driver_unregister(&jz_nand_driver);
+}
+module_exit(jz_nand_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");

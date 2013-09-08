@@ -34,7 +34,10 @@
 #include <linux/blkdev.h>
 #include <asm/uaccess.h>
 #include <linux/highmem.h> /* For flush_kernel_dcache_page */
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <scsi/scsi.h>
 #include <scsi/scsi_cmnd.h>
@@ -151,11 +154,15 @@ int aac_msi;
 int aac_commit = -1;
 int startup_timeout = 180;
 int aif_timeout = 120;
+<<<<<<< HEAD
 int aac_sync_mode;  /* Only Sync. transfer - disabled */
 
 module_param(aac_sync_mode, int, S_IRUGO|S_IWUSR);
 MODULE_PARM_DESC(aac_sync_mode, "Force sync. transfer mode"
 	" 0=off, 1=on");
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(nondasd, int, S_IRUGO|S_IWUSR);
 MODULE_PARM_DESC(nondasd, "Control scanning of hba for nondasd devices."
 	" 0=off, 1=on");

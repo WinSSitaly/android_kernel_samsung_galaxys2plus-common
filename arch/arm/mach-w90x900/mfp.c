@@ -26,8 +26,15 @@
 #define REG_MFSEL	(W90X900_VA_GCR + 0xC)
 
 #define GPSELF		(0x01 << 1)
+<<<<<<< HEAD
 #define GPSELC		(0x03 << 2)
 #define GPSELD		(0x0f << 4)
+=======
+
+#define GPSELC		(0x03 << 2)
+#define ENKPI		(0x02 << 2)
+#define ENNAND		(0x01 << 2)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define GPSELEI0	(0x01 << 26)
 #define GPSELEI1	(0x01 << 27)
@@ -35,16 +42,22 @@
 #define GPIOG0TO1	(0x03 << 14)
 #define GPIOG2TO3	(0x03 << 16)
 #define GPIOG22TO23	(0x03 << 22)
+<<<<<<< HEAD
 #define GPIOG18TO20	(0x07 << 18)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define ENSPI		(0x0a << 14)
 #define ENI2C0		(0x01 << 14)
 #define ENI2C1		(0x01 << 16)
 #define ENAC97		(0x02 << 22)
+<<<<<<< HEAD
 #define ENSD1		(0x02 << 18)
 #define ENSD0		(0x0a << 4)
 #define ENKPI		(0x02 << 2)
 #define ENNAND		(0x01 << 2)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DEFINE_MUTEX(mfp_mutex);
 
@@ -130,11 +143,16 @@ void mfp_set_groupi(struct device *dev)
 }
 EXPORT_SYMBOL(mfp_set_groupi);
 
+<<<<<<< HEAD
 void mfp_set_groupg(struct device *dev, const char *subname)
+=======
+void mfp_set_groupg(struct device *dev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long mfpen;
 	const char *dev_id;
 
+<<<<<<< HEAD
 	BUG_ON((!dev) && (!subname));
 
 	mutex_lock(&mfp_mutex);
@@ -143,6 +161,13 @@ void mfp_set_groupg(struct device *dev, const char *subname)
 		dev_id = subname;
 	else
 		dev_id = dev_name(dev);
+=======
+	BUG_ON(!dev);
+
+	mutex_lock(&mfp_mutex);
+
+	dev_id = dev_name(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mfpen = __raw_readl(REG_MFSEL);
 
@@ -155,12 +180,18 @@ void mfp_set_groupg(struct device *dev, const char *subname)
 	} else if (strcmp(dev_id, "nuc900-i2c1") == 0) {
 		mfpen &= ~(GPIOG2TO3);
 		mfpen |= ENI2C1;/*enable i2c1*/
+<<<<<<< HEAD
 	} else if (strcmp(dev_id, "nuc900-ac97") == 0) {
 		mfpen &= ~(GPIOG22TO23);
 		mfpen |= ENAC97;/*enable AC97*/
 	} else if (strcmp(dev_id, "nuc900-mmc-port1") == 0) {
 		mfpen &= ~(GPIOG18TO20);
 		mfpen |= (ENSD1 | 0x01);/*enable sd1*/
+=======
+	} else if (strcmp(dev_id, "nuc900-audio") == 0) {
+		mfpen &= ~(GPIOG22TO23);
+		mfpen |= ENAC97;/*enable AC97*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		mfpen &= ~(GPIOG0TO1 | GPIOG2TO3);/*GPIOG[3:0]*/
 	}
@@ -171,6 +202,7 @@ void mfp_set_groupg(struct device *dev, const char *subname)
 }
 EXPORT_SYMBOL(mfp_set_groupg);
 
+<<<<<<< HEAD
 void mfp_set_groupd(struct device *dev, const char *subname)
 {
 	unsigned long mfpen;
@@ -198,3 +230,5 @@ void mfp_set_groupd(struct device *dev, const char *subname)
 	mutex_unlock(&mfp_mutex);
 }
 EXPORT_SYMBOL(mfp_set_groupd);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

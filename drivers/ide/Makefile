@@ -116,3 +116,7 @@ obj-$(CONFIG_BLK_DEV_IDE_AU1XXX)	+= au1xxx-ide.o
 
 obj-$(CONFIG_BLK_DEV_IDE_TX4938)	+= tx4938ide.o
 obj-$(CONFIG_BLK_DEV_IDE_TX4939)	+= tx4939ide.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_BLK_DEV_IDE_AT91)		+= at91_ide.o
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -287,11 +287,16 @@ static int get_ctl_value_v1(struct usb_mixer_elem_info *cval, int request, int v
 	unsigned char buf[2];
 	int val_len = cval->val_type >= USB_MIXER_S16 ? 2 : 1;
 	int timeout = 10;
+<<<<<<< HEAD
 	int idx = 0, err;
+=======
+	int err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = snd_usb_autoresume(cval->mixer->chip);
 	if (err < 0)
 		return -EIO;
+<<<<<<< HEAD
 	down_read(&chip->shutdown_rwsem);
 	while (timeout-- > 0) {
 		if (chip->shutdown)
@@ -313,6 +318,22 @@ static int get_ctl_value_v1(struct usb_mixer_elem_info *cval, int request, int v
 	up_read(&chip->shutdown_rwsem);
 	snd_usb_autosuspend(cval->mixer->chip);
 	return err;
+=======
+	while (timeout-- > 0) {
+		if (snd_usb_ctl_msg(chip->dev, usb_rcvctrlpipe(chip->dev, 0), request,
+				    USB_RECIP_INTERFACE | USB_TYPE_CLASS | USB_DIR_IN,
+				    validx, snd_usb_ctrl_intf(chip) | (cval->id << 8),
+				    buf, val_len, 100) >= val_len) {
+			*value_ret = convert_signed_value(cval, snd_usb_combine_bytes(buf, val_len));
+			snd_usb_autosuspend(cval->mixer->chip);
+			return 0;
+		}
+	}
+	snd_usb_autosuspend(cval->mixer->chip);
+	snd_printdd(KERN_ERR "cannot get ctl value: req = %#x, wValue = %#x, wIndex = %#x, type = %d\n",
+		    request, validx, snd_usb_ctrl_intf(chip) | (cval->id << 8), cval->val_type);
+	return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int get_ctl_value_v2(struct usb_mixer_elem_info *cval, int request, int validx, int *value_ret)
@@ -320,7 +341,11 @@ static int get_ctl_value_v2(struct usb_mixer_elem_info *cval, int request, int v
 	struct snd_usb_audio *chip = cval->mixer->chip;
 	unsigned char buf[2 + 3*sizeof(__u16)]; /* enough space for one range */
 	unsigned char *val;
+<<<<<<< HEAD
 	int idx = 0, ret, size;
+=======
+	int ret, size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__u8 bRequest;
 
 	if (request == UAC_GET_CUR) {
@@ -337,6 +362,7 @@ static int get_ctl_value_v2(struct usb_mixer_elem_info *cval, int request, int v
 	if (ret)
 		goto error;
 
+<<<<<<< HEAD
 	down_read(&chip->shutdown_rwsem);
 	if (chip->shutdown)
 		ret = -ENODEV;
@@ -347,12 +373,22 @@ static int get_ctl_value_v2(struct usb_mixer_elem_info *cval, int request, int v
 			      validx, idx, buf, size);
 	}
 	up_read(&chip->shutdown_rwsem);
+=======
+	ret = snd_usb_ctl_msg(chip->dev, usb_rcvctrlpipe(chip->dev, 0), bRequest,
+			      USB_RECIP_INTERFACE | USB_TYPE_CLASS | USB_DIR_IN,
+			      validx, snd_usb_ctrl_intf(chip) | (cval->id << 8),
+			      buf, size, 1000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_usb_autosuspend(chip);
 
 	if (ret < 0) {
 error:
 		snd_printk(KERN_ERR "cannot get ctl value: req = %#x, wValue = %#x, wIndex = %#x, type = %d\n",
+<<<<<<< HEAD
 			   request, validx, idx, cval->val_type);
+=======
+			   request, validx, snd_usb_ctrl_intf(chip) | (cval->id << 8), cval->val_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return ret;
 	}
 
@@ -430,7 +466,11 @@ int snd_usb_mixer_set_ctl_value(struct usb_mixer_elem_info *cval,
 {
 	struct snd_usb_audio *chip = cval->mixer->chip;
 	unsigned char buf[2];
+<<<<<<< HEAD
 	int idx = 0, val_len, err, timeout = 10;
+=======
+	int val_len, err, timeout = 10;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cval->mixer->protocol == UAC_VERSION_1) {
 		val_len = cval->val_type >= USB_MIXER_S16 ? 2 : 1;
@@ -453,6 +493,7 @@ int snd_usb_mixer_set_ctl_value(struct usb_mixer_elem_info *cval,
 	err = snd_usb_autoresume(chip);
 	if (err < 0)
 		return -EIO;
+<<<<<<< HEAD
 	down_read(&chip->shutdown_rwsem);
 	while (timeout-- > 0) {
 		if (chip->shutdown)
@@ -474,6 +515,21 @@ int snd_usb_mixer_set_ctl_value(struct usb_mixer_elem_info *cval,
 	up_read(&chip->shutdown_rwsem);
 	snd_usb_autosuspend(chip);
 	return err;
+=======
+	while (timeout-- > 0)
+		if (snd_usb_ctl_msg(chip->dev,
+				    usb_sndctrlpipe(chip->dev, 0), request,
+				    USB_RECIP_INTERFACE | USB_TYPE_CLASS | USB_DIR_OUT,
+				    validx, snd_usb_ctrl_intf(chip) | (cval->id << 8),
+				    buf, val_len, 100) >= 0) {
+			snd_usb_autosuspend(chip);
+			return 0;
+		}
+	snd_usb_autosuspend(chip);
+	snd_printdd(KERN_ERR "cannot set ctl value: req = %#x, wValue = %#x, wIndex = %#x, type = %d, data = %#x/%#x\n",
+		    request, validx, snd_usb_ctrl_intf(chip) | (cval->id << 8), cval->val_type, buf[0], buf[1]);
+	return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int set_cur_ctl_value(struct usb_mixer_elem_info *cval, int validx, int value)
@@ -711,9 +767,14 @@ static int check_input_term(struct mixer_build *state, int id, struct usb_audio_
 		case UAC2_CLOCK_SELECTOR: {
 			struct uac_selector_unit_descriptor *d = p1;
 			/* call recursively to retrieve the channel info */
+<<<<<<< HEAD
 			err = check_input_term(state, d->baSourceID[0], term);
 			if (err < 0)
 				return err;
+=======
+			if (check_input_term(state, d->baSourceID[0], term) < 0)
+				return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			term->type = d->bDescriptorSubtype << 16; /* virtual type */
 			term->id = id;
 			term->name = uac_selector_unit_iSelector(d);
@@ -821,9 +882,12 @@ static void volume_control_quirks(struct usb_mixer_elem_info *cval,
 
 	case USB_ID(0x046d, 0x0808):
 	case USB_ID(0x046d, 0x0809):
+<<<<<<< HEAD
 	case USB_ID(0x046d, 0x081b): /* HD Webcam c310 */
 	case USB_ID(0x046d, 0x081d): /* HD Webcam c510 */
 	case USB_ID(0x046d, 0x0825): /* HD Webcam c270 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case USB_ID(0x046d, 0x0991):
 	/* Most audio usb devices lie about volume resolution.
 	 * Most Logitech webcams have res = 384.
@@ -963,7 +1027,11 @@ static int mixer_ctl_feature_info(struct snd_kcontrol *kcontrol, struct snd_ctl_
 		if (!cval->initialized) {
 			get_min_max_with_quirks(cval, 0, kcontrol);
 			if (cval->initialized && cval->dBmin >= cval->dBmax) {
+<<<<<<< HEAD
 				kcontrol->vd[0].access &= 
+=======
+				kcontrol->vd[0].access &=
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					~(SNDRV_CTL_ELEM_ACCESS_TLV_READ |
 					  SNDRV_CTL_ELEM_ACCESS_TLV_CALLBACK);
 				snd_ctl_notify(cval->mixer->chip->card,
@@ -1242,23 +1310,34 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid, void 
 		}
 		channels = (hdr->bLength - 7) / csize - 1;
 		bmaControls = hdr->bmaControls;
+<<<<<<< HEAD
 		if (hdr->bLength < 7 + csize) {
 			snd_printk(KERN_ERR "usbaudio: unit %u: "
 				   "invalid UAC_FEATURE_UNIT descriptor\n",
 				   unitid);
 			return -EINVAL;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		struct uac2_feature_unit_descriptor *ftr = _ftr;
 		csize = 4;
 		channels = (hdr->bLength - 6) / 4 - 1;
 		bmaControls = ftr->bmaControls;
+<<<<<<< HEAD
 		if (hdr->bLength < 6 + csize) {
 			snd_printk(KERN_ERR "usbaudio: unit %u: "
 				   "invalid UAC_FEATURE_UNIT descriptor\n",
 				   unitid);
 			return -EINVAL;
 		}
+=======
+	}
+
+	if (hdr->bLength < 7 || !csize || hdr->bLength < 7 + csize) {
+		snd_printk(KERN_ERR "usbaudio: unit %u: invalid UAC_FEATURE_UNIT descriptor\n", unitid);
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* parse the source unit */
@@ -1266,9 +1345,14 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid, void 
 		return err;
 
 	/* determine the input source type and name */
+<<<<<<< HEAD
 	err = check_input_term(state, hdr->bSourceID, &iterm);
 	if (err < 0)
 		return err;
+=======
+	if (check_input_term(state, hdr->bSourceID, &iterm) < 0)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	master_bits = snd_usb_combine_bytes(bmaControls, csize);
 	/* master configuration quirks */
@@ -1279,6 +1363,7 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid, void 
 		/* disable non-functional volume control */
 		master_bits &= ~UAC_CONTROL_BIT(UAC_FU_VOLUME);
 		break;
+<<<<<<< HEAD
 	case USB_ID(0x1130, 0xf211):
 		snd_printk(KERN_INFO
 			   "usbmixer: volume control quirk for Tenx TP6911 Audio Headset\n");
@@ -1286,6 +1371,8 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid, void 
 		channels = 0;
 		break;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (channels > 0)
 		first_ch_bits = snd_usb_combine_bytes(bmaControls + csize, csize);
@@ -1308,7 +1395,11 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid, void 
 				build_feature_ctl(state, _ftr, 0, i, &iterm, unitid, 0);
 		}
 	} else { /* UAC_VERSION_2 */
+<<<<<<< HEAD
 		for (i = 0; i < ARRAY_SIZE(audio_feature_info); i++) {
+=======
+		for (i = 0; i < 30/2; i++) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			unsigned int ch_bits = 0;
 			unsigned int ch_read_only = 0;
 
@@ -2029,7 +2120,11 @@ static int snd_usb_mixer_controls(struct usb_mixer_interface *mixer)
 			state.oterm.type = le16_to_cpu(desc->wTerminalType);
 			state.oterm.name = desc->iTerminal;
 			err = parse_audio_unit(&state, desc->bSourceID);
+<<<<<<< HEAD
 			if (err < 0 && err != -EINVAL)
+=======
+			if (err < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return err;
 		} else { /* UAC_VERSION_2 */
 			struct uac2_output_terminal_descriptor *desc = p;
@@ -2041,12 +2136,20 @@ static int snd_usb_mixer_controls(struct usb_mixer_interface *mixer)
 			state.oterm.type = le16_to_cpu(desc->wTerminalType);
 			state.oterm.name = desc->iTerminal;
 			err = parse_audio_unit(&state, desc->bSourceID);
+<<<<<<< HEAD
 			if (err < 0 && err != -EINVAL)
+=======
+			if (err < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return err;
 
 			/* for UAC2, use the same approach to also add the clock selectors */
 			err = parse_audio_unit(&state, desc->bCSourceID);
+<<<<<<< HEAD
 			if (err < 0 && err != -EINVAL)
+=======
+			if (err < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				return err;
 		}
 	}

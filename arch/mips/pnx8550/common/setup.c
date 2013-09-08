@@ -139,4 +139,9 @@ void __init plat_mem_setup(void)
 			PNX8XXX_UART_LCR_8BIT;
 		ip3106_baud(UART_BASE, pnx8550_console_port) = 5;
 	}
+<<<<<<< HEAD
+=======
+
+	return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -19,9 +19,16 @@
 #include <linux/time.h>
 #include <linux/workqueue.h>
 #include <scsi/scsi_dh.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
 
 #define DM_MSG_PREFIX "multipath"
+=======
+#include <asm/atomic.h>
+
+#define DM_MSG_PREFIX "multipath"
+#define MESG_STR(x) x, sizeof(x)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define DM_PG_INIT_DELAY_MSECS 2000
 #define DM_PG_INIT_DELAY_DEFAULT ((unsigned) -1)
 
@@ -226,6 +233,7 @@ static void free_multipath(struct multipath *m)
 	kfree(m);
 }
 
+<<<<<<< HEAD
 static int set_mapinfo(struct multipath *m, union map_info *info)
 {
 	struct dm_mpath_io *mpio;
@@ -247,6 +255,8 @@ static void clear_mapinfo(struct multipath *m, union map_info *info)
 	info->ptr = NULL;
 	mempool_free(mpio, m->mpio_pool);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*-----------------------------------------------
  * Path selection
@@ -362,14 +372,21 @@ static int __must_push_back(struct multipath *m)
 }
 
 static int map_io(struct multipath *m, struct request *clone,
+<<<<<<< HEAD
 		  union map_info *map_context, unsigned was_queued)
+=======
+		  struct dm_mpath_io *mpio, unsigned was_queued)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r = DM_MAPIO_REMAPPED;
 	size_t nr_bytes = blk_rq_bytes(clone);
 	unsigned long flags;
 	struct pgpath *pgpath;
 	struct block_device *bdev;
+<<<<<<< HEAD
 	struct dm_mpath_io *mpio = map_context->ptr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_irqsave(&m->lock, flags);
 
@@ -445,6 +462,10 @@ static void dispatch_queued_ios(struct multipath *m)
 {
 	int r;
 	unsigned long flags;
+<<<<<<< HEAD
+=======
+	struct dm_mpath_io *mpio;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	union map_info *info;
 	struct request *clone, *n;
 	LIST_HEAD(cl);
@@ -457,15 +478,27 @@ static void dispatch_queued_ios(struct multipath *m)
 		list_del_init(&clone->queuelist);
 
 		info = dm_get_rq_mapinfo(clone);
+<<<<<<< HEAD
 
 		r = map_io(m, clone, info, 1);
 		if (r < 0) {
 			clear_mapinfo(m, info);
+=======
+		mpio = info->ptr;
+
+		r = map_io(m, clone, mpio, 1);
+		if (r < 0) {
+			mempool_free(mpio, m->mpio_pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dm_kill_unmapped_request(clone, r);
 		} else if (r == DM_MAPIO_REMAPPED)
 			dm_dispatch_request(clone);
 		else if (r == DM_MAPIO_REQUEUE) {
+<<<<<<< HEAD
 			clear_mapinfo(m, info);
+=======
+			mempool_free(mpio, m->mpio_pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dm_requeue_unmapped_request(clone);
 		}
 	}
@@ -524,29 +557,99 @@ static void trigger_event(struct work_struct *work)
  *      <#paths> <#per-path selector args>
  *         [<path> [<arg>]* ]+ ]+
  *---------------------------------------------------------------*/
+<<<<<<< HEAD
 static int parse_path_selector(struct dm_arg_set *as, struct priority_group *pg,
+=======
+struct param {
+	unsigned min;
+	unsigned max;
+	char *error;
+};
+
+static int read_param(struct param *param, char *str, unsigned *v, char **error)
+{
+	if (!str ||
+	    (sscanf(str, "%u", v) != 1) ||
+	    (*v < param->min) ||
+	    (*v > param->max)) {
+		*error = param->error;
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+struct arg_set {
+	unsigned argc;
+	char **argv;
+};
+
+static char *shift(struct arg_set *as)
+{
+	char *r;
+
+	if (as->argc) {
+		as->argc--;
+		r = *as->argv;
+		as->argv++;
+		return r;
+	}
+
+	return NULL;
+}
+
+static void consume(struct arg_set *as, unsigned n)
+{
+	BUG_ON (as->argc < n);
+	as->argc -= n;
+	as->argv += n;
+}
+
+static int parse_path_selector(struct arg_set *as, struct priority_group *pg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       struct dm_target *ti)
 {
 	int r;
 	struct path_selector_type *pst;
 	unsigned ps_argc;
 
+<<<<<<< HEAD
 	static struct dm_arg _args[] = {
 		{0, 1024, "invalid number of path selector args"},
 	};
 
 	pst = dm_get_path_selector(dm_shift_arg(as));
+=======
+	static struct param _params[] = {
+		{0, 1024, "invalid number of path selector args"},
+	};
+
+	pst = dm_get_path_selector(shift(as));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!pst) {
 		ti->error = "unknown path selector type";
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	r = dm_read_arg_group(_args, as, &ps_argc, &ti->error);
+=======
+	r = read_param(_params, shift(as), &ps_argc, &ti->error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r) {
 		dm_put_path_selector(pst);
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
+=======
+	if (ps_argc > as->argc) {
+		dm_put_path_selector(pst);
+		ti->error = "not enough arguments for path selector";
+		return -EINVAL;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = pst->create(&pg->ps, ps_argc, as->argv);
 	if (r) {
 		dm_put_path_selector(pst);
@@ -555,12 +658,20 @@ static int parse_path_selector(struct dm_arg_set *as, struct priority_group *pg,
 	}
 
 	pg->ps.type = pst;
+<<<<<<< HEAD
 	dm_consume_args(as, ps_argc);
+=======
+	consume(as, ps_argc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct pgpath *parse_path(struct dm_arg_set *as, struct path_selector *ps,
+=======
+static struct pgpath *parse_path(struct arg_set *as, struct path_selector *ps,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			       struct dm_target *ti)
 {
 	int r;
@@ -577,7 +688,11 @@ static struct pgpath *parse_path(struct dm_arg_set *as, struct path_selector *ps
 	if (!p)
 		return ERR_PTR(-ENOMEM);
 
+<<<<<<< HEAD
 	r = dm_get_device(ti, dm_shift_arg(as), dm_table_get_mode(ti->table),
+=======
+	r = dm_get_device(ti, shift(as), dm_table_get_mode(ti->table),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  &p->path.dev);
 	if (r) {
 		ti->error = "error getting device";
@@ -628,16 +743,27 @@ static struct pgpath *parse_path(struct dm_arg_set *as, struct path_selector *ps
 	return ERR_PTR(r);
 }
 
+<<<<<<< HEAD
 static struct priority_group *parse_priority_group(struct dm_arg_set *as,
 						   struct multipath *m)
 {
 	static struct dm_arg _args[] = {
+=======
+static struct priority_group *parse_priority_group(struct arg_set *as,
+						   struct multipath *m)
+{
+	static struct param _params[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		{1, 1024, "invalid number of paths"},
 		{0, 1024, "invalid number of selector args"}
 	};
 
 	int r;
+<<<<<<< HEAD
 	unsigned i, nr_selector_args, nr_args;
+=======
+	unsigned i, nr_selector_args, nr_params;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct priority_group *pg;
 	struct dm_target *ti = m->ti;
 
@@ -661,6 +787,7 @@ static struct priority_group *parse_priority_group(struct dm_arg_set *as,
 	/*
 	 * read the paths
 	 */
+<<<<<<< HEAD
 	r = dm_read_arg(_args, as, &pg->nr_pgpaths, &ti->error);
 	if (r)
 		goto bad;
@@ -675,12 +802,32 @@ static struct priority_group *parse_priority_group(struct dm_arg_set *as,
 		struct dm_arg_set path_args;
 
 		if (as->argc < nr_args) {
+=======
+	r = read_param(_params, shift(as), &pg->nr_pgpaths, &ti->error);
+	if (r)
+		goto bad;
+
+	r = read_param(_params + 1, shift(as), &nr_selector_args, &ti->error);
+	if (r)
+		goto bad;
+
+	nr_params = 1 + nr_selector_args;
+	for (i = 0; i < pg->nr_pgpaths; i++) {
+		struct pgpath *pgpath;
+		struct arg_set path_args;
+
+		if (as->argc < nr_params) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ti->error = "not enough path parameters";
 			r = -EINVAL;
 			goto bad;
 		}
 
+<<<<<<< HEAD
 		path_args.argc = nr_args;
+=======
+		path_args.argc = nr_params;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		path_args.argv = as->argv;
 
 		pgpath = parse_path(&path_args, &pg->ps, ti);
@@ -691,7 +838,11 @@ static struct priority_group *parse_priority_group(struct dm_arg_set *as,
 
 		pgpath->pg = pg;
 		list_add_tail(&pgpath->list, &pg->pgpaths);
+<<<<<<< HEAD
 		dm_consume_args(as, nr_args);
+=======
+		consume(as, nr_params);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return pg;
@@ -701,25 +852,48 @@ static struct priority_group *parse_priority_group(struct dm_arg_set *as,
 	return ERR_PTR(r);
 }
 
+<<<<<<< HEAD
 static int parse_hw_handler(struct dm_arg_set *as, struct multipath *m)
+=======
+static int parse_hw_handler(struct arg_set *as, struct multipath *m)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned hw_argc;
 	int ret;
 	struct dm_target *ti = m->ti;
 
+<<<<<<< HEAD
 	static struct dm_arg _args[] = {
 		{0, 1024, "invalid number of hardware handler args"},
 	};
 
 	if (dm_read_arg_group(_args, as, &hw_argc, &ti->error))
+=======
+	static struct param _params[] = {
+		{0, 1024, "invalid number of hardware handler args"},
+	};
+
+	if (read_param(_params, shift(as), &hw_argc, &ti->error))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	if (!hw_argc)
 		return 0;
 
+<<<<<<< HEAD
 	m->hw_handler_name = kstrdup(dm_shift_arg(as), GFP_KERNEL);
 	if (!try_then_request_module(scsi_dh_handler_exist(m->hw_handler_name),
 				     "scsi_dh_%s", m->hw_handler_name)) {
+=======
+	if (hw_argc > as->argc) {
+		ti->error = "not enough arguments for hardware handler";
+		return -EINVAL;
+	}
+
+	m->hw_handler_name = kstrdup(shift(as), GFP_KERNEL);
+	request_module("scsi_dh_%s", m->hw_handler_name);
+	if (scsi_dh_handler_exist(m->hw_handler_name) == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ti->error = "unknown hardware handler type";
 		ret = -EINVAL;
 		goto fail;
@@ -741,7 +915,11 @@ static int parse_hw_handler(struct dm_arg_set *as, struct multipath *m)
 		for (i = 0, p+=j+1; i <= hw_argc - 2; i++, p+=j+1)
 			j = sprintf(p, "%s", as->argv[i]);
 	}
+<<<<<<< HEAD
 	dm_consume_args(as, hw_argc - 1);
+=======
+	consume(as, hw_argc - 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 fail:
@@ -750,45 +928,86 @@ fail:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int parse_features(struct dm_arg_set *as, struct multipath *m)
+=======
+static int parse_features(struct arg_set *as, struct multipath *m)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int r;
 	unsigned argc;
 	struct dm_target *ti = m->ti;
+<<<<<<< HEAD
 	const char *arg_name;
 
 	static struct dm_arg _args[] = {
+=======
+	const char *param_name;
+
+	static struct param _params[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		{0, 5, "invalid number of feature args"},
 		{1, 50, "pg_init_retries must be between 1 and 50"},
 		{0, 60000, "pg_init_delay_msecs must be between 0 and 60000"},
 	};
 
+<<<<<<< HEAD
 	r = dm_read_arg_group(_args, as, &argc, &ti->error);
+=======
+	r = read_param(_params, shift(as), &argc, &ti->error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r)
 		return -EINVAL;
 
 	if (!argc)
 		return 0;
 
+<<<<<<< HEAD
 	do {
 		arg_name = dm_shift_arg(as);
 		argc--;
 
 		if (!strcasecmp(arg_name, "queue_if_no_path")) {
+=======
+	if (argc > as->argc) {
+		ti->error = "not enough arguments for features";
+		return -EINVAL;
+	}
+
+	do {
+		param_name = shift(as);
+		argc--;
+
+		if (!strnicmp(param_name, MESG_STR("queue_if_no_path"))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			r = queue_if_no_path(m, 1, 0);
 			continue;
 		}
 
+<<<<<<< HEAD
 		if (!strcasecmp(arg_name, "pg_init_retries") &&
 		    (argc >= 1)) {
 			r = dm_read_arg(_args + 1, as, &m->pg_init_retries, &ti->error);
+=======
+		if (!strnicmp(param_name, MESG_STR("pg_init_retries")) &&
+		    (argc >= 1)) {
+			r = read_param(_params + 1, shift(as),
+				       &m->pg_init_retries, &ti->error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			argc--;
 			continue;
 		}
 
+<<<<<<< HEAD
 		if (!strcasecmp(arg_name, "pg_init_delay_msecs") &&
 		    (argc >= 1)) {
 			r = dm_read_arg(_args + 2, as, &m->pg_init_delay_msecs, &ti->error);
+=======
+		if (!strnicmp(param_name, MESG_STR("pg_init_delay_msecs")) &&
+		    (argc >= 1)) {
+			r = read_param(_params + 2, shift(as),
+				       &m->pg_init_delay_msecs, &ti->error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			argc--;
 			continue;
 		}
@@ -803,15 +1022,24 @@ static int parse_features(struct dm_arg_set *as, struct multipath *m)
 static int multipath_ctr(struct dm_target *ti, unsigned int argc,
 			 char **argv)
 {
+<<<<<<< HEAD
 	/* target arguments */
 	static struct dm_arg _args[] = {
+=======
+	/* target parameters */
+	static struct param _params[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		{0, 1024, "invalid number of priority groups"},
 		{0, 1024, "invalid initial priority group number"},
 	};
 
 	int r;
 	struct multipath *m;
+<<<<<<< HEAD
 	struct dm_arg_set as;
+=======
+	struct arg_set as;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned pg_count = 0;
 	unsigned next_pg_num;
 
@@ -832,11 +1060,19 @@ static int multipath_ctr(struct dm_target *ti, unsigned int argc,
 	if (r)
 		goto bad;
 
+<<<<<<< HEAD
 	r = dm_read_arg(_args, &as, &m->nr_priority_groups, &ti->error);
 	if (r)
 		goto bad;
 
 	r = dm_read_arg(_args + 1, &as, &next_pg_num, &ti->error);
+=======
+	r = read_param(_params, shift(&as), &m->nr_priority_groups, &ti->error);
+	if (r)
+		goto bad;
+
+	r = read_param(_params + 1, shift(&as), &next_pg_num, &ti->error);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (r)
 		goto bad;
 
@@ -928,6 +1164,7 @@ static int multipath_map(struct dm_target *ti, struct request *clone,
 			 union map_info *map_context)
 {
 	int r;
+<<<<<<< HEAD
 	struct multipath *m = (struct multipath *) ti->private;
 
 	if (set_mapinfo(m, map_context) < 0)
@@ -938,6 +1175,22 @@ static int multipath_map(struct dm_target *ti, struct request *clone,
 	r = map_io(m, clone, map_context, 0);
 	if (r < 0 || r == DM_MAPIO_REQUEUE)
 		clear_mapinfo(m, map_context);
+=======
+	struct dm_mpath_io *mpio;
+	struct multipath *m = (struct multipath *) ti->private;
+
+	mpio = mempool_alloc(m->mpio_pool, GFP_ATOMIC);
+	if (!mpio)
+		/* ENOMEM, requeue */
+		return DM_MAPIO_REQUEUE;
+	memset(mpio, 0, sizeof(*mpio));
+
+	map_context->ptr = mpio;
+	clone->cmd_flags |= REQ_FAILFAST_TRANSPORT;
+	r = map_io(m, clone, mpio, 0);
+	if (r < 0 || r == DM_MAPIO_REQUEUE)
+		mempool_free(mpio, m->mpio_pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return r;
 }
@@ -1070,9 +1323,14 @@ static int switch_pg_num(struct multipath *m, const char *pgstr)
 	struct priority_group *pg;
 	unsigned pgnum;
 	unsigned long flags;
+<<<<<<< HEAD
 	char dummy;
 
 	if (!pgstr || (sscanf(pgstr, "%u%c", &pgnum, &dummy) != 1) || !pgnum ||
+=======
+
+	if (!pgstr || (sscanf(pgstr, "%u", &pgnum) != 1) || !pgnum ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (pgnum > m->nr_priority_groups)) {
 		DMWARN("invalid PG number supplied to switch_pg_num");
 		return -EINVAL;
@@ -1102,9 +1360,14 @@ static int bypass_pg_num(struct multipath *m, const char *pgstr, int bypassed)
 {
 	struct priority_group *pg;
 	unsigned pgnum;
+<<<<<<< HEAD
 	char dummy;
 
 	if (!pgstr || (sscanf(pgstr, "%u%c", &pgnum, &dummy) != 1) || !pgnum ||
+=======
+
+	if (!pgstr || (sscanf(pgstr, "%u", &pgnum) != 1) || !pgnum ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    (pgnum > m->nr_priority_groups)) {
 		DMWARN("invalid PG number supplied to bypass_pg");
 		return -EINVAL;
@@ -1279,15 +1542,22 @@ static int multipath_end_io(struct dm_target *ti, struct request *clone,
 	struct path_selector *ps;
 	int r;
 
+<<<<<<< HEAD
 	BUG_ON(!mpio);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r  = do_end_io(m, clone, error, mpio);
 	if (pgpath) {
 		ps = &pgpath->pg->ps;
 		if (ps->type->end_io)
 			ps->type->end_io(ps, &pgpath->path, mpio->nr_bytes);
 	}
+<<<<<<< HEAD
 	clear_mapinfo(m, map_context);
+=======
+	mempool_free(mpio, m->mpio_pool);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return r;
 }
@@ -1466,10 +1736,17 @@ static int multipath_message(struct dm_target *ti, unsigned argc, char **argv)
 	}
 
 	if (argc == 1) {
+<<<<<<< HEAD
 		if (!strcasecmp(argv[0], "queue_if_no_path")) {
 			r = queue_if_no_path(m, 1, 0);
 			goto out;
 		} else if (!strcasecmp(argv[0], "fail_if_no_path")) {
+=======
+		if (!strnicmp(argv[0], MESG_STR("queue_if_no_path"))) {
+			r = queue_if_no_path(m, 1, 0);
+			goto out;
+		} else if (!strnicmp(argv[0], MESG_STR("fail_if_no_path"))) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			r = queue_if_no_path(m, 0, 0);
 			goto out;
 		}
@@ -1480,6 +1757,7 @@ static int multipath_message(struct dm_target *ti, unsigned argc, char **argv)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (!strcasecmp(argv[0], "disable_group")) {
 		r = bypass_pg_num(m, argv[1], 1);
 		goto out;
@@ -1492,6 +1770,20 @@ static int multipath_message(struct dm_target *ti, unsigned argc, char **argv)
 	} else if (!strcasecmp(argv[0], "reinstate_path"))
 		action = reinstate_path;
 	else if (!strcasecmp(argv[0], "fail_path"))
+=======
+	if (!strnicmp(argv[0], MESG_STR("disable_group"))) {
+		r = bypass_pg_num(m, argv[1], 1);
+		goto out;
+	} else if (!strnicmp(argv[0], MESG_STR("enable_group"))) {
+		r = bypass_pg_num(m, argv[1], 0);
+		goto out;
+	} else if (!strnicmp(argv[0], MESG_STR("switch_group"))) {
+		r = switch_pg_num(m, argv[1]);
+		goto out;
+	} else if (!strnicmp(argv[0], MESG_STR("reinstate_path")))
+		action = reinstate_path;
+	else if (!strnicmp(argv[0], MESG_STR("fail_path")))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		action = fail_path;
 	else {
 		DMWARN("Unrecognised multipath message received.");

@@ -130,6 +130,7 @@ static int can_calc_bittiming(struct net_device *dev, struct can_bittiming *bt)
 		/* Error in one-tenth of a percent */
 		error = (best_error * 1000) / bt->bitrate;
 		if (error > CAN_CALC_MAX_ERROR) {
+<<<<<<< HEAD
 			netdev_err(dev,
 				   "bitrate error %ld.%ld%% too high\n",
 				   error / 10, error % 10);
@@ -137,6 +138,15 @@ static int can_calc_bittiming(struct net_device *dev, struct can_bittiming *bt)
 		} else {
 			netdev_warn(dev, "bitrate error %ld.%ld%%\n",
 				    error / 10, error % 10);
+=======
+			dev_err(dev->dev.parent,
+				"bitrate error %ld.%ld%% too high\n",
+				error / 10, error % 10);
+			return -EDOM;
+		} else {
+			dev_warn(dev->dev.parent, "bitrate error %ld.%ld%%\n",
+				 error / 10, error % 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -150,6 +160,7 @@ static int can_calc_bittiming(struct net_device *dev, struct can_bittiming *bt)
 	bt->prop_seg = tseg1 / 2;
 	bt->phase_seg1 = tseg1 - bt->prop_seg;
 	bt->phase_seg2 = tseg2;
+<<<<<<< HEAD
 
 	/* check for sjw user settings */
 	if (!bt->sjw || !btc->sjw_max)
@@ -163,6 +174,9 @@ static int can_calc_bittiming(struct net_device *dev, struct can_bittiming *bt)
 			bt->sjw = tseg2;
 	}
 
+=======
+	bt->sjw = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bt->brp = best_brp;
 	/* real bit-rate */
 	bt->bitrate = priv->clock.freq / (bt->brp * (tseg1 + tseg2 + 1));
@@ -172,7 +186,11 @@ static int can_calc_bittiming(struct net_device *dev, struct can_bittiming *bt)
 #else /* !CONFIG_CAN_CALC_BITTIMING */
 static int can_calc_bittiming(struct net_device *dev, struct can_bittiming *bt)
 {
+<<<<<<< HEAD
 	netdev_err(dev, "bit-timing calculation not available\n");
+=======
+	dev_err(dev->dev.parent, "bit-timing calculation not available\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return -EINVAL;
 }
 #endif /* CONFIG_CAN_CALC_BITTIMING */
@@ -220,7 +238,11 @@ static int can_fixup_bittiming(struct net_device *dev, struct can_bittiming *bt)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int can_get_bittiming(struct net_device *dev, struct can_bittiming *bt)
+=======
+int can_get_bittiming(struct net_device *dev, struct can_bittiming *bt)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct can_priv *priv = netdev_priv(dev);
 	int err;
@@ -313,7 +335,12 @@ void can_put_echo_skb(struct sk_buff *skb, struct net_device *dev,
 		priv->echo_skb[idx] = skb;
 	} else {
 		/* locking problem with netif_stop_queue() ?? */
+<<<<<<< HEAD
 		netdev_err(dev, "%s: BUG! echo_skb is occupied!\n", __func__);
+=======
+		dev_err(dev->dev.parent, "%s: BUG! echo_skb is occupied!\n",
+			__func__);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		kfree_skb(skb);
 	}
 }
@@ -326,13 +353,18 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
  * is handled in the device driver. The driver must protect
  * access to priv->echo_skb, if necessary.
  */
+<<<<<<< HEAD
 unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx)
+=======
+void can_get_echo_skb(struct net_device *dev, unsigned int idx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct can_priv *priv = netdev_priv(dev);
 
 	BUG_ON(idx >= priv->echo_skb_max);
 
 	if (priv->echo_skb[idx]) {
+<<<<<<< HEAD
 		struct sk_buff *skb = priv->echo_skb[idx];
 		struct can_frame *cf = (struct can_frame *)skb->data;
 		u8 dlc = cf->can_dlc;
@@ -344,6 +376,11 @@ unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx)
 	}
 
 	return 0;
+=======
+		netif_rx(priv->echo_skb[idx]);
+		priv->echo_skb[idx] = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(can_get_echo_skb);
 
@@ -399,7 +436,11 @@ void can_restart(unsigned long data)
 	stats->rx_bytes += cf->can_dlc;
 
 restart:
+<<<<<<< HEAD
 	netdev_dbg(dev, "restarted\n");
+=======
+	dev_dbg(dev->dev.parent, "restarted\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	priv->can_stats.restarts++;
 
 	/* Now restart the device */
@@ -407,7 +448,11 @@ restart:
 
 	netif_carrier_on(dev);
 	if (err)
+<<<<<<< HEAD
 		netdev_err(dev, "Error %d during restart", err);
+=======
+		dev_err(dev->dev.parent, "Error %d during restart", err);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int can_restart_now(struct net_device *dev)
@@ -440,7 +485,11 @@ void can_bus_off(struct net_device *dev)
 {
 	struct can_priv *priv = netdev_priv(dev);
 
+<<<<<<< HEAD
 	netdev_dbg(dev, "bus-off\n");
+=======
+	dev_dbg(dev->dev.parent, "bus-off\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	netif_carrier_off(dev);
 	priv->can_stats.bus_off++;
@@ -461,7 +510,11 @@ static void can_setup(struct net_device *dev)
 
 	/* New-style flags. */
 	dev->flags = IFF_NOARP;
+<<<<<<< HEAD
 	dev->features = NETIF_F_HW_CSUM;
+=======
+	dev->features = NETIF_F_NO_CSUM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct sk_buff *alloc_can_skb(struct net_device *dev, struct can_frame **cf)
@@ -552,7 +605,11 @@ int open_candev(struct net_device *dev)
 	struct can_priv *priv = netdev_priv(dev);
 
 	if (!priv->bittiming.tq && !priv->bittiming.bitrate) {
+<<<<<<< HEAD
 		netdev_err(dev, "bit-timing not yet defined\n");
+=======
+		dev_err(dev->dev.parent, "bit-timing not yet defined\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 
@@ -576,7 +633,12 @@ void close_candev(struct net_device *dev)
 {
 	struct can_priv *priv = netdev_priv(dev);
 
+<<<<<<< HEAD
 	del_timer_sync(&priv->restart_timer);
+=======
+	if (del_timer_sync(&priv->restart_timer))
+		dev_put(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	can_flush_echo_skb(dev);
 }
 EXPORT_SYMBOL_GPL(close_candev);

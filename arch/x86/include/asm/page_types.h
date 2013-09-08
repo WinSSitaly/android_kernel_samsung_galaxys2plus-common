@@ -55,6 +55,10 @@ extern unsigned long init_memory_mapping(unsigned long start,
 					 unsigned long end);
 
 extern void initmem_init(void);
+<<<<<<< HEAD
+=======
+extern void free_initmem(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif	/* !__ASSEMBLY__ */
 

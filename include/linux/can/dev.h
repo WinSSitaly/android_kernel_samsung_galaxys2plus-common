@@ -8,6 +8,10 @@
  *
  * Copyright (C) 2008 Wolfgang Grandegger <wg@grandegger.com>
  *
+<<<<<<< HEAD
+=======
+ * Send feedback to <socketcan-users@lists.berlios.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 
 #ifndef CAN_DEV_H
@@ -92,7 +96,11 @@ void can_bus_off(struct net_device *dev);
 
 void can_put_echo_skb(struct sk_buff *skb, struct net_device *dev,
 		      unsigned int idx);
+<<<<<<< HEAD
 unsigned int can_get_echo_skb(struct net_device *dev, unsigned int idx);
+=======
+void can_get_echo_skb(struct net_device *dev, unsigned int idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void can_free_echo_skb(struct net_device *dev, unsigned int idx);
 
 struct sk_buff *alloc_can_skb(struct net_device *dev, struct can_frame **cf);

@@ -46,6 +46,7 @@ static void radeon_bo_clear_surface_reg(struct radeon_bo *bo);
  * function are calling it.
  */
 
+<<<<<<< HEAD
 void radeon_bo_clear_va(struct radeon_bo *bo)
 {
 	struct radeon_bo_va *bo_va, *tmp;
@@ -60,6 +61,8 @@ void radeon_bo_clear_va(struct radeon_bo *bo)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void radeon_ttm_bo_destroy(struct ttm_buffer_object *tbo)
 {
 	struct radeon_bo *bo;
@@ -69,7 +72,10 @@ static void radeon_ttm_bo_destroy(struct ttm_buffer_object *tbo)
 	list_del_init(&bo->list);
 	mutex_unlock(&bo->rdev->gem.mutex);
 	radeon_bo_clear_surface_reg(bo);
+<<<<<<< HEAD
 	radeon_bo_clear_va(bo);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	drm_gem_object_release(&bo->gem_base);
 	kfree(bo);
 }
@@ -110,7 +116,10 @@ int radeon_bo_create(struct radeon_device *rdev,
 	enum ttm_bo_type type;
 	unsigned long page_align = roundup(byte_align, PAGE_SIZE) >> PAGE_SHIFT;
 	unsigned long max_size = 0;
+<<<<<<< HEAD
 	size_t acc_size;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int r;
 
 	size = ALIGN(size, PAGE_SIZE);
@@ -133,9 +142,12 @@ int radeon_bo_create(struct radeon_device *rdev,
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	acc_size = ttm_bo_dma_acc_size(&rdev->mman.bdev, size,
 				       sizeof(struct radeon_bo));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 retry:
 	bo = kzalloc(sizeof(struct radeon_bo), GFP_KERNEL);
 	if (bo == NULL)
@@ -149,13 +161,21 @@ retry:
 	bo->gem_base.driver_private = NULL;
 	bo->surface_reg = -1;
 	INIT_LIST_HEAD(&bo->list);
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&bo->va);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	radeon_ttm_placement_from_domain(bo, domain);
 	/* Kernel allocation are uninterruptible */
 	mutex_lock(&rdev->vram_mutex);
 	r = ttm_bo_init(&rdev->mman.bdev, &bo->tbo, size, type,
+<<<<<<< HEAD
 			&bo->placement, page_align, 0, !kernel, NULL,
 			acc_size, &radeon_ttm_bo_destroy);
+=======
+			&bo->placement, page_align, 0, !kernel, NULL, size,
+			&radeon_ttm_bo_destroy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&rdev->vram_mutex);
 	if (unlikely(r != 0)) {
 		if (r != -ERESTARTSYS) {
@@ -233,6 +253,7 @@ int radeon_bo_pin_restricted(struct radeon_bo *bo, u32 domain, u64 max_offset,
 		bo->pin_count++;
 		if (gpu_addr)
 			*gpu_addr = radeon_bo_gpu_offset(bo);
+<<<<<<< HEAD
 
 		if (max_offset != 0) {
 			u64 domain_start;
@@ -245,6 +266,9 @@ int radeon_bo_pin_restricted(struct radeon_bo *bo, u32 domain, u64 max_offset,
 				     (radeon_bo_gpu_offset(bo) - domain_start));
 		}
 
+=======
+		WARN_ON_ONCE(max_offset != 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 	radeon_ttm_placement_from_domain(bo, domain);
@@ -472,6 +496,7 @@ static void radeon_bo_clear_surface_reg(struct radeon_bo *bo)
 int radeon_bo_set_tiling_flags(struct radeon_bo *bo,
 				uint32_t tiling_flags, uint32_t pitch)
 {
+<<<<<<< HEAD
 	struct radeon_device *rdev = bo->rdev;
 	int r;
 
@@ -520,6 +545,10 @@ int radeon_bo_set_tiling_flags(struct radeon_bo *bo,
 			return -EINVAL;
 		}
 	}
+=======
+	int r;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	r = radeon_bo_reserve(bo, false);
 	if (unlikely(r != 0))
 		return r;
@@ -576,7 +605,10 @@ void radeon_bo_move_notify(struct ttm_buffer_object *bo,
 		return;
 	rbo = container_of(bo, struct radeon_bo, tbo);
 	radeon_bo_check_tiling(rbo, 0, 1);
+<<<<<<< HEAD
 	radeon_vm_bo_invalidate(rbo->rdev, rbo);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int radeon_bo_fault_reserve_notify(struct ttm_buffer_object *bo)
@@ -609,6 +641,7 @@ int radeon_bo_fault_reserve_notify(struct ttm_buffer_object *bo)
 	}
 	return 0;
 }
+<<<<<<< HEAD
 
 int radeon_bo_wait(struct radeon_bo *bo, u32 *mem_type, bool no_wait)
 {
@@ -663,3 +696,5 @@ struct radeon_bo_va *radeon_bo_va(struct radeon_bo *rbo, struct radeon_vm *vm)
 	}
 	return NULL;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

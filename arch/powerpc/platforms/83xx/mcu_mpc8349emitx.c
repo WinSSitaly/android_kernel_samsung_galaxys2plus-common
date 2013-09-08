@@ -21,8 +21,11 @@
 #include <linux/of.h>
 #include <linux/of_gpio.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/kthread.h>
 #include <linux/reboot.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/prom.h>
 #include <asm/machdep.h>
 
@@ -32,7 +35,10 @@
  */
 #define MCU_REG_CTRL	0x20
 #define MCU_CTRL_POFF	0x40
+<<<<<<< HEAD
 #define MCU_CTRL_BTN	0x80
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define MCU_NUM_GPIO	2
 
@@ -45,6 +51,7 @@ struct mcu {
 
 static struct mcu *glob_mcu;
 
+<<<<<<< HEAD
 struct task_struct *shutdown_thread;
 static int shutdown_thread_fn(void *data)
 {
@@ -87,13 +94,19 @@ static ssize_t show_status(struct device *d,
 }
 static DEVICE_ATTR(status, S_IRUGO, show_status, NULL);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void mcu_power_off(void)
 {
 	struct mcu *mcu = glob_mcu;
 
 	pr_info("Sending power-off request to the MCU...\n");
 	mutex_lock(&mcu->lock);
+<<<<<<< HEAD
 	i2c_smbus_write_byte_data(mcu->client, MCU_REG_CTRL,
+=======
+	i2c_smbus_write_byte_data(glob_mcu->client, MCU_REG_CTRL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  mcu->reg_ctrl | MCU_CTRL_POFF);
 	mutex_unlock(&mcu->lock);
 }
@@ -175,6 +188,7 @@ static int __devinit mcu_probe(struct i2c_client *client,
 		dev_info(&client->dev, "will provide power-off service\n");
 	}
 
+<<<<<<< HEAD
 	if (device_create_file(&client->dev, &dev_attr_status))
 		dev_err(&client->dev,
 			"couldn't create device file for status\n");
@@ -182,6 +196,8 @@ static int __devinit mcu_probe(struct i2c_client *client,
 	shutdown_thread = kthread_run(shutdown_thread_fn, NULL,
 				      "mcu-i2c-shdn");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 err:
 	kfree(mcu);
@@ -193,10 +209,13 @@ static int __devexit mcu_remove(struct i2c_client *client)
 	struct mcu *mcu = i2c_get_clientdata(client);
 	int ret;
 
+<<<<<<< HEAD
 	kthread_stop(shutdown_thread);
 
 	device_remove_file(&client->dev, &dev_attr_status);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (glob_mcu == mcu) {
 		ppc_md.power_off = NULL;
 		glob_mcu = NULL;

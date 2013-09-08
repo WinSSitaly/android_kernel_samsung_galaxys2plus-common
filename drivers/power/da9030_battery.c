@@ -588,7 +588,22 @@ static struct platform_driver da903x_battery_driver = {
 	.remove = da9030_battery_remove,
 };
 
+<<<<<<< HEAD
 module_platform_driver(da903x_battery_driver);
+=======
+static int da903x_battery_init(void)
+{
+	return platform_driver_register(&da903x_battery_driver);
+}
+
+static void da903x_battery_exit(void)
+{
+	platform_driver_unregister(&da903x_battery_driver);
+}
+
+module_init(da903x_battery_init);
+module_exit(da903x_battery_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("DA9030 battery charger driver");
 MODULE_AUTHOR("Mike Rapoport, CompuLab");

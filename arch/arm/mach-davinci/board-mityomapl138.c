@@ -20,7 +20,10 @@
 #include <linux/spi/spi.h>
 #include <linux/spi/flash.h>
 
+<<<<<<< HEAD
 #include <asm/io.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <mach/common.h>
@@ -396,8 +399,12 @@ static struct davinci_nand_pdata mityomapl138_nandflash_data = {
 	.parts		= mityomapl138_nandflash_partition,
 	.nr_parts	= ARRAY_SIZE(mityomapl138_nandflash_partition),
 	.ecc_mode	= NAND_ECC_HW,
+<<<<<<< HEAD
 	.bbt_options	= NAND_BBT_USE_FLASH,
 	.options	= NAND_BUSWIDTH_16,
+=======
+	.options	= NAND_USE_FLASH_BBT | NAND_BUSWIDTH_16,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ecc_bits	= 1, /* 4 bit mode is not supported with 16 bit NAND */
 };
 
@@ -567,11 +574,18 @@ static void __init mityomapl138_map_io(void)
 }
 
 MACHINE_START(MITYOMAPL138, "MityDSP-L138/MityARM-1808")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= (DA8XX_DDR_BASE + 0x100),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.map_io		= mityomapl138_map_io,
 	.init_irq	= cp_intc_init,
 	.timer		= &davinci_timer,
 	.init_machine	= mityomapl138_init,
+<<<<<<< HEAD
 	.dma_zone_size	= SZ_128M,
 	.restart	= da8xx_restart,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

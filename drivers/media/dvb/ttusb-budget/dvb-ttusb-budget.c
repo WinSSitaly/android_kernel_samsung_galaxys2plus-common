@@ -1017,20 +1017,33 @@ static u32 functionality(struct i2c_adapter *adapter)
 
 
 
+<<<<<<< HEAD
 static int alps_tdmb7_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int alps_tdmb7_tuner_set_params(struct dvb_frontend* fe, struct dvb_frontend_parameters* params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ttusb* ttusb = (struct ttusb*) fe->dvb->priv;
 	u8 data[4];
 	struct i2c_msg msg = {.addr=0x61, .flags=0, .buf=data, .len=sizeof(data) };
 	u32 div;
 
+<<<<<<< HEAD
 	div = (p->frequency + 36166667) / 166667;
+=======
+	div = (params->frequency + 36166667) / 166667;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data[0] = (div >> 8) & 0x7f;
 	data[1] = div & 0xff;
 	data[2] = ((div >> 10) & 0x60) | 0x85;
+<<<<<<< HEAD
 	data[3] = p->frequency < 592000000 ? 0x40 : 0x80;
+=======
+	data[3] = params->frequency < 592000000 ? 0x40 : 0x80;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1);
@@ -1072,9 +1085,14 @@ static int philips_tdm1316l_tuner_init(struct dvb_frontend* fe)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int philips_tdm1316l_tuner_set_params(struct dvb_frontend* fe, struct dvb_frontend_parameters* params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ttusb* ttusb = (struct ttusb*) fe->dvb->priv;
 	u8 tuner_buf[4];
 	struct i2c_msg tuner_msg = {.addr=0x60, .flags=0, .buf=tuner_buf, .len=sizeof(tuner_buf) };
@@ -1082,7 +1100,11 @@ static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 	u8 band, cp, filter;
 
 	// determine charge pump
+<<<<<<< HEAD
 	tuner_frequency = p->frequency + 36130000;
+=======
+	tuner_frequency = params->frequency + 36130000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (tuner_frequency < 87000000) return -EINVAL;
 	else if (tuner_frequency < 130000000) cp = 3;
 	else if (tuner_frequency < 160000000) cp = 5;
@@ -1096,6 +1118,7 @@ static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 	else return -EINVAL;
 
 	// determine band
+<<<<<<< HEAD
 	if (p->frequency < 49000000)
 		return -EINVAL;
 	else if (p->frequency < 159000000)
@@ -1109,16 +1132,35 @@ static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 	// setup PLL filter
 	switch (p->bandwidth_hz) {
 	case 6000000:
+=======
+	if (params->frequency < 49000000) return -EINVAL;
+	else if (params->frequency < 159000000) band = 1;
+	else if (params->frequency < 444000000) band = 2;
+	else if (params->frequency < 861000000) band = 4;
+	else return -EINVAL;
+
+	// setup PLL filter
+	switch (params->u.ofdm.bandwidth) {
+	case BANDWIDTH_6_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tda1004x_writereg(fe, 0x0C, 0);
 		filter = 0;
 		break;
 
+<<<<<<< HEAD
 	case 7000000:
+=======
+	case BANDWIDTH_7_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tda1004x_writereg(fe, 0x0C, 0);
 		filter = 0;
 		break;
 
+<<<<<<< HEAD
 	case 8000000:
+=======
+	case BANDWIDTH_8_MHZ:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tda1004x_writereg(fe, 0x0C, 0xFF);
 		filter = 1;
 		break;
@@ -1129,7 +1171,11 @@ static int philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 
 	// calculate divisor
 	// ((36130000+((1000000/6)/2)) + Finput)/(1000000/6)
+<<<<<<< HEAD
 	tuner_frequency = (((p->frequency / 1000) * 6) + 217280) / 1000;
+=======
+	tuner_frequency = (((params->frequency / 1000) * 6) + 217280) / 1000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	// setup tuner buffer
 	tuner_buf[0] = tuner_frequency >> 8;
@@ -1279,24 +1325,40 @@ static int alps_stv0299_set_symbol_rate(struct dvb_frontend *fe, u32 srate, u32 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int philips_tsa5059_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int philips_tsa5059_tuner_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ttusb* ttusb = (struct ttusb*) fe->dvb->priv;
 	u8 buf[4];
 	u32 div;
 	struct i2c_msg msg = {.addr = 0x61,.flags = 0,.buf = buf,.len = sizeof(buf) };
 
+<<<<<<< HEAD
 	if ((p->frequency < 950000) || (p->frequency > 2150000))
 		return -EINVAL;
 
 	div = (p->frequency + (125 - 1)) / 125;	/* round correctly */
+=======
+	if ((params->frequency < 950000) || (params->frequency > 2150000))
+		return -EINVAL;
+
+	div = (params->frequency + (125 - 1)) / 125;	// round correctly
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	buf[0] = (div >> 8) & 0x7f;
 	buf[1] = div & 0xff;
 	buf[2] = 0x80 | ((div & 0x18000) >> 10) | 4;
 	buf[3] = 0xC4;
 
+<<<<<<< HEAD
 	if (p->frequency > 1530000)
+=======
+	if (params->frequency > 1530000)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buf[3] = 0xC0;
 
 	/* BSBE1 wants XCE bit set */
@@ -1323,15 +1385,24 @@ static struct stv0299_config alps_stv0299_config = {
 	.set_symbol_rate = alps_stv0299_set_symbol_rate,
 };
 
+<<<<<<< HEAD
 static int ttusb_novas_grundig_29504_491_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int ttusb_novas_grundig_29504_491_tuner_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ttusb* ttusb = (struct ttusb*) fe->dvb->priv;
 	u8 buf[4];
 	u32 div;
 	struct i2c_msg msg = {.addr = 0x61,.flags = 0,.buf = buf,.len = sizeof(buf) };
 
+<<<<<<< HEAD
 	div = p->frequency / 125;
+=======
+	div = params->frequency / 125;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	buf[0] = (div >> 8) & 0x7f;
 	buf[1] = div & 0xff;
@@ -1351,20 +1422,33 @@ static struct tda8083_config ttusb_novas_grundig_29504_491_config = {
 	.demod_address = 0x68,
 };
 
+<<<<<<< HEAD
 static int alps_tdbe2_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int alps_tdbe2_tuner_set_params(struct dvb_frontend* fe, struct dvb_frontend_parameters* params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ttusb* ttusb = fe->dvb->priv;
 	u32 div;
 	u8 data[4];
 	struct i2c_msg msg = { .addr = 0x62, .flags = 0, .buf = data, .len = sizeof(data) };
 
+<<<<<<< HEAD
 	div = (p->frequency + 35937500 + 31250) / 62500;
+=======
+	div = (params->frequency + 35937500 + 31250) / 62500;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	data[0] = (div >> 8) & 0x7f;
 	data[1] = div & 0xff;
 	data[2] = 0x85 | ((div >> 10) & 0x60);
+<<<<<<< HEAD
 	data[3] = (p->frequency < 174000000 ? 0x88 : p->frequency < 470000000 ? 0x84 : 0x81);
+=======
+	data[3] = (params->frequency < 174000000 ? 0x88 : params->frequency < 470000000 ? 0x84 : 0x81);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1);
@@ -1396,9 +1480,14 @@ static u8 read_pwm(struct ttusb* ttusb)
 }
 
 
+<<<<<<< HEAD
 static int dvbc_philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 {
 	struct dtv_frontend_properties *p = &fe->dtv_property_cache;
+=======
+static int dvbc_philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ttusb *ttusb = (struct ttusb *) fe->dvb->priv;
 	u8 tuner_buf[5];
 	struct i2c_msg tuner_msg = {.addr = 0x60,
@@ -1409,7 +1498,11 @@ static int dvbc_philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 	u8 band, cp, filter;
 
 	// determine charge pump
+<<<<<<< HEAD
 	tuner_frequency = p->frequency;
+=======
+	tuner_frequency = params->frequency;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if      (tuner_frequency <  87000000) {return -EINVAL;}
 	else if (tuner_frequency < 130000000) {cp = 3; band = 1;}
 	else if (tuner_frequency < 160000000) {cp = 5; band = 1;}
@@ -1427,7 +1520,11 @@ static int dvbc_philips_tdm1316l_tuner_set_params(struct dvb_frontend *fe)
 
 	// calculate divisor
 	// (Finput + Fif)/Fref; Fif = 36125000 Hz, Fref = 62500 Hz
+<<<<<<< HEAD
 	tuner_frequency = ((p->frequency + 36125000) / 62500);
+=======
+	tuner_frequency = ((params->frequency + 36125000) / 62500);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	// setup tuner buffer
 	tuner_buf[0] = tuner_frequency >> 8;
@@ -1704,8 +1801,15 @@ static int ttusb_probe(struct usb_interface *intf, const struct usb_device_id *i
 	ttusb->i2c_adap.dev.parent	  = &udev->dev;
 
 	result = i2c_add_adapter(&ttusb->i2c_adap);
+<<<<<<< HEAD
 	if (result)
 		goto err_unregister_adapter;
+=======
+	if (result) {
+		dvb_unregister_adapter (&ttusb->adapter);
+		return result;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	memset(&ttusb->dvb_demux, 0, sizeof(ttusb->dvb_demux));
 
@@ -1722,29 +1826,55 @@ static int ttusb_probe(struct usb_interface *intf, const struct usb_device_id *i
 	ttusb->dvb_demux.stop_feed = ttusb_stop_feed;
 	ttusb->dvb_demux.write_to_decoder = NULL;
 
+<<<<<<< HEAD
 	result = dvb_dmx_init(&ttusb->dvb_demux);
 	if (result < 0) {
 		printk("ttusb_dvb: dvb_dmx_init failed (errno = %d)\n", result);
 		result = -ENODEV;
 		goto err_i2c_del_adapter;
+=======
+	if ((result = dvb_dmx_init(&ttusb->dvb_demux)) < 0) {
+		printk("ttusb_dvb: dvb_dmx_init failed (errno = %d)\n", result);
+		i2c_del_adapter(&ttusb->i2c_adap);
+		dvb_unregister_adapter (&ttusb->adapter);
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 //FIXME dmxdev (nur WAS?)
 	ttusb->dmxdev.filternum = ttusb->dvb_demux.filternum;
 	ttusb->dmxdev.demux = &ttusb->dvb_demux.dmx;
 	ttusb->dmxdev.capabilities = 0;
 
+<<<<<<< HEAD
 	result = dvb_dmxdev_init(&ttusb->dmxdev, &ttusb->adapter);
 	if (result < 0) {
 		printk("ttusb_dvb: dvb_dmxdev_init failed (errno = %d)\n",
 		       result);
 		result = -ENODEV;
 		goto err_release_dmx;
+=======
+	if ((result = dvb_dmxdev_init(&ttusb->dmxdev, &ttusb->adapter)) < 0) {
+		printk("ttusb_dvb: dvb_dmxdev_init failed (errno = %d)\n",
+		       result);
+		dvb_dmx_release(&ttusb->dvb_demux);
+		i2c_del_adapter(&ttusb->i2c_adap);
+		dvb_unregister_adapter (&ttusb->adapter);
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (dvb_net_init(&ttusb->adapter, &ttusb->dvbnet, &ttusb->dvb_demux.dmx)) {
 		printk("ttusb_dvb: dvb_net_init failed!\n");
+<<<<<<< HEAD
 		result = -ENODEV;
 		goto err_release_dmxdev;
+=======
+		dvb_dmxdev_release(&ttusb->dmxdev);
+		dvb_dmx_release(&ttusb->dvb_demux);
+		i2c_del_adapter(&ttusb->i2c_adap);
+		dvb_unregister_adapter (&ttusb->adapter);
+		return -ENODEV;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	usb_set_intfdata(intf, (void *) ttusb);
@@ -1752,6 +1882,7 @@ static int ttusb_probe(struct usb_interface *intf, const struct usb_device_id *i
 	frontend_init(ttusb);
 
 	return 0;
+<<<<<<< HEAD
 
 err_release_dmxdev:
 	dvb_dmxdev_release(&ttusb->dmxdev);
@@ -1762,6 +1893,8 @@ err_i2c_del_adapter:
 err_unregister_adapter:
 	dvb_unregister_adapter (&ttusb->adapter);
 	return result;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void ttusb_disconnect(struct usb_interface *intf)
@@ -1808,7 +1941,30 @@ static struct usb_driver ttusb_driver = {
       .id_table		= ttusb_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(ttusb_driver);
+=======
+static int __init ttusb_init(void)
+{
+	int err;
+
+	if ((err = usb_register(&ttusb_driver)) < 0) {
+		printk("%s: usb_register failed! Error number %d",
+		       __FILE__, err);
+		return err;
+	}
+
+	return 0;
+}
+
+static void __exit ttusb_exit(void)
+{
+	usb_deregister(&ttusb_driver);
+}
+
+module_init(ttusb_init);
+module_exit(ttusb_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Holger Waechtler <holger@convergence.de>");
 MODULE_DESCRIPTION("TTUSB DVB Driver");

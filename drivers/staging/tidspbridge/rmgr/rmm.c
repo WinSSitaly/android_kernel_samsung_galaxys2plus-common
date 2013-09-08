@@ -46,6 +46,12 @@
 /*  ----------------------------------- DSP/BIOS Bridge */
 #include <dspbridge/dbdefs.h>
 
+<<<<<<< HEAD
+=======
+/*  ----------------------------------- Trace & Debug */
+#include <dspbridge/dbc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*  ----------------------------------- This */
 #include <dspbridge/rmm.h>
 
@@ -80,6 +86,11 @@ struct rmm_target_obj {
 	struct list_head ovly_list;	/* List of overlay memory in use */
 };
 
+<<<<<<< HEAD
+=======
+static u32 refs;		/* module reference count */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static bool alloc_block(struct rmm_target_obj *target, u32 segid, u32 size,
 			u32 align, u32 *dsp_address);
 static bool free_block(struct rmm_target_obj *target, u32 segid, u32 addr,
@@ -96,6 +107,15 @@ int rmm_alloc(struct rmm_target_obj *target, u32 segid, u32 size,
 	u32 addr;
 	int status = 0;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(target);
+	DBC_REQUIRE(dsp_address != NULL);
+	DBC_REQUIRE(size > 0);
+	DBC_REQUIRE(reserve || (target->num_segs > 0));
+	DBC_REQUIRE(refs > 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!reserve) {
 		if (!alloc_block(target, segid, size, align, dsp_address)) {
 			status = -ENOMEM;
@@ -159,6 +179,12 @@ int rmm_create(struct rmm_target_obj **target_obj,
 	s32 i;
 	int status = 0;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(target_obj != NULL);
+	DBC_REQUIRE(num_segs == 0 || seg_tab != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Allocate DBL target object */
 	target = kzalloc(sizeof(struct rmm_target_obj), GFP_KERNEL);
 
@@ -221,6 +247,12 @@ func_cont:
 
 	}
 
+<<<<<<< HEAD
+=======
+	DBC_ENSURE((!status && *target_obj)
+		   || (status && *target_obj == NULL));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return status;
 }
 
@@ -234,6 +266,11 @@ void rmm_delete(struct rmm_target_obj *target)
 	struct rmm_header *next;
 	u32 i;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(target);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(target->seg_tab);
 
 	list_for_each_entry_safe(sect, tmp, &target->ovly_list, list_elem) {
@@ -258,6 +295,21 @@ void rmm_delete(struct rmm_target_obj *target)
 }
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== rmm_exit ========
+ */
+void rmm_exit(void)
+{
+	DBC_REQUIRE(refs > 0);
+
+	refs--;
+
+	DBC_ENSURE(refs >= 0);
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== rmm_free ========
  */
 bool rmm_free(struct rmm_target_obj *target, u32 segid, u32 dsp_addr, u32 size,
@@ -266,6 +318,18 @@ bool rmm_free(struct rmm_target_obj *target, u32 segid, u32 dsp_addr, u32 size,
 	struct rmm_ovly_sect *sect, *tmp;
 	bool ret = false;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(target);
+
+	DBC_REQUIRE(reserved || segid < target->num_segs);
+	DBC_REQUIRE(reserved || (dsp_addr >= target->seg_tab[segid].base &&
+				 (dsp_addr + size) <= (target->seg_tab[segid].
+						   base +
+						   target->seg_tab[segid].
+						   length)));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 *  Free or unreserve memory.
 	 */
@@ -279,6 +343,10 @@ bool rmm_free(struct rmm_target_obj *target, u32 segid, u32 dsp_addr, u32 size,
 		list_for_each_entry_safe(sect, tmp, &target->ovly_list,
 				list_elem) {
 			if (dsp_addr == sect->addr) {
+<<<<<<< HEAD
+=======
+				DBC_ASSERT(size == sect->size);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* Remove from list */
 				list_del(&sect->list_elem);
 				kfree(sect);
@@ -290,6 +358,21 @@ bool rmm_free(struct rmm_target_obj *target, u32 segid, u32 dsp_addr, u32 size,
 }
 
 /*
+<<<<<<< HEAD
+=======
+ *  ======== rmm_init ========
+ */
+bool rmm_init(void)
+{
+	DBC_REQUIRE(refs >= 0);
+
+	refs++;
+
+	return true;
+}
+
+/*
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  ======== rmm_stat ========
  */
 bool rmm_stat(struct rmm_target_obj *target, enum dsp_memtype segid,
@@ -301,6 +384,12 @@ bool rmm_stat(struct rmm_target_obj *target, enum dsp_memtype segid,
 	u32 total_free_size = 0;
 	u32 free_blocks = 0;
 
+<<<<<<< HEAD
+=======
+	DBC_REQUIRE(mem_stat_buf != NULL);
+	DBC_ASSERT(target != NULL);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ((u32) segid < target->num_segs) {
 		head = target->free_list[segid];
 

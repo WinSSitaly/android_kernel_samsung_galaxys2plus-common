@@ -8,7 +8,10 @@
 #include <linux/device.h>
 #include <linux/firewire.h>
 #include <linux/firewire-constants.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/jiffies.h>
 #include <linux/mutex.h>
 #include <linux/sched.h>

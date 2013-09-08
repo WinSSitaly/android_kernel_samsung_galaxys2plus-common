@@ -8,7 +8,11 @@
  *
  * Copyright (C) 2003 Red Hat, Inc., James Morris <jmorris@redhat.com>
  * Copyright (C) 2007 Hewlett-Packard Development Company, L.P.
+<<<<<<< HEAD
  *                    Paul Moore <paul@paul-moore.com>
+=======
+ *                    Paul Moore, <paul.moore@hp.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,

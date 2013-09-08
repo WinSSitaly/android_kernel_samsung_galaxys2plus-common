@@ -67,7 +67,11 @@ enum {
 	TCF_META_ID_SK_FORWARD_ALLOCS,
 	TCF_META_ID_SK_SNDBUF,
  	TCF_META_ID_SK_ALLOCS,
+<<<<<<< HEAD
 	__TCF_META_ID_SK_ROUTE_CAPS,	/* unimplemented but in ABI already */
+=======
+ 	TCF_META_ID_SK_ROUTE_CAPS,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  	TCF_META_ID_SK_HASH,
  	TCF_META_ID_SK_LINGERTIME,
  	TCF_META_ID_SK_ACK_BACKLOG,

@@ -3,7 +3,10 @@
  *			  (C) 2005 Red Hat Inc
  *			  Alan Cox <alan@lxorguk.ukuu.org.uk>
  *			  (C) 2009-2010 Bartlomiej Zolnierkiewicz
+<<<<<<< HEAD
  *			  (C) 2012 MontaVista Software, LLC <source@mvista.com>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Based upon
  * linux/drivers/ide/pci/cmd64x.c		Version 1.30	Sept 10, 2002
@@ -33,7 +36,11 @@
 #include <linux/libata.h>
 
 #define DRV_NAME "pata_cmd64x"
+<<<<<<< HEAD
 #define DRV_VERSION "0.2.18"
+=======
+#define DRV_VERSION "0.2.5"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * CMD64x specific registers definition.
@@ -83,7 +90,11 @@ static int cmd648_cable_detect(struct ata_port *ap)
 }
 
 /**
+<<<<<<< HEAD
  *	cmd64x_set_timing	-	set PIO and MWDMA timing
+=======
+ *	cmd64x_set_piomode	-	set PIO and MWDMA timing
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@ap: ATA interface
  *	@adev: ATA device
  *	@mode: mode
@@ -230,6 +241,7 @@ static void cmd64x_set_dmamode(struct ata_port *ap, struct ata_device *adev)
 }
 
 /**
+<<<<<<< HEAD
  *	cmd64x_sff_irq_check	-	check IDE interrupt
  *	@ap: ATA interface
  *
@@ -309,6 +321,30 @@ static void cmd648_sff_irq_clear(struct ata_port *ap)
 
 /**
  *	cmd646r1_bmdma_stop	-	DMA stop callback
+=======
+ *	cmd648_dma_stop	-	DMA stop callback
+ *	@qc: Command in progress
+ *
+ *	DMA has completed.
+ */
+
+static void cmd648_bmdma_stop(struct ata_queued_cmd *qc)
+{
+	struct ata_port *ap = qc->ap;
+	struct pci_dev *pdev = to_pci_dev(ap->host->dev);
+	u8 dma_intr;
+	int dma_mask = ap->port_no ? ARTTIM23_INTR_CH1 : CFR_INTR_CH0;
+	int dma_reg = ap->port_no ? ARTTIM23 : CFR;
+
+	ata_bmdma_stop(qc);
+
+	pci_read_config_byte(pdev, dma_reg, &dma_intr);
+	pci_write_config_byte(pdev, dma_reg, dma_intr | dma_mask);
+}
+
+/**
+ *	cmd646r1_dma_stop	-	DMA stop callback
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *	@qc: Command in progress
  *
  *	Stub for now while investigating the r1 quirk in the old driver.
@@ -331,19 +367,26 @@ static const struct ata_port_operations cmd64x_base_ops = {
 
 static struct ata_port_operations cmd64x_port_ops = {
 	.inherits	= &cmd64x_base_ops,
+<<<<<<< HEAD
 	.sff_irq_check	= cmd64x_sff_irq_check,
 	.sff_irq_clear	= cmd64x_sff_irq_clear,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.cable_detect	= ata_cable_40wire,
 };
 
 static struct ata_port_operations cmd646r1_port_ops = {
 	.inherits	= &cmd64x_base_ops,
+<<<<<<< HEAD
 	.sff_irq_check	= cmd64x_sff_irq_check,
 	.sff_irq_clear	= cmd64x_sff_irq_clear,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bmdma_stop	= cmd646r1_bmdma_stop,
 	.cable_detect	= ata_cable_40wire,
 };
 
+<<<<<<< HEAD
 static struct ata_port_operations cmd646r3_port_ops = {
 	.inherits	= &cmd64x_base_ops,
 	.sff_irq_check	= cmd648_sff_irq_check,
@@ -377,6 +420,17 @@ static void cmd64x_fixup(struct pci_dev *pdev)
 static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
 {
 	static const struct ata_port_info cmd_info[7] = {
+=======
+static struct ata_port_operations cmd648_port_ops = {
+	.inherits	= &cmd64x_base_ops,
+	.bmdma_stop	= cmd648_bmdma_stop,
+	.cable_detect	= cmd648_cable_detect,
+};
+
+static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
+{
+	static const struct ata_port_info cmd_info[6] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		{	/* CMD 643 - no UDMA */
 			.flags = ATA_FLAG_SLAVE_POSS,
 			.pio_mask = ATA_PIO4,
@@ -389,6 +443,7 @@ static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
 			.mwdma_mask = ATA_MWDMA2,
 			.port_ops = &cmd64x_port_ops
 		},
+<<<<<<< HEAD
 		{	/* CMD 646U with broken UDMA */
 			.flags = ATA_FLAG_SLAVE_POSS,
 			.pio_mask = ATA_PIO4,
@@ -396,11 +451,18 @@ static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
 			.port_ops = &cmd646r3_port_ops
 		},
 		{	/* CMD 646U2 with working UDMA */
+=======
+		{	/* CMD 646 with working UDMA */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.flags = ATA_FLAG_SLAVE_POSS,
 			.pio_mask = ATA_PIO4,
 			.mwdma_mask = ATA_MWDMA2,
 			.udma_mask = ATA_UDMA2,
+<<<<<<< HEAD
 			.port_ops = &cmd646r3_port_ops
+=======
+			.port_ops = &cmd64x_port_ops
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		{	/* CMD 646 rev 1  */
 			.flags = ATA_FLAG_SLAVE_POSS,
@@ -428,7 +490,11 @@ static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		&cmd_info[id->driver_data],
 		NULL
 	};
+<<<<<<< HEAD
 	u8 reg;
+=======
+	u8 mrdmode, reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 	struct pci_dev *bridge = pdev->bus->self;
 	/* mobility split bridges don't report enabled ports correctly */
@@ -444,6 +510,7 @@ static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
 	if (id->driver_data == 0)	/* 643 */
 		ata_pci_bmdma_clear_simplex(pdev);
 
+<<<<<<< HEAD
 	if (pdev->device == PCI_DEVICE_ID_CMD_646)
 		switch (pdev->revision) {
 		/* UDMA works since rev 5 */
@@ -470,6 +537,29 @@ static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		}
 
 	cmd64x_fixup(pdev);
+=======
+	if (pdev->device == PCI_DEVICE_ID_CMD_646) {
+		/* Does UDMA work ? */
+		if (pdev->revision > 4) {
+			ppi[0] = &cmd_info[2];
+			ppi[1] = &cmd_info[2];
+		}
+		/* Early rev with other problems ? */
+		else if (pdev->revision == 1) {
+			ppi[0] = &cmd_info[3];
+			ppi[1] = &cmd_info[3];
+		}
+		/* revs 1,2 have no CNTRL_CH0 */
+		if (pdev->revision < 3)
+			cntrl_ch0_ok = 0;
+	}
+
+	pci_write_config_byte(pdev, PCI_LATENCY_TIMER, 64);
+	pci_read_config_byte(pdev, MRDMODE, &mrdmode);
+	mrdmode &= ~ 0x30;	/* IRQ set up */
+	mrdmode |= 0x02;	/* Memory read line enable */
+	pci_write_config_byte(pdev, MRDMODE, mrdmode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* check for enabled ports */
 	pci_read_config_byte(pdev, CNTRL, &reg);
@@ -485,6 +575,16 @@ static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
 		ppi[1] = &ata_dummy_port_info;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Force PIO 0 here.. */
+
+	/* PPC specific fixup copied from old driver */
+#ifdef CONFIG_PPC
+	pci_write_config_byte(pdev, UDIDETCR0, 0xF0);
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ata_pci_bmdma_init_one(pdev, ppi, &cmd64x_sht, NULL, 0);
 }
 
@@ -492,14 +592,29 @@ static int cmd64x_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
 static int cmd64x_reinit_one(struct pci_dev *pdev)
 {
 	struct ata_host *host = dev_get_drvdata(&pdev->dev);
+<<<<<<< HEAD
+=======
+	u8 mrdmode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rc;
 
 	rc = ata_pci_device_do_resume(pdev);
 	if (rc)
 		return rc;
 
+<<<<<<< HEAD
 	cmd64x_fixup(pdev);
 
+=======
+	pci_write_config_byte(pdev, PCI_LATENCY_TIMER, 64);
+	pci_read_config_byte(pdev, MRDMODE, &mrdmode);
+	mrdmode &= ~ 0x30;	/* IRQ set up */
+	mrdmode |= 0x02;	/* Memory read line enable */
+	pci_write_config_byte(pdev, MRDMODE, mrdmode);
+#ifdef CONFIG_PPC
+	pci_write_config_byte(pdev, UDIDETCR0, 0xF0);
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ata_host_resume(host);
 	return 0;
 }
@@ -508,8 +623,13 @@ static int cmd64x_reinit_one(struct pci_dev *pdev)
 static const struct pci_device_id cmd64x[] = {
 	{ PCI_VDEVICE(CMD, PCI_DEVICE_ID_CMD_643), 0 },
 	{ PCI_VDEVICE(CMD, PCI_DEVICE_ID_CMD_646), 1 },
+<<<<<<< HEAD
 	{ PCI_VDEVICE(CMD, PCI_DEVICE_ID_CMD_648), 5 },
 	{ PCI_VDEVICE(CMD, PCI_DEVICE_ID_CMD_649), 6 },
+=======
+	{ PCI_VDEVICE(CMD, PCI_DEVICE_ID_CMD_648), 4 },
+	{ PCI_VDEVICE(CMD, PCI_DEVICE_ID_CMD_649), 5 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	{ },
 };

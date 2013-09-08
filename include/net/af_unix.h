@@ -11,13 +11,19 @@ extern void unix_notinflight(struct file *fp);
 extern void unix_gc(void);
 extern void wait_for_unix_gc(void);
 extern struct sock *unix_get_socket(struct file *filp);
+<<<<<<< HEAD
 extern struct sock *unix_peer_get(struct sock *);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define UNIX_HASH_SIZE	256
 
 extern unsigned int unix_tot_inflight;
+<<<<<<< HEAD
 extern spinlock_t unix_table_lock;
 extern struct hlist_head unix_socket_table[UNIX_HASH_SIZE + 1];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct unix_address {
 	atomic_t	refcnt;
@@ -49,7 +55,12 @@ struct unix_sock {
 	/* WARNING: sk has to be the first member */
 	struct sock		sk;
 	struct unix_address     *addr;
+<<<<<<< HEAD
 	struct path		path;
+=======
+	struct dentry		*dentry;
+	struct vfsmount		*mnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mutex		readlock;
 	struct sock		*peer;
 	struct sock		*other;
@@ -65,9 +76,12 @@ struct unix_sock {
 
 #define peer_wait peer_wq.wait
 
+<<<<<<< HEAD
 long unix_inq_len(struct sock *sk);
 long unix_outq_len(struct sock *sk);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 extern int unix_sysctl_register(struct net *net);
 extern void unix_sysctl_unregister(struct net *net);

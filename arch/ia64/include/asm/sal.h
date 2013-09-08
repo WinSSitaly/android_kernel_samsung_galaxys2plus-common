@@ -40,6 +40,10 @@
 #include <linux/efi.h>
 
 #include <asm/pal.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/fpu.h>
 
 extern spinlock_t sal_lock;

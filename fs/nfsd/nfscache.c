@@ -118,7 +118,11 @@ hash_refile(struct svc_cacherep *rp)
  * Note that no operation within the loop may sleep.
  */
 int
+<<<<<<< HEAD
 nfsd_cache_lookup(struct svc_rqst *rqstp)
+=======
+nfsd_cache_lookup(struct svc_rqst *rqstp, int type)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hlist_node	*hn;
 	struct hlist_head 	*rh;
@@ -128,7 +132,10 @@ nfsd_cache_lookup(struct svc_rqst *rqstp)
 				vers = rqstp->rq_vers,
 				proc = rqstp->rq_proc;
 	unsigned long		age;
+<<<<<<< HEAD
 	int type = rqstp->rq_cachetype;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int rtn;
 
 	rqstp->rq_cacherep = NULL;

@@ -16,7 +16,10 @@
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/irqflags.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/setup.h>
 #include <hv/hypervisor.h>
 

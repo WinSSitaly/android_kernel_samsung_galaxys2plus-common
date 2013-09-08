@@ -14,11 +14,15 @@
  */
 
 #include <linux/ieee80211.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/mac80211.h>
 #include "ieee80211_i.h"
 #include "rate.h"
 
+<<<<<<< HEAD
 bool ieee80111_cfg_override_disables_ht40(struct ieee80211_sub_if_data *sdata)
 {
 	const __le16 flg = cpu_to_le16(IEEE80211_HT_CAP_SUP_WIDTH_20_40);
@@ -97,6 +101,9 @@ void ieee80211_apply_htcap_overrides(struct ieee80211_sub_if_data *sdata,
 
 void ieee80211_ht_cap_ie_to_sta_ht_cap(struct ieee80211_sub_if_data *sdata,
 				       struct ieee80211_supported_band *sband,
+=======
+void ieee80211_ht_cap_ie_to_sta_ht_cap(struct ieee80211_supported_band *sband,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				       struct ieee80211_ht_cap *ht_cap_ie,
 				       struct ieee80211_sta_ht_cap *ht_cap)
 {
@@ -180,12 +187,15 @@ void ieee80211_ht_cap_ie_to_sta_ht_cap(struct ieee80211_sub_if_data *sdata,
 	/* handle MCS rate 32 too */
 	if (sband->ht_cap.mcs.rx_mask[32/8] & ht_cap_ie->mcs.rx_mask[32/8] & 1)
 		ht_cap->mcs.rx_mask[32/8] |= 1;
+<<<<<<< HEAD
 
 	/*
 	 * If user has specified capability over-rides, take care
 	 * of that here.
 	 */
 	ieee80211_apply_htcap_overrides(sdata, ht_cap);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ieee80211_sta_tear_down_BA_sessions(struct sta_info *sta, bool tx)
@@ -214,7 +224,11 @@ void ieee80211_ba_session_work(struct work_struct *work)
 	 * down by the code that set the flag, so this
 	 * need not run.
 	 */
+<<<<<<< HEAD
 	if (test_sta_flag(sta, WLAN_STA_BLOCK_BA))
+=======
+	if (test_sta_flags(sta, WLAN_STA_BLOCK_BA))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 
 	mutex_lock(&sta->ampdu_mlme.mtx);
@@ -224,12 +238,15 @@ void ieee80211_ba_session_work(struct work_struct *work)
 				sta, tid, WLAN_BACK_RECIPIENT,
 				WLAN_REASON_QSTA_TIMEOUT, true);
 
+<<<<<<< HEAD
 		if (test_and_clear_bit(tid,
 				       sta->ampdu_mlme.tid_rx_stop_requested))
 			___ieee80211_stop_rx_ba_session(
 				sta, tid, WLAN_BACK_RECIPIENT,
 				WLAN_REASON_UNSPECIFIED, true);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		tid_tx = sta->ampdu_mlme.tid_start_tx[tid];
 		if (tid_tx) {
 			/*
@@ -270,8 +287,17 @@ void ieee80211_send_delba(struct ieee80211_sub_if_data *sdata,
 	u16 params;
 
 	skb = dev_alloc_skb(sizeof(*mgmt) + local->hw.extra_tx_headroom);
+<<<<<<< HEAD
 	if (!skb)
 		return;
+=======
+
+	if (!skb) {
+		printk(KERN_ERR "%s: failed to allocate buffer "
+					"for delba frame\n", sdata->name);
+		return;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_reserve(skb, local->hw.extra_tx_headroom);
 	mgmt = (struct ieee80211_mgmt *) skb_put(skb, 24);
@@ -279,6 +305,7 @@ void ieee80211_send_delba(struct ieee80211_sub_if_data *sdata,
 	memcpy(mgmt->da, da, ETH_ALEN);
 	memcpy(mgmt->sa, sdata->vif.addr, ETH_ALEN);
 	if (sdata->vif.type == NL80211_IFTYPE_AP ||
+<<<<<<< HEAD
 	    sdata->vif.type == NL80211_IFTYPE_AP_VLAN ||
 	    sdata->vif.type == NL80211_IFTYPE_MESH_POINT)
 		memcpy(mgmt->bssid, sdata->vif.addr, ETH_ALEN);
@@ -286,6 +313,12 @@ void ieee80211_send_delba(struct ieee80211_sub_if_data *sdata,
 		memcpy(mgmt->bssid, sdata->u.mgd.bssid, ETH_ALEN);
 	else if (sdata->vif.type == NL80211_IFTYPE_ADHOC)
 		memcpy(mgmt->bssid, sdata->u.ibss.bssid, ETH_ALEN);
+=======
+	    sdata->vif.type == NL80211_IFTYPE_AP_VLAN)
+		memcpy(mgmt->bssid, sdata->vif.addr, ETH_ALEN);
+	else if (sdata->vif.type == NL80211_IFTYPE_STATION)
+		memcpy(mgmt->bssid, sdata->u.mgd.bssid, ETH_ALEN);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mgmt->frame_control = cpu_to_le16(IEEE80211_FTYPE_MGMT |
 					  IEEE80211_STYPE_ACTION);
@@ -300,7 +333,11 @@ void ieee80211_send_delba(struct ieee80211_sub_if_data *sdata,
 	mgmt->u.action.u.delba.params = cpu_to_le16(params);
 	mgmt->u.action.u.delba.reason_code = cpu_to_le16(reason_code);
 
+<<<<<<< HEAD
 	ieee80211_tx_skb_tid(sdata, skb, tid);
+=======
+	ieee80211_tx_skb(sdata, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void ieee80211_process_delba(struct ieee80211_sub_if_data *sdata,

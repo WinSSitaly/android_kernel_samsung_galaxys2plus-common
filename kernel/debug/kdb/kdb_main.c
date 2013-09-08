@@ -145,6 +145,10 @@ static char *__env[] = {
 #endif
  "RADIX=16",
  "MDCOUNT=8",			/* lines of md output */
+<<<<<<< HEAD
+=======
+ "BTARGS=9",			/* 9 possible args in bt */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  KDB_PLATFORM_ENV,
  "DTABCOUNT=30",
  "NOSECT=1",
@@ -171,7 +175,10 @@ static char *__env[] = {
  (char *)0,
  (char *)0,
  (char *)0,
+<<<<<<< HEAD
  (char *)0,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const int __nenv = (sizeof(__env) / sizeof(char *));
@@ -1386,7 +1393,11 @@ int kdb_main_loop(kdb_reason_t reason, kdb_reason_t reason2, int error,
 		}
 
 		if (result == KDB_CMD_KGDB) {
+<<<<<<< HEAD
 			if (!KDB_STATE(DOING_KGDB))
+=======
+			if (!(KDB_STATE(DOING_KGDB) || KDB_STATE(DOING_KGDB2)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				kdb_printf("Entering please attach debugger "
 					   "or use $D#44+ or $3#33\n");
 			break;
@@ -1400,9 +1411,12 @@ int kdb_main_loop(kdb_reason_t reason, kdb_reason_t reason2, int error,
 	if (KDB_STATE(DOING_SS))
 		KDB_STATE_CLEAR(SSBPT);
 
+<<<<<<< HEAD
 	/* Clean up any keyboard devices before leaving */
 	kdb_kbd_cleanup_state();
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return result;
 }
 
@@ -1985,7 +1999,11 @@ static int kdb_lsmod(int argc, const char **argv)
 		kdb_printf("%-20s%8u  0x%p ", mod->name,
 			   mod->core_size, (void *)mod);
 #ifdef CONFIG_MODULE_UNLOAD
+<<<<<<< HEAD
 		kdb_printf("%4ld ", module_refcount(mod));
+=======
+		kdb_printf("%4d ", module_refcount(mod));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		if (mod->state == MODULE_STATE_GOING)
 			kdb_printf(" (Unloading)");

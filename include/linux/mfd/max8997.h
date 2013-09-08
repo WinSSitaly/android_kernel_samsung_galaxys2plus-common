@@ -77,6 +77,7 @@ struct max8997_regulator_data {
 	struct regulator_init_data *initdata;
 };
 
+<<<<<<< HEAD
 enum max8997_muic_usb_type {
 	MAX8997_USB_HOST,
 	MAX8997_USB_DEVICE,
@@ -202,6 +203,8 @@ struct max8997_led_platform_data {
 	u8 brightness[2];
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 struct max8997_platform_data {
 	/* IRQ */
 	int irq_base;
@@ -232,6 +235,7 @@ struct max8997_platform_data {
 	unsigned int buck5_voltage[8];
 	bool buck5_gpiodvs;
 
+<<<<<<< HEAD
 	/* ---- Charger control ---- */
 	/* eoc stands for 'end of charge' */
 	int eoc_mA; /* 50 ~ 200mA by 10mA step */
@@ -247,6 +251,13 @@ struct max8997_platform_data {
 	/* RTC: Not implemented */
 	/* ---- LED ---- */
 	struct max8997_led_platform_data *led_pdata;
+=======
+	/* MUIC: Not implemented */
+	/* HAPTIC: Not implemented */
+	/* RTC: Not implemented */
+	/* Flash: Not implemented */
+	/* Charger control: Not implemented */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* __LINUX_MFD_MAX8998_H */

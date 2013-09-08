@@ -1,3 +1,10 @@
+<<<<<<< HEAD
+=======
+/*
+ * $Id: comet_tables.c,v 1.2 2005/10/17 23:55:27 rickd PMCC4_3_1B $
+ */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*-----------------------------------------------------------------------------
  * comet_tables.c - waveform tables for the PM4351 'COMET'
  *
@@ -16,8 +23,33 @@
  * For further information, contact via email: support@sbei.com
  * SBE, Inc.  San Ramon, California  U.S.A.
  *-----------------------------------------------------------------------------
+<<<<<<< HEAD
  */
 
+=======
+ * RCS info:
+ * RCS revision: $Revision: 1.2 $
+ * Last changed on $Date: 2005/10/17 23:55:27 $
+ * Changed by $Author: rickd $
+ *-----------------------------------------------------------------------------
+ * $Log: comet_tables.c,v $
+ * Revision 1.2  2005/10/17 23:55:27  rickd
+ * Note that 75 Ohm transmit waveform is not supported on PMCC4.
+ *
+ * Revision 1.1  2005/09/28 00:10:05  rickd
+ * Cosmetic alignment of tables for readability.
+ *
+ * Revision 1.0  2005/05/10 22:47:53  rickd
+ * Initial revision
+ *
+ *-----------------------------------------------------------------------------
+ */
+
+char SBEid_pmcc4_comet_tblc[] =
+  "@(#)comet_tables.c - $Revision: 1.2 $      (c) Copyright 2004-2005 SBE, Inc.";
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/types.h>
 
 /*****************************************************************************

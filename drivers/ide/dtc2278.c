@@ -130,7 +130,11 @@ static int __init dtc2278_probe(void)
 	return ide_legacy_device_add(&dtc2278_port_info, 0);
 }
 
+<<<<<<< HEAD
 static bool probe_dtc2278;
+=======
+static int probe_dtc2278;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 module_param_named(probe, probe_dtc2278, bool, 0);
 MODULE_PARM_DESC(probe, "probe for DTC2278xx chipsets");

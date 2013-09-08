@@ -21,9 +21,17 @@
 #include <asm/mach-jz4740/clock.h>
 
 #include "clock.h"
+<<<<<<< HEAD
 
 static int jz4740_pm_enter(suspend_state_t state)
 {
+=======
+#include "irq.h"
+
+static int jz4740_pm_enter(suspend_state_t state)
+{
+	jz4740_intc_suspend();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jz4740_clock_suspend();
 
 	jz4740_clock_set_wait_mode(JZ4740_WAIT_MODE_SLEEP);
@@ -35,6 +43,10 @@ static int jz4740_pm_enter(suspend_state_t state)
 	jz4740_clock_set_wait_mode(JZ4740_WAIT_MODE_IDLE);
 
 	jz4740_clock_resume();
+<<<<<<< HEAD
+=======
+	jz4740_intc_resume();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

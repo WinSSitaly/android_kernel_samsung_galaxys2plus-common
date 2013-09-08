@@ -79,6 +79,14 @@ int iwctl_giwname(struct net_device *dev,
 			 char *wrq,
 			 char *extra);
 
+<<<<<<< HEAD
+=======
+int iwctl_giwnwid(struct net_device *dev,
+             struct iw_request_info *info,
+			 struct iw_param *wrq,
+                   char *extra) ;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int iwctl_giwsens(struct net_device *dev,
 			 struct iw_request_info *info,
 			 struct iw_param *wrq,

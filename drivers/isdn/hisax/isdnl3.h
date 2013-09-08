@@ -5,7 +5,11 @@
  *
  */
 
+<<<<<<< HEAD
 #define SBIT(state) (1 << state)
+=======
+#define SBIT(state) (1<<state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define ALL_STATES  0x03ffffff
 
 #define PROTO_DIS_EURO	0x08
@@ -40,3 +44,7 @@ void l3_msg(struct PStack *st, int pr, void *arg);
 void setstack_dss1(struct PStack *st);
 void setstack_ni1(struct PStack *st);
 void setstack_1tr6(struct PStack *st);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

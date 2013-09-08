@@ -16,7 +16,11 @@
 
 #include <asm/uaccess.h>
 #include <asm/io.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/list.h>
 #include <linux/interrupt.h>

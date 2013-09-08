@@ -128,8 +128,11 @@ static int mlx4_ib_query_device(struct ib_device *ibdev,
 	    (dev->dev->caps.bmme_flags & MLX4_BMME_FLAG_REMOTE_INV) &&
 	    (dev->dev->caps.bmme_flags & MLX4_BMME_FLAG_FAST_REG_WR))
 		props->device_cap_flags |= IB_DEVICE_MEM_MGT_EXTENSIONS;
+<<<<<<< HEAD
 	if (dev->dev->caps.flags & MLX4_DEV_CAP_FLAG_XRC)
 		props->device_cap_flags |= IB_DEVICE_XRC;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	props->vendor_id	   = be32_to_cpup((__be32 *) (out_mad->data + 36)) &
 		0xffffff;
@@ -163,7 +166,11 @@ static int mlx4_ib_query_device(struct ib_device *ibdev,
 	props->max_mcast_qp_attach = dev->dev->caps.num_qp_per_mgm;
 	props->max_total_mcast_qp_attach = props->max_mcast_qp_attach *
 					   props->max_mcast_grp;
+<<<<<<< HEAD
 	props->max_map_per_fmr = dev->dev->caps.max_fmr_maps;
+=======
+	props->max_map_per_fmr = (1 << (32 - ilog2(dev->dev->caps.num_mpts))) - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	kfree(in_mad);
@@ -177,11 +184,16 @@ mlx4_ib_port_link_layer(struct ib_device *device, u8 port_num)
 {
 	struct mlx4_dev *dev = to_mdev(device)->dev;
 
+<<<<<<< HEAD
 	return dev->caps.port_mask[port_num] == MLX4_PORT_TYPE_IB ?
+=======
+	return dev->caps.port_mask & (1 << (port_num - 1)) ?
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		IB_LINK_LAYER_INFINIBAND : IB_LINK_LAYER_ETHERNET;
 }
 
 static int ib_link_query_port(struct ib_device *ibdev, u8 port,
+<<<<<<< HEAD
 			      struct ib_port_attr *props)
 {
 	struct ib_smp *in_mad  = NULL;
@@ -204,6 +216,11 @@ static int ib_link_query_port(struct ib_device *ibdev, u8 port,
 		goto out;
 
 
+=======
+			      struct ib_port_attr *props,
+			      struct ib_smp *out_mad)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	props->lid		= be16_to_cpup((__be16 *) (out_mad->data + 16));
 	props->lmc		= out_mad->data[34] & 0x7;
 	props->sm_lid		= be16_to_cpup((__be16 *) (out_mad->data + 18));
@@ -224,6 +241,7 @@ static int ib_link_query_port(struct ib_device *ibdev, u8 port,
 	props->max_vl_num	= out_mad->data[37] >> 4;
 	props->init_type_reply	= out_mad->data[41] >> 4;
 
+<<<<<<< HEAD
 	/* Check if extended speeds (EDR/FDR/...) are supported */
 	if (props->port_cap_flags & IB_PORT_EXTENDED_SPEEDS_SUP) {
 		ext_active_speed = out_mad->data[62] >> 4;
@@ -262,6 +280,9 @@ out:
 	kfree(in_mad);
 	kfree(out_mad);
 	return err;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u8 state_to_phys_state(enum ib_port_state state)
@@ -270,6 +291,7 @@ static u8 state_to_phys_state(enum ib_port_state state)
 }
 
 static int eth_link_query_port(struct ib_device *ibdev, u8 port,
+<<<<<<< HEAD
 			       struct ib_port_attr *props)
 {
 
@@ -299,13 +321,38 @@ static int eth_link_query_port(struct ib_device *ibdev, u8 port,
 	props->pkey_tbl_len	= 1;
 	props->max_mtu		= IB_MTU_4096;
 	props->max_vl_num	= 2;
+=======
+			       struct ib_port_attr *props,
+			       struct ib_smp *out_mad)
+{
+	struct mlx4_ib_iboe *iboe = &to_mdev(ibdev)->iboe;
+	struct net_device *ndev;
+	enum ib_mtu tmp;
+
+	props->active_width	= IB_WIDTH_1X;
+	props->active_speed	= 4;
+	props->port_cap_flags	= IB_PORT_CM_SUP;
+	props->gid_tbl_len	= to_mdev(ibdev)->dev->caps.gid_table_len[port];
+	props->max_msg_sz	= to_mdev(ibdev)->dev->caps.max_msg_sz;
+	props->pkey_tbl_len	= 1;
+	props->bad_pkey_cntr	= be16_to_cpup((__be16 *) (out_mad->data + 46));
+	props->qkey_viol_cntr	= be16_to_cpup((__be16 *) (out_mad->data + 48));
+	props->max_mtu		= IB_MTU_2048;
+	props->subnet_timeout	= 0;
+	props->max_vl_num	= out_mad->data[37] >> 4;
+	props->init_type_reply	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	props->state		= IB_PORT_DOWN;
 	props->phys_state	= state_to_phys_state(props->state);
 	props->active_mtu	= IB_MTU_256;
 	spin_lock(&iboe->lock);
 	ndev = iboe->netdevs[port - 1];
 	if (!ndev)
+<<<<<<< HEAD
 		goto out_unlock;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	tmp = iboe_get_mtu(ndev->mtu);
 	props->active_mtu = tmp ? min(props->max_mtu, tmp) : IB_MTU_256;
@@ -313,16 +360,24 @@ static int eth_link_query_port(struct ib_device *ibdev, u8 port,
 	props->state		= (netif_running(ndev) && netif_carrier_ok(ndev)) ?
 					IB_PORT_ACTIVE : IB_PORT_DOWN;
 	props->phys_state	= state_to_phys_state(props->state);
+<<<<<<< HEAD
 out_unlock:
 	spin_unlock(&iboe->lock);
 out:
 	mlx4_free_cmd_mailbox(mdev->dev, mailbox);
 	return err;
+=======
+
+out:
+	spin_unlock(&iboe->lock);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int mlx4_ib_query_port(struct ib_device *ibdev, u8 port,
 			      struct ib_port_attr *props)
 {
+<<<<<<< HEAD
 	int err;
 
 	memset(props, 0, sizeof *props);
@@ -330,6 +385,34 @@ static int mlx4_ib_query_port(struct ib_device *ibdev, u8 port,
 	err = mlx4_ib_port_link_layer(ibdev, port) == IB_LINK_LAYER_INFINIBAND ?
 		ib_link_query_port(ibdev, port, props) :
 				eth_link_query_port(ibdev, port, props);
+=======
+	struct ib_smp *in_mad  = NULL;
+	struct ib_smp *out_mad = NULL;
+	int err = -ENOMEM;
+
+	in_mad  = kzalloc(sizeof *in_mad, GFP_KERNEL);
+	out_mad = kmalloc(sizeof *out_mad, GFP_KERNEL);
+	if (!in_mad || !out_mad)
+		goto out;
+
+	memset(props, 0, sizeof *props);
+
+	init_query_mad(in_mad);
+	in_mad->attr_id  = IB_SMP_ATTR_PORT_INFO;
+	in_mad->attr_mod = cpu_to_be32(port);
+
+	err = mlx4_MAD_IFC(to_mdev(ibdev), 1, 1, port, NULL, NULL, in_mad, out_mad);
+	if (err)
+		goto out;
+
+	err = mlx4_ib_port_link_layer(ibdev, port) == IB_LINK_LAYER_INFINIBAND ?
+		ib_link_query_port(ibdev, port, props, out_mad) :
+		eth_link_query_port(ibdev, port, props, out_mad);
+
+out:
+	kfree(in_mad);
+	kfree(out_mad);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -445,7 +528,11 @@ static int mlx4_ib_modify_device(struct ib_device *ibdev, int mask,
 	memset(mailbox->buf, 0, 256);
 	memcpy(mailbox->buf, props->node_desc, 64);
 	mlx4_cmd(to_mdev(ibdev)->dev, mailbox->dma, 1, 0,
+<<<<<<< HEAD
 		 MLX4_CMD_SET_NODE, MLX4_CMD_TIME_CLASS_A, MLX4_CMD_WRAPPED);
+=======
+		 MLX4_CMD_SET_NODE, MLX4_CMD_TIME_CLASS_A);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mlx4_free_cmd_mailbox(to_mdev(ibdev)->dev, mailbox);
 
@@ -474,7 +561,11 @@ static int mlx4_SET_PORT(struct mlx4_ib_dev *dev, u8 port, int reset_qkey_viols,
 	}
 
 	err = mlx4_cmd(dev->dev, mailbox->dma, port, is_eth, MLX4_CMD_SET_PORT,
+<<<<<<< HEAD
 		       MLX4_CMD_TIME_CLASS_B, MLX4_CMD_NATIVE);
+=======
+		       MLX4_CMD_TIME_CLASS_B);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mlx4_free_cmd_mailbox(dev->dev, mailbox);
 	return err;
@@ -616,6 +707,7 @@ static int mlx4_ib_dealloc_pd(struct ib_pd *pd)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct ib_xrcd *mlx4_ib_alloc_xrcd(struct ib_device *ibdev,
 					  struct ib_ucontext *context,
 					  struct ib_udata *udata)
@@ -667,6 +759,8 @@ static int mlx4_ib_dealloc_xrcd(struct ib_xrcd *xrcd)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int add_gid_entry(struct ib_qp *ibqp, union ib_gid *gid)
 {
 	struct mlx4_ib_qp *mqp = to_mqp(ibqp);
@@ -910,15 +1004,23 @@ static void update_gids_task(struct work_struct *work)
 	memcpy(gids, gw->gids, sizeof gw->gids);
 
 	err = mlx4_cmd(dev, mailbox->dma, MLX4_SET_PORT_GID_TABLE << 8 | gw->port,
+<<<<<<< HEAD
 		       1, MLX4_CMD_SET_PORT, MLX4_CMD_TIME_CLASS_B,
 		       MLX4_CMD_NATIVE);
+=======
+		       1, MLX4_CMD_SET_PORT, MLX4_CMD_TIME_CLASS_B);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		printk(KERN_WARNING "set port command failed\n");
 	else {
 		memcpy(gw->dev->iboe.gid_table[gw->port - 1], gw->gids, sizeof gw->gids);
 		event.device = &gw->dev->ib_dev;
 		event.element.port_num = gw->port;
+<<<<<<< HEAD
 		event.event    = IB_EVENT_GID_CHANGE;
+=======
+		event.event    = IB_EVENT_LID_CHANGE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ib_dispatch_event(&event);
 	}
 
@@ -1086,11 +1188,14 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
 
 	printk_once(KERN_INFO "%s", mlx4_ib_version);
 
+<<<<<<< HEAD
 	if (mlx4_is_mfunc(dev)) {
 		printk(KERN_WARNING "IB not yet supported in SRIOV\n");
 		return NULL;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mlx4_foreach_ib_transport_port(i, dev)
 		num_ports++;
 
@@ -1151,9 +1256,13 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
 		(1ull << IB_USER_VERBS_CMD_CREATE_SRQ)		|
 		(1ull << IB_USER_VERBS_CMD_MODIFY_SRQ)		|
 		(1ull << IB_USER_VERBS_CMD_QUERY_SRQ)		|
+<<<<<<< HEAD
 		(1ull << IB_USER_VERBS_CMD_DESTROY_SRQ)		|
 		(1ull << IB_USER_VERBS_CMD_CREATE_XSRQ)		|
 		(1ull << IB_USER_VERBS_CMD_OPEN_QP);
+=======
+		(1ull << IB_USER_VERBS_CMD_DESTROY_SRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ibdev->ib_dev.query_device	= mlx4_ib_query_device;
 	ibdev->ib_dev.query_port	= mlx4_ib_query_port;
@@ -1202,6 +1311,7 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
 	ibdev->ib_dev.unmap_fmr		= mlx4_ib_unmap_fmr;
 	ibdev->ib_dev.dealloc_fmr	= mlx4_ib_fmr_dealloc;
 
+<<<<<<< HEAD
 	if (dev->caps.flags & MLX4_DEV_CAP_FLAG_XRC) {
 		ibdev->ib_dev.alloc_xrcd = mlx4_ib_alloc_xrcd;
 		ibdev->ib_dev.dealloc_xrcd = mlx4_ib_dealloc_xrcd;
@@ -1210,11 +1320,14 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
 			(1ull << IB_USER_VERBS_CMD_CLOSE_XRCD);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_init(&iboe->lock);
 
 	if (init_node_data(ibdev))
 		goto err_map;
 
+<<<<<<< HEAD
 	for (i = 0; i < ibdev->num_ports; ++i) {
 		if (mlx4_ib_port_link_layer(&ibdev->ib_dev, i + 1) ==
 						IB_LINK_LAYER_ETHERNET) {
@@ -1225,11 +1338,17 @@ static void *mlx4_ib_add(struct mlx4_dev *dev)
 				ibdev->counters[i] = -1;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_init(&ibdev->sm_lock);
 	mutex_init(&ibdev->cap_mask_mutex);
 
 	if (ib_register_device(&ibdev->ib_dev, NULL))
+<<<<<<< HEAD
 		goto err_counter;
+=======
+		goto err_map;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (mlx4_ib_mad_init(ibdev))
 		goto err_reg;
@@ -1259,11 +1378,14 @@ err_notif:
 err_reg:
 	ib_unregister_device(&ibdev->ib_dev);
 
+<<<<<<< HEAD
 err_counter:
 	for (; i; --i)
 		if (ibdev->counters[i - 1] != -1)
 			mlx4_counter_free(ibdev->dev, ibdev->counters[i - 1]);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_map:
 	iounmap(ibdev->uar_map);
 
@@ -1292,9 +1414,13 @@ static void mlx4_ib_remove(struct mlx4_dev *dev, void *ibdev_ptr)
 		ibdev->iboe.nb.notifier_call = NULL;
 	}
 	iounmap(ibdev->uar_map);
+<<<<<<< HEAD
 	for (p = 0; p < ibdev->num_ports; ++p)
 		if (ibdev->counters[p] != -1)
 			mlx4_counter_free(ibdev->dev, ibdev->counters[p]);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mlx4_foreach_port(p, dev, MLX4_PORT_TYPE_IB)
 		mlx4_CLOSE_PORT(dev, p);
 

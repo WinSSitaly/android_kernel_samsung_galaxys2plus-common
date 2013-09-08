@@ -25,7 +25,11 @@ int write_sigio_irq(int fd)
 	int err;
 
 	err = um_request_irq(SIGIO_WRITE_IRQ, fd, IRQ_READ, sigio_interrupt,
+<<<<<<< HEAD
 			     IRQF_SAMPLE_RANDOM, "write sigio",
+=======
+			     IRQF_DISABLED|IRQF_SAMPLE_RANDOM, "write sigio",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     NULL);
 	if (err) {
 		printk(KERN_ERR "write_sigio_irq : um_request_irq failed, "

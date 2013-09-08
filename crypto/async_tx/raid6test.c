@@ -21,9 +21,13 @@
  */
 #include <linux/async_tx.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/mm.h>
 #include <linux/random.h>
 #include <linux/module.h>
+=======
+#include <linux/random.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef pr
 #define pr(fmt, args...) pr_info("raid6test: " fmt, ##args)

@@ -16,6 +16,7 @@
 #include <linux/slab.h>
 #include <linux/init.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/mutex.h>
 #include "base.h"
 #include "power/power.h"
@@ -23,6 +24,16 @@
 /* /sys/devices/system */
 /* FIXME: make static after drivers/base/sys.c is deleted */
 struct kset *system_kset;
+=======
+#include "base.h"
+#include "power/power.h"
+
+struct klist_node *CSP_knode_bcmdhd_wlan = NULL;
+struct klist_node *CSP_knode_bcm4329_wlan = NULL;
+struct klist_node *CSP_knode_bcmsdh_sdmmc = NULL;
+
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define to_bus_attr(_attr) container_of(_attr, struct bus_attribute, attr)
 
@@ -294,7 +305,11 @@ int bus_for_each_dev(struct bus_type *bus, struct device *start,
 	struct device *dev;
 	int error = 0;
 
+<<<<<<< HEAD
 	if (!bus || !bus->p)
+=======
+	if (!bus)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 
 	klist_iter_init_node(&bus->p->klist_devices, &i,
@@ -328,7 +343,11 @@ struct device *bus_find_device(struct bus_type *bus,
 	struct klist_iter i;
 	struct device *dev;
 
+<<<<<<< HEAD
 	if (!bus || !bus->p)
+=======
+	if (!bus)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return NULL;
 
 	klist_iter_init_node(&bus->p->klist_devices, &i,
@@ -365,6 +384,7 @@ struct device *bus_find_device_by_name(struct bus_type *bus,
 }
 EXPORT_SYMBOL_GPL(bus_find_device_by_name);
 
+<<<<<<< HEAD
 /**
  * subsys_find_device_by_id - find a device with a specific enumeration number
  * @subsys: subsystem
@@ -406,6 +426,8 @@ struct device *subsys_find_device_by_id(struct bus_type *subsys, unsigned int id
 }
 EXPORT_SYMBOL_GPL(subsys_find_device_by_id);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct device_driver *next_driver(struct klist_iter *i)
 {
 	struct klist_node *n = klist_next(i);
@@ -533,6 +555,7 @@ out_put:
 void bus_probe_device(struct device *dev)
 {
 	struct bus_type *bus = dev->bus;
+<<<<<<< HEAD
 	struct subsys_interface *sif;
 	int ret;
 
@@ -549,20 +572,33 @@ void bus_probe_device(struct device *dev)
 		if (sif->add_dev)
 			sif->add_dev(dev, sif);
 	mutex_unlock(&bus->p->mutex);
+=======
+	int ret;
+
+	if (bus && bus->p->drivers_autoprobe) {
+		ret = device_attach(dev);
+		WARN_ON(ret < 0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
  * bus_remove_device - remove device from bus
  * @dev: device to be removed
  *
+<<<<<<< HEAD
  * - Remove device from all interfaces.
  * - Remove symlink from bus' directory.
+=======
+ * - Remove symlink from bus's directory.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * - Delete device from bus's list.
  * - Detach from its driver.
  * - Drop reference taken in bus_add_device().
  */
 void bus_remove_device(struct device *dev)
 {
+<<<<<<< HEAD
 	struct bus_type *bus = dev->bus;
 	struct subsys_interface *sif;
 
@@ -586,6 +622,21 @@ void bus_remove_device(struct device *dev)
 		 dev->bus->name, dev_name(dev));
 	device_release_driver(dev);
 	bus_put(dev->bus);
+=======
+	if (dev->bus) {
+		sysfs_remove_link(&dev->kobj, "subsystem");
+		sysfs_remove_link(&dev->bus->p->devices_kset->kobj,
+				  dev_name(dev));
+		device_remove_attrs(dev->bus, dev);
+		if (klist_node_attached(&dev->p->knode_bus))
+			klist_del(&dev->p->knode_bus);
+
+		pr_debug("bus: '%s': remove device %s\n",
+			 dev->bus->name, dev_name(dev));
+		device_release_driver(dev);
+		bus_put(dev->bus);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int driver_add_attrs(struct bus_type *bus, struct device_driver *drv)
@@ -698,8 +749,13 @@ int bus_add_driver(struct device_driver *drv)
 	bus = bus_get(drv->bus);
 	if (!bus)
 		return -EINVAL;
+<<<<<<< HEAD
 
 	pr_debug("bus: '%s': add driver %s\n", bus->name, drv->name);
+=======
+	if(!strncmp(drv->name,"bcmsdh_sdmmc",12) || !strncmp(drv->name,"bcmdhd_wlan",10)  || !strncmp(drv->name,"bcm4329_wlan",12))
+		printk("CSP:: bus: '%s': add driver %s\n", bus->name, drv->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
 	if (!priv) {
@@ -720,6 +776,25 @@ int bus_add_driver(struct device_driver *drv)
 		if (error)
 			goto out_unregister;
 	}
+<<<<<<< HEAD
+=======
+	
+	if(!strncmp(drv->name,"bcmsdh_sdmmc",12))
+	{
+		CSP_knode_bcmsdh_sdmmc = &(priv->knode_bus);
+		printk("CSP:: calling klist_add_tail with node %x\n",&(priv->knode_bus));
+	}
+	if(!strncmp(drv->name,"bcmdhd_wlan",10))
+	{
+		CSP_knode_bcmdhd_wlan = &(priv->knode_bus);
+		printk("CSP:: calling klist_add_tail with node %x\n",&(priv->knode_bus));
+	}
+	if(!strncmp(drv->name,"bcm4329_wlan",12))
+	{
+		CSP_knode_bcm4329_wlan = &(priv->knode_bus);
+		printk("CSP:: calling klist_add_tail with node %x\n",&(priv->knode_bus));
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);
 	module_add_driver(drv->owner, drv);
 
@@ -748,6 +823,10 @@ int bus_add_driver(struct device_driver *drv)
 	return 0;
 
 out_unregister:
+<<<<<<< HEAD
+=======
+	printk("CSP:: unregister error \n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kobject_put(&priv->kobj);
 	kfree(drv->p);
 	drv->p = NULL;
@@ -768,13 +847,23 @@ void bus_remove_driver(struct device_driver *drv)
 {
 	if (!drv->bus)
 		return;
+<<<<<<< HEAD
 
+=======
+	if(!strncmp(drv->name,"bcmsdh_sdmmc",12) || !strncmp(drv->name,"bcmdhd_wlan",10)  || !strncmp(drv->name,"bcm4329_wlan",12))
+		printk("CSP bus_remove_driver %s node address is %x\n",drv->name,&drv->p->knode_bus);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!drv->suppress_bind_attrs)
 		remove_bind_files(drv);
 	driver_remove_attrs(drv->bus, drv);
 	driver_remove_file(drv, &driver_attr_uevent);
 	klist_remove(&drv->p->knode_bus);
+<<<<<<< HEAD
 	pr_debug("bus: '%s': remove driver %s\n", drv->bus->name, drv->name);
+=======
+	if(!strncmp(drv->name,"bcmsdh_sdmmc",12) || !strncmp(drv->name,"bcmdhd_wlan",10)  || !strncmp(drv->name,"bcm4329_wlan",12))
+		printk("CSP bus: '%s': remove driver %s\n", drv->bus->name, drv->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	driver_detach(drv);
 	module_remove_driver(drv);
 	kobject_put(&drv->p->kobj);
@@ -914,6 +1003,7 @@ static ssize_t bus_uevent_store(struct bus_type *bus,
 static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
 
 /**
+<<<<<<< HEAD
  * __bus_register - register a driver-core subsystem
  * @bus: bus to register
  * @key: lockdep class key
@@ -923,6 +1013,16 @@ static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
  * the devices and drivers that belong to the subsystem.
  */
 int __bus_register(struct bus_type *bus, struct lock_class_key *key)
+=======
+ * bus_register - register a bus with the system.
+ * @bus: bus.
+ *
+ * Once we have that, we registered the bus with the kobject
+ * infrastructure, then register the children subsystems it has:
+ * the devices and drivers that belong to the bus.
+ */
+int bus_register(struct bus_type *bus)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int retval;
 	struct subsys_private *priv;
@@ -966,8 +1066,11 @@ int __bus_register(struct bus_type *bus, struct lock_class_key *key)
 		goto bus_drivers_fail;
 	}
 
+<<<<<<< HEAD
 	INIT_LIST_HEAD(&priv->interfaces);
 	__mutex_init(&priv->mutex, "subsys mutex", key);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	klist_init(&priv->klist_devices, klist_devices_get, klist_devices_put);
 	klist_init(&priv->klist_drivers, NULL, NULL);
 
@@ -997,7 +1100,11 @@ out:
 	bus->p = NULL;
 	return retval;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(__bus_register);
+=======
+EXPORT_SYMBOL_GPL(bus_register);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * bus_unregister - remove a bus from the system
@@ -1009,8 +1116,11 @@ EXPORT_SYMBOL_GPL(__bus_register);
 void bus_unregister(struct bus_type *bus)
 {
 	pr_debug("bus: '%s': unregistering\n", bus->name);
+<<<<<<< HEAD
 	if (bus->dev_root)
 		device_unregister(bus->dev_root);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bus_remove_attrs(bus);
 	remove_probe_files(bus);
 	kset_unregister(bus->p->drivers_kset);
@@ -1100,6 +1210,7 @@ void bus_sort_breadthfirst(struct bus_type *bus,
 }
 EXPORT_SYMBOL_GPL(bus_sort_breadthfirst);
 
+<<<<<<< HEAD
 /**
  * subsys_dev_iter_init - initialize subsys device iterator
  * @iter: subsys iterator to initialize
@@ -1281,15 +1392,20 @@ err_dev:
 }
 EXPORT_SYMBOL_GPL(subsys_system_register);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init buses_init(void)
 {
 	bus_kset = kset_create_and_add("bus", &bus_uevent_ops, NULL);
 	if (!bus_kset)
 		return -ENOMEM;
+<<<<<<< HEAD
 
 	system_kset = kset_create_and_add("system", NULL, &devices_kset->kobj);
 	if (!system_kset)
 		return -ENOMEM;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }

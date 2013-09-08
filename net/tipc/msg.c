@@ -61,8 +61,15 @@ void tipc_msg_init(struct tipc_msg *m, u32 user, u32 type,
 	msg_set_size(m, hsize);
 	msg_set_prevnode(m, tipc_own_addr);
 	msg_set_type(m, type);
+<<<<<<< HEAD
 	msg_set_orignode(m, tipc_own_addr);
 	msg_set_destnode(m, destnode);
+=======
+	if (!msg_short(m)) {
+		msg_set_orignode(m, tipc_own_addr);
+		msg_set_destnode(m, destnode);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -106,7 +113,11 @@ int tipc_msg_build(struct tipc_msg *hdr, struct iovec const *msg_sect,
 	if (likely(res))
 		return dsz;
 
+<<<<<<< HEAD
 	kfree_skb(*buf);
+=======
+	buf_discard(*buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*buf = NULL;
 	return -EFAULT;
 }
@@ -333,6 +344,7 @@ void tipc_msg_dbg(struct print_buf *buf, struct tipc_msg *msg, const char *str)
 	}
 
 	if (msg_user(msg) ==  LINK_CONFIG) {
+<<<<<<< HEAD
 		struct tipc_media_addr orig;
 
 		tipc_printf(buf, ":DDOM(%x):", msg_dest_domain(msg));
@@ -341,6 +353,13 @@ void tipc_msg_dbg(struct print_buf *buf, struct tipc_msg *msg, const char *str)
 		orig.media_id = 0;
 		orig.broadcast = 0;
 		tipc_media_addr_printf(buf, &orig);
+=======
+		u32 *raw = (u32 *)msg;
+		struct tipc_media_addr *orig = (struct tipc_media_addr *)&raw[5];
+		tipc_printf(buf, ":DDOM(%x):", msg_dest_domain(msg));
+		tipc_printf(buf, ":NETID(%u):", msg_bc_netid(msg));
+		tipc_media_addr_printf(buf, orig);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (msg_user(msg) == BCAST_PROTOCOL) {
 		tipc_printf(buf, "BCNACK:AFTER(%u):", msg_bcgap_after(msg));

@@ -33,7 +33,11 @@
 #include <asm/prom.h>
 #endif
 
+<<<<<<< HEAD
 #include <linux/sungem_phy.h>
+=======
+#include "sungem_phy.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Link modes of the BCM5400 PHY */
 static const int phy_BCM5400_link_table[8][3] = {
@@ -1156,7 +1160,11 @@ static struct mii_phy_def* mii_phy_table[] = {
 	NULL
 };
 
+<<<<<<< HEAD
 int sungem_phy_probe(struct mii_phy *phy, int mii_id)
+=======
+int mii_phy_probe(struct mii_phy *phy, int mii_id)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int rc;
 	u32 id;
@@ -1195,5 +1203,11 @@ fail:
 	return -ENODEV;
 }
 
+<<<<<<< HEAD
 EXPORT_SYMBOL(sungem_phy_probe);
 MODULE_LICENSE("GPL");
+=======
+EXPORT_SYMBOL(mii_phy_probe);
+MODULE_LICENSE("GPL");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

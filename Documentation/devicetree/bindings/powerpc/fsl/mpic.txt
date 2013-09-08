@@ -56,6 +56,7 @@ PROPERTIES
           to the client.  The presence of this property also mandates
           that any initialization related to interrupt sources shall
           be limited to sources explicitly referenced in the device tree.
+<<<<<<< HEAD
 
   - big-endian
       Usage: optional
@@ -77,6 +78,9 @@ PROPERTIES
           in the global feature registers.  If specified, this field will
           override the value read from MPIC_GREG_FEATURE_LAST_SRC.
 
+=======
+       
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 INTERRUPT SPECIFIER DEFINITION
 
   Interrupt specifiers consists of 4 cells encoded as

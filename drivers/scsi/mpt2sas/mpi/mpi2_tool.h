@@ -6,7 +6,11 @@
  *          Title:  MPI diagnostic tool structures and definitions
  *  Creation Date:  March 26, 2007
  *
+<<<<<<< HEAD
  *    mpi2_tool.h Version:  02.00.07
+=======
+ *    mpi2_tool.h Version:  02.00.06
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  Version History
  *  ---------------
@@ -25,8 +29,11 @@
  *  05-12-10  02.00.05  Added Diagnostic Data Upload tool.
  *  08-11-10  02.00.06  Added defines that were missing for Diagnostic Buffer
  *                      Post Request.
+<<<<<<< HEAD
  *  05-25-11  02.00.07  Added Flags field and related defines to
  *                      MPI2_TOOLBOX_ISTWI_READ_WRITE_REQUEST.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  --------------------------------------------------------------------------
  */
 
@@ -183,7 +190,11 @@ typedef struct _MPI2_TOOLBOX_ISTWI_READ_WRITE_REQUEST {
     U8                      DevIndex;                   /* 0x14 */
     U8                      Action;                     /* 0x15 */
     U8                      SGLFlags;                   /* 0x16 */
+<<<<<<< HEAD
 	 U8                      Flags;                      /* 0x17 */
+=======
+    U8                      Reserved7;                  /* 0x17 */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
     U16                     TxDataLength;               /* 0x18 */
     U16                     RxDataLength;               /* 0x1A */
     U32                     Reserved8;                  /* 0x1C */
@@ -207,9 +218,12 @@ typedef struct _MPI2_TOOLBOX_ISTWI_READ_WRITE_REQUEST {
 
 /* use MPI2_SGLFLAGS_ defines from mpi2.h for the SGLFlags field */
 
+<<<<<<< HEAD
 /* values for the Flags field */
 #define MPI2_TOOL_ISTWI_FLAG_AUTO_RESERVE_RELEASE   (0x80)
 #define MPI2_TOOL_ISTWI_FLAG_PAGE_ADDR_MASK         (0x07)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Toolbox ISTWI Read Write Tool reply message */
 typedef struct _MPI2_TOOLBOX_ISTWI_REPLY {

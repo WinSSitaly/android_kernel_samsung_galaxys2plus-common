@@ -51,6 +51,7 @@
 #define MBOX_ASLE      (1<<2)
 
 struct opregion_header {
+<<<<<<< HEAD
 	u8 signature[16];
 	u32 size;
 	u32 opregion_ver;
@@ -59,10 +60,21 @@ struct opregion_header {
 	u8 driver_ver[16];
 	u32 mboxes;
 	u8 reserved[164];
+=======
+       u8 signature[16];
+       u32 size;
+       u32 opregion_ver;
+       u8 bios_ver[32];
+       u8 vbios_ver[16];
+       u8 driver_ver[16];
+       u32 mboxes;
+       u8 reserved[164];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __attribute__((packed));
 
 /* OpRegion mailbox #1: public ACPI methods */
 struct opregion_acpi {
+<<<<<<< HEAD
 	u32 drdy;       /* driver readiness */
 	u32 csts;       /* notification status */
 	u32 cevt;       /* current event */
@@ -81,18 +93,46 @@ struct opregion_acpi {
 	u32 cnot;       /* current OS notification */
 	u32 nrdy;       /* driver status */
 	u8 rsvd2[60];
+=======
+       u32 drdy;       /* driver readiness */
+       u32 csts;       /* notification status */
+       u32 cevt;       /* current event */
+       u8 rsvd1[20];
+       u32 didl[8];    /* supported display devices ID list */
+       u32 cpdl[8];    /* currently presented display list */
+       u32 cadl[8];    /* currently active display list */
+       u32 nadl[8];    /* next active devices list */
+       u32 aslp;       /* ASL sleep time-out */
+       u32 tidx;       /* toggle table index */
+       u32 chpd;       /* current hotplug enable indicator */
+       u32 clid;       /* current lid state*/
+       u32 cdck;       /* current docking state */
+       u32 sxsw;       /* Sx state resume */
+       u32 evts;       /* ASL supported events */
+       u32 cnot;       /* current OS notification */
+       u32 nrdy;       /* driver status */
+       u8 rsvd2[60];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __attribute__((packed));
 
 /* OpRegion mailbox #2: SWSCI */
 struct opregion_swsci {
+<<<<<<< HEAD
 	u32 scic;       /* SWSCI command|status|data */
 	u32 parm;       /* command parameters */
 	u32 dslp;       /* driver sleep time-out */
 	u8 rsvd[244];
+=======
+       u32 scic;       /* SWSCI command|status|data */
+       u32 parm;       /* command parameters */
+       u32 dslp;       /* driver sleep time-out */
+       u8 rsvd[244];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __attribute__((packed));
 
 /* OpRegion mailbox #3: ASLE */
 struct opregion_asle {
+<<<<<<< HEAD
 	u32 ardy;       /* driver readiness */
 	u32 aslc;       /* ASLE interrupt command */
 	u32 tche;       /* technology enabled indicator */
@@ -106,6 +146,21 @@ struct opregion_asle {
 	u8 plut[74];    /* panel LUT and identifier */
 	u32 pfmb;       /* PWM freq and min brightness */
 	u8 rsvd[102];
+=======
+       u32 ardy;       /* driver readiness */
+       u32 aslc;       /* ASLE interrupt command */
+       u32 tche;       /* technology enabled indicator */
+       u32 alsi;       /* current ALS illuminance reading */
+       u32 bclp;       /* backlight brightness to set */
+       u32 pfit;       /* panel fitting state */
+       u32 cblv;       /* current brightness level */
+       u16 bclm[20];   /* backlight level duty cycle mapping table */
+       u32 cpfm;       /* current panel fitting mode */
+       u32 epfm;       /* enabled panel fitting modes */
+       u8 plut[74];    /* panel LUT and identifier */
+       u32 pfmb;       /* PWM freq and min brightness */
+       u8 rsvd[102];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 } __attribute__((packed));
 
 /* ASLE irq request bits */
@@ -227,6 +282,10 @@ void intel_opregion_asle_intr(struct drm_device *dev)
 	asle->aslc = asle_stat;
 }
 
+<<<<<<< HEAD
+=======
+/* Only present on Ironlake+ */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void intel_opregion_gse_intr(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -296,6 +355,7 @@ static int intel_opregion_video_event(struct notifier_block *nb,
 	/* The only video events relevant to opregion are 0x80. These indicate
 	   either a docking event, lid switch or display switch request. In
 	   Linux, these are handled by the dock, button and video drivers.
+<<<<<<< HEAD
 	*/
 
 	struct opregion_acpi *acpi;
@@ -304,11 +364,19 @@ static int intel_opregion_video_event(struct notifier_block *nb,
 
 	if (strcmp(event->device_class, ACPI_VIDEO_CLASS) != 0)
 		return NOTIFY_DONE;
+=======
+	   We might want to fix the video driver to be opregion-aware in
+	   future, but right now we just indicate to the firmware that the
+	   request has been handled */
+
+	struct opregion_acpi *acpi;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!system_opregion)
 		return NOTIFY_DONE;
 
 	acpi = system_opregion->acpi;
+<<<<<<< HEAD
 
 	if (event->type == 0x80 && !(acpi->cevt & 0x1))
 		ret = NOTIFY_BAD;
@@ -316,6 +384,11 @@ static int intel_opregion_video_event(struct notifier_block *nb,
 	acpi->csts = 0;
 
 	return ret;
+=======
+	acpi->csts = 0;
+
+	return NOTIFY_OK;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct notifier_block intel_opregion_notifier = {
@@ -361,7 +434,11 @@ static void intel_didl_outputs(struct drm_device *dev)
 
 	list_for_each_entry(acpi_cdev, &acpi_video_bus->children, node) {
 		if (i >= 8) {
+<<<<<<< HEAD
 			dev_printk(KERN_ERR, &dev->pdev->dev,
+=======
+			dev_printk (KERN_ERR, &dev->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    "More than 8 outputs detected\n");
 			return;
 		}
@@ -387,7 +464,11 @@ blind_set:
 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
 		int output_type = ACPI_OTHER_OUTPUT;
 		if (i >= 8) {
+<<<<<<< HEAD
 			dev_printk(KERN_ERR, &dev->pdev->dev,
+=======
+			dev_printk (KERN_ERR, &dev->pdev->dev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    "More than 8 outputs detected\n");
 			return;
 		}
@@ -419,6 +500,7 @@ blind_set:
 	goto end;
 }
 
+<<<<<<< HEAD
 static void intel_setup_cadls(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -438,6 +520,8 @@ static void intel_setup_cadls(struct drm_device *dev)
 	} while (++i < 8 && disp_id != 0);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void intel_opregion_init(struct drm_device *dev)
 {
 	struct drm_i915_private *dev_priv = dev->dev_private;
@@ -447,10 +531,15 @@ void intel_opregion_init(struct drm_device *dev)
 		return;
 
 	if (opregion->acpi) {
+<<<<<<< HEAD
 		if (drm_core_check_feature(dev, DRIVER_MODESET)) {
 			intel_didl_outputs(dev);
 			intel_setup_cadls(dev);
 		}
+=======
+		if (drm_core_check_feature(dev, DRIVER_MODESET))
+			intel_didl_outputs(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* Notify BIOS we are ready to handle ACPI video ext notifs.
 		 * Right now, all the events are handled by the ACPI video module.

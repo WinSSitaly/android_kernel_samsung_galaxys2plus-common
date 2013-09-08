@@ -3598,7 +3598,11 @@ int i_APCI3200_InterruptHandleEos(struct comedi_device *dev)
 			n = comedi_buf_write_alloc(s->async,
 				(7 + 12) * sizeof(unsigned int));
 
+<<<<<<< HEAD
 			/*  If not enough memory available, event is set to Comedi Buffer Error */
+=======
+			/*  If not enougth memory available, event is set to Comedi Buffer Errror */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (n > ((7 + 12) * sizeof(unsigned int))) {
 				printk("\ncomedi_buf_write_alloc n = %i", n);
 				s->async->events |= COMEDI_CB_ERROR;

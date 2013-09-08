@@ -129,7 +129,11 @@ int __init mmio_nvram_init(void)
 		goto out;
 	}
 	nvram_addr = r.start;
+<<<<<<< HEAD
 	mmio_nvram_len = resource_size(&r);
+=======
+	mmio_nvram_len = r.end - r.start + 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if ( (!mmio_nvram_len) || (!nvram_addr) ) {
 		printk(KERN_WARNING "nvram: address or length is 0\n");
 		ret = -EIO;

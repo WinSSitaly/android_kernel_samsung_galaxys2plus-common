@@ -125,7 +125,11 @@ int ehca_create_eq(struct ehca_shca *shca,
 		tasklet_init(&eq->interrupt_task, ehca_tasklet_eq, (long)shca);
 
 		ret = ibmebus_request_irq(eq->ist, ehca_interrupt_eq,
+<<<<<<< HEAD
 					  0, "ehca_eq",
+=======
+					  IRQF_DISABLED, "ehca_eq",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  (void *)shca);
 		if (ret < 0)
 			ehca_err(ib_dev, "Can't map interrupt handler.");
@@ -133,7 +137,11 @@ int ehca_create_eq(struct ehca_shca *shca,
 		tasklet_init(&eq->interrupt_task, ehca_tasklet_neq, (long)shca);
 
 		ret = ibmebus_request_irq(eq->ist, ehca_interrupt_neq,
+<<<<<<< HEAD
 					  0, "ehca_neq",
+=======
+					  IRQF_DISABLED, "ehca_neq",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  (void *)shca);
 		if (ret < 0)
 			ehca_err(ib_dev, "Can't map interrupt handler.");

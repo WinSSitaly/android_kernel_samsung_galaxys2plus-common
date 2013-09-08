@@ -1,4 +1,5 @@
 #include <dirent.h>
+<<<<<<< HEAD
 #include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -8,6 +9,10 @@
 #include <unistd.h>
 #include "strlist.h"
 #include <string.h>
+=======
+#include <stdlib.h>
+#include <stdio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "thread_map.h"
 
 /* Skip "." and ".." directories */
@@ -30,7 +35,11 @@ struct thread_map *thread_map__new_by_pid(pid_t pid)
 	sprintf(name, "/proc/%d/task", pid);
 	items = scandir(name, &namelist, filter, NULL);
 	if (items <= 0)
+<<<<<<< HEAD
 		return NULL;
+=======
+                return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	threads = malloc(sizeof(*threads) + sizeof(pid_t) * items);
 	if (threads != NULL) {
@@ -58,6 +67,7 @@ struct thread_map *thread_map__new_by_tid(pid_t tid)
 	return threads;
 }
 
+<<<<<<< HEAD
 struct thread_map *thread_map__new_by_uid(uid_t uid)
 {
 	DIR *proc;
@@ -280,10 +290,20 @@ struct thread_map *thread_map__new_str(const char *pid, const char *tid,
 	return thread_map__new_by_tid_str(tid);
 }
 
+=======
+struct thread_map *thread_map__new(pid_t pid, pid_t tid)
+{
+	if (pid != -1)
+		return thread_map__new_by_pid(pid);
+	return thread_map__new_by_tid(tid);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void thread_map__delete(struct thread_map *threads)
 {
 	free(threads);
 }
+<<<<<<< HEAD
 
 size_t thread_map__fprintf(struct thread_map *threads, FILE *fp)
 {
@@ -295,3 +315,5 @@ size_t thread_map__fprintf(struct thread_map *threads, FILE *fp)
 
 	return printed + fprintf(fp, "\n");
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

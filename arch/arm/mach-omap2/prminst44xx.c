@@ -2,7 +2,10 @@
  * OMAP4 PRM instance functions
  *
  * Copyright (C) 2009 Nokia Corporation
+<<<<<<< HEAD
  * Copyright (C) 2011 Texas Instruments, Inc.
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * Paul Walmsley
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,8 +19,13 @@
 #include <linux/err.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include "iomap.h"
 #include "common.h"
+=======
+#include <plat/common.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "prm44xx.h"
 #include "prminst44xx.h"
 #include "prm-regbits-44xx.h"
@@ -54,7 +62,11 @@ void omap4_prminst_write_inst_reg(u32 val, u8 part, s16 inst, u16 idx)
 
 /* Read-modify-write a register in PRM. Caller must lock */
 u32 omap4_prminst_rmw_inst_reg_bits(u32 mask, u32 bits, u8 part, s16 inst,
+<<<<<<< HEAD
 				    u16 idx)
+=======
+				   s16 idx)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	u32 v;
 
@@ -65,6 +77,7 @@ u32 omap4_prminst_rmw_inst_reg_bits(u32 mask, u32 bits, u8 part, s16 inst,
 
 	return v;
 }
+<<<<<<< HEAD
 
 /*
  * Address offset (in bytes) between the reset control and the reset
@@ -174,3 +187,5 @@ void omap4_prminst_global_warm_sw_reset(void)
 				    OMAP4430_PRM_DEVICE_INST,
 				    OMAP4_PRM_RSTCTRL_OFFSET);
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -20,6 +20,10 @@
 #include <linux/string.h>
 #include <linux/mm.h>
 #include <linux/bootmem.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/prom.h>
 #include <asm/oplib.h>

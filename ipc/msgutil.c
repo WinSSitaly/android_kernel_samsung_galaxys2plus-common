@@ -13,9 +13,13 @@
 #include <linux/security.h>
 #include <linux/slab.h>
 #include <linux/ipc.h>
+<<<<<<< HEAD
 #include <linux/msg.h>
 #include <linux/ipc_namespace.h>
 #include <linux/utsname.h>
+=======
+#include <linux/ipc_namespace.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/uaccess.h>
 
 #include "util.h"
@@ -29,6 +33,14 @@ DEFINE_SPINLOCK(mq_lock);
  */
 struct ipc_namespace init_ipc_ns = {
 	.count		= ATOMIC_INIT(1),
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_POSIX_MQUEUE
+	.mq_queues_max   = DFLT_QUEUESMAX,
+	.mq_msg_max      = DFLT_MSGMAX,
+	.mq_msgsize_max  = DFLT_MSGSIZEMAX,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.user_ns = &init_user_ns,
 };
 

@@ -88,8 +88,11 @@
  */
 
 #include <linux/timer.h>
+<<<<<<< HEAD
 #include <linux/delay.h>
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <asm/unaligned.h>
 
@@ -116,8 +119,11 @@ static void fc_lport_enter_ns(struct fc_lport *, enum fc_lport_state);
 static void fc_lport_enter_scr(struct fc_lport *);
 static void fc_lport_enter_ready(struct fc_lport *);
 static void fc_lport_enter_logo(struct fc_lport *);
+<<<<<<< HEAD
 static void fc_lport_enter_fdmi(struct fc_lport *lport);
 static void fc_lport_enter_ms(struct fc_lport *, enum fc_lport_state);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static const char *fc_lport_state_names[] = {
 	[LPORT_ST_DISABLED] = "disabled",
@@ -128,11 +134,14 @@ static const char *fc_lport_state_names[] = {
 	[LPORT_ST_RSPN_ID] =  "RSPN_ID",
 	[LPORT_ST_RFT_ID] =   "RFT_ID",
 	[LPORT_ST_RFF_ID] =   "RFF_ID",
+<<<<<<< HEAD
 	[LPORT_ST_FDMI] =     "FDMI",
 	[LPORT_ST_RHBA] =     "RHBA",
 	[LPORT_ST_RPA] =      "RPA",
 	[LPORT_ST_DHBA] =     "DHBA",
 	[LPORT_ST_DPRT] =     "DPRT",
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[LPORT_ST_SCR] =      "SCR",
 	[LPORT_ST_READY] =    "Ready",
 	[LPORT_ST_LOGO] =     "LOGO",
@@ -190,14 +199,21 @@ static void fc_lport_rport_callback(struct fc_lport *lport,
 		if (lport->state == LPORT_ST_DNS) {
 			lport->dns_rdata = rdata;
 			fc_lport_enter_ns(lport, LPORT_ST_RNN_ID);
+<<<<<<< HEAD
 		} else if (lport->state == LPORT_ST_FDMI) {
 			lport->ms_rdata = rdata;
 			fc_lport_enter_ms(lport, LPORT_ST_DHBA);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			FC_LPORT_DBG(lport, "Received an READY event "
 				     "on port (%6.6x) for the directory "
 				     "server, but the lport is not "
+<<<<<<< HEAD
 				     "in the DNS or FDMI state, it's in the "
+=======
+				     "in the DNS state, it's in the "
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     "%d state", rdata->ids.port_id,
 				     lport->state);
 			lport->tt.rport_logoff(rdata);
@@ -206,10 +222,14 @@ static void fc_lport_rport_callback(struct fc_lport *lport,
 	case RPORT_EV_LOGO:
 	case RPORT_EV_FAILED:
 	case RPORT_EV_STOP:
+<<<<<<< HEAD
 		if (rdata->ids.port_id == FC_FID_DIR_SERV)
 			lport->dns_rdata = NULL;
 		else if (rdata->ids.port_id == FC_FID_MGMT_SERV)
 			lport->ms_rdata = NULL;
+=======
+		lport->dns_rdata = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case RPORT_EV_NONE:
 		break;
@@ -690,8 +710,12 @@ EXPORT_SYMBOL(fc_set_mfs);
  * @lport: The local port receiving the event
  * @event: The discovery event
  */
+<<<<<<< HEAD
 static void fc_lport_disc_callback(struct fc_lport *lport,
 				   enum fc_disc_event event)
+=======
+void fc_lport_disc_callback(struct fc_lport *lport, enum fc_disc_event event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	switch (event) {
 	case DISC_EV_SUCCESS:
@@ -1041,8 +1065,11 @@ static void fc_lport_enter_reset(struct fc_lport *lport)
 			fc_vport_set_state(lport->vport, FC_VPORT_LINKDOWN);
 	}
 	fc_lport_state_enter(lport, LPORT_ST_RESET);
+<<<<<<< HEAD
 	fc_host_post_event(lport->host, fc_get_event_number(),
 			   FCH_EVT_LIPRESET, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	fc_vports_linkchange(lport);
 	fc_lport_reset_locked(lport);
 	if (lport->link_up)
@@ -1161,6 +1188,7 @@ static void fc_lport_ns_resp(struct fc_seq *sp, struct fc_frame *fp,
 			fc_lport_enter_ns(lport, LPORT_ST_RFF_ID);
 			break;
 		case LPORT_ST_RFF_ID:
+<<<<<<< HEAD
 			if (lport->fdmi_enabled)
 				fc_lport_enter_fdmi(lport);
 			else
@@ -1243,14 +1271,23 @@ static void fc_lport_ms_resp(struct fc_seq *sp, struct fc_frame *fp,
 		case LPORT_ST_DHBA:
 			fc_lport_enter_ms(lport, LPORT_ST_DPRT);
 			break;
+=======
+			fc_lport_enter_scr(lport);
+			break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		default:
 			/* should have already been caught by state checks */
 			break;
 		}
+<<<<<<< HEAD
 	} else {
 		/* Invalid Frame? */
 		fc_lport_error(lport, fp);
 	}
+=======
+	else
+		fc_lport_error(lport, fp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	fc_frame_free(fp);
 err:
@@ -1434,6 +1471,7 @@ err:
 }
 
 /**
+<<<<<<< HEAD
  * fc_lport_enter_ms() - management server commands
  * @lport: Fibre Channel local port to register
  *
@@ -1551,6 +1589,8 @@ err:
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * fc_lport_timeout() - Handler for the retry_work timer
  * @work: The work struct of the local port
  */
@@ -1567,6 +1607,10 @@ static void fc_lport_timeout(struct work_struct *work)
 		WARN_ON(1);
 		break;
 	case LPORT_ST_READY:
+<<<<<<< HEAD
+=======
+		WARN_ON(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case LPORT_ST_RESET:
 		break;
@@ -1583,6 +1627,7 @@ static void fc_lport_timeout(struct work_struct *work)
 	case LPORT_ST_RFF_ID:
 		fc_lport_enter_ns(lport, lport->state);
 		break;
+<<<<<<< HEAD
 	case LPORT_ST_FDMI:
 		fc_lport_enter_fdmi(lport);
 		break;
@@ -1592,6 +1637,8 @@ static void fc_lport_timeout(struct work_struct *work)
 	case LPORT_ST_DPRT:
 		fc_lport_enter_ms(lport, lport->state);
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case LPORT_ST_SCR:
 		fc_lport_enter_scr(lport);
 		break;
@@ -1696,7 +1743,10 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
 			 void *lp_arg)
 {
 	struct fc_lport *lport = lp_arg;
+<<<<<<< HEAD
 	struct fc_frame_header *fh;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct fc_els_flogi *flp;
 	u32 did;
 	u16 csp_flags;
@@ -1724,6 +1774,7 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
 		goto err;
 	}
 
+<<<<<<< HEAD
 	fh = fc_frame_header_get(fp);
 	did = fc_frame_did(fp);
 	if (fh->fh_r_ctl != FC_RCTL_ELS_REP || did == 0 ||
@@ -1784,6 +1835,51 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
 			get_unaligned_be64(&flp->fl_wwnn);
 		fc_lport_set_port_id(lport, did, fp);
 		fc_lport_enter_dns(lport);
+=======
+	did = fc_frame_did(fp);
+	if (fc_frame_payload_op(fp) == ELS_LS_ACC && did) {
+		flp = fc_frame_payload_get(fp, sizeof(*flp));
+		if (flp) {
+			mfs = ntohs(flp->fl_csp.sp_bb_data) &
+				FC_SP_BB_DATA_MASK;
+			if (mfs >= FC_SP_MIN_MAX_PAYLOAD &&
+			    mfs < lport->mfs)
+				lport->mfs = mfs;
+			csp_flags = ntohs(flp->fl_csp.sp_features);
+			r_a_tov = ntohl(flp->fl_csp.sp_r_a_tov);
+			e_d_tov = ntohl(flp->fl_csp.sp_e_d_tov);
+			if (csp_flags & FC_SP_FT_EDTR)
+				e_d_tov /= 1000000;
+
+			lport->npiv_enabled = !!(csp_flags & FC_SP_FT_NPIV_ACC);
+
+			if ((csp_flags & FC_SP_FT_FPORT) == 0) {
+				if (e_d_tov > lport->e_d_tov)
+					lport->e_d_tov = e_d_tov;
+				lport->r_a_tov = 2 * e_d_tov;
+				fc_lport_set_port_id(lport, did, fp);
+				printk(KERN_INFO "host%d: libfc: "
+				       "Port (%6.6x) entered "
+				       "point-to-point mode\n",
+				       lport->host->host_no, did);
+				fc_lport_ptp_setup(lport, fc_frame_sid(fp),
+						   get_unaligned_be64(
+							   &flp->fl_wwpn),
+						   get_unaligned_be64(
+							   &flp->fl_wwnn));
+			} else {
+				lport->e_d_tov = e_d_tov;
+				lport->r_a_tov = r_a_tov;
+				fc_host_fabric_name(lport->host) =
+					get_unaligned_be64(&flp->fl_wwnn);
+				fc_lport_set_port_id(lport, did, fp);
+				fc_lport_enter_dns(lport);
+			}
+		}
+	} else {
+		FC_LPORT_DBG(lport, "FLOGI RJT or bad response\n");
+		fc_lport_error(lport, fp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out:
@@ -1800,7 +1896,11 @@ EXPORT_SYMBOL(fc_lport_flogi_resp);
  * Locking Note: The lport lock is expected to be held before calling
  * this routine.
  */
+<<<<<<< HEAD
 static void fc_lport_enter_flogi(struct fc_lport *lport)
+=======
+void fc_lport_enter_flogi(struct fc_lport *lport)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct fc_frame *fp;
 
@@ -1929,7 +2029,11 @@ static void fc_lport_bsg_resp(struct fc_seq *sp, struct fc_frame *fp,
 
 	job->reply->reply_payload_rcv_len +=
 		fc_copy_buffer_to_sglist(buf, len, info->sg, &info->nents,
+<<<<<<< HEAD
 					 &info->offset, NULL);
+=======
+					 &info->offset, KM_BIO_SRC_IRQ, NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (fr_eof(fp) == FC_EOF_T &&
 	    (ntoh24(fh->fh_f_ctl) & (FC_FC_LAST_SEQ | FC_FC_END_SEQ)) ==

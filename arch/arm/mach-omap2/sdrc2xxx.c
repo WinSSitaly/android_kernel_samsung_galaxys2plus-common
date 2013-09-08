@@ -24,6 +24,7 @@
 #include <linux/clk.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include <plat/hardware.h>
 #include <plat/clock.h>
 #include <plat/sram.h>
@@ -33,6 +34,15 @@
 #include "common.h"
 #include "prm2xxx_3xxx.h"
 #include "clock.h"
+=======
+#include <plat/common.h>
+#include <plat/clock.h>
+#include <plat/sram.h>
+
+#include "prm2xxx_3xxx.h"
+#include "clock.h"
+#include <plat/sdrc.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "sdrc.h"
 
 /* Memory timing, DLL mode flags */

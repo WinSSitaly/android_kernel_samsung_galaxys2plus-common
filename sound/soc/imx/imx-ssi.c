@@ -233,6 +233,7 @@ static int imx_ssi_set_dai_clkdiv(struct snd_soc_dai *cpu_dai,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int imx_ssi_startup(struct snd_pcm_substream *substream,
 			   struct snd_soc_dai *cpu_dai)
 {
@@ -250,6 +251,8 @@ static int imx_ssi_startup(struct snd_pcm_substream *substream,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Should only be called when port is inactive (i.e. SSIEN = 0),
  * although can be called multiple times by upper layers.
@@ -259,6 +262,7 @@ static int imx_ssi_hw_params(struct snd_pcm_substream *substream,
 			     struct snd_soc_dai *cpu_dai)
 {
 	struct imx_ssi *ssi = snd_soc_dai_get_drvdata(cpu_dai);
+<<<<<<< HEAD
 	u32 reg, sccr;
 
 	/* Tx/Rx config */
@@ -266,10 +270,28 @@ static int imx_ssi_hw_params(struct snd_pcm_substream *substream,
 		reg = SSI_STCCR;
 	else
 		reg = SSI_SRCCR;
+=======
+	struct imx_pcm_dma_params *dma_data;
+	u32 reg, sccr;
+
+	/* Tx/Rx config */
+	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+		reg = SSI_STCCR;
+		dma_data = &ssi->dma_params_tx;
+	} else {
+		reg = SSI_SRCCR;
+		dma_data = &ssi->dma_params_rx;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ssi->flags & IMX_SSI_SYN)
 		reg = SSI_STCCR;
 
+<<<<<<< HEAD
+=======
+	snd_soc_dai_set_dma_data(cpu_dai, substream, dma_data);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sccr = readl(ssi->base + reg) & ~SSI_STCCR_WL_MASK;
 
 	/* DAI data (word) size */
@@ -353,8 +375,12 @@ static int imx_ssi_trigger(struct snd_pcm_substream *substream, int cmd,
 	return 0;
 }
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops imx_ssi_pcm_dai_ops = {
 	.startup	= imx_ssi_startup,
+=======
+static struct snd_soc_dai_ops imx_ssi_pcm_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= imx_ssi_hw_params,
 	.set_fmt	= imx_ssi_set_dai_fmt,
 	.set_clkdiv	= imx_ssi_set_dai_clkdiv,
@@ -363,6 +389,97 @@ static const struct snd_soc_dai_ops imx_ssi_pcm_dai_ops = {
 	.trigger	= imx_ssi_trigger,
 };
 
+<<<<<<< HEAD
+=======
+int snd_imx_pcm_mmap(struct snd_pcm_substream *substream,
+		struct vm_area_struct *vma)
+{
+	struct snd_pcm_runtime *runtime = substream->runtime;
+	int ret;
+
+	ret = dma_mmap_coherent(NULL, vma, runtime->dma_area,
+			runtime->dma_addr, runtime->dma_bytes);
+
+	pr_debug("%s: ret: %d %p 0x%08x 0x%08x\n", __func__, ret,
+			runtime->dma_area,
+			runtime->dma_addr,
+			runtime->dma_bytes);
+	return ret;
+}
+EXPORT_SYMBOL_GPL(snd_imx_pcm_mmap);
+
+static int imx_pcm_preallocate_dma_buffer(struct snd_pcm *pcm, int stream)
+{
+	struct snd_pcm_substream *substream = pcm->streams[stream].substream;
+	struct snd_dma_buffer *buf = &substream->dma_buffer;
+	size_t size = IMX_SSI_DMABUF_SIZE;
+
+	buf->dev.type = SNDRV_DMA_TYPE_DEV;
+	buf->dev.dev = pcm->card->dev;
+	buf->private_data = NULL;
+	buf->area = dma_alloc_writecombine(pcm->card->dev, size,
+					   &buf->addr, GFP_KERNEL);
+	if (!buf->area)
+		return -ENOMEM;
+	buf->bytes = size;
+
+	return 0;
+}
+
+static u64 imx_pcm_dmamask = DMA_BIT_MASK(32);
+
+int imx_pcm_new(struct snd_card *card, struct snd_soc_dai *dai,
+	struct snd_pcm *pcm)
+{
+
+	int ret = 0;
+
+	if (!card->dev->dma_mask)
+		card->dev->dma_mask = &imx_pcm_dmamask;
+	if (!card->dev->coherent_dma_mask)
+		card->dev->coherent_dma_mask = DMA_BIT_MASK(32);
+	if (dai->driver->playback.channels_min) {
+		ret = imx_pcm_preallocate_dma_buffer(pcm,
+			SNDRV_PCM_STREAM_PLAYBACK);
+		if (ret)
+			goto out;
+	}
+
+	if (dai->driver->capture.channels_min) {
+		ret = imx_pcm_preallocate_dma_buffer(pcm,
+			SNDRV_PCM_STREAM_CAPTURE);
+		if (ret)
+			goto out;
+	}
+
+out:
+	return ret;
+}
+EXPORT_SYMBOL_GPL(imx_pcm_new);
+
+void imx_pcm_free(struct snd_pcm *pcm)
+{
+	struct snd_pcm_substream *substream;
+	struct snd_dma_buffer *buf;
+	int stream;
+
+	for (stream = 0; stream < 2; stream++) {
+		substream = pcm->streams[stream].substream;
+		if (!substream)
+			continue;
+
+		buf = &substream->dma_buffer;
+		if (!buf->area)
+			continue;
+
+		dma_free_writecombine(pcm->card->dev, buf->bytes,
+				      buf->area, buf->addr);
+		buf->area = NULL;
+	}
+}
+EXPORT_SYMBOL_GPL(imx_pcm_free);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int imx_ssi_dai_probe(struct snd_soc_dai *dai)
 {
 	struct imx_ssi *ssi = dev_get_drvdata(dai->dev);
@@ -580,7 +697,11 @@ static int imx_ssi_probe(struct platform_device *pdev)
 	ssi->dma_params_rx.dma_addr = res->start + SSI_SRX0;
 	ssi->dma_params_tx.dma_addr = res->start + SSI_STX0;
 
+<<<<<<< HEAD
 	ssi->dma_params_tx.burstsize = 6;
+=======
+	ssi->dma_params_tx.burstsize = 4;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ssi->dma_params_rx.burstsize = 4;
 
 	res = platform_get_resource_byname(pdev, IORESOURCE_DMA, "tx0");
@@ -681,7 +802,22 @@ static struct platform_driver imx_ssi_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(imx_ssi_driver);
+=======
+static int __init imx_ssi_init(void)
+{
+	return platform_driver_register(&imx_ssi_driver);
+}
+
+static void __exit imx_ssi_exit(void)
+{
+	platform_driver_unregister(&imx_ssi_driver);
+}
+
+module_init(imx_ssi_init);
+module_exit(imx_ssi_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Module information */
 MODULE_AUTHOR("Sascha Hauer, <s.hauer@pengutronix.de>");

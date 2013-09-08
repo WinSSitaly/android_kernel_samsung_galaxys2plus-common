@@ -12,14 +12,22 @@
 #include <linux/cpu.h>
 #include <linux/init.h>
 #include <linux/kthread.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/percpu.h>
 #include <linux/sched.h>
 #include <linux/stop_machine.h>
 #include <linux/interrupt.h>
 #include <linux/kallsyms.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Structure to determine completion condition and record errors.  May
@@ -41,7 +49,10 @@ struct cpu_stopper {
 };
 
 static DEFINE_PER_CPU(struct cpu_stopper, cpu_stopper);
+<<<<<<< HEAD
 static bool stop_machine_initialized = false;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void cpu_stop_init_done(struct cpu_stop_done *done, unsigned int nr_todo)
 {
@@ -133,6 +144,7 @@ void stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
 	cpu_stop_queue_work(&per_cpu(cpu_stopper, cpu), work_buf);
 }
 
+<<<<<<< HEAD
 /* static data for stop_cpus */
 static DEFINE_MUTEX(stop_cpus_mutex);
 static DEFINE_PER_CPU(struct cpu_stop_work, stop_cpus_work);
@@ -142,6 +154,16 @@ static void queue_stop_cpus_work(const struct cpumask *cpumask,
 				 struct cpu_stop_done *done)
 {
 	struct cpu_stop_work *work;
+=======
+DEFINE_MUTEX(stop_cpus_mutex);
+/* static data for stop_cpus */
+static DEFINE_PER_CPU(struct cpu_stop_work, stop_cpus_work);
+
+int __stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg)
+{
+	struct cpu_stop_work *work;
+	struct cpu_stop_done done;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned int cpu;
 
 	/* initialize works and done */
@@ -149,8 +171,14 @@ static void queue_stop_cpus_work(const struct cpumask *cpumask,
 		work = &per_cpu(stop_cpus_work, cpu);
 		work->fn = fn;
 		work->arg = arg;
+<<<<<<< HEAD
 		work->done = done;
 	}
+=======
+		work->done = &done;
+	}
+	cpu_stop_init_done(&done, cpumask_weight(cpumask));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Disable preemption while queueing to avoid getting
@@ -162,6 +190,7 @@ static void queue_stop_cpus_work(const struct cpumask *cpumask,
 		cpu_stop_queue_work(&per_cpu(cpu_stopper, cpu),
 				    &per_cpu(stop_cpus_work, cpu));
 	preempt_enable();
+<<<<<<< HEAD
 }
 
 static int __stop_cpus(const struct cpumask *cpumask,
@@ -171,6 +200,9 @@ static int __stop_cpus(const struct cpumask *cpumask,
 
 	cpu_stop_init_done(&done, cpumask_weight(cpumask));
 	queue_stop_cpus_work(cpumask, fn, arg, &done);
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wait_for_completion(&done.completion);
 	return done.executed ? done.ret : -ENOENT;
 }
@@ -387,8 +419,11 @@ static int __init cpu_stop_init(void)
 	cpu_stop_cpu_callback(&cpu_stop_cpu_notifier, CPU_ONLINE, bcpu);
 	register_cpu_notifier(&cpu_stop_cpu_notifier);
 
+<<<<<<< HEAD
 	stop_machine_initialized = true;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 early_initcall(cpu_stop_init);
@@ -442,6 +477,7 @@ static int stop_machine_cpu_stop(void *data)
 	struct stop_machine_data *smdata = data;
 	enum stopmachine_state curstate = STOPMACHINE_NONE;
 	int cpu = smp_processor_id(), err = 0;
+<<<<<<< HEAD
 	unsigned long flags;
 	bool is_active;
 
@@ -451,6 +487,10 @@ static int stop_machine_cpu_stop(void *data)
 	 */
 	local_save_flags(flags);
 
+=======
+	bool is_active;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!smdata->active_cpus)
 		is_active = cpu == cpumask_first(cpu_online_mask);
 	else
@@ -478,7 +518,11 @@ static int stop_machine_cpu_stop(void *data)
 		}
 	} while (curstate != STOPMACHINE_EXIT);
 
+<<<<<<< HEAD
 	local_irq_restore(flags);
+=======
+	local_irq_enable();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -488,6 +532,7 @@ int __stop_machine(int (*fn)(void *), void *data, const struct cpumask *cpus)
 					    .num_threads = num_online_cpus(),
 					    .active_cpus = cpus };
 
+<<<<<<< HEAD
 	if (!stop_machine_initialized) {
 		/*
 		 * Handle the case where stop_machine() is called
@@ -507,6 +552,8 @@ int __stop_machine(int (*fn)(void *), void *data, const struct cpumask *cpus)
 		return ret;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Set the initial state and stop all online cpus. */
 	set_state(&smdata, STOPMACHINE_PREPARE);
 	return stop_cpus(cpu_online_mask, stop_machine_cpu_stop, &smdata);
@@ -524,6 +571,7 @@ int stop_machine(int (*fn)(void *), void *data, const struct cpumask *cpus)
 }
 EXPORT_SYMBOL_GPL(stop_machine);
 
+<<<<<<< HEAD
 /**
  * stop_machine_from_inactive_cpu - stop_machine() from inactive CPU
  * @fn: the function to run
@@ -577,4 +625,6 @@ int stop_machine_from_inactive_cpu(int (*fn)(void *), void *data,
 	return ret ?: done.ret;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* CONFIG_STOP_MACHINE */

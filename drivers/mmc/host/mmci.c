@@ -29,8 +29,11 @@
 #include <linux/dmaengine.h>
 #include <linux/dma-mapping.h>
 #include <linux/amba/mmci.h>
+<<<<<<< HEAD
 #include <linux/pm_runtime.h>
 #include <linux/types.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/div64.h>
 #include <asm/io.h>
@@ -54,8 +57,11 @@ static unsigned int fmax = 515633;
  * @sdio: variant supports SDIO
  * @st_clkdiv: true if using a ST-specific clock divider algorithm
  * @blksz_datactrl16: true if Block size is at b16..b30 position in datactrl register
+<<<<<<< HEAD
  * @pwrreg_powerup: power up value for MMCIPOWER register
  * @signal_direction: input/out direction of bus signals can be indicated
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 struct variant_data {
 	unsigned int		clkreg;
@@ -66,22 +72,31 @@ struct variant_data {
 	bool			sdio;
 	bool			st_clkdiv;
 	bool			blksz_datactrl16;
+<<<<<<< HEAD
 	u32			pwrreg_powerup;
 	bool			signal_direction;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct variant_data variant_arm = {
 	.fifosize		= 16 * 4,
 	.fifohalfsize		= 8 * 4,
 	.datalength_bits	= 16,
+<<<<<<< HEAD
 	.pwrreg_powerup		= MCI_PWR_UP,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct variant_data variant_arm_extended_fifo = {
 	.fifosize		= 128 * 4,
 	.fifohalfsize		= 64 * 4,
 	.datalength_bits	= 16,
+<<<<<<< HEAD
 	.pwrreg_powerup		= MCI_PWR_UP,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct variant_data variant_u300 = {
@@ -90,8 +105,11 @@ static struct variant_data variant_u300 = {
 	.clkreg_enable		= MCI_ST_U300_HWFCEN,
 	.datalength_bits	= 16,
 	.sdio			= true,
+<<<<<<< HEAD
 	.pwrreg_powerup		= MCI_PWR_ON,
 	.signal_direction	= true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct variant_data variant_ux500 = {
@@ -102,8 +120,11 @@ static struct variant_data variant_ux500 = {
 	.datalength_bits	= 24,
 	.sdio			= true,
 	.st_clkdiv		= true,
+<<<<<<< HEAD
 	.pwrreg_powerup		= MCI_PWR_ON,
 	.signal_direction	= true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct variant_data variant_ux500v2 = {
@@ -115,13 +136,17 @@ static struct variant_data variant_ux500v2 = {
 	.sdio			= true,
 	.st_clkdiv		= true,
 	.blksz_datactrl16	= true,
+<<<<<<< HEAD
 	.pwrreg_powerup		= MCI_PWR_ON,
 	.signal_direction	= true,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
  * This must be called with host->lock held
  */
+<<<<<<< HEAD
 static void mmci_write_clkreg(struct mmci_host *host, u32 clk)
 {
 	if (host->clk_reg != clk) {
@@ -144,6 +169,8 @@ static void mmci_write_pwrreg(struct mmci_host *host, u32 pwr)
 /*
  * This must be called with host->lock held
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void mmci_set_clkreg(struct mmci_host *host, unsigned int desired)
 {
 	struct variant_data *variant = host->variant;
@@ -188,7 +215,11 @@ static void mmci_set_clkreg(struct mmci_host *host, unsigned int desired)
 	if (host->mmc->ios.bus_width == MMC_BUS_WIDTH_8)
 		clk |= MCI_ST_8BIT_BUS;
 
+<<<<<<< HEAD
 	mmci_write_clkreg(host, clk);
+=======
+	writel(clk, host->base + MMCICLOCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void
@@ -201,10 +232,20 @@ mmci_request_end(struct mmci_host *host, struct mmc_request *mrq)
 	host->mrq = NULL;
 	host->cmd = NULL;
 
+<<<<<<< HEAD
 	mmc_request_done(host->mmc, mrq);
 
 	pm_runtime_mark_last_busy(mmc_dev(host->mmc));
 	pm_runtime_put_autosuspend(mmc_dev(host->mmc));
+=======
+	/*
+	 * Need to drop the host lock here; mmc_request_done may call
+	 * back into the driver...
+	 */
+	spin_unlock(&host->lock);
+	mmc_request_done(host->mmc, mrq);
+	spin_lock(&host->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mmci_set_mask1(struct mmci_host *host, unsigned int mask)
@@ -259,9 +300,12 @@ static void __devinit mmci_dma_setup(struct mmci_host *host)
 		return;
 	}
 
+<<<<<<< HEAD
 	/* initialize pre request cookie */
 	host->next_data.cookie = 1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Try to acquire a generic DMA engine slave channel */
 	dma_cap_zero(mask);
 	dma_cap_set(DMA_SLAVE, mask);
@@ -371,8 +415,12 @@ static void mmci_dma_unmap(struct mmci_host *host, struct mmc_data *data)
 		dir = DMA_FROM_DEVICE;
 	}
 
+<<<<<<< HEAD
 	if (!data->host_cookie)
 		dma_unmap_sg(chan->device->dev, data->sg, data->sg_len, dir);
+=======
+	dma_unmap_sg(chan->device->dev, data->sg, data->sg_len, dir);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Use of DMA with scatter-gather is impossible.
@@ -390,8 +438,12 @@ static void mmci_dma_data_error(struct mmci_host *host)
 	dmaengine_terminate_all(host->dma_current);
 }
 
+<<<<<<< HEAD
 static int mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
 			      struct mmci_host_next *next)
+=======
+static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct variant_data *variant = host->variant;
 	struct dma_slave_config conf = {
@@ -401,6 +453,7 @@ static int mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
 		.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES,
 		.src_maxburst = variant->fifohalfsize >> 2, /* # of words */
 		.dst_maxburst = variant->fifohalfsize >> 2, /* # of words */
+<<<<<<< HEAD
 		.device_fc = false,
 	};
 	struct dma_chan *chan;
@@ -426,6 +479,22 @@ static int mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
 	} else {
 		conf.direction = DMA_MEM_TO_DEV;
 		buffer_dirn = DMA_TO_DEVICE;
+=======
+	};
+	struct mmc_data *data = host->data;
+	struct dma_chan *chan;
+	struct dma_device *device;
+	struct dma_async_tx_descriptor *desc;
+	int nr_sg;
+
+	host->dma_current = NULL;
+
+	if (data->flags & MMC_DATA_READ) {
+		conf.direction = DMA_FROM_DEVICE;
+		chan = host->dma_rx_channel;
+	} else {
+		conf.direction = DMA_TO_DEVICE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		chan = host->dma_tx_channel;
 	}
 
@@ -434,20 +503,33 @@ static int mmci_dma_prep_data(struct mmci_host *host, struct mmc_data *data,
 		return -EINVAL;
 
 	/* If less than or equal to the fifo size, don't bother with DMA */
+<<<<<<< HEAD
 	if (data->blksz * data->blocks <= variant->fifosize)
 		return -EINVAL;
 
 	device = chan->device;
 	nr_sg = dma_map_sg(device->dev, data->sg, data->sg_len, buffer_dirn);
+=======
+	if (host->size <= variant->fifosize)
+		return -EINVAL;
+
+	device = chan->device;
+	nr_sg = dma_map_sg(device->dev, data->sg, data->sg_len, conf.direction);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (nr_sg == 0)
 		return -EINVAL;
 
 	dmaengine_slave_config(chan, &conf);
+<<<<<<< HEAD
 	desc = dmaengine_prep_slave_sg(chan, data->sg, nr_sg,
+=======
+	desc = device->device_prep_slave_sg(chan, data->sg, nr_sg,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					    conf.direction, DMA_CTRL_ACK);
 	if (!desc)
 		goto unmap_exit;
 
+<<<<<<< HEAD
 	if (next) {
 		next->dma_chan = chan;
 		next->dma_desc = desc;
@@ -480,6 +562,16 @@ static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
 		 data->sg_len, data->blksz, data->blocks, data->flags);
 	dmaengine_submit(host->dma_desc_current);
 	dma_async_issue_pending(host->dma_current);
+=======
+	/* Okay, go for it. */
+	host->dma_current = chan;
+
+	dev_vdbg(mmc_dev(host->mmc),
+		 "Submit MMCI DMA job, sglen %d blksz %04x blks %04x flags %08x\n",
+		 data->sg_len, data->blksz, data->blocks, data->flags);
+	dmaengine_submit(desc);
+	dma_async_issue_pending(chan);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	datactrl |= MCI_DPSM_DMAENABLE;
 
@@ -494,6 +586,7 @@ static int mmci_dma_start_data(struct mmci_host *host, unsigned int datactrl)
 	writel(readl(host->base + MMCIMASK0) | MCI_DATAENDMASK,
 	       host->base + MMCIMASK0);
 	return 0;
+<<<<<<< HEAD
 }
 
 static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
@@ -578,6 +671,16 @@ static void mmci_post_request(struct mmc_host *mmc, struct mmc_request *mrq,
 static void mmci_get_next_data(struct mmci_host *host, struct mmc_data *data)
 {
 }
+=======
+
+unmap_exit:
+	dmaengine_terminate_all(chan);
+	dma_unmap_sg(device->dev, data->sg, data->sg_len, conf.direction);
+	return -ENOMEM;
+}
+#else
+/* Blank functions if the DMA engine is not available */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static inline void mmci_dma_setup(struct mmci_host *host)
 {
 }
@@ -598,10 +701,13 @@ static inline int mmci_dma_start_data(struct mmci_host *host, unsigned int datac
 {
 	return -ENOSYS;
 }
+<<<<<<< HEAD
 
 #define mmci_pre_request NULL
 #define mmci_post_request NULL
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
@@ -639,11 +745,14 @@ static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
 	if (data->flags & MMC_DATA_READ)
 		datactrl |= MCI_DPSM_DIRECTION;
 
+<<<<<<< HEAD
 	/* The ST Micro variants has a special bit to enable SDIO */
 	if (variant->sdio && host->mmc->card)
 		if (mmc_card_sdio(host->mmc->card))
 			datactrl |= MCI_ST_DPSM_SDIOEN;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * Attempt to use DMA operation mode, if this
 	 * should fail, fall back to PIO mode
@@ -672,6 +781,14 @@ static void mmci_start_data(struct mmci_host *host, struct mmc_data *data)
 		irqmask = MCI_TXFIFOHALFEMPTYMASK;
 	}
 
+<<<<<<< HEAD
+=======
+	/* The ST Micro variants has a special bit to enable SDIO */
+	if (variant->sdio && host->mmc->card)
+		if (mmc_card_sdio(host->mmc->card))
+			datactrl |= MCI_ST_DPSM_SDIOEN;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	writel(datactrl, base + MMCIDATACTRL);
 	writel(readl(base + MMCIMASK0) & ~MCI_DATAENDMASK, base + MMCIMASK0);
 	mmci_set_mask1(host, irqmask);
@@ -818,6 +935,7 @@ static int mmci_pio_read(struct mmci_host *host, char *buffer, unsigned int rema
 		if (count <= 0)
 			break;
 
+<<<<<<< HEAD
 		/*
 		 * SDIO especially may want to send something that is
 		 * not divisible by 4 (as opposed to card sectors
@@ -836,6 +954,9 @@ static int mmci_pio_read(struct mmci_host *host, char *buffer, unsigned int rema
 		} else {
 			readsl(base + MMCIFIFO, ptr, count >> 2);
 		}
+=======
+		readsl(base + MMCIFIFO, ptr, count >> 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ptr += count;
 		remain -= count;
@@ -870,6 +991,7 @@ static int mmci_pio_write(struct mmci_host *host, char *buffer, unsigned int rem
 		 */
 		if (variant->sdio &&
 		    mmc_card_sdio(host->mmc->card)) {
+<<<<<<< HEAD
 			u32 clk;
 			if (count < 8)
 				clk = host->clk_reg & ~variant->clkreg_enable;
@@ -877,6 +999,16 @@ static int mmci_pio_write(struct mmci_host *host, char *buffer, unsigned int rem
 				clk = host->clk_reg | variant->clkreg_enable;
 
 			mmci_write_clkreg(host, clk);
+=======
+			if (count < 8)
+				writel(readl(host->base + MMCICLOCK) &
+					~variant->clkreg_enable,
+					host->base + MMCICLOCK);
+			else
+				writel(readl(host->base + MMCICLOCK) |
+					variant->clkreg_enable,
+					host->base + MMCICLOCK);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/*
@@ -1043,15 +1175,21 @@ static void mmci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 		return;
 	}
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(mmc_dev(mmc));
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&host->lock, flags);
 
 	host->mrq = mrq;
 
+<<<<<<< HEAD
 	if (mrq->data)
 		mmci_get_next_data(host, mrq->data);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (mrq->data && mrq->data->flags & MMC_DATA_READ)
 		mmci_start_data(host, mrq->data);
 
@@ -1063,17 +1201,23 @@ static void mmci_request(struct mmc_host *mmc, struct mmc_request *mrq)
 static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 {
 	struct mmci_host *host = mmc_priv(mmc);
+<<<<<<< HEAD
 	struct variant_data *variant = host->variant;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u32 pwr = 0;
 	unsigned long flags;
 	int ret;
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(mmc_dev(mmc));
 
 	if (host->plat->ios_handler &&
 		host->plat->ios_handler(mmc_dev(mmc), ios))
 			dev_err(mmc_dev(mmc), "platform ios_handler failed\n");
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (ios->power_mode) {
 	case MMC_POWER_OFF:
 		if (host->vcc)
@@ -1090,6 +1234,7 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 				 * power should be rare so we print an error
 				 * and return here.
 				 */
+<<<<<<< HEAD
 				goto out;
 			}
 		}
@@ -1101,11 +1246,25 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 		pwr |= variant->pwrreg_powerup;
 
 		break;
+=======
+				return;
+			}
+		}
+		if (host->plat->vdd_handler)
+			pwr |= host->plat->vdd_handler(mmc_dev(mmc), ios->vdd,
+						       ios->power_mode);
+		/* The ST version does not have this, fall through to POWER_ON */
+		if (host->hw_designer != AMBA_VENDOR_ST) {
+			pwr |= MCI_PWR_UP;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case MMC_POWER_ON:
 		pwr |= MCI_PWR_ON;
 		break;
 	}
 
+<<<<<<< HEAD
 	if (variant->signal_direction && ios->power_mode != MMC_POWER_OFF) {
 		/*
 		 * The ST Micro variant has some additional bits
@@ -1122,6 +1281,8 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 				~MCI_ST_DATA2DIREN);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN) {
 		if (host->hw_designer != AMBA_VENDOR_ST)
 			pwr |= MCI_ROD;
@@ -1137,6 +1298,7 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
 	spin_lock_irqsave(&host->lock, flags);
 
 	mmci_set_clkreg(host, ios->clock);
+<<<<<<< HEAD
 	mmci_write_pwrreg(host, pwr);
 
 	spin_unlock_irqrestore(&host->lock, flags);
@@ -1144,6 +1306,15 @@ static void mmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
  out:
 	pm_runtime_mark_last_busy(mmc_dev(mmc));
 	pm_runtime_put_autosuspend(mmc_dev(mmc));
+=======
+
+	if (host->pwr != pwr) {
+		host->pwr = pwr;
+		writel(pwr, host->base + MMCIPOWER);
+	}
+
+	spin_unlock_irqrestore(&host->lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int mmci_get_ro(struct mmc_host *mmc)
@@ -1189,8 +1360,11 @@ static irqreturn_t mmci_cd_irq(int irq, void *dev_id)
 
 static const struct mmc_host_ops mmci_ops = {
 	.request	= mmci_request,
+<<<<<<< HEAD
 	.pre_req	= mmci_pre_request,
 	.post_req	= mmci_post_request,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_ios	= mmci_set_ios,
 	.get_ro		= mmci_get_ro,
 	.get_cd		= mmci_get_cd,
@@ -1240,6 +1414,7 @@ static int __devinit mmci_probe(struct amba_device *dev,
 		goto host_free;
 	}
 
+<<<<<<< HEAD
 	ret = clk_prepare(host->clk);
 	if (ret)
 		goto clk_free;
@@ -1247,6 +1422,11 @@ static int __devinit mmci_probe(struct amba_device *dev,
 	ret = clk_enable(host->clk);
 	if (ret)
 		goto clk_unprep;
+=======
+	ret = clk_enable(host->clk);
+	if (ret)
+		goto clk_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	host->plat = plat;
 	host->variant = variant;
@@ -1272,6 +1452,7 @@ static int __devinit mmci_probe(struct amba_device *dev,
 	}
 
 	mmc->ops = &mmci_ops;
+<<<<<<< HEAD
 	/*
 	 * The ARM and ST versions of the block have slightly different
 	 * clock divider equations which means that the minimum divider
@@ -1281,6 +1462,9 @@ static int __devinit mmci_probe(struct amba_device *dev,
 		mmc->f_min = DIV_ROUND_UP(host->mclk, 257);
 	else
 		mmc->f_min = DIV_ROUND_UP(host->mclk, 512);
+=======
+	mmc->f_min = (host->mclk + 511) / 512;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * If the platform data supplies a maximum operating
 	 * frequency, this takes precedence. Else, we fall back
@@ -1319,7 +1503,10 @@ static int __devinit mmci_probe(struct amba_device *dev,
 	if (host->vcc == NULL)
 		mmc->ocr_avail = plat->ocr_mask;
 	mmc->caps = plat->capabilities;
+<<<<<<< HEAD
 	mmc->caps2 = plat->capabilities2;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * We can do SGIO
@@ -1342,6 +1529,7 @@ static int __devinit mmci_probe(struct amba_device *dev,
 	/*
 	 * Block size can be up to 2048 bytes, but must be a power of two.
 	 */
+<<<<<<< HEAD
 	mmc->max_blk_size = 1 << 11;
 
 	/*
@@ -1349,6 +1537,14 @@ static int __devinit mmci_probe(struct amba_device *dev,
 	 * the maximum request size.
 	 */
 	mmc->max_blk_count = mmc->max_req_size >> 11;
+=======
+	mmc->max_blk_size = 2048;
+
+	/*
+	 * No limit on the number of blocks transferred.
+	 */
+	mmc->max_blk_count = mmc->max_req_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_lock_init(&host->lock);
 
@@ -1397,7 +1593,11 @@ static int __devinit mmci_probe(struct amba_device *dev,
 	if (ret)
 		goto unmap;
 
+<<<<<<< HEAD
 	if (dev->irq[1] == NO_IRQ || !dev->irq[1])
+=======
+	if (dev->irq[1] == NO_IRQ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		host->singleirq = true;
 	else {
 		ret = request_irq(dev->irq[1], mmci_pio_irq, IRQF_SHARED,
@@ -1417,10 +1617,13 @@ static int __devinit mmci_probe(struct amba_device *dev,
 
 	mmci_dma_setup(host);
 
+<<<<<<< HEAD
 	pm_runtime_set_autosuspend_delay(&dev->dev, 50);
 	pm_runtime_use_autosuspend(&dev->dev);
 	pm_runtime_put(&dev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mmc_add_host(mmc);
 
 	return 0;
@@ -1439,8 +1642,11 @@ static int __devinit mmci_probe(struct amba_device *dev,
 	iounmap(host->base);
  clk_disable:
 	clk_disable(host->clk);
+<<<<<<< HEAD
  clk_unprep:
 	clk_unprepare(host->clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  clk_free:
 	clk_put(host->clk);
  host_free:
@@ -1460,12 +1666,15 @@ static int __devexit mmci_remove(struct amba_device *dev)
 	if (mmc) {
 		struct mmci_host *host = mmc_priv(mmc);
 
+<<<<<<< HEAD
 		/*
 		 * Undo pm_runtime_put() in probe.  We use the _sync
 		 * version here so that we can access the primecell.
 		 */
 		pm_runtime_get_sync(&dev->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mmc_remove_host(mmc);
 
 		writel(0, host->base + MMCIMASK0);
@@ -1488,7 +1697,10 @@ static int __devexit mmci_remove(struct amba_device *dev)
 
 		iounmap(host->base);
 		clk_disable(host->clk);
+<<<<<<< HEAD
 		clk_unprepare(host->clk);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		clk_put(host->clk);
 
 		if (host->vcc)
@@ -1503,49 +1715,78 @@ static int __devexit mmci_remove(struct amba_device *dev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_SUSPEND
 static int mmci_suspend(struct device *dev)
 {
 	struct amba_device *adev = to_amba_device(dev);
 	struct mmc_host *mmc = amba_get_drvdata(adev);
+=======
+#ifdef CONFIG_PM
+static int mmci_suspend(struct amba_device *dev, pm_message_t state)
+{
+	struct mmc_host *mmc = amba_get_drvdata(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	if (mmc) {
 		struct mmci_host *host = mmc_priv(mmc);
 
 		ret = mmc_suspend_host(mmc);
+<<<<<<< HEAD
 		if (ret == 0) {
 			pm_runtime_get_sync(dev);
 			writel(0, host->base + MMCIMASK0);
 		}
+=======
+		if (ret == 0)
+			writel(0, host->base + MMCIMASK0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static int mmci_resume(struct device *dev)
 {
 	struct amba_device *adev = to_amba_device(dev);
 	struct mmc_host *mmc = amba_get_drvdata(adev);
+=======
+static int mmci_resume(struct amba_device *dev)
+{
+	struct mmc_host *mmc = amba_get_drvdata(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 
 	if (mmc) {
 		struct mmci_host *host = mmc_priv(mmc);
 
 		writel(MCI_IRQENABLE, host->base + MMCIMASK0);
+<<<<<<< HEAD
 		pm_runtime_put(dev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = mmc_resume_host(mmc);
 	}
 
 	return ret;
 }
+<<<<<<< HEAD
 #endif
 
 static const struct dev_pm_ops mmci_dev_pm_ops = {
 	SET_SYSTEM_SLEEP_PM_OPS(mmci_suspend, mmci_resume)
 };
 
+=======
+#else
+#define mmci_suspend	NULL
+#define mmci_resume	NULL
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct amba_id mmci_ids[] = {
 	{
 		.id	= 0x00041180,
@@ -1586,6 +1827,7 @@ static struct amba_id mmci_ids[] = {
 	{ 0, 0 },
 };
 
+<<<<<<< HEAD
 MODULE_DEVICE_TABLE(amba, mmci_ids);
 
 static struct amba_driver mmci_driver = {
@@ -1600,6 +1842,31 @@ static struct amba_driver mmci_driver = {
 
 module_amba_driver(mmci_driver);
 
+=======
+static struct amba_driver mmci_driver = {
+	.drv		= {
+		.name	= DRIVER_NAME,
+	},
+	.probe		= mmci_probe,
+	.remove		= __devexit_p(mmci_remove),
+	.suspend	= mmci_suspend,
+	.resume		= mmci_resume,
+	.id_table	= mmci_ids,
+};
+
+static int __init mmci_init(void)
+{
+	return amba_driver_register(&mmci_driver);
+}
+
+static void __exit mmci_exit(void)
+{
+	amba_driver_unregister(&mmci_driver);
+}
+
+module_init(mmci_init);
+module_exit(mmci_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(fmax, uint, 0444);
 
 MODULE_DESCRIPTION("ARM PrimeCell PL180/181 Multimedia Card Interface driver");

@@ -73,12 +73,18 @@ static unsigned long ioapic_read_indirect(struct kvm_ioapic *ioapic,
 			u32 redir_index = (ioapic->ioregsel - 0x10) >> 1;
 			u64 redir_content;
 
+<<<<<<< HEAD
 			if (redir_index < IOAPIC_NUM_PINS)
 				redir_content =
 					ioapic->redirtbl[redir_index].bits;
 			else
 				redir_content = ~0ULL;
 
+=======
+			ASSERT(redir_index < IOAPIC_NUM_PINS);
+
+			redir_content = ioapic->redirtbl[redir_index].bits;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			result = (ioapic->ioregsel & 0x1) ?
 			    (redir_content >> 32) & 0xffffffff :
 			    redir_content & 0xffffffff;
@@ -188,7 +194,11 @@ static int ioapic_deliver(struct kvm_ioapic *ioapic, int irq)
 		irqe.dest_mode = 0; /* Physical mode. */
 		/* need to read apic_id from apic regiest since
 		 * it can be rewritten */
+<<<<<<< HEAD
 		irqe.dest_id = ioapic->kvm->bsp_vcpu_id;
+=======
+		irqe.dest_id = ioapic->kvm->bsp_vcpu->vcpu_id;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 #endif
 	return kvm_irq_delivery_to_apic(ioapic->kvm, NULL, &irqe);
@@ -335,6 +345,7 @@ static int ioapic_mmio_write(struct kvm_io_device *this, gpa_t addr, int len,
 		     (void*)addr, len, val);
 	ASSERT(!(addr & 0xf));	/* check alignment */
 
+<<<<<<< HEAD
 	switch (len) {
 	case 8:
 	case 4:
@@ -347,6 +358,11 @@ static int ioapic_mmio_write(struct kvm_io_device *this, gpa_t addr, int len,
 		data = *(u8  *) val;
 		break;
 	default:
+=======
+	if (len == 4 || len == 8)
+		data = *(u32 *) val;
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_WARNING "ioapic: Unsupported size %d\n", len);
 		return 0;
 	}
@@ -355,7 +371,11 @@ static int ioapic_mmio_write(struct kvm_io_device *this, gpa_t addr, int len,
 	spin_lock(&ioapic->lock);
 	switch (addr) {
 	case IOAPIC_REG_SELECT:
+<<<<<<< HEAD
 		ioapic->ioregsel = data & 0xFF; /* 8-bit register */
+=======
+		ioapic->ioregsel = data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case IOAPIC_REG_WINDOW:
@@ -406,8 +426,12 @@ int kvm_ioapic_init(struct kvm *kvm)
 	kvm_iodevice_init(&ioapic->dev, &ioapic_mmio_ops);
 	ioapic->kvm = kvm;
 	mutex_lock(&kvm->slots_lock);
+<<<<<<< HEAD
 	ret = kvm_io_bus_register_dev(kvm, KVM_MMIO_BUS, ioapic->base_address,
 				      IOAPIC_MEM_LENGTH, &ioapic->dev);
+=======
+	ret = kvm_io_bus_register_dev(kvm, KVM_MMIO_BUS, &ioapic->dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&kvm->slots_lock);
 	if (ret < 0) {
 		kvm->arch.vioapic = NULL;

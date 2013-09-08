@@ -13,8 +13,11 @@
 #include <linux/smp.h>
 
 #include <asm/cacheflush.h>
+<<<<<<< HEAD
 #include <asm/cp15.h>
 #include <asm/smp_plat.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern volatile int pen_release;
 
@@ -71,7 +74,11 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
 		    :
 		    : "memory", "cc");
 
+<<<<<<< HEAD
 		if (pen_release == cpu_logical_map(cpu)) {
+=======
+		if (pen_release == cpu) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * OK, proper wakeup, we're done
 			 */

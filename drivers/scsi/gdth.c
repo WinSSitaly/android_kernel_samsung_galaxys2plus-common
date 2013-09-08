@@ -129,6 +129,10 @@
 #include <linux/reboot.h>
 
 #include <asm/dma.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <linux/spinlock.h>
@@ -2309,10 +2313,17 @@ static void gdth_copy_internal_data(gdth_ha_str *ha, Scsi_Cmnd *scp,
                 return;
             }
             local_irq_save(flags);
+<<<<<<< HEAD
             address = kmap_atomic(sg_page(sl)) + sl->offset;
             memcpy(address, buffer, cpnow);
             flush_dcache_page(sg_page(sl));
             kunmap_atomic(address);
+=======
+            address = kmap_atomic(sg_page(sl), KM_BIO_SRC_IRQ) + sl->offset;
+            memcpy(address, buffer, cpnow);
+            flush_dcache_page(sg_page(sl));
+            kunmap_atomic(address, KM_BIO_SRC_IRQ);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
             local_irq_restore(flags);
             if (cpsum == cpcount)
                 break;

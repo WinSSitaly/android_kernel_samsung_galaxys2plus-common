@@ -125,11 +125,18 @@ static struct platform_device dma40_device = {
 	.resource	= dma40_resources
 };
 
+<<<<<<< HEAD
 void __init db5500_dma_init(struct device *parent)
 {
 	int ret;
 
 	dma40_device.dev.parent = parent;
+=======
+void __init db5500_dma_init(void)
+{
+	int ret;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = platform_device_register(&dma40_device);
 	if (ret)
 		dev_err(&dma40_device.dev, "unable to register device: %d\n", ret);

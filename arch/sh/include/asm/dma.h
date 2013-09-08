@@ -14,7 +14,11 @@
 #include <linux/spinlock.h>
 #include <linux/wait.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+#include <linux/sysdev.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <cpu/dma.h>
 #include <asm-generic/dma.h>
 
@@ -91,7 +95,11 @@ struct dma_channel {
 
 	wait_queue_head_t wait_queue;
 
+<<<<<<< HEAD
 	struct device dev;
+=======
+	struct sys_device dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *priv_data;
 };
 

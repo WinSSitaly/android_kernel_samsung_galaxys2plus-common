@@ -29,11 +29,16 @@
  *          Keith Packard.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) "[TTM] " fmt
 
 #include "ttm/ttm_module.h"
 #include "ttm/ttm_bo_driver.h"
 #include "ttm/ttm_page_alloc.h"
+=======
+#include "ttm/ttm_module.h"
+#include "ttm/ttm_bo_driver.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef TTM_HAS_AGP
 #include "ttm/ttm_placement.h"
 #include <linux/agp_backend.h>
@@ -43,11 +48,16 @@
 #include <asm/agp.h>
 
 struct ttm_agp_backend {
+<<<<<<< HEAD
 	struct ttm_tt ttm;
+=======
+	struct ttm_backend backend;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct agp_memory *mem;
 	struct agp_bridge_data *bridge;
 };
 
+<<<<<<< HEAD
 static int ttm_agp_bind(struct ttm_tt *ttm, struct ttm_mem_reg *bo_mem)
 {
 	struct ttm_agp_backend *agp_be = container_of(ttm, struct ttm_agp_backend, ttm);
@@ -57,30 +67,69 @@ static int ttm_agp_bind(struct ttm_tt *ttm, struct ttm_mem_reg *bo_mem)
 	unsigned i;
 
 	mem = agp_allocate_memory(agp_be->bridge, ttm->num_pages, AGP_USER_MEMORY);
+=======
+static int ttm_agp_populate(struct ttm_backend *backend,
+			    unsigned long num_pages, struct page **pages,
+			    struct page *dummy_read_page,
+			    dma_addr_t *dma_addrs)
+{
+	struct ttm_agp_backend *agp_be =
+	    container_of(backend, struct ttm_agp_backend, backend);
+	struct page **cur_page, **last_page = pages + num_pages;
+	struct agp_memory *mem;
+
+	mem = agp_allocate_memory(agp_be->bridge, num_pages, AGP_USER_MEMORY);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (unlikely(mem == NULL))
 		return -ENOMEM;
 
 	mem->page_count = 0;
+<<<<<<< HEAD
 	for (i = 0; i < ttm->num_pages; i++) {
 		struct page *page = ttm->pages[i];
 
 		if (!page)
 			page = ttm->dummy_read_page;
+=======
+	for (cur_page = pages; cur_page < last_page; ++cur_page) {
+		struct page *page = *cur_page;
+		if (!page)
+			page = dummy_read_page;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		mem->pages[mem->page_count++] = page;
 	}
 	agp_be->mem = mem;
+<<<<<<< HEAD
+=======
+	return 0;
+}
+
+static int ttm_agp_bind(struct ttm_backend *backend, struct ttm_mem_reg *bo_mem)
+{
+	struct ttm_agp_backend *agp_be =
+	    container_of(backend, struct ttm_agp_backend, backend);
+	struct drm_mm_node *node = bo_mem->mm_node;
+	struct agp_memory *mem = agp_be->mem;
+	int cached = (bo_mem->placement & TTM_PL_FLAG_CACHED);
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mem->is_flushed = 1;
 	mem->type = (cached) ? AGP_USER_CACHED_MEMORY : AGP_USER_MEMORY;
 
 	ret = agp_bind_memory(mem, node->start);
 	if (ret)
+<<<<<<< HEAD
 		pr_err("AGP Bind memory failed\n");
+=======
+		printk(KERN_ERR TTM_PFX "AGP Bind memory failed.\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
 
+<<<<<<< HEAD
 static int ttm_agp_unbind(struct ttm_tt *ttm)
 {
 	struct ttm_agp_backend *agp_be = container_of(ttm, struct ttm_agp_backend, ttm);
@@ -101,19 +150,62 @@ static void ttm_agp_destroy(struct ttm_tt *ttm)
 	if (agp_be->mem)
 		ttm_agp_unbind(ttm);
 	ttm_tt_fini(ttm);
+=======
+static int ttm_agp_unbind(struct ttm_backend *backend)
+{
+	struct ttm_agp_backend *agp_be =
+	    container_of(backend, struct ttm_agp_backend, backend);
+
+	if (agp_be->mem->is_bound)
+		return agp_unbind_memory(agp_be->mem);
+	else
+		return 0;
+}
+
+static void ttm_agp_clear(struct ttm_backend *backend)
+{
+	struct ttm_agp_backend *agp_be =
+	    container_of(backend, struct ttm_agp_backend, backend);
+	struct agp_memory *mem = agp_be->mem;
+
+	if (mem) {
+		ttm_agp_unbind(backend);
+		agp_free_memory(mem);
+	}
+	agp_be->mem = NULL;
+}
+
+static void ttm_agp_destroy(struct ttm_backend *backend)
+{
+	struct ttm_agp_backend *agp_be =
+	    container_of(backend, struct ttm_agp_backend, backend);
+
+	if (agp_be->mem)
+		ttm_agp_clear(backend);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(agp_be);
 }
 
 static struct ttm_backend_func ttm_agp_func = {
+<<<<<<< HEAD
+=======
+	.populate = ttm_agp_populate,
+	.clear = ttm_agp_clear,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.bind = ttm_agp_bind,
 	.unbind = ttm_agp_unbind,
 	.destroy = ttm_agp_destroy,
 };
 
+<<<<<<< HEAD
 struct ttm_tt *ttm_agp_tt_create(struct ttm_bo_device *bdev,
 				 struct agp_bridge_data *bridge,
 				 unsigned long size, uint32_t page_flags,
 				 struct page *dummy_read_page)
+=======
+struct ttm_backend *ttm_agp_backend_init(struct ttm_bo_device *bdev,
+					 struct agp_bridge_data *bridge)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ttm_agp_backend *agp_be;
 
@@ -123,6 +215,7 @@ struct ttm_tt *ttm_agp_tt_create(struct ttm_bo_device *bdev,
 
 	agp_be->mem = NULL;
 	agp_be->bridge = bridge;
+<<<<<<< HEAD
 	agp_be->ttm.func = &ttm_agp_func;
 
 	if (ttm_tt_init(&agp_be->ttm, bdev, size, page_flags, dummy_read_page)) {
@@ -147,5 +240,12 @@ void ttm_agp_tt_unpopulate(struct ttm_tt *ttm)
 	ttm_pool_unpopulate(ttm);
 }
 EXPORT_SYMBOL(ttm_agp_tt_unpopulate);
+=======
+	agp_be->backend.func = &ttm_agp_func;
+	agp_be->backend.bdev = bdev;
+	return &agp_be->backend;
+}
+EXPORT_SYMBOL(ttm_agp_backend_init);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

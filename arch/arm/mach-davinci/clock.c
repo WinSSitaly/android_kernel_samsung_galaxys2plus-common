@@ -31,13 +31,28 @@ static LIST_HEAD(clocks);
 static DEFINE_MUTEX(clocks_mutex);
 static DEFINE_SPINLOCK(clockfw_lock);
 
+<<<<<<< HEAD
+=======
+static unsigned psc_domain(struct clk *clk)
+{
+	return (clk->flags & PSC_DSP)
+		? DAVINCI_GPSC_DSPDOMAIN
+		: DAVINCI_GPSC_ARMDOMAIN;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __clk_enable(struct clk *clk)
 {
 	if (clk->parent)
 		__clk_enable(clk->parent);
 	if (clk->usecount++ == 0 && (clk->flags & CLK_PSC))
+<<<<<<< HEAD
 		davinci_psc_config(clk->domain, clk->gpsc, clk->lpsc,
 				true, clk->flags);
+=======
+		davinci_psc_config(psc_domain(clk), clk->gpsc, clk->lpsc,
+				PSC_STATE_ENABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __clk_disable(struct clk *clk)
@@ -46,8 +61,14 @@ static void __clk_disable(struct clk *clk)
 		return;
 	if (--clk->usecount == 0 && !(clk->flags & CLK_PLL) &&
 	    (clk->flags & CLK_PSC))
+<<<<<<< HEAD
 		davinci_psc_config(clk->domain, clk->gpsc, clk->lpsc,
 				false, clk->flags);
+=======
+		davinci_psc_config(psc_domain(clk), clk->gpsc, clk->lpsc,
+				(clk->flags & PSC_SWRSTDISABLE) ?
+				PSC_STATE_SWRSTDISABLE : PSC_STATE_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (clk->parent)
 		__clk_disable(clk->parent);
 }
@@ -230,8 +251,14 @@ static int __init clk_disable_unused(void)
 
 		pr_debug("Clocks: disable unused %s\n", ck->name);
 
+<<<<<<< HEAD
 		davinci_psc_config(ck->domain, ck->gpsc, ck->lpsc,
 				false, ck->flags);
+=======
+		davinci_psc_config(psc_domain(ck), ck->gpsc, ck->lpsc,
+				(ck->flags & PSC_SWRSTDISABLE) ?
+				PSC_STATE_SWRSTDISABLE : PSC_STATE_DISABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	spin_unlock_irq(&clockfw_lock);
 
@@ -359,12 +386,15 @@ static unsigned long clk_leafclk_recalc(struct clk *clk)
 	return clk->parent->rate;
 }
 
+<<<<<<< HEAD
 int davinci_simple_set_rate(struct clk *clk, unsigned long rate)
 {
 	clk->rate = rate;
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static unsigned long clk_pllclk_recalc(struct clk *clk)
 {
 	u32 ctrl, mult = 1, prediv = 1, postdiv = 1;
@@ -503,6 +533,7 @@ int davinci_set_pllrate(struct pll_data *pll, unsigned int prediv,
 }
 EXPORT_SYMBOL(davinci_set_pllrate);
 
+<<<<<<< HEAD
 /**
  * davinci_set_refclk_rate() - Set the reference clock rate
  * @rate:	The new rate.
@@ -535,6 +566,8 @@ int davinci_set_refclk_rate(unsigned long rate)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init davinci_clk_init(struct clk_lookup *clocks)
   {
 	struct clk_lookup *c;

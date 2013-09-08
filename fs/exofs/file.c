@@ -42,6 +42,7 @@ static int exofs_release_file(struct inode *inode, struct file *filp)
  *   Note, in exofs all metadata is written as part of inode, regardless.
  *   The writeout is synchronous
  */
+<<<<<<< HEAD
 static int exofs_file_fsync(struct file *filp, loff_t start, loff_t end,
 			    int datasync)
 {
@@ -55,6 +56,13 @@ static int exofs_file_fsync(struct file *filp, loff_t start, loff_t end,
 	mutex_lock(&inode->i_mutex);
 	ret = sync_inode_metadata(filp->f_mapping->host, 1);
 	mutex_unlock(&inode->i_mutex);
+=======
+static int exofs_file_fsync(struct file *filp, int datasync)
+{
+	int ret;
+
+	ret = sync_inode_metadata(filp->f_mapping->host, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 

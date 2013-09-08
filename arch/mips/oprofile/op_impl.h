@@ -36,6 +36,9 @@ struct op_mips_model {
 	unsigned char num_counters;
 };
 
+<<<<<<< HEAD
 void op_mips_backtrace(struct pt_regs * const regs, unsigned int depth);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

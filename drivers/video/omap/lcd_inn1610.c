@@ -22,7 +22,11 @@
 #include <linux/module.h>
 #include <linux/platform_device.h>
 
+<<<<<<< HEAD
 #include <linux/gpio.h>
+=======
+#include <mach/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "omapfb.h"
 
 #define MODULE_NAME	"omapfb-lcd_h3"
@@ -32,18 +36,32 @@ static int innovator1610_panel_init(struct lcd_panel *panel,
 {
 	int r = 0;
 
+<<<<<<< HEAD
 	/* configure GPIO(14, 15) as outputs */
 	if (gpio_request_one(14, GPIOF_OUT_INIT_LOW, "lcd_en0")) {
+=======
+	if (gpio_request(14, "lcd_en0")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err(MODULE_NAME ": can't request GPIO 14\n");
 		r = -1;
 		goto exit;
 	}
+<<<<<<< HEAD
 	if (gpio_request_one(15, GPIOF_OUT_INIT_LOW, "lcd_en1")) {
+=======
+	if (gpio_request(15, "lcd_en1")) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err(MODULE_NAME ": can't request GPIO 15\n");
 		gpio_free(14);
 		r = -1;
 		goto exit;
 	}
+<<<<<<< HEAD
+=======
+	/* configure GPIO(14, 15) as outputs */
+	gpio_direction_output(14, 0);
+	gpio_direction_output(15, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 exit:
 	return r;
 }
@@ -120,7 +138,11 @@ static int innovator1610_panel_resume(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 static struct platform_driver innovator1610_panel_driver = {
+=======
+struct platform_driver innovator1610_panel_driver = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe		= innovator1610_panel_probe,
 	.remove		= innovator1610_panel_remove,
 	.suspend	= innovator1610_panel_suspend,
@@ -131,4 +153,20 @@ static struct platform_driver innovator1610_panel_driver = {
 	},
 };
 
+<<<<<<< HEAD
 module_platform_driver(innovator1610_panel_driver);
+=======
+static int __init innovator1610_panel_drv_init(void)
+{
+	return platform_driver_register(&innovator1610_panel_driver);
+}
+
+static void __exit innovator1610_panel_drv_cleanup(void)
+{
+	platform_driver_unregister(&innovator1610_panel_driver);
+}
+
+module_init(innovator1610_panel_drv_init);
+module_exit(innovator1610_panel_drv_cleanup);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

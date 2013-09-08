@@ -16,7 +16,10 @@
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/bitops.h>
 #include <linux/fb.h>
@@ -555,6 +558,7 @@ static void __init trizeps4_map_io(void)
 
 MACHINE_START(TRIZEPS4, "Keith und Koep Trizeps IV module")
 	/* MAINTAINER("Jürgen Schindele") */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_machine	= trizeps4_init,
 	.map_io		= trizeps4_map_io,
@@ -563,10 +567,18 @@ MACHINE_START(TRIZEPS4, "Keith und Koep Trizeps IV module")
 	.handle_irq	= pxa27x_handle_irq,
 	.timer		= &pxa_timer,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= TRIZEPS4_SDRAM_BASE + 0x100,
+	.init_machine	= trizeps4_init,
+	.map_io		= trizeps4_map_io,
+	.init_irq	= pxa27x_init_irq,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 
 MACHINE_START(TRIZEPS4WL, "Keith und Koep Trizeps IV-WL module")
 	/* MAINTAINER("Jürgen Schindele") */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.init_machine	= trizeps4_init,
 	.map_io		= trizeps4_map_io,
@@ -575,4 +587,11 @@ MACHINE_START(TRIZEPS4WL, "Keith und Koep Trizeps IV-WL module")
 	.handle_irq	= pxa27x_handle_irq,
 	.timer		= &pxa_timer,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= TRIZEPS4_SDRAM_BASE + 0x100,
+	.init_machine	= trizeps4_init,
+	.map_io		= trizeps4_map_io,
+	.init_irq	= pxa27x_init_irq,
+	.timer		= &pxa_timer,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

@@ -22,18 +22,29 @@
  * NTP timekeeping variables:
  */
 
+<<<<<<< HEAD
 DEFINE_SPINLOCK(ntp_lock);
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* USER_HZ period (usecs): */
 unsigned long			tick_usec = TICK_USEC;
 
 /* ACTHZ period (nsecs): */
 unsigned long			tick_nsec;
 
+<<<<<<< HEAD
 static u64			tick_length;
 static u64			tick_length_base;
 
+=======
+u64				tick_length;
+static u64			tick_length_base;
+
+static struct hrtimer		leap_timer;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MAX_TICKADJ		500LL		/* usecs */
 #define MAX_TICKADJ_SCALED \
 	(((MAX_TICKADJ * NSEC_PER_USEC) << NTP_SCALE_SHIFT) / NTP_INTERVAL_FREQ)
@@ -50,7 +61,11 @@ static u64			tick_length_base;
 static int			time_state = TIME_OK;
 
 /* clock status bits:							*/
+<<<<<<< HEAD
 static int			time_status = STA_UNSYNC;
+=======
+int				time_status = STA_UNSYNC;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* TAI offset (secs):							*/
 static long			time_tai;
@@ -134,7 +149,11 @@ static inline void pps_reset_freq_interval(void)
 /**
  * pps_clear - Clears the PPS state variables
  *
+<<<<<<< HEAD
  * Must be called while holding a write on the ntp_lock
+=======
+ * Must be called while holding a write on the xtime_lock
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static inline void pps_clear(void)
 {
@@ -150,7 +169,11 @@ static inline void pps_clear(void)
  * the last PPS signal. When it reaches 0, indicate that PPS signal is
  * missing.
  *
+<<<<<<< HEAD
  * Must be called while holding a write on the ntp_lock
+=======
+ * Must be called while holding a write on the xtime_lock
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static inline void pps_dec_valid(void)
 {
@@ -234,6 +257,7 @@ static inline void pps_fill_timex(struct timex *txc)
 
 #endif /* CONFIG_NTP_PPS */
 
+<<<<<<< HEAD
 
 /**
  * ntp_synced - Returns 1 if the NTP status is not UNSYNC
@@ -245,6 +269,8 @@ static inline int ntp_synced(void)
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * NTP methods:
  */
@@ -342,6 +368,7 @@ static void ntp_update_offset(long offset)
 
 /**
  * ntp_clear - Clears the NTP state variables
+<<<<<<< HEAD
  */
 void ntp_clear(void)
 {
@@ -349,6 +376,13 @@ void ntp_clear(void)
 
 	spin_lock_irqsave(&ntp_lock, flags);
 
+=======
+ *
+ * Must be called while holding a write on the xtime_lock
+ */
+void ntp_clear(void)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	time_adjust	= 0;		/* stop active adjtime() */
 	time_status	|= STA_UNSYNC;
 	time_maxerror	= NTP_PHASE_LIMIT;
@@ -361,6 +395,7 @@ void ntp_clear(void)
 
 	/* Clear PPS state variables */
 	pps_clear();
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&ntp_lock, flags);
 
 }
@@ -434,12 +469,68 @@ int second_overflow(unsigned long secs)
 		time_state = TIME_WAIT;
 		break;
 
+=======
+}
+
+/*
+ * Leap second processing. If in leap-insert state at the end of the
+ * day, the system clock is set back one second; if in leap-delete
+ * state, the system clock is set ahead one second.
+ */
+static enum hrtimer_restart ntp_leap_second(struct hrtimer *timer)
+{
+	enum hrtimer_restart res = HRTIMER_NORESTART;
+
+	write_seqlock(&xtime_lock);
+
+	switch (time_state) {
+	case TIME_OK:
+		break;
+	case TIME_INS:
+		timekeeping_leap_insert(-1);
+		time_state = TIME_OOP;
+		printk(KERN_NOTICE
+			"Clock: inserting leap second 23:59:60 UTC\n");
+		hrtimer_add_expires_ns(&leap_timer, NSEC_PER_SEC);
+		res = HRTIMER_RESTART;
+		break;
+	case TIME_DEL:
+		timekeeping_leap_insert(1);
+		time_tai--;
+		time_state = TIME_WAIT;
+		printk(KERN_NOTICE
+			"Clock: deleting leap second 23:59:59 UTC\n");
+		break;
+	case TIME_OOP:
+		time_tai++;
+		time_state = TIME_WAIT;
+		/* fall through */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case TIME_WAIT:
 		if (!(time_status & (STA_INS | STA_DEL)))
 			time_state = TIME_OK;
 		break;
 	}
 
+<<<<<<< HEAD
+=======
+	write_sequnlock(&xtime_lock);
+
+	return res;
+}
+
+/*
+ * this routine handles the overflow of the microsecond field
+ *
+ * The tricky bits of code to handle the accurate clock support
+ * were provided by Dave Mills (Mills@UDEL.EDU) of NTP fame.
+ * They were originally developed for SUN and DEC kernels.
+ * All the kudos should go to Dave for this stuff.
+ */
+void second_overflow(void)
+{
+	s64 delta;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Bump the maxerror field */
 	time_maxerror += MAXFREQ / NSEC_PER_USEC;
@@ -459,23 +550,36 @@ int second_overflow(unsigned long secs)
 	pps_dec_valid();
 
 	if (!time_adjust)
+<<<<<<< HEAD
 		goto out;
+=======
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (time_adjust > MAX_TICKADJ) {
 		time_adjust -= MAX_TICKADJ;
 		tick_length += MAX_TICKADJ_SCALED;
+<<<<<<< HEAD
 		goto out;
+=======
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (time_adjust < -MAX_TICKADJ) {
 		time_adjust += MAX_TICKADJ;
 		tick_length -= MAX_TICKADJ_SCALED;
+<<<<<<< HEAD
 		goto out;
+=======
+		return;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	tick_length += (s64)(time_adjust * NSEC_PER_USEC / NTP_INTERVAL_FREQ)
 							 << NTP_SCALE_SHIFT;
 	time_adjust = 0;
+<<<<<<< HEAD
 
 
 
@@ -483,10 +587,18 @@ out:
 	spin_unlock_irqrestore(&ntp_lock, flags);
 
 	return leap;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #ifdef CONFIG_GENERIC_CMOS_UPDATE
 
+<<<<<<< HEAD
+=======
+/* Disable the cmos update - used by virtualization and embedded */
+int no_sync_cmos_clock  __read_mostly;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void sync_cmos_clock(struct work_struct *work);
 
 static DECLARE_DELAYED_WORK(sync_cmos_work, sync_cmos_clock);
@@ -533,13 +645,42 @@ static void sync_cmos_clock(struct work_struct *work)
 
 static void notify_cmos_timer(void)
 {
+<<<<<<< HEAD
 	schedule_delayed_work(&sync_cmos_work, 0);
+=======
+	if (!no_sync_cmos_clock)
+		schedule_delayed_work(&sync_cmos_work, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #else
 static inline void notify_cmos_timer(void) { }
 #endif
 
+<<<<<<< HEAD
+=======
+/*
+ * Start the leap seconds timer:
+ */
+static inline void ntp_start_leap_timer(struct timespec *ts)
+{
+	long now = ts->tv_sec;
+
+	if (time_status & STA_INS) {
+		time_state = TIME_INS;
+		now += 86400 - now % 86400;
+		hrtimer_start(&leap_timer, ktime_set(now, 0), HRTIMER_MODE_ABS);
+
+		return;
+	}
+
+	if (time_status & STA_DEL) {
+		time_state = TIME_DEL;
+		now += 86400 - (now + 1) % 86400;
+		hrtimer_start(&leap_timer, ktime_set(now, 0), HRTIMER_MODE_ABS);
+	}
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Propagate a new txc->status value into the NTP state:
@@ -564,6 +705,25 @@ static inline void process_adj_status(struct timex *txc, struct timespec *ts)
 	time_status &= STA_RONLY;
 	time_status |= txc->status & ~STA_RONLY;
 
+<<<<<<< HEAD
+=======
+	switch (time_state) {
+	case TIME_OK:
+		ntp_start_leap_timer(ts);
+		break;
+	case TIME_INS:
+	case TIME_DEL:
+		time_state = TIME_OK;
+		ntp_start_leap_timer(ts);
+	case TIME_WAIT:
+		if (!(time_status & (STA_INS | STA_DEL)))
+			time_state = TIME_OK;
+		break;
+	case TIME_OOP:
+		hrtimer_restart(&leap_timer);
+		break;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 /*
  * Called with the xtime lock held, so we can access and modify
@@ -645,6 +805,12 @@ int do_adjtimex(struct timex *txc)
 		    (txc->tick <  900000/USER_HZ ||
 		     txc->tick > 1100000/USER_HZ))
 			return -EINVAL;
+<<<<<<< HEAD
+=======
+
+		if (txc->modes & ADJ_STATUS && time_state != TIME_OK)
+			hrtimer_cancel(&leap_timer);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (txc->modes & ADJ_SETOFFSET) {
@@ -662,7 +828,11 @@ int do_adjtimex(struct timex *txc)
 
 	getnstimeofday(&ts);
 
+<<<<<<< HEAD
 	spin_lock_irq(&ntp_lock);
+=======
+	write_seqlock_irq(&xtime_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (txc->modes & ADJ_ADJTIME) {
 		long save_adjust = time_adjust;
@@ -704,7 +874,11 @@ int do_adjtimex(struct timex *txc)
 	/* fill PPS status fields */
 	pps_fill_timex(txc);
 
+<<<<<<< HEAD
 	spin_unlock_irq(&ntp_lock);
+=======
+	write_sequnlock_irq(&xtime_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	txc->time.tv_sec = ts.tv_sec;
 	txc->time.tv_usec = ts.tv_nsec;
@@ -902,7 +1076,11 @@ void hardpps(const struct timespec *phase_ts, const struct timespec *raw_ts)
 
 	pts_norm = pps_normalize_ts(*phase_ts);
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&ntp_lock, flags);
+=======
+	write_seqlock_irqsave(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* clear the error bits, they will be set again if needed */
 	time_status &= ~(STA_PPSJITTER | STA_PPSWANDER | STA_PPSERROR);
@@ -915,7 +1093,11 @@ void hardpps(const struct timespec *phase_ts, const struct timespec *raw_ts)
 	 * just start the frequency interval */
 	if (unlikely(pps_fbase.tv_sec == 0)) {
 		pps_fbase = *raw_ts;
+<<<<<<< HEAD
 		spin_unlock_irqrestore(&ntp_lock, flags);
+=======
+		write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -930,7 +1112,11 @@ void hardpps(const struct timespec *phase_ts, const struct timespec *raw_ts)
 		time_status |= STA_PPSJITTER;
 		/* restart the frequency calibration interval */
 		pps_fbase = *raw_ts;
+<<<<<<< HEAD
 		spin_unlock_irqrestore(&ntp_lock, flags);
+=======
+		write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_err("hardpps: PPSJITTER: bad pulse\n");
 		return;
 	}
@@ -947,7 +1133,11 @@ void hardpps(const struct timespec *phase_ts, const struct timespec *raw_ts)
 
 	hardpps_update_phase(pts_norm.nsec);
 
+<<<<<<< HEAD
 	spin_unlock_irqrestore(&ntp_lock, flags);
+=======
+	write_sequnlock_irqrestore(&xtime_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL(hardpps);
 
@@ -966,4 +1156,9 @@ __setup("ntp_tick_adj=", ntp_tick_adj_setup);
 void __init ntp_init(void)
 {
 	ntp_clear();
+<<<<<<< HEAD
+=======
+	hrtimer_init(&leap_timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
+	leap_timer.function = ntp_leap_second;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

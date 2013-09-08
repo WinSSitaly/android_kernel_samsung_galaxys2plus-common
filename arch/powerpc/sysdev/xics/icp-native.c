@@ -17,7 +17,10 @@
 #include <linux/cpu.h>
 #include <linux/of.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/prom.h>
 #include <asm/io.h>
@@ -25,7 +28,10 @@
 #include <asm/irq.h>
 #include <asm/errno.h>
 #include <asm/xics.h>
+<<<<<<< HEAD
 #include <asm/kvm_ppc.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct icp_ipl {
 	union {
@@ -141,12 +147,15 @@ static void icp_native_cause_ipi(int cpu, unsigned long data)
 	icp_native_set_qirr(cpu, IPI_PRIORITY);
 }
 
+<<<<<<< HEAD
 void xics_wake_cpu(int cpu)
 {
 	icp_native_set_qirr(cpu, IPI_PRIORITY);
 }
 EXPORT_SYMBOL_GPL(xics_wake_cpu);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static irqreturn_t icp_native_ipi_action(int irq, void *dev_id)
 {
 	int cpu = smp_processor_id();
@@ -193,7 +202,10 @@ static int __init icp_native_map_one_cpu(int hw_id, unsigned long addr,
 	}
 
 	icp_native_regs[cpu] = ioremap(addr, size);
+<<<<<<< HEAD
 	kvmppc_set_xics_phys(cpu, addr);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!icp_native_regs[cpu]) {
 		pr_warning("icp_native: Failed ioremap for CPU %d, "
 			   "interrupt server #0x%x, addr %#lx\n",
@@ -256,7 +268,11 @@ static int __init icp_native_init_one_node(struct device_node *np,
 			return -1;
 		}
 
+<<<<<<< HEAD
 		if (icp_native_map_one_cpu(*indx, r.start, resource_size(&r)))
+=======
+		if (icp_native_map_one_cpu(*indx, r.start, r.end - r.start))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -1;
 
 		(*indx)++;
@@ -276,7 +292,11 @@ static const struct icp_ops icp_native_ops = {
 #endif
 };
 
+<<<<<<< HEAD
 int __init icp_native_init(void)
+=======
+int icp_native_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct device_node *np;
 	u32 indx = 0;

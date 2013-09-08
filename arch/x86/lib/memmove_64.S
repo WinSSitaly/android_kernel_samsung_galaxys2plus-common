@@ -9,7 +9,10 @@
 #include <linux/linkage.h>
 #include <asm/dwarf2.h>
 #include <asm/cpufeature.h>
+<<<<<<< HEAD
 #include <asm/alternative-asm.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #undef memmove
 
@@ -215,9 +218,18 @@ ENTRY(memmove)
 	.previous
 
 	.section .altinstructions,"a"
+<<<<<<< HEAD
 	altinstruction_entry .Lmemmove_begin_forward,		\
 		.Lmemmove_begin_forward_efs,X86_FEATURE_ERMS,	\
 		.Lmemmove_end_forward-.Lmemmove_begin_forward,	\
 		.Lmemmove_end_forward_efs-.Lmemmove_begin_forward_efs
+=======
+	.align 8
+	.quad .Lmemmove_begin_forward
+	.quad .Lmemmove_begin_forward_efs
+	.word X86_FEATURE_ERMS
+	.byte .Lmemmove_end_forward-.Lmemmove_begin_forward
+	.byte .Lmemmove_end_forward_efs-.Lmemmove_begin_forward_efs
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.previous
 ENDPROC(memmove)

@@ -11,7 +11,11 @@
 #ifndef _ASM_MICROBLAZE_MMU_CONTEXT_H
 #define _ASM_MICROBLAZE_MMU_CONTEXT_H
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/bitops.h>
 #include <asm/mmu.h>
 #include <asm-generic/mm_hooks.h>

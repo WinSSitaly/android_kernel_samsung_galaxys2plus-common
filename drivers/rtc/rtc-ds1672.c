@@ -11,7 +11,10 @@
 
 #include <linux/i2c.h>
 #include <linux/rtc.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define DRV_VERSION "0.4"
 
@@ -202,9 +205,27 @@ static struct i2c_driver ds1672_driver = {
 	.id_table = ds1672_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(ds1672_driver);
+=======
+static int __init ds1672_init(void)
+{
+	return i2c_add_driver(&ds1672_driver);
+}
+
+static void __exit ds1672_exit(void)
+{
+	i2c_del_driver(&ds1672_driver);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
 MODULE_DESCRIPTION("Dallas/Maxim DS1672 timekeeper driver");
 MODULE_LICENSE("GPL");
 MODULE_VERSION(DRV_VERSION);
+<<<<<<< HEAD
+=======
+
+module_init(ds1672_init);
+module_exit(ds1672_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

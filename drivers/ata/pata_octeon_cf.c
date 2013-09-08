@@ -405,7 +405,11 @@ static int octeon_cf_softreset16(struct ata_link *link, unsigned int *classes,
 
 	rc = ata_sff_wait_after_reset(link, 1, deadline);
 	if (rc) {
+<<<<<<< HEAD
 		ata_link_err(link, "SRST failed (errno=%d)\n", rc);
+=======
+		ata_link_printk(link, KERN_ERR, "SRST failed (errno=%d)\n", rc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return rc;
 	}
 
@@ -807,7 +811,10 @@ static int __devinit octeon_cf_probe(struct platform_device *pdev)
 	irq_handler_t irq_handler = NULL;
 	void __iomem *base;
 	struct octeon_cf_port *cf_port;
+<<<<<<< HEAD
 	char version[32];
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	res_cs0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 
@@ -906,11 +913,18 @@ static int __devinit octeon_cf_probe(struct platform_device *pdev)
 	ata_port_desc(ap, "cmd %p ctl %p", base, ap->ioaddr.ctl_addr);
 
 
+<<<<<<< HEAD
 	snprintf(version, sizeof(version), "%s %d bit%s",
 		 DRV_VERSION,
 		 (ocd->is16bit) ? 16 : 8,
 		 (cs1) ? ", True IDE" : "");
 	ata_print_version_once(&pdev->dev, version);
+=======
+	dev_info(&pdev->dev, "version " DRV_VERSION" %d bit%s.\n",
+		 (ocd->is16bit) ? 16 : 8,
+		 (cs1) ? ", True IDE" : "");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ata_host_activate(host, irq, irq_handler, 0, &octeon_cf_sht);
 

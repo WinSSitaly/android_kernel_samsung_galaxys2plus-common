@@ -181,7 +181,11 @@ EXPORT_SYMBOL_GPL(nf_ct_extend_register);
 void nf_ct_extend_unregister(struct nf_ct_ext_type *type)
 {
 	mutex_lock(&nf_ct_ext_type_mutex);
+<<<<<<< HEAD
 	RCU_INIT_POINTER(nf_ct_ext_types[type->id], NULL);
+=======
+	rcu_assign_pointer(nf_ct_ext_types[type->id], NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	update_alloc_size(type);
 	mutex_unlock(&nf_ct_ext_type_mutex);
 	rcu_barrier(); /* Wait for completion of call_rcu()'s */

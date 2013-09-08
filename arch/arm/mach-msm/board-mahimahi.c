@@ -53,8 +53,13 @@ static void __init mahimahi_init(void)
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 }
 
+<<<<<<< HEAD
 static void __init mahimahi_fixup(struct tag *tags, char **cmdline,
 				  struct meminfo *mi)
+=======
+static void __init mahimahi_fixup(struct machine_desc *desc, struct tag *tags,
+				 char **cmdline, struct meminfo *mi)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	mi->nr_banks = 2;
 	mi->bank[0].start = PHYS_OFFSET;
@@ -74,7 +79,11 @@ static void __init mahimahi_map_io(void)
 extern struct sys_timer msm_timer;
 
 MACHINE_START(MAHIMAHI, "mahimahi")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
+=======
+	.boot_params	= 0x20000100,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.fixup		= mahimahi_fixup,
 	.map_io		= mahimahi_map_io,
 	.init_irq	= msm_init_irq,

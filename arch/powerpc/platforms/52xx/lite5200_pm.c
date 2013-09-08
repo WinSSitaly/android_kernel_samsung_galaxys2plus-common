@@ -3,7 +3,10 @@
 #include <asm/io.h>
 #include <asm/time.h>
 #include <asm/mpc52xx.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* defined in lite5200_sleep.S and only used here */
 extern void lite5200_low_power(void __iomem *sram, void __iomem *mbar);

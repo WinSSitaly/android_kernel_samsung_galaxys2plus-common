@@ -82,10 +82,17 @@ int alloc_event_buffer(void)
 {
 	unsigned long flags;
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&oprofilefs_lock, flags);
 	buffer_size = oprofile_buffer_size;
 	buffer_watershed = oprofile_buffer_watershed;
 	raw_spin_unlock_irqrestore(&oprofilefs_lock, flags);
+=======
+	spin_lock_irqsave(&oprofilefs_lock, flags);
+	buffer_size = oprofile_buffer_size;
+	buffer_watershed = oprofile_buffer_watershed;
+	spin_unlock_irqrestore(&oprofilefs_lock, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (buffer_watershed >= buffer_size)
 		return -EINVAL;

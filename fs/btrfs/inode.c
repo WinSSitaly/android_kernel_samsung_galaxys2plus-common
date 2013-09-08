@@ -38,7 +38,10 @@
 #include <linux/falloc.h>
 #include <linux/slab.h>
 #include <linux/ratelimit.h>
+<<<<<<< HEAD
 #include <linux/mount.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "compat.h"
 #include "ctree.h"
 #include "disk-io.h"
@@ -46,10 +49,17 @@
 #include "btrfs_inode.h"
 #include "ioctl.h"
 #include "print-tree.h"
+<<<<<<< HEAD
 #include "ordered-data.h"
 #include "xattr.h"
 #include "tree-log.h"
 #include "volumes.h"
+=======
+#include "volumes.h"
+#include "ordered-data.h"
+#include "xattr.h"
+#include "tree-log.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "compression.h"
 #include "locking.h"
 #include "free-space-cache.h"
@@ -94,8 +104,11 @@ static noinline int cow_file_range(struct inode *inode,
 				   struct page *locked_page,
 				   u64 start, u64 end, int *page_started,
 				   unsigned long *nr_written, int unlock);
+<<<<<<< HEAD
 static noinline int btrfs_update_inode_fallback(struct btrfs_trans_handle *trans,
 				struct btrfs_root *root, struct inode *inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int btrfs_init_inode_security(struct btrfs_trans_handle *trans,
 				     struct inode *inode,  struct inode *dir,
@@ -150,6 +163,10 @@ static noinline int insert_inline_extent(struct btrfs_trans_handle *trans,
 	inode_add_bytes(inode, size);
 	ret = btrfs_insert_empty_item(trans, root, path, &key,
 				      datasize);
+<<<<<<< HEAD
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		err = ret;
 		goto fail;
@@ -172,9 +189,15 @@ static noinline int insert_inline_extent(struct btrfs_trans_handle *trans,
 			cur_size = min_t(unsigned long, compressed_size,
 				       PAGE_CACHE_SIZE);
 
+<<<<<<< HEAD
 			kaddr = kmap_atomic(cpage);
 			write_extent_buffer(leaf, kaddr, ptr, cur_size);
 			kunmap_atomic(kaddr);
+=======
+			kaddr = kmap_atomic(cpage, KM_USER0);
+			write_extent_buffer(leaf, kaddr, ptr, cur_size);
+			kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			i++;
 			ptr += cur_size;
@@ -186,10 +209,17 @@ static noinline int insert_inline_extent(struct btrfs_trans_handle *trans,
 		page = find_get_page(inode->i_mapping,
 				     start >> PAGE_CACHE_SHIFT);
 		btrfs_set_file_extent_compression(leaf, ei, 0);
+<<<<<<< HEAD
 		kaddr = kmap_atomic(page);
 		offset = start & (PAGE_CACHE_SIZE - 1);
 		write_extent_buffer(leaf, kaddr + offset, ptr, size);
 		kunmap_atomic(kaddr);
+=======
+		kaddr = kmap_atomic(page, KM_USER0);
+		offset = start & (PAGE_CACHE_SIZE - 1);
+		write_extent_buffer(leaf, kaddr + offset, ptr, size);
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		page_cache_release(page);
 	}
 	btrfs_mark_buffer_dirty(leaf);
@@ -205,9 +235,15 @@ static noinline int insert_inline_extent(struct btrfs_trans_handle *trans,
 	 * could end up racing with unlink.
 	 */
 	BTRFS_I(inode)->disk_i_size = inode->i_size;
+<<<<<<< HEAD
 	ret = btrfs_update_inode(trans, root, inode);
 
 	return ret;
+=======
+	btrfs_update_inode(trans, root, inode);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail:
 	btrfs_free_path(path);
 	return err;
@@ -249,14 +285,19 @@ static noinline int cow_file_range_inline(struct btrfs_trans_handle *trans,
 
 	ret = btrfs_drop_extents(trans, inode, start, aligned_end,
 				 &hint_byte, 1);
+<<<<<<< HEAD
 	if (ret)
 		return ret;
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (isize > actual_end)
 		inline_len = min_t(u64, isize, actual_end);
 	ret = insert_inline_extent(trans, root, inode, start,
 				   inline_len, compressed_size,
 				   compress_type, compressed_pages);
+<<<<<<< HEAD
 	if (ret && ret != -ENOSPC) {
 		btrfs_abort_transaction(trans, root, ret);
 		return ret;
@@ -264,6 +305,9 @@ static noinline int cow_file_range_inline(struct btrfs_trans_handle *trans,
 		return 1;
 	}
 
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_delalloc_release_metadata(inode, end + 1 - start);
 	btrfs_drop_extent_cache(inode, start, aligned_end - 1, 0);
 	return 0;
@@ -299,7 +343,11 @@ static noinline int add_async_extent(struct async_cow *cow,
 	struct async_extent *async_extent;
 
 	async_extent = kmalloc(sizeof(*async_extent), GFP_NOFS);
+<<<<<<< HEAD
 	BUG_ON(!async_extent); /* -ENOMEM */
+=======
+	BUG_ON(!async_extent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	async_extent->start = start;
 	async_extent->ram_size = ram_size;
 	async_extent->compressed_size = compressed_size;
@@ -349,11 +397,17 @@ static noinline int compress_file_range(struct inode *inode,
 	int i;
 	int will_compress;
 	int compress_type = root->fs_info->compress_type;
+<<<<<<< HEAD
 	int redirty = 0;
 
 	/* if this is a small write inside eof, kick off a defrag */
 	if ((end - start + 1) < 16 * 1024 &&
 	    (start > 0 || end + 1 < BTRFS_I(inode)->disk_i_size))
+=======
+
+	/* if this is a small write inside eof, kick off a defragbot */
+	if (end <= BTRFS_I(inode)->disk_i_size && (end - start + 1) < 16 * 1024)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_add_inode_defrag(NULL, inode);
 
 	actual_end = min_t(u64, isize, end + 1);
@@ -404,14 +458,19 @@ again:
 	     (BTRFS_I(inode)->flags & BTRFS_INODE_COMPRESS))) {
 		WARN_ON(pages);
 		pages = kzalloc(sizeof(struct page *) * nr_pages, GFP_NOFS);
+<<<<<<< HEAD
 		if (!pages) {
 			/* just bail out to the uncompressed code */
 			goto cont;
 		}
+=======
+		BUG_ON(!pages);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (BTRFS_I(inode)->force_compress)
 			compress_type = BTRFS_I(inode)->force_compress;
 
+<<<<<<< HEAD
 		/*
 		 * we need to call clear_page_dirty_for_io on each
 		 * page in the range.  Otherwise applications with the file
@@ -423,6 +482,8 @@ again:
 		 */
 		extent_range_clear_dirty_for_io(inode, start, end);
 		redirty = 1;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = btrfs_compress_pages(compress_type,
 					   inode->i_mapping, start,
 					   total_compressed, pages,
@@ -441,14 +502,22 @@ again:
 			 * sending it down to disk
 			 */
 			if (offset) {
+<<<<<<< HEAD
 				kaddr = kmap_atomic(page);
 				memset(kaddr + offset, 0,
 				       PAGE_CACHE_SIZE - offset);
 				kunmap_atomic(kaddr);
+=======
+				kaddr = kmap_atomic(page, KM_USER0);
+				memset(kaddr + offset, 0,
+				       PAGE_CACHE_SIZE - offset);
+				kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 			will_compress = 1;
 		}
 	}
+<<<<<<< HEAD
 cont:
 	if (start == 0) {
 		trans = btrfs_join_transaction(root);
@@ -457,6 +526,11 @@ cont:
 			trans = NULL;
 			goto cleanup_and_out;
 		}
+=======
+	if (start == 0) {
+		trans = btrfs_join_transaction(root);
+		BUG_ON(IS_ERR(trans));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		trans->block_rsv = &root->fs_info->delalloc_block_rsv;
 
 		/* lets try to make an inline extent */
@@ -473,11 +547,19 @@ cont:
 						    total_compressed,
 						    compress_type, pages);
 		}
+<<<<<<< HEAD
 		if (ret <= 0) {
 			/*
 			 * inline extent creation worked or returned error,
 			 * we don't need to create any more async work items.
 			 * Unlock and free up our temp pages.
+=======
+		if (ret == 0) {
+			/*
+			 * inline extent creation worked, we don't need
+			 * to create any more async work items.  Unlock
+			 * and free up our temp pages.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 */
 			extent_clear_unlock_delalloc(inode,
 			     &BTRFS_I(inode)->io_tree,
@@ -564,15 +646,22 @@ cleanup_and_bail_uncompressed:
 			__set_page_dirty_nobuffers(locked_page);
 			/* unlocked later on in the async handlers */
 		}
+<<<<<<< HEAD
 		if (redirty)
 			extent_range_redirty_for_io(inode, start, end);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		add_async_extent(async_cow, start, end - start + 1,
 				 0, NULL, 0, BTRFS_COMPRESS_NONE);
 		*num_added += 1;
 	}
 
 out:
+<<<<<<< HEAD
 	return ret;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 free_pages_out:
 	for (i = 0; i < nr_pages_ret; i++) {
@@ -582,6 +671,7 @@ free_pages_out:
 	kfree(pages);
 
 	goto out;
+<<<<<<< HEAD
 
 cleanup_and_out:
 	extent_clear_unlock_delalloc(inode, &BTRFS_I(inode)->io_tree,
@@ -596,6 +686,8 @@ cleanup_and_out:
 	else
 		btrfs_abort_transaction(trans, root, ret);
 	goto free_pages_out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -636,7 +728,11 @@ retry:
 
 			lock_extent(io_tree, async_extent->start,
 					 async_extent->start +
+<<<<<<< HEAD
 					 async_extent->ram_size - 1);
+=======
+					 async_extent->ram_size - 1, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			/* allocate blocks */
 			ret = cow_file_range(inode, async_cow->locked_page,
@@ -645,8 +741,11 @@ retry:
 					     async_extent->ram_size - 1,
 					     &page_started, &nr_written, 0);
 
+<<<<<<< HEAD
 			/* JDM XXX */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * if page_started, cow_file_range inserted an
 			 * inline extent and took care of all the unlocking
@@ -666,6 +765,7 @@ retry:
 		}
 
 		lock_extent(io_tree, async_extent->start,
+<<<<<<< HEAD
 			    async_extent->start + async_extent->ram_size - 1);
 
 		trans = btrfs_join_transaction(root);
@@ -681,6 +781,20 @@ retry:
 				btrfs_abort_transaction(trans, root, ret);
 			btrfs_end_transaction(trans, root);
 		}
+=======
+			    async_extent->start + async_extent->ram_size - 1,
+			    GFP_NOFS);
+
+		trans = btrfs_join_transaction(root);
+		BUG_ON(IS_ERR(trans));
+		trans->block_rsv = &root->fs_info->delalloc_block_rsv;
+		ret = btrfs_reserve_extent(trans, root,
+					   async_extent->compressed_size,
+					   async_extent->compressed_size,
+					   0, alloc_hint,
+					   (u64)-1, &ins, 1);
+		btrfs_end_transaction(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (ret) {
 			int i;
@@ -693,10 +807,15 @@ retry:
 			async_extent->pages = NULL;
 			unlock_extent(io_tree, async_extent->start,
 				      async_extent->start +
+<<<<<<< HEAD
 				      async_extent->ram_size - 1);
 			if (ret == -ENOSPC)
 				goto retry;
 			goto out_free; /* JDM: Requeue? */
+=======
+				      async_extent->ram_size - 1, GFP_NOFS);
+			goto retry;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		/*
@@ -708,7 +827,11 @@ retry:
 					async_extent->ram_size - 1, 0);
 
 		em = alloc_extent_map();
+<<<<<<< HEAD
 		BUG_ON(!em); /* -ENOMEM */
+=======
+		BUG_ON(!em);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		em->start = async_extent->start;
 		em->len = async_extent->ram_size;
 		em->orig_start = em->start;
@@ -740,7 +863,11 @@ retry:
 						ins.offset,
 						BTRFS_ORDERED_COMPRESSED,
 						async_extent->compress_type);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/*
 		 * clear dirty, set writeback and unlock the pages.
@@ -762,17 +889,26 @@ retry:
 				    ins.offset, async_extent->pages,
 				    async_extent->nr_pages);
 
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		alloc_hint = ins.objectid + ins.offset;
 		kfree(async_extent);
 		cond_resched();
 	}
+<<<<<<< HEAD
 	ret = 0;
 out:
 	return ret;
 out_free:
 	kfree(async_extent);
 	goto out;
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static u64 get_extent_allocation_hint(struct inode *inode, u64 start,
@@ -807,6 +943,18 @@ static u64 get_extent_allocation_hint(struct inode *inode, u64 start,
 	return alloc_hint;
 }
 
+<<<<<<< HEAD
+=======
+static inline bool is_free_space_inode(struct btrfs_root *root,
+				       struct inode *inode)
+{
+	if (root == root->fs_info->tree_root ||
+	    BTRFS_I(inode)->location.objectid == BTRFS_FREE_INO_OBJECTID)
+		return true;
+	return false;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * when extent_io.c finds a delayed allocation range in the file,
  * the call backs end up in this code.  The basic idea is to
@@ -839,6 +987,7 @@ static noinline int cow_file_range(struct inode *inode,
 	struct extent_map_tree *em_tree = &BTRFS_I(inode)->extent_tree;
 	int ret = 0;
 
+<<<<<<< HEAD
 	BUG_ON(btrfs_is_free_space_inode(root, inode));
 	trans = btrfs_join_transaction(root);
 	if (IS_ERR(trans)) {
@@ -853,6 +1002,11 @@ static noinline int cow_file_range(struct inode *inode,
 			     EXTENT_END_WRITEBACK);
 		return PTR_ERR(trans);
 	}
+=======
+	BUG_ON(is_free_space_inode(root, inode));
+	trans = btrfs_join_transaction(root);
+	BUG_ON(IS_ERR(trans));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trans->block_rsv = &root->fs_info->delalloc_block_rsv;
 
 	num_bytes = (end - start + blocksize) & ~(blocksize - 1);
@@ -861,8 +1015,12 @@ static noinline int cow_file_range(struct inode *inode,
 	ret = 0;
 
 	/* if this is a small write inside eof, kick off defrag */
+<<<<<<< HEAD
 	if (num_bytes < 64 * 1024 &&
 	    (start > 0 || end + 1 < BTRFS_I(inode)->disk_i_size))
+=======
+	if (end <= BTRFS_I(inode)->disk_i_size && num_bytes < 64 * 1024)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_add_inode_defrag(trans, inode);
 
 	if (start == 0) {
@@ -883,15 +1041,24 @@ static noinline int cow_file_range(struct inode *inode,
 			*nr_written = *nr_written +
 			     (end - start + PAGE_CACHE_SIZE) / PAGE_CACHE_SIZE;
 			*page_started = 1;
+<<<<<<< HEAD
 			goto out;
 		} else if (ret < 0) {
 			btrfs_abort_transaction(trans, root, ret);
 			goto out_unlock;
+=======
+			ret = 0;
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	BUG_ON(disk_num_bytes >
+<<<<<<< HEAD
 	       btrfs_super_total_bytes(root->fs_info->super_copy));
+=======
+	       btrfs_super_total_bytes(&root->fs_info->super_copy));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	alloc_hint = get_extent_allocation_hint(inode, start, num_bytes);
 	btrfs_drop_extent_cache(inode, start, start + num_bytes - 1, 0);
@@ -902,6 +1069,7 @@ static noinline int cow_file_range(struct inode *inode,
 		cur_alloc_size = disk_num_bytes;
 		ret = btrfs_reserve_extent(trans, root, cur_alloc_size,
 					   root->sectorsize, 0, alloc_hint,
+<<<<<<< HEAD
 					   &ins, 1);
 		if (ret < 0) {
 			btrfs_abort_transaction(trans, root, ret);
@@ -910,6 +1078,13 @@ static noinline int cow_file_range(struct inode *inode,
 
 		em = alloc_extent_map();
 		BUG_ON(!em); /* -ENOMEM */
+=======
+					   (u64)-1, &ins, 1);
+		BUG_ON(ret);
+
+		em = alloc_extent_map();
+		BUG_ON(!em);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		em->start = start;
 		em->orig_start = em->start;
 		ram_size = ins.offset;
@@ -935,16 +1110,24 @@ static noinline int cow_file_range(struct inode *inode,
 		cur_alloc_size = ins.offset;
 		ret = btrfs_add_ordered_extent(inode, start, ins.objectid,
 					       ram_size, cur_alloc_size, 0);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (root->root_key.objectid ==
 		    BTRFS_DATA_RELOC_TREE_OBJECTID) {
 			ret = btrfs_reloc_clone_csums(inode, start,
 						      cur_alloc_size);
+<<<<<<< HEAD
 			if (ret) {
 				btrfs_abort_transaction(trans, root, ret);
 				goto out_unlock;
 			}
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		if (disk_num_bytes < cur_alloc_size)
@@ -969,6 +1152,7 @@ static noinline int cow_file_range(struct inode *inode,
 		alloc_hint = ins.objectid + ins.offset;
 		start += cur_alloc_size;
 	}
+<<<<<<< HEAD
 	ret = 0;
 out:
 	btrfs_end_transaction(trans, root);
@@ -986,6 +1170,13 @@ out_unlock:
 		     EXTENT_END_WRITEBACK);
 
 	goto out;
+=======
+out:
+	ret = 0;
+	btrfs_end_transaction(trans, root);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1051,7 +1242,11 @@ static int cow_file_range_async(struct inode *inode, struct page *locked_page,
 			 1, 0, NULL, GFP_NOFS);
 	while (start < end) {
 		async_cow = kmalloc(sizeof(*async_cow), GFP_NOFS);
+<<<<<<< HEAD
 		BUG_ON(!async_cow); /* -ENOMEM */
+=======
+		BUG_ON(!async_cow);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		async_cow->inode = inode;
 		async_cow->root = root;
 		async_cow->locked_page = locked_page;
@@ -1142,7 +1337,11 @@ static noinline int run_delalloc_nocow(struct inode *inode,
 	u64 disk_bytenr;
 	u64 num_bytes;
 	int extent_type;
+<<<<<<< HEAD
 	int ret, err;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int type;
 	int nocow;
 	int check_prev = 1;
@@ -1150,21 +1349,31 @@ static noinline int run_delalloc_nocow(struct inode *inode,
 	u64 ino = btrfs_ino(inode);
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path)
 		return -ENOMEM;
 
 	nolock = btrfs_is_free_space_inode(root, inode);
+=======
+	BUG_ON(!path);
+
+	nolock = is_free_space_inode(root, inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (nolock)
 		trans = btrfs_join_transaction_nolock(root);
 	else
 		trans = btrfs_join_transaction(root);
 
+<<<<<<< HEAD
 	if (IS_ERR(trans)) {
 		btrfs_free_path(path);
 		return PTR_ERR(trans);
 	}
 
+=======
+	BUG_ON(IS_ERR(trans));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trans->block_rsv = &root->fs_info->delalloc_block_rsv;
 
 	cow_start = (u64)-1;
@@ -1172,10 +1381,14 @@ static noinline int run_delalloc_nocow(struct inode *inode,
 	while (1) {
 		ret = btrfs_lookup_file_extent(trans, root, path, ino,
 					       cur_offset, 0);
+<<<<<<< HEAD
 		if (ret < 0) {
 			btrfs_abort_transaction(trans, root, ret);
 			goto error;
 		}
+=======
+		BUG_ON(ret < 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret > 0 && path->slots[0] > 0 && check_prev) {
 			leaf = path->nodes[0];
 			btrfs_item_key_to_cpu(leaf, &found_key,
@@ -1189,10 +1402,15 @@ next_slot:
 		leaf = path->nodes[0];
 		if (path->slots[0] >= btrfs_header_nritems(leaf)) {
 			ret = btrfs_next_leaf(root, path);
+<<<<<<< HEAD
 			if (ret < 0) {
 				btrfs_abort_transaction(trans, root, ret);
 				goto error;
 			}
+=======
+			if (ret < 0)
+				BUG_ON(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (ret > 0)
 				break;
 			leaf = path->nodes[0];
@@ -1280,10 +1498,14 @@ out_check:
 			ret = cow_file_range(inode, locked_page, cow_start,
 					found_key.offset - 1, page_started,
 					nr_written, 1);
+<<<<<<< HEAD
 			if (ret) {
 				btrfs_abort_transaction(trans, root, ret);
 				goto error;
 			}
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cow_start = (u64)-1;
 		}
 
@@ -1292,7 +1514,11 @@ out_check:
 			struct extent_map_tree *em_tree;
 			em_tree = &BTRFS_I(inode)->extent_tree;
 			em = alloc_extent_map();
+<<<<<<< HEAD
 			BUG_ON(!em); /* -ENOMEM */
+=======
+			BUG_ON(!em);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			em->start = cur_offset;
 			em->orig_start = em->start;
 			em->len = num_bytes;
@@ -1318,16 +1544,24 @@ out_check:
 
 		ret = btrfs_add_ordered_extent(inode, cur_offset, disk_bytenr,
 					       num_bytes, num_bytes, type);
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (root->root_key.objectid ==
 		    BTRFS_DATA_RELOC_TREE_OBJECTID) {
 			ret = btrfs_reloc_clone_csums(inode, cur_offset,
 						      num_bytes);
+<<<<<<< HEAD
 			if (ret) {
 				btrfs_abort_transaction(trans, root, ret);
 				goto error;
 			}
+=======
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 
 		extent_clear_unlock_delalloc(inode, &BTRFS_I(inode)->io_tree,
@@ -1346,6 +1580,7 @@ out_check:
 	if (cow_start != (u64)-1) {
 		ret = cow_file_range(inode, locked_page, cow_start, end,
 				     page_started, nr_written, 1);
+<<<<<<< HEAD
 		if (ret) {
 			btrfs_abort_transaction(trans, root, ret);
 			goto error;
@@ -1363,6 +1598,20 @@ error:
 
 	btrfs_free_path(path);
 	return ret;
+=======
+		BUG_ON(ret);
+	}
+
+	if (nolock) {
+		ret = btrfs_end_transaction_nolock(trans, root);
+		BUG_ON(ret);
+	} else {
+		ret = btrfs_end_transaction(trans, root);
+		BUG_ON(ret);
+	}
+	btrfs_free_path(path);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1392,6 +1641,7 @@ static int run_delalloc_range(struct inode *inode, struct page *locked_page,
 	return ret;
 }
 
+<<<<<<< HEAD
 static void btrfs_split_extent_hook(struct inode *inode,
 				    struct extent_state *orig, u64 split)
 {
@@ -1402,6 +1652,17 @@ static void btrfs_split_extent_hook(struct inode *inode,
 	spin_lock(&BTRFS_I(inode)->lock);
 	BTRFS_I(inode)->outstanding_extents++;
 	spin_unlock(&BTRFS_I(inode)->lock);
+=======
+static int btrfs_split_extent_hook(struct inode *inode,
+				   struct extent_state *orig, u64 split)
+{
+	/* not delalloc, ignore it */
+	if (!(orig->state & EXTENT_DELALLOC))
+		return 0;
+
+	atomic_inc(&BTRFS_I(inode)->outstanding_extents);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1410,6 +1671,7 @@ static void btrfs_split_extent_hook(struct inode *inode,
  * extents, such as when we are doing sequential writes, so we can properly
  * account for the metadata space we'll need.
  */
+<<<<<<< HEAD
 static void btrfs_merge_extent_hook(struct inode *inode,
 				    struct extent_state *new,
 				    struct extent_state *other)
@@ -1421,6 +1683,18 @@ static void btrfs_merge_extent_hook(struct inode *inode,
 	spin_lock(&BTRFS_I(inode)->lock);
 	BTRFS_I(inode)->outstanding_extents--;
 	spin_unlock(&BTRFS_I(inode)->lock);
+=======
+static int btrfs_merge_extent_hook(struct inode *inode,
+				   struct extent_state *new,
+				   struct extent_state *other)
+{
+	/* not delalloc, ignore it */
+	if (!(other->state & EXTENT_DELALLOC))
+		return 0;
+
+	atomic_dec(&BTRFS_I(inode)->outstanding_extents);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1428,8 +1702,13 @@ static void btrfs_merge_extent_hook(struct inode *inode,
  * bytes in this file, and to maintain the list of inodes that
  * have pending delalloc work to be done.
  */
+<<<<<<< HEAD
 static void btrfs_set_bit_hook(struct inode *inode,
 			       struct extent_state *state, int *bits)
+=======
+static int btrfs_set_bit_hook(struct inode *inode,
+			      struct extent_state *state, int *bits)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 
 	/*
@@ -1440,6 +1719,7 @@ static void btrfs_set_bit_hook(struct inode *inode,
 	if (!(state->state & EXTENT_DELALLOC) && (*bits & EXTENT_DELALLOC)) {
 		struct btrfs_root *root = BTRFS_I(inode)->root;
 		u64 len = state->end + 1 - state->start;
+<<<<<<< HEAD
 		bool do_list = !btrfs_is_free_space_inode(root, inode);
 
 		if (*bits & EXTENT_FIRST_DELALLOC) {
@@ -1449,6 +1729,14 @@ static void btrfs_set_bit_hook(struct inode *inode,
 			BTRFS_I(inode)->outstanding_extents++;
 			spin_unlock(&BTRFS_I(inode)->lock);
 		}
+=======
+		bool do_list = !is_free_space_inode(root, inode);
+
+		if (*bits & EXTENT_FIRST_DELALLOC)
+			*bits &= ~EXTENT_FIRST_DELALLOC;
+		else
+			atomic_inc(&BTRFS_I(inode)->outstanding_extents);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		spin_lock(&root->fs_info->delalloc_lock);
 		BTRFS_I(inode)->delalloc_bytes += len;
@@ -1459,13 +1747,22 @@ static void btrfs_set_bit_hook(struct inode *inode,
 		}
 		spin_unlock(&root->fs_info->delalloc_lock);
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * extent_io.c clear_bit_hook, see set_bit_hook for why
  */
+<<<<<<< HEAD
 static void btrfs_clear_bit_hook(struct inode *inode,
 				 struct extent_state *state, int *bits)
+=======
+static int btrfs_clear_bit_hook(struct inode *inode,
+				struct extent_state *state, int *bits)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/*
 	 * set_bit and clear bit hooks normally require _irqsave/restore
@@ -1475,6 +1772,7 @@ static void btrfs_clear_bit_hook(struct inode *inode,
 	if ((state->state & EXTENT_DELALLOC) && (*bits & EXTENT_DELALLOC)) {
 		struct btrfs_root *root = BTRFS_I(inode)->root;
 		u64 len = state->end + 1 - state->start;
+<<<<<<< HEAD
 		bool do_list = !btrfs_is_free_space_inode(root, inode);
 
 		if (*bits & EXTENT_FIRST_DELALLOC) {
@@ -1484,6 +1782,14 @@ static void btrfs_clear_bit_hook(struct inode *inode,
 			BTRFS_I(inode)->outstanding_extents--;
 			spin_unlock(&BTRFS_I(inode)->lock);
 		}
+=======
+		bool do_list = !is_free_space_inode(root, inode);
+
+		if (*bits & EXTENT_FIRST_DELALLOC)
+			*bits &= ~EXTENT_FIRST_DELALLOC;
+		else if (!(*bits & EXTENT_DO_ACCOUNTING))
+			atomic_dec(&BTRFS_I(inode)->outstanding_extents);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (*bits & EXTENT_DO_ACCOUNTING)
 			btrfs_delalloc_release_metadata(inode, len);
@@ -1502,6 +1808,10 @@ static void btrfs_clear_bit_hook(struct inode *inode,
 		}
 		spin_unlock(&root->fs_info->delalloc_lock);
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1527,11 +1837,18 @@ int btrfs_merge_bio_hook(struct page *page, unsigned long offset,
 	map_length = length;
 	ret = btrfs_map_block(map_tree, READ, logical,
 			      &map_length, NULL, 0);
+<<<<<<< HEAD
 	/* Will always return 0 or 1 with map_multi == NULL */
 	BUG_ON(ret < 0);
 	if (map_length < length + size)
 		return 1;
 	return 0;
+=======
+
+	if (map_length < length + size)
+		return 1;
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1551,7 +1868,11 @@ static int __btrfs_submit_bio_start(struct inode *inode, int rw,
 	int ret = 0;
 
 	ret = btrfs_csum_one_bio(root, inode, bio, 0, 0);
+<<<<<<< HEAD
 	BUG_ON(ret); /* -ENOMEM */
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -1582,6 +1903,7 @@ static int btrfs_submit_bio_hook(struct inode *inode, int rw, struct bio *bio,
 	struct btrfs_root *root = BTRFS_I(inode)->root;
 	int ret = 0;
 	int skip_sum;
+<<<<<<< HEAD
 	int metadata = 0;
 
 	skip_sum = BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM;
@@ -1592,6 +1914,16 @@ static int btrfs_submit_bio_hook(struct inode *inode, int rw, struct bio *bio,
 	ret = btrfs_bio_wq_end_io(root->fs_info, bio, metadata);
 	if (ret)
 		return ret;
+=======
+
+	skip_sum = BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM;
+
+	if (is_free_space_inode(root, inode))
+		ret = btrfs_bio_wq_end_io(root->fs_info, bio, 2);
+	else
+		ret = btrfs_bio_wq_end_io(root->fs_info, bio, 0);
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!(rw & REQ_WRITE)) {
 		if (bio_flags & EXTENT_BIO_COMPRESSED) {
@@ -1660,7 +1992,10 @@ static void btrfs_writepage_fixup_worker(struct btrfs_work *work)
 	struct inode *inode;
 	u64 page_start;
 	u64 page_end;
+<<<<<<< HEAD
 	int ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fixup = container_of(work, struct btrfs_writepage_fixup, work);
 	page = fixup->page;
@@ -1676,7 +2011,11 @@ again:
 	page_end = page_offset(page) + PAGE_CACHE_SIZE - 1;
 
 	lock_extent_bits(&BTRFS_I(inode)->io_tree, page_start, page_end, 0,
+<<<<<<< HEAD
 			 &cached_state);
+=======
+			 &cached_state, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* already ordered? We're done */
 	if (PagePrivate2(page))
@@ -1688,6 +2027,7 @@ again:
 				     page_end, &cached_state, GFP_NOFS);
 		unlock_page(page);
 		btrfs_start_ordered_extent(inode, ordered, 1);
+<<<<<<< HEAD
 		btrfs_put_ordered_extent(ordered);
 		goto again;
 	}
@@ -1703,6 +2043,14 @@ again:
 	btrfs_set_extent_delalloc(inode, page_start, page_end, &cached_state);
 	ClearPageChecked(page);
 	set_page_dirty(page);
+=======
+		goto again;
+	}
+
+	BUG();
+	btrfs_set_extent_delalloc(inode, page_start, page_end, &cached_state);
+	ClearPageChecked(page);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	unlock_extent_cached(&BTRFS_I(inode)->io_tree, page_start, page_end,
 			     &cached_state, GFP_NOFS);
@@ -1745,7 +2093,11 @@ static int btrfs_writepage_start_hook(struct page *page, u64 start, u64 end)
 	fixup->work.func = btrfs_writepage_fixup_worker;
 	fixup->page = page;
 	btrfs_queue_worker(&root->fs_info->fixup_workers, &fixup->work);
+<<<<<<< HEAD
 	return -EBUSY;
+=======
+	return -EAGAIN;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
@@ -1764,8 +2116,12 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
 	int ret;
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path)
 		return -ENOMEM;
+=======
+	BUG_ON(!path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	path->leave_spinning = 1;
 
@@ -1780,15 +2136,23 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
 	 */
 	ret = btrfs_drop_extents(trans, inode, file_pos, file_pos + num_bytes,
 				 &hint, 0);
+<<<<<<< HEAD
 	if (ret)
 		goto out;
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ins.objectid = btrfs_ino(inode);
 	ins.offset = file_pos;
 	ins.type = BTRFS_EXTENT_DATA_KEY;
 	ret = btrfs_insert_empty_item(trans, root, path, &ins, sizeof(*fi));
+<<<<<<< HEAD
 	if (ret)
 		goto out;
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	leaf = path->nodes[0];
 	fi = btrfs_item_ptr(leaf, path->slots[0],
 			    struct btrfs_file_extent_item);
@@ -1816,10 +2180,17 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
 	ret = btrfs_alloc_reserved_file_extent(trans, root,
 					root->root_key.objectid,
 					btrfs_ino(inode), file_pos, &ins);
+<<<<<<< HEAD
 out:
 	btrfs_free_path(path);
 
 	return ret;
+=======
+	BUG_ON(ret);
+	btrfs_free_path(path);
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1847,41 +2218,65 @@ static int btrfs_finish_ordered_io(struct inode *inode, u64 start, u64 end)
 					     end - start + 1);
 	if (!ret)
 		return 0;
+<<<<<<< HEAD
 	BUG_ON(!ordered_extent); /* Logic error */
 
 	nolock = btrfs_is_free_space_inode(root, inode);
 
 	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
 		BUG_ON(!list_empty(&ordered_extent->list)); /* Logic error */
+=======
+	BUG_ON(!ordered_extent);
+
+	nolock = is_free_space_inode(root, inode);
+
+	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags)) {
+		BUG_ON(!list_empty(&ordered_extent->list));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = btrfs_ordered_update_i_size(inode, 0, ordered_extent);
 		if (!ret) {
 			if (nolock)
 				trans = btrfs_join_transaction_nolock(root);
 			else
 				trans = btrfs_join_transaction(root);
+<<<<<<< HEAD
 			if (IS_ERR(trans))
 				return PTR_ERR(trans);
 			trans->block_rsv = &root->fs_info->delalloc_block_rsv;
 			ret = btrfs_update_inode_fallback(trans, root, inode);
 			if (ret) /* -ENOMEM or corruption */
 				btrfs_abort_transaction(trans, root, ret);
+=======
+			BUG_ON(IS_ERR(trans));
+			trans->block_rsv = &root->fs_info->delalloc_block_rsv;
+			ret = btrfs_update_inode(trans, root, inode);
+			BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 		goto out;
 	}
 
 	lock_extent_bits(io_tree, ordered_extent->file_offset,
 			 ordered_extent->file_offset + ordered_extent->len - 1,
+<<<<<<< HEAD
 			 0, &cached_state);
+=======
+			 0, &cached_state, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (nolock)
 		trans = btrfs_join_transaction_nolock(root);
 	else
 		trans = btrfs_join_transaction(root);
+<<<<<<< HEAD
 	if (IS_ERR(trans)) {
 		ret = PTR_ERR(trans);
 		trans = NULL;
 		goto out_unlock;
 	}
+=======
+	BUG_ON(IS_ERR(trans));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trans->block_rsv = &root->fs_info->delalloc_block_rsv;
 
 	if (test_bit(BTRFS_ORDERED_COMPRESSED, &ordered_extent->flags))
@@ -1892,6 +2287,10 @@ static int btrfs_finish_ordered_io(struct inode *inode, u64 start, u64 end)
 						ordered_extent->file_offset,
 						ordered_extent->file_offset +
 						ordered_extent->len);
+<<<<<<< HEAD
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		BUG_ON(root == root->fs_info->tree_root);
 		ret = insert_reserved_file_extent(trans, inode,
@@ -1905,19 +2304,27 @@ static int btrfs_finish_ordered_io(struct inode *inode, u64 start, u64 end)
 		unpin_extent_cache(&BTRFS_I(inode)->extent_tree,
 				   ordered_extent->file_offset,
 				   ordered_extent->len);
+<<<<<<< HEAD
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	unlock_extent_cached(io_tree, ordered_extent->file_offset,
 			     ordered_extent->file_offset +
 			     ordered_extent->len - 1, &cached_state, GFP_NOFS);
+<<<<<<< HEAD
 	if (ret < 0) {
 		btrfs_abort_transaction(trans, root, ret);
 		goto out;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	add_pending_csums(trans, inode, ordered_extent->file_offset,
 			  &ordered_extent->list);
 
 	ret = btrfs_ordered_update_i_size(inode, 0, ordered_extent);
+<<<<<<< HEAD
 	if (!ret || !test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags)) {
 		ret = btrfs_update_inode_fallback(trans, root, inode);
 		if (ret) { /* -ENOMEM or corruption */
@@ -1933,6 +2340,20 @@ out:
 		if (nolock)
 			btrfs_end_transaction_nolock(trans, root);
 		else
+=======
+	if (!ret) {
+		ret = btrfs_update_inode(trans, root, inode);
+		BUG_ON(ret);
+	}
+	ret = 0;
+out:
+	if (nolock) {
+		if (trans)
+			btrfs_end_transaction_nolock(trans, root);
+	} else {
+		btrfs_delalloc_release_metadata(inode, ordered_extent->len);
+		if (trans)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			btrfs_end_transaction(trans, root);
 	}
 
@@ -1942,11 +2363,14 @@ out:
 	btrfs_put_ordered_extent(ordered_extent);
 
 	return 0;
+<<<<<<< HEAD
 out_unlock:
 	unlock_extent_cached(io_tree, ordered_extent->file_offset,
 			     ordered_extent->file_offset +
 			     ordered_extent->len - 1, &cached_state, GFP_NOFS);
 	goto out;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int btrfs_writepage_end_io_hook(struct page *page, u64 start, u64 end,
@@ -1959,12 +2383,165 @@ static int btrfs_writepage_end_io_hook(struct page *page, u64 start, u64 end,
 }
 
 /*
+<<<<<<< HEAD
  * when reads are done, we need to check csums to verify the data is correct
  * if there's a match, we allow the bio to finish.  If not, the code in
  * extent_io.c will try to find good copies for us.
  */
 static int btrfs_readpage_end_io_hook(struct page *page, u64 start, u64 end,
 			       struct extent_state *state, int mirror)
+=======
+ * When IO fails, either with EIO or csum verification fails, we
+ * try other mirrors that might have a good copy of the data.  This
+ * io_failure_record is used to record state as we go through all the
+ * mirrors.  If another mirror has good data, the page is set up to date
+ * and things continue.  If a good mirror can't be found, the original
+ * bio end_io callback is called to indicate things have failed.
+ */
+struct io_failure_record {
+	struct page *page;
+	u64 start;
+	u64 len;
+	u64 logical;
+	unsigned long bio_flags;
+	int last_mirror;
+};
+
+static int btrfs_io_failed_hook(struct bio *failed_bio,
+			 struct page *page, u64 start, u64 end,
+			 struct extent_state *state)
+{
+	struct io_failure_record *failrec = NULL;
+	u64 private;
+	struct extent_map *em;
+	struct inode *inode = page->mapping->host;
+	struct extent_io_tree *failure_tree = &BTRFS_I(inode)->io_failure_tree;
+	struct extent_map_tree *em_tree = &BTRFS_I(inode)->extent_tree;
+	struct bio *bio;
+	int num_copies;
+	int ret;
+	int rw;
+	u64 logical;
+
+	ret = get_state_private(failure_tree, start, &private);
+	if (ret) {
+		failrec = kmalloc(sizeof(*failrec), GFP_NOFS);
+		if (!failrec)
+			return -ENOMEM;
+		failrec->start = start;
+		failrec->len = end - start + 1;
+		failrec->last_mirror = 0;
+		failrec->bio_flags = 0;
+
+		read_lock(&em_tree->lock);
+		em = lookup_extent_mapping(em_tree, start, failrec->len);
+		if (em->start > start || em->start + em->len < start) {
+			free_extent_map(em);
+			em = NULL;
+		}
+		read_unlock(&em_tree->lock);
+
+		if (IS_ERR_OR_NULL(em)) {
+			kfree(failrec);
+			return -EIO;
+		}
+		logical = start - em->start;
+		logical = em->block_start + logical;
+		if (test_bit(EXTENT_FLAG_COMPRESSED, &em->flags)) {
+			logical = em->block_start;
+			failrec->bio_flags = EXTENT_BIO_COMPRESSED;
+			extent_set_compress_type(&failrec->bio_flags,
+						 em->compress_type);
+		}
+		failrec->logical = logical;
+		free_extent_map(em);
+		set_extent_bits(failure_tree, start, end, EXTENT_LOCKED |
+				EXTENT_DIRTY, GFP_NOFS);
+		set_state_private(failure_tree, start,
+				 (u64)(unsigned long)failrec);
+	} else {
+		failrec = (struct io_failure_record *)(unsigned long)private;
+	}
+	num_copies = btrfs_num_copies(
+			      &BTRFS_I(inode)->root->fs_info->mapping_tree,
+			      failrec->logical, failrec->len);
+	failrec->last_mirror++;
+	if (!state) {
+		spin_lock(&BTRFS_I(inode)->io_tree.lock);
+		state = find_first_extent_bit_state(&BTRFS_I(inode)->io_tree,
+						    failrec->start,
+						    EXTENT_LOCKED);
+		if (state && state->start != failrec->start)
+			state = NULL;
+		spin_unlock(&BTRFS_I(inode)->io_tree.lock);
+	}
+	if (!state || failrec->last_mirror > num_copies) {
+		set_state_private(failure_tree, failrec->start, 0);
+		clear_extent_bits(failure_tree, failrec->start,
+				  failrec->start + failrec->len - 1,
+				  EXTENT_LOCKED | EXTENT_DIRTY, GFP_NOFS);
+		kfree(failrec);
+		return -EIO;
+	}
+	bio = bio_alloc(GFP_NOFS, 1);
+	bio->bi_private = state;
+	bio->bi_end_io = failed_bio->bi_end_io;
+	bio->bi_sector = failrec->logical >> 9;
+	bio->bi_bdev = failed_bio->bi_bdev;
+	bio->bi_size = 0;
+
+	bio_add_page(bio, page, failrec->len, start - page_offset(page));
+	if (failed_bio->bi_rw & REQ_WRITE)
+		rw = WRITE;
+	else
+		rw = READ;
+
+	ret = BTRFS_I(inode)->io_tree.ops->submit_bio_hook(inode, rw, bio,
+						      failrec->last_mirror,
+						      failrec->bio_flags, 0);
+	return ret;
+}
+
+/*
+ * each time an IO finishes, we do a fast check in the IO failure tree
+ * to see if we need to process or clean up an io_failure_record
+ */
+static int btrfs_clean_io_failures(struct inode *inode, u64 start)
+{
+	u64 private;
+	u64 private_failure;
+	struct io_failure_record *failure;
+	int ret;
+
+	private = 0;
+	if (count_range_bits(&BTRFS_I(inode)->io_failure_tree, &private,
+			     (u64)-1, 1, EXTENT_DIRTY, 0)) {
+		ret = get_state_private(&BTRFS_I(inode)->io_failure_tree,
+					start, &private_failure);
+		if (ret == 0) {
+			failure = (struct io_failure_record *)(unsigned long)
+				   private_failure;
+			set_state_private(&BTRFS_I(inode)->io_failure_tree,
+					  failure->start, 0);
+			clear_extent_bits(&BTRFS_I(inode)->io_failure_tree,
+					  failure->start,
+					  failure->start + failure->len - 1,
+					  EXTENT_DIRTY | EXTENT_LOCKED,
+					  GFP_NOFS);
+			kfree(failure);
+		}
+	}
+	return 0;
+}
+
+/*
+ * when reads are done, we need to check csums to verify the data is correct
+ * if there's a match, we allow the bio to finish.  If not, we go through
+ * the io_failure_record routines to find good copies
+ */
+static int btrfs_readpage_end_io_hook(struct page *page, u64 start, u64 end,
+			       struct extent_state *state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	size_t offset = start - ((u64)page->index << PAGE_CACHE_SHIFT);
 	struct inode *inode = page->mapping->host;
@@ -1996,7 +2573,11 @@ static int btrfs_readpage_end_io_hook(struct page *page, u64 start, u64 end,
 	} else {
 		ret = get_state_private(io_tree, start, &private);
 	}
+<<<<<<< HEAD
 	kaddr = kmap_atomic(page);
+=======
+	kaddr = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto zeroit;
 
@@ -2005,8 +2586,17 @@ static int btrfs_readpage_end_io_hook(struct page *page, u64 start, u64 end,
 	if (csum != private)
 		goto zeroit;
 
+<<<<<<< HEAD
 	kunmap_atomic(kaddr);
 good:
+=======
+	kunmap_atomic(kaddr, KM_USER0);
+good:
+	/* if the io failure tree for this inode is non-empty,
+	 * check to see if we've recovered from a failed IO
+	 */
+	btrfs_clean_io_failures(inode, start);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 
 zeroit:
@@ -2017,7 +2607,11 @@ zeroit:
 		       (unsigned long long)private);
 	memset(kaddr + offset, 1, end - start + 1);
 	flush_dcache_page(page);
+<<<<<<< HEAD
 	kunmap_atomic(kaddr);
+=======
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (private == 0)
 		return 0;
 	return -EIO;
@@ -2028,8 +2622,11 @@ struct delayed_iput {
 	struct inode *inode;
 };
 
+<<<<<<< HEAD
 /* JDM: If this is fs-wide, why can't we add a pointer to
  * btrfs_inode instead and avoid the allocation? */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void btrfs_add_delayed_iput(struct inode *inode)
 {
 	struct btrfs_fs_info *fs_info = BTRFS_I(inode)->root->fs_info;
@@ -2073,26 +2670,120 @@ void btrfs_run_delayed_iputs(struct btrfs_root *root)
 	up_read(&root->fs_info->cleanup_work_sem);
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * calculate extra metadata reservation when snapshotting a subvolume
+ * contains orphan files.
+ */
+void btrfs_orphan_pre_snapshot(struct btrfs_trans_handle *trans,
+				struct btrfs_pending_snapshot *pending,
+				u64 *bytes_to_reserve)
+{
+	struct btrfs_root *root;
+	struct btrfs_block_rsv *block_rsv;
+	u64 num_bytes;
+	int index;
+
+	root = pending->root;
+	if (!root->orphan_block_rsv || list_empty(&root->orphan_list))
+		return;
+
+	block_rsv = root->orphan_block_rsv;
+
+	/* orphan block reservation for the snapshot */
+	num_bytes = block_rsv->size;
+
+	/*
+	 * after the snapshot is created, COWing tree blocks may use more
+	 * space than it frees. So we should make sure there is enough
+	 * reserved space.
+	 */
+	index = trans->transid & 0x1;
+	if (block_rsv->reserved + block_rsv->freed[index] < block_rsv->size) {
+		num_bytes += block_rsv->size -
+			     (block_rsv->reserved + block_rsv->freed[index]);
+	}
+
+	*bytes_to_reserve += num_bytes;
+}
+
+void btrfs_orphan_post_snapshot(struct btrfs_trans_handle *trans,
+				struct btrfs_pending_snapshot *pending)
+{
+	struct btrfs_root *root = pending->root;
+	struct btrfs_root *snap = pending->snap;
+	struct btrfs_block_rsv *block_rsv;
+	u64 num_bytes;
+	int index;
+	int ret;
+
+	if (!root->orphan_block_rsv || list_empty(&root->orphan_list))
+		return;
+
+	/* refill source subvolume's orphan block reservation */
+	block_rsv = root->orphan_block_rsv;
+	index = trans->transid & 0x1;
+	if (block_rsv->reserved + block_rsv->freed[index] < block_rsv->size) {
+		num_bytes = block_rsv->size -
+			    (block_rsv->reserved + block_rsv->freed[index]);
+		ret = btrfs_block_rsv_migrate(&pending->block_rsv,
+					      root->orphan_block_rsv,
+					      num_bytes);
+		BUG_ON(ret);
+	}
+
+	/* setup orphan block reservation for the snapshot */
+	block_rsv = btrfs_alloc_block_rsv(snap);
+	BUG_ON(!block_rsv);
+
+	btrfs_add_durable_block_rsv(root->fs_info, block_rsv);
+	snap->orphan_block_rsv = block_rsv;
+
+	num_bytes = root->orphan_block_rsv->size;
+	ret = btrfs_block_rsv_migrate(&pending->block_rsv,
+				      block_rsv, num_bytes);
+	BUG_ON(ret);
+
+#if 0
+	/* insert orphan item for the snapshot */
+	WARN_ON(!root->orphan_item_inserted);
+	ret = btrfs_insert_orphan_item(trans, root->fs_info->tree_root,
+				       snap->root_key.objectid);
+	BUG_ON(ret);
+	snap->orphan_item_inserted = 1;
+#endif
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum btrfs_orphan_cleanup_state {
 	ORPHAN_CLEANUP_STARTED	= 1,
 	ORPHAN_CLEANUP_DONE	= 2,
 };
 
 /*
+<<<<<<< HEAD
  * This is called in transaction commit time. If there are no orphan
+=======
+ * This is called in transaction commmit time. If there are no orphan
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * files in the subvolume, it removes orphan item and frees block_rsv
  * structure.
  */
 void btrfs_orphan_commit_root(struct btrfs_trans_handle *trans,
 			      struct btrfs_root *root)
 {
+<<<<<<< HEAD
 	struct btrfs_block_rsv *block_rsv;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (!list_empty(&root->orphan_list) ||
 	    root->orphan_cleanup_state != ORPHAN_CLEANUP_DONE)
 		return;
 
+<<<<<<< HEAD
 	spin_lock(&root->orphan_lock);
 	if (!list_empty(&root->orphan_list)) {
 		spin_unlock(&root->orphan_lock);
@@ -2108,6 +2799,8 @@ void btrfs_orphan_commit_root(struct btrfs_trans_handle *trans,
 	root->orphan_block_rsv = NULL;
 	spin_unlock(&root->orphan_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (root->orphan_item_inserted &&
 	    btrfs_root_refs(&root->root_item) > 0) {
 		ret = btrfs_del_orphan_item(trans, root->fs_info->tree_root,
@@ -2116,9 +2809,16 @@ void btrfs_orphan_commit_root(struct btrfs_trans_handle *trans,
 		root->orphan_item_inserted = 0;
 	}
 
+<<<<<<< HEAD
 	if (block_rsv) {
 		WARN_ON(block_rsv->size > 0);
 		btrfs_free_block_rsv(root, block_rsv);
+=======
+	if (root->orphan_block_rsv) {
+		WARN_ON(root->orphan_block_rsv->size > 0);
+		btrfs_free_block_rsv(root, root->orphan_block_rsv);
+		root->orphan_block_rsv = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -2139,8 +2839,12 @@ int btrfs_orphan_add(struct btrfs_trans_handle *trans, struct inode *inode)
 
 	if (!root->orphan_block_rsv) {
 		block_rsv = btrfs_alloc_block_rsv(root);
+<<<<<<< HEAD
 		if (!block_rsv)
 			return -ENOMEM;
+=======
+		BUG_ON(!block_rsv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	spin_lock(&root->orphan_lock);
@@ -2173,30 +2877,48 @@ int btrfs_orphan_add(struct btrfs_trans_handle *trans, struct inode *inode)
 	}
 	spin_unlock(&root->orphan_lock);
 
+<<<<<<< HEAD
 	/* grab metadata reservation from transaction handle */
 	if (reserve) {
 		ret = btrfs_orphan_reserve_metadata(trans, inode);
 		BUG_ON(ret); /* -ENOSPC in reservation; Logic error? JDM */
+=======
+	if (block_rsv)
+		btrfs_add_durable_block_rsv(root->fs_info, block_rsv);
+
+	/* grab metadata reservation from transaction handle */
+	if (reserve) {
+		ret = btrfs_orphan_reserve_metadata(trans, inode);
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* insert an orphan item to track this unlinked/truncated file */
 	if (insert >= 1) {
 		ret = btrfs_insert_orphan_item(trans, root, btrfs_ino(inode));
+<<<<<<< HEAD
 		if (ret && ret != -EEXIST) {
 			btrfs_abort_transaction(trans, root, ret);
 			return ret;
 		}
 		ret = 0;
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* insert an orphan item to track subvolume contains orphan files */
 	if (insert >= 2) {
 		ret = btrfs_insert_orphan_item(trans, root->fs_info->tree_root,
 					       root->root_key.objectid);
+<<<<<<< HEAD
 		if (ret && ret != -EEXIST) {
 			btrfs_abort_transaction(trans, root, ret);
 			return ret;
 		}
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
@@ -2226,7 +2948,11 @@ int btrfs_orphan_del(struct btrfs_trans_handle *trans, struct inode *inode)
 
 	if (trans && delete_item) {
 		ret = btrfs_del_orphan_item(trans, root, btrfs_ino(inode));
+<<<<<<< HEAD
 		BUG_ON(ret); /* -ENOMEM or corruption (JDM: Recheck) */
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	if (release_rsv)
@@ -2246,7 +2972,10 @@ int btrfs_orphan_cleanup(struct btrfs_root *root)
 	struct btrfs_key key, found_key;
 	struct btrfs_trans_handle *trans;
 	struct inode *inode;
+<<<<<<< HEAD
 	u64 last_objectid = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0, nr_unlink = 0, nr_truncate = 0;
 
 	if (cmpxchg(&root->orphan_cleanup_state, 0, ORPHAN_CLEANUP_STARTED))
@@ -2298,6 +3027,7 @@ int btrfs_orphan_cleanup(struct btrfs_root *root)
 		 * crossing root thing.  we store the inode number in the
 		 * offset of the orphan item.
 		 */
+<<<<<<< HEAD
 
 		if (found_key.offset == last_objectid) {
 			printk(KERN_ERR "btrfs: Error removing orphan entry, "
@@ -2308,10 +3038,13 @@ int btrfs_orphan_cleanup(struct btrfs_root *root)
 
 		last_objectid = found_key.offset;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		found_key.objectid = found_key.offset;
 		found_key.type = BTRFS_INODE_ITEM_KEY;
 		found_key.offset = 0;
 		inode = btrfs_iget(root->fs_info->sb, &found_key, root, NULL);
+<<<<<<< HEAD
 		ret = PTR_RET(inode);
 		if (ret && ret != -ESTALE)
 			goto out;
@@ -2354,10 +3087,34 @@ int btrfs_orphan_cleanup(struct btrfs_root *root)
 		 */
 		if (ret == -ESTALE) {
 			trans = btrfs_start_transaction(root, 1);
+=======
+		if (IS_ERR(inode)) {
+			ret = PTR_ERR(inode);
+			goto out;
+		}
+
+		/*
+		 * add this inode to the orphan list so btrfs_orphan_del does
+		 * the proper thing when we hit it
+		 */
+		spin_lock(&root->orphan_lock);
+		list_add(&BTRFS_I(inode)->i_orphan, &root->orphan_list);
+		spin_unlock(&root->orphan_lock);
+
+		/*
+		 * if this is a bad inode, means we actually succeeded in
+		 * removing the inode, but not the orphan record, which means
+		 * we need to manually delete the orphan since iput will just
+		 * do a destroy_inode
+		 */
+		if (is_bad_inode(inode)) {
+			trans = btrfs_start_transaction(root, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (IS_ERR(trans)) {
 				ret = PTR_ERR(trans);
 				goto out;
 			}
+<<<<<<< HEAD
 			ret = btrfs_del_orphan_item(trans, root,
 						    found_key.objectid);
 			BUG_ON(ret); /* -ENOMEM or corruption (JDM: Recheck) */
@@ -2373,6 +3130,14 @@ int btrfs_orphan_cleanup(struct btrfs_root *root)
 		list_add(&BTRFS_I(inode)->i_orphan, &root->orphan_list);
 		spin_unlock(&root->orphan_lock);
 
+=======
+			btrfs_orphan_del(trans, inode);
+			btrfs_end_transaction(trans, root);
+			iput(inode);
+			continue;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* if we have links, this was a truncate, lets do that */
 		if (inode->i_nlink) {
 			if (!S_ISREG(inode->i_mode)) {
@@ -2391,9 +3156,12 @@ int btrfs_orphan_cleanup(struct btrfs_root *root)
 		if (ret)
 			goto out;
 	}
+<<<<<<< HEAD
 	/* release the path since we're done with it */
 	btrfs_release_path(path);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	root->orphan_cleanup_state = ORPHAN_CLEANUP_DONE;
 
 	if (root->orphan_block_rsv)
@@ -2490,9 +3258,13 @@ static void btrfs_read_locked_inode(struct inode *inode)
 		filled = true;
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path)
 		goto make_bad;
 
+=======
+	BUG_ON(!path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	path->leave_spinning = 1;
 	memcpy(&location, &BTRFS_I(inode)->location, sizeof(location));
 
@@ -2507,8 +3279,20 @@ static void btrfs_read_locked_inode(struct inode *inode)
 
 	inode_item = btrfs_item_ptr(leaf, path->slots[0],
 				    struct btrfs_inode_item);
+<<<<<<< HEAD
 	inode->i_mode = btrfs_inode_mode(leaf, inode_item);
 	set_nlink(inode, btrfs_inode_nlink(leaf, inode_item));
+=======
+	if (!leaf->map_token)
+		map_private_extent_buffer(leaf, (unsigned long)inode_item,
+					  sizeof(struct btrfs_inode_item),
+					  &leaf->map_token, &leaf->kaddr,
+					  &leaf->map_start, &leaf->map_len,
+					  KM_USER1);
+
+	inode->i_mode = btrfs_inode_mode(leaf, inode_item);
+	inode->i_nlink = btrfs_inode_nlink(leaf, inode_item);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_uid = btrfs_inode_uid(leaf, inode_item);
 	inode->i_gid = btrfs_inode_gid(leaf, inode_item);
 	btrfs_i_size_write(inode, btrfs_inode_size(leaf, inode_item));
@@ -2544,6 +3328,14 @@ cache_acl:
 	if (!maybe_acls)
 		cache_no_acl(inode);
 
+<<<<<<< HEAD
+=======
+	if (leaf->map_token) {
+		unmap_extent_buffer(leaf, leaf->map_token, KM_USER1);
+		leaf->map_token = NULL;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_free_path(path);
 
 	switch (inode->i_mode & S_IFMT) {
@@ -2588,6 +3380,16 @@ static void fill_inode_item(struct btrfs_trans_handle *trans,
 			    struct btrfs_inode_item *item,
 			    struct inode *inode)
 {
+<<<<<<< HEAD
+=======
+	if (!leaf->map_token)
+		map_private_extent_buffer(leaf, (unsigned long)item,
+					  sizeof(struct btrfs_inode_item),
+					  &leaf->map_token, &leaf->kaddr,
+					  &leaf->map_start, &leaf->map_len,
+					  KM_USER1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_set_inode_uid(leaf, item, inode->i_uid);
 	btrfs_set_inode_gid(leaf, item, inode->i_gid);
 	btrfs_set_inode_size(leaf, item, BTRFS_I(inode)->disk_i_size);
@@ -2616,12 +3418,24 @@ static void fill_inode_item(struct btrfs_trans_handle *trans,
 	btrfs_set_inode_rdev(leaf, item, inode->i_rdev);
 	btrfs_set_inode_flags(leaf, item, BTRFS_I(inode)->flags);
 	btrfs_set_inode_block_group(leaf, item, 0);
+<<<<<<< HEAD
+=======
+
+	if (leaf->map_token) {
+		unmap_extent_buffer(leaf, leaf->map_token, KM_USER1);
+		leaf->map_token = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
  * copy everything in the in-memory inode into the btree.
  */
+<<<<<<< HEAD
 static noinline int btrfs_update_inode_item(struct btrfs_trans_handle *trans,
+=======
+noinline int btrfs_update_inode(struct btrfs_trans_handle *trans,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				struct btrfs_root *root, struct inode *inode)
 {
 	struct btrfs_inode_item *inode_item;
@@ -2629,6 +3443,24 @@ static noinline int btrfs_update_inode_item(struct btrfs_trans_handle *trans,
 	struct extent_buffer *leaf;
 	int ret;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * If the inode is a free space inode, we can deadlock during commit
+	 * if we put it into the delayed code.
+	 *
+	 * The data relocation inode should also be directly updated
+	 * without delay
+	 */
+	if (!is_free_space_inode(root, inode)
+	    && root->root_key.objectid != BTRFS_DATA_RELOC_TREE_OBJECTID) {
+		ret = btrfs_delayed_update_inode(trans, root, inode);
+		if (!ret)
+			btrfs_set_inode_last_trans(trans, inode);
+		return ret;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	path = btrfs_alloc_path();
 	if (!path)
 		return -ENOMEM;
@@ -2657,6 +3489,7 @@ failed:
 }
 
 /*
+<<<<<<< HEAD
  * copy everything in the in-memory inode into the btree.
  */
 noinline int btrfs_update_inode(struct btrfs_trans_handle *trans,
@@ -2694,6 +3527,8 @@ static noinline int btrfs_update_inode_fallback(struct btrfs_trans_handle *trans
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * unlink helper that gets used here in inode.c and in the tree logging
  * recovery code.  It remove a link in a directory with a given name, and
  * also drops the back refs in the inode to the directory
@@ -2742,11 +3577,15 @@ static int __btrfs_unlink_inode(struct btrfs_trans_handle *trans,
 		printk(KERN_INFO "btrfs failed to delete reference to %.*s, "
 		       "inode %llu parent %llu\n", name_len, name,
 		       (unsigned long long)ino, (unsigned long long)dir_ino);
+<<<<<<< HEAD
 		btrfs_abort_transaction(trans, root, ret);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto err;
 	}
 
 	ret = btrfs_delete_delayed_dir_index(trans, root, dir, index);
+<<<<<<< HEAD
 	if (ret) {
 		btrfs_abort_transaction(trans, root, ret);
 		goto err;
@@ -2758,6 +3597,14 @@ static int __btrfs_unlink_inode(struct btrfs_trans_handle *trans,
 		btrfs_abort_transaction(trans, root, ret);
 		goto err;
 	}
+=======
+	if (ret)
+		goto err;
+
+	ret = btrfs_del_inode_ref_in_log(trans, root, name, name_len,
+					 inode, dir_ino);
+	BUG_ON(ret != 0 && ret != -ENOENT);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_del_dir_entries_in_log(trans, root, name, name_len,
 					   dir, index);
@@ -2837,6 +3684,7 @@ static struct btrfs_trans_handle *__unlink_start_trans(struct inode *dir,
 	u64 ino = btrfs_ino(inode);
 	u64 dir_ino = btrfs_ino(dir);
 
+<<<<<<< HEAD
 	/*
 	 * 1 for the possible orphan item
 	 * 1 for the dir item
@@ -2847,6 +3695,9 @@ static struct btrfs_trans_handle *__unlink_start_trans(struct inode *dir,
 	 * 1 for the inode
 	 */
 	trans = btrfs_start_transaction(root, 8);
+=======
+	trans = btrfs_start_transaction(root, 10);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!IS_ERR(trans) || PTR_ERR(trans) != -ENOSPC)
 		return trans;
 
@@ -2869,8 +3720,12 @@ static struct btrfs_trans_handle *__unlink_start_trans(struct inode *dir,
 		return ERR_PTR(-ENOMEM);
 	}
 
+<<<<<<< HEAD
 	/* 1 for the orphan item */
 	trans = btrfs_start_transaction(root, 1);
+=======
+	trans = btrfs_start_transaction(root, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(trans)) {
 		btrfs_free_path(path);
 		root->fs_info->enospc_unlink = 0;
@@ -2915,7 +3770,11 @@ static struct btrfs_trans_handle *__unlink_start_trans(struct inode *dir,
 			err = ret;
 			goto out;
 		}
+<<<<<<< HEAD
 		BUG_ON(ret == 0); /* Corruption */
+=======
+		BUG_ON(ret == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (check_path_shared(root, path))
 			goto out;
 		btrfs_release_path(path);
@@ -2948,7 +3807,11 @@ static struct btrfs_trans_handle *__unlink_start_trans(struct inode *dir,
 		err = PTR_ERR(ref);
 		goto out;
 	}
+<<<<<<< HEAD
 	BUG_ON(!ref); /* Logic error */
+=======
+	BUG_ON(!ref);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (check_path_shared(root, path))
 		goto out;
 	index = btrfs_inode_ref_index(path->nodes[0], ref);
@@ -2975,12 +3838,15 @@ static struct btrfs_trans_handle *__unlink_start_trans(struct inode *dir,
 	err = 0;
 out:
 	btrfs_free_path(path);
+<<<<<<< HEAD
 	/* Migrate the orphan reservation over */
 	if (!err)
 		err = btrfs_block_rsv_migrate(trans->block_rsv,
 				&root->fs_info->global_block_rsv,
 				trans->bytes_reserved);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err) {
 		btrfs_end_transaction(trans, root);
 		root->fs_info->enospc_unlink = 0;
@@ -2995,6 +3861,7 @@ static void __unlink_end_trans(struct btrfs_trans_handle *trans,
 			       struct btrfs_root *root)
 {
 	if (trans->block_rsv == &root->fs_info->global_block_rsv) {
+<<<<<<< HEAD
 		btrfs_block_rsv_release(root, trans->block_rsv,
 					trans->bytes_reserved);
 		trans->block_rsv = &root->fs_info->trans_block_rsv;
@@ -3002,6 +3869,12 @@ static void __unlink_end_trans(struct btrfs_trans_handle *trans,
 		root->fs_info->enospc_unlink = 0;
 	}
 	btrfs_end_transaction(trans, root);
+=======
+		BUG_ON(!root->fs_info->enospc_unlink);
+		root->fs_info->enospc_unlink = 0;
+	}
+	btrfs_end_transaction_throttle(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int btrfs_unlink(struct inode *dir, struct dentry *dentry)
@@ -3020,6 +3893,7 @@ static int btrfs_unlink(struct inode *dir, struct dentry *dentry)
 
 	ret = btrfs_unlink_inode(trans, root, dir, dentry->d_inode,
 				 dentry->d_name.name, dentry->d_name.len);
+<<<<<<< HEAD
 	if (ret)
 		goto out;
 
@@ -3030,6 +3904,15 @@ static int btrfs_unlink(struct inode *dir, struct dentry *dentry)
 	}
 
 out:
+=======
+	BUG_ON(ret);
+
+	if (inode->i_nlink == 0) {
+		ret = btrfs_orphan_add(trans, inode);
+		BUG_ON(ret);
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	nr = trans->blocks_used;
 	__unlink_end_trans(trans, root);
 	btrfs_btree_balance_dirty(root, nr);
@@ -3055,6 +3938,7 @@ int btrfs_unlink_subvol(struct btrfs_trans_handle *trans,
 
 	di = btrfs_lookup_dir_item(trans, root, path, dir_ino,
 				   name, name_len, -1);
+<<<<<<< HEAD
 	if (IS_ERR_OR_NULL(di)) {
 		if (!di)
 			ret = -ENOENT;
@@ -3062,21 +3946,29 @@ int btrfs_unlink_subvol(struct btrfs_trans_handle *trans,
 			ret = PTR_ERR(di);
 		goto out;
 	}
+=======
+	BUG_ON(IS_ERR_OR_NULL(di));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	btrfs_dir_item_key_to_cpu(leaf, di, &key);
 	WARN_ON(key.type != BTRFS_ROOT_ITEM_KEY || key.objectid != objectid);
 	ret = btrfs_delete_one_dir_name(trans, root, path, di);
+<<<<<<< HEAD
 	if (ret) {
 		btrfs_abort_transaction(trans, root, ret);
 		goto out;
 	}
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_release_path(path);
 
 	ret = btrfs_del_root_ref(trans, root->fs_info->tree_root,
 				 objectid, root->root_key.objectid,
 				 dir_ino, &index, name, name_len);
 	if (ret < 0) {
+<<<<<<< HEAD
 		if (ret != -ENOENT) {
 			btrfs_abort_transaction(trans, root, ret);
 			goto out;
@@ -3091,6 +3983,12 @@ int btrfs_unlink_subvol(struct btrfs_trans_handle *trans,
 			btrfs_abort_transaction(trans, root, ret);
 			goto out;
 		}
+=======
+		BUG_ON(ret != -ENOENT);
+		di = btrfs_search_dir_index_item(root, path, dir_ino,
+						 name, name_len);
+		BUG_ON(IS_ERR_OR_NULL(di));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		leaf = path->nodes[0];
 		btrfs_item_key_to_cpu(leaf, &key, path->slots[0]);
@@ -3100,19 +3998,30 @@ int btrfs_unlink_subvol(struct btrfs_trans_handle *trans,
 	btrfs_release_path(path);
 
 	ret = btrfs_delete_delayed_dir_index(trans, root, dir, index);
+<<<<<<< HEAD
 	if (ret) {
 		btrfs_abort_transaction(trans, root, ret);
 		goto out;
 	}
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	btrfs_i_size_write(dir, dir->i_size - name_len * 2);
 	dir->i_mtime = dir->i_ctime = CURRENT_TIME;
 	ret = btrfs_update_inode(trans, root, dir);
+<<<<<<< HEAD
 	if (ret)
 		btrfs_abort_transaction(trans, root, ret);
 out:
 	btrfs_free_path(path);
 	return ret;
+=======
+	BUG_ON(ret);
+
+	btrfs_free_path(path);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int btrfs_rmdir(struct inode *dir, struct dentry *dentry)
@@ -3188,17 +4097,24 @@ int btrfs_truncate_inode_items(struct btrfs_trans_handle *trans,
 	int pending_del_nr = 0;
 	int pending_del_slot = 0;
 	int extent_type = -1;
+<<<<<<< HEAD
+=======
+	int encoding;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 	int err = 0;
 	u64 ino = btrfs_ino(inode);
 
 	BUG_ON(new_size > 0 && min_type != BTRFS_EXTENT_DATA_KEY);
 
+<<<<<<< HEAD
 	path = btrfs_alloc_path();
 	if (!path)
 		return -ENOMEM;
 	path->reada = -1;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (root->ref_cows || root == root->fs_info->tree_root)
 		btrfs_drop_extent_cache(inode, new_size & (~mask), (u64)-1, 0);
 
@@ -3211,6 +4127,13 @@ int btrfs_truncate_inode_items(struct btrfs_trans_handle *trans,
 	if (min_type == 0 && root == BTRFS_I(inode)->root)
 		btrfs_kill_delayed_inode_items(inode);
 
+<<<<<<< HEAD
+=======
+	path = btrfs_alloc_path();
+	BUG_ON(!path);
+	path->reada = -1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	key.objectid = ino;
 	key.offset = (u64)-1;
 	key.type = (u8)-1;
@@ -3237,6 +4160,10 @@ search_again:
 		leaf = path->nodes[0];
 		btrfs_item_key_to_cpu(leaf, &found_key, path->slots[0]);
 		found_type = btrfs_key_type(&found_key);
+<<<<<<< HEAD
+=======
+		encoding = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (found_key.objectid != ino)
 			break;
@@ -3249,6 +4176,13 @@ search_again:
 			fi = btrfs_item_ptr(leaf, path->slots[0],
 					    struct btrfs_file_extent_item);
 			extent_type = btrfs_file_extent_type(leaf, fi);
+<<<<<<< HEAD
+=======
+			encoding = btrfs_file_extent_compression(leaf, fi);
+			encoding |= btrfs_file_extent_encryption(leaf, fi);
+			encoding |= btrfs_file_extent_other_encoding(leaf, fi);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (extent_type != BTRFS_FILE_EXTENT_INLINE) {
 				item_end +=
 				    btrfs_file_extent_num_bytes(leaf, fi);
@@ -3276,7 +4210,11 @@ search_again:
 		if (extent_type != BTRFS_FILE_EXTENT_INLINE) {
 			u64 num_dec;
 			extent_start = btrfs_file_extent_disk_bytenr(leaf, fi);
+<<<<<<< HEAD
 			if (!del_item) {
+=======
+			if (!del_item && !encoding) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				u64 orig_num_bytes =
 					btrfs_file_extent_num_bytes(leaf, fi);
 				extent_num_bytes = new_size -
@@ -3322,8 +4260,13 @@ search_again:
 				}
 				size =
 				    btrfs_file_extent_calc_inline_size(size);
+<<<<<<< HEAD
 				btrfs_truncate_item(trans, root, path,
 						    size, 1);
+=======
+				ret = btrfs_truncate_item(trans, root, path,
+							  size, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else if (root->ref_cows) {
 				inode_sub_bytes(inode, item_end + 1 -
 						found_key.offset);
@@ -3352,7 +4295,11 @@ delete:
 			ret = btrfs_free_extent(trans, root, extent_start,
 						extent_num_bytes, 0,
 						btrfs_header_owner(leaf),
+<<<<<<< HEAD
 						ino, extent_offset, 0);
+=======
+						ino, extent_offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			BUG_ON(ret);
 		}
 
@@ -3371,11 +4318,15 @@ delete:
 				ret = btrfs_del_items(trans, root, path,
 						pending_del_slot,
 						pending_del_nr);
+<<<<<<< HEAD
 				if (ret) {
 					btrfs_abort_transaction(trans,
 								root, ret);
 					goto error;
 				}
+=======
+				BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				pending_del_nr = 0;
 			}
 			btrfs_release_path(path);
@@ -3388,10 +4339,15 @@ out:
 	if (pending_del_nr) {
 		ret = btrfs_del_items(trans, root, path, pending_del_slot,
 				      pending_del_nr);
+<<<<<<< HEAD
 		if (ret)
 			btrfs_abort_transaction(trans, root, ret);
 	}
 error:
+=======
+		BUG_ON(ret);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_free_path(path);
 	return err;
 }
@@ -3412,7 +4368,10 @@ static int btrfs_truncate_page(struct address_space *mapping, loff_t from)
 	pgoff_t index = from >> PAGE_CACHE_SHIFT;
 	unsigned offset = from & (PAGE_CACHE_SIZE-1);
 	struct page *page;
+<<<<<<< HEAD
 	gfp_t mask = btrfs_alloc_write_mask(mapping);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret = 0;
 	u64 page_start;
 	u64 page_end;
@@ -3425,7 +4384,11 @@ static int btrfs_truncate_page(struct address_space *mapping, loff_t from)
 
 	ret = -ENOMEM;
 again:
+<<<<<<< HEAD
 	page = find_or_create_page(mapping, index, mask);
+=======
+	page = grab_cache_page(mapping, index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!page) {
 		btrfs_delalloc_release_space(inode, PAGE_CACHE_SIZE);
 		goto out;
@@ -3449,7 +4412,12 @@ again:
 	}
 	wait_on_page_writeback(page);
 
+<<<<<<< HEAD
 	lock_extent_bits(io_tree, page_start, page_end, 0, &cached_state);
+=======
+	lock_extent_bits(io_tree, page_start, page_end, 0, &cached_state,
+			 GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_page_extent_mapped(page);
 
 	ordered = btrfs_lookup_ordered_extent(inode, page_start);
@@ -3525,7 +4493,11 @@ int btrfs_cont_expand(struct inode *inode, loff_t oldsize, loff_t size)
 		btrfs_wait_ordered_range(inode, hole_start,
 					 block_end - hole_start);
 		lock_extent_bits(io_tree, hole_start, block_end - 1, 0,
+<<<<<<< HEAD
 				 &cached_state);
+=======
+				 &cached_state, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ordered = btrfs_lookup_ordered_extent(inode, hole_start);
 		if (!ordered)
 			break;
@@ -3538,17 +4510,25 @@ int btrfs_cont_expand(struct inode *inode, loff_t oldsize, loff_t size)
 	while (1) {
 		em = btrfs_get_extent(inode, NULL, 0, cur_offset,
 				block_end - cur_offset, 0);
+<<<<<<< HEAD
 		if (IS_ERR(em)) {
 			err = PTR_ERR(em);
 			break;
 		}
+=======
+		BUG_ON(IS_ERR_OR_NULL(em));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		last_byte = min(extent_map_end(em), block_end);
 		last_byte = (last_byte + mask) & ~mask;
 		if (!test_bit(EXTENT_FLAG_PREALLOC, &em->flags)) {
 			u64 hint_byte = 0;
 			hole_size = last_byte - cur_offset;
 
+<<<<<<< HEAD
 			trans = btrfs_start_transaction(root, 3);
+=======
+			trans = btrfs_start_transaction(root, 2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (IS_ERR(trans)) {
 				err = PTR_ERR(trans);
 				break;
@@ -3557,26 +4537,39 @@ int btrfs_cont_expand(struct inode *inode, loff_t oldsize, loff_t size)
 			err = btrfs_drop_extents(trans, inode, cur_offset,
 						 cur_offset + hole_size,
 						 &hint_byte, 1);
+<<<<<<< HEAD
 			if (err) {
 				btrfs_abort_transaction(trans, root, err);
 				btrfs_end_transaction(trans, root);
 				break;
 			}
+=======
+			if (err)
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			err = btrfs_insert_file_extent(trans, root,
 					btrfs_ino(inode), cur_offset, 0,
 					0, hole_size, 0, hole_size,
 					0, 0, 0);
+<<<<<<< HEAD
 			if (err) {
 				btrfs_abort_transaction(trans, root, err);
 				btrfs_end_transaction(trans, root);
 				break;
 			}
+=======
+			if (err)
+				break;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			btrfs_drop_extent_cache(inode, hole_start,
 					last_byte - 1, 0);
 
+<<<<<<< HEAD
 			btrfs_update_inode(trans, root, inode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			btrfs_end_transaction(trans, root);
 		}
 		free_extent_map(em);
@@ -3594,8 +4587,11 @@ int btrfs_cont_expand(struct inode *inode, loff_t oldsize, loff_t size)
 
 static int btrfs_setsize(struct inode *inode, loff_t newsize)
 {
+<<<<<<< HEAD
 	struct btrfs_root *root = BTRFS_I(inode)->root;
 	struct btrfs_trans_handle *trans;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	loff_t oldsize = i_size_read(inode);
 	int ret;
 
@@ -3603,6 +4599,7 @@ static int btrfs_setsize(struct inode *inode, loff_t newsize)
 		return 0;
 
 	if (newsize > oldsize) {
+<<<<<<< HEAD
 		truncate_pagecache(inode, oldsize, newsize);
 		ret = btrfs_cont_expand(inode, oldsize, newsize);
 		if (ret)
@@ -3616,6 +4613,18 @@ static int btrfs_setsize(struct inode *inode, loff_t newsize)
 		btrfs_ordered_update_i_size(inode, i_size_read(inode), NULL);
 		ret = btrfs_update_inode(trans, root, inode);
 		btrfs_end_transaction(trans, root);
+=======
+		i_size_write(inode, newsize);
+		btrfs_ordered_update_i_size(inode, i_size_read(inode), NULL);
+		truncate_pagecache(inode, oldsize, newsize);
+		ret = btrfs_cont_expand(inode, oldsize, newsize);
+		if (ret) {
+			btrfs_setsize(inode, oldsize);
+			return ret;
+		}
+
+		mark_inode_dirty(inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 
 		/*
@@ -3655,9 +4664,15 @@ static int btrfs_setattr(struct dentry *dentry, struct iattr *attr)
 
 	if (attr->ia_valid) {
 		setattr_copy(inode, attr);
+<<<<<<< HEAD
 		err = btrfs_dirty_inode(inode);
 
 		if (!err && attr->ia_valid & ATTR_MODE)
+=======
+		mark_inode_dirty(inode);
+
+		if (attr->ia_valid & ATTR_MODE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			err = btrfs_acl_chmod(inode);
 	}
 
@@ -3668,8 +4683,11 @@ void btrfs_evict_inode(struct inode *inode)
 {
 	struct btrfs_trans_handle *trans;
 	struct btrfs_root *root = BTRFS_I(inode)->root;
+<<<<<<< HEAD
 	struct btrfs_block_rsv *rsv, *global_rsv;
 	u64 min_size = btrfs_calc_trunc_metadata_size(root, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long nr;
 	int ret;
 
@@ -3677,7 +4695,11 @@ void btrfs_evict_inode(struct inode *inode)
 
 	truncate_inode_pages(&inode->i_data, 0);
 	if (inode->i_nlink && (btrfs_root_refs(&root->root_item) != 0 ||
+<<<<<<< HEAD
 			       btrfs_is_free_space_inode(root, inode)))
+=======
+			       is_free_space_inode(root, inode)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto no_delete;
 
 	if (is_bad_inode(inode)) {
@@ -3697,6 +4719,7 @@ void btrfs_evict_inode(struct inode *inode)
 		goto no_delete;
 	}
 
+<<<<<<< HEAD
 	rsv = btrfs_alloc_block_rsv(root);
 	if (!rsv) {
 		btrfs_orphan_del(NULL, inode);
@@ -3746,6 +4769,24 @@ void btrfs_evict_inode(struct inode *inode)
 
 		trans->block_rsv = rsv;
 
+=======
+	btrfs_i_size_write(inode, 0);
+
+	while (1) {
+		trans = btrfs_join_transaction(root);
+		BUG_ON(IS_ERR(trans));
+		trans->block_rsv = root->orphan_block_rsv;
+
+		ret = btrfs_block_rsv_check(trans, root,
+					    root->orphan_block_rsv, 0, 5);
+		if (ret) {
+			BUG_ON(ret != -EAGAIN);
+			ret = btrfs_commit_transaction(trans, root);
+			BUG_ON(ret);
+			continue;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = btrfs_truncate_inode_items(trans, root, inode, 0, 0);
 		if (ret != -EAGAIN)
 			break;
@@ -3754,17 +4795,27 @@ void btrfs_evict_inode(struct inode *inode)
 		btrfs_end_transaction(trans, root);
 		trans = NULL;
 		btrfs_btree_balance_dirty(root, nr);
+<<<<<<< HEAD
 	}
 
 	btrfs_free_block_rsv(root, rsv);
 
 	if (ret == 0) {
 		trans->block_rsv = root->orphan_block_rsv;
+=======
+
+	}
+
+	if (ret == 0) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = btrfs_orphan_del(trans, inode);
 		BUG_ON(ret);
 	}
 
+<<<<<<< HEAD
 	trans->block_rsv = &root->fs_info->trans_block_rsv;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (!(root == root->fs_info->tree_root ||
 	      root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID))
 		btrfs_return_ino(root, btrfs_ino(inode));
@@ -3792,8 +4843,12 @@ static int btrfs_inode_by_name(struct inode *dir, struct dentry *dentry,
 	int ret = 0;
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path)
 		return -ENOMEM;
+=======
+	BUG_ON(!path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	di = btrfs_lookup_dir_item(NULL, root, path, btrfs_ino(dir), name,
 				    namelen, 0);
@@ -3948,7 +5003,11 @@ static void inode_tree_del(struct inode *inode)
 	}
 }
 
+<<<<<<< HEAD
 void btrfs_invalidate_inodes(struct btrfs_root *root)
+=======
+int btrfs_invalidate_inodes(struct btrfs_root *root)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct rb_node *node;
 	struct rb_node *prev;
@@ -4008,6 +5067,10 @@ again:
 		node = rb_next(node);
 	}
 	spin_unlock(&root->inode_lock);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int btrfs_init_locked_inode(struct inode *inode, void *p)
@@ -4057,6 +5120,7 @@ struct inode *btrfs_iget(struct super_block *s, struct btrfs_key *location,
 		BTRFS_I(inode)->root = root;
 		memcpy(&BTRFS_I(inode)->location, location, sizeof(*location));
 		btrfs_read_locked_inode(inode);
+<<<<<<< HEAD
 		if (!is_bad_inode(inode)) {
 			inode_tree_add(inode);
 			unlock_new_inode(inode);
@@ -4067,6 +5131,12 @@ struct inode *btrfs_iget(struct super_block *s, struct btrfs_key *location,
 			iput(inode);
 			inode = ERR_PTR(-ESTALE);
 		}
+=======
+		inode_tree_add(inode);
+		unlock_new_inode(inode);
+		if (new)
+			*new = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return inode;
@@ -4086,7 +5156,11 @@ static struct inode *new_simple_dir(struct super_block *s,
 	BTRFS_I(inode)->dummy_inode = 1;
 
 	inode->i_ino = BTRFS_EMPTY_SUBVOL_DIR_OBJECTID;
+<<<<<<< HEAD
 	inode->i_op = &btrfs_dir_ro_inode_operations;
+=======
+	inode->i_op = &simple_dir_inode_operations;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	inode->i_fop = &simple_dir_operations;
 	inode->i_mode = S_IFDIR | S_IRUGO | S_IWUSR | S_IXUGO;
 	inode->i_mtime = inode->i_atime = inode->i_ctime = CURRENT_TIME;
@@ -4101,11 +5175,16 @@ struct inode *btrfs_lookup_dentry(struct inode *dir, struct dentry *dentry)
 	struct btrfs_root *sub_root = root;
 	struct btrfs_key location;
 	int index;
+<<<<<<< HEAD
 	int ret = 0;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (dentry->d_name.len > BTRFS_NAME_LEN)
 		return ERR_PTR(-ENAMETOOLONG);
 
+<<<<<<< HEAD
 	if (unlikely(d_need_lookup(dentry))) {
 		memcpy(&location, dentry->d_fsdata, sizeof(struct btrfs_key));
 		kfree(dentry->d_fsdata);
@@ -4115,6 +5194,9 @@ struct inode *btrfs_lookup_dentry(struct inode *dir, struct dentry *dentry)
 	} else {
 		ret = btrfs_inode_by_name(dir, dentry, &location);
 	}
+=======
+	ret = btrfs_inode_by_name(dir, dentry, &location);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ret < 0)
 		return ERR_PTR(ret);
@@ -4157,6 +5239,7 @@ struct inode *btrfs_lookup_dentry(struct inode *dir, struct dentry *dentry)
 static int btrfs_dentry_delete(const struct dentry *dentry)
 {
 	struct btrfs_root *root;
+<<<<<<< HEAD
 	struct inode *inode = dentry->d_inode;
 
 	if (!inode && !IS_ROOT(dentry))
@@ -4169,10 +5252,21 @@ static int btrfs_dentry_delete(const struct dentry *dentry)
 
 		if (btrfs_ino(inode) == BTRFS_EMPTY_SUBVOL_DIR_OBJECTID)
 			return 1;
+=======
+
+	if (!dentry->d_inode && !IS_ROOT(dentry))
+		dentry = dentry->d_parent;
+
+	if (dentry->d_inode) {
+		root = BTRFS_I(dentry->d_inode)->root;
+		if (btrfs_root_refs(&root->root_item) == 0)
+			return 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }
 
+<<<<<<< HEAD
 static void btrfs_dentry_release(struct dentry *dentry)
 {
 	if (dentry->d_fsdata)
@@ -4191,6 +5285,18 @@ static struct dentry *btrfs_lookup(struct inode *dir, struct dentry *dentry,
 		spin_unlock(&dentry->d_lock);
 	}
 	return ret;
+=======
+static struct dentry *btrfs_lookup(struct inode *dir, struct dentry *dentry,
+				   struct nameidata *nd)
+{
+	struct inode *inode;
+
+	inode = btrfs_lookup_dentry(dir, dentry);
+	if (IS_ERR(inode))
+		return ERR_CAST(inode);
+
+	return d_splice_alias(inode, dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 unsigned char btrfs_filetype_table[] = {
@@ -4319,6 +5425,7 @@ static int btrfs_real_readdir(struct file *filp, void *dirent,
 			d_type = btrfs_filetype_table[btrfs_dir_type(leaf, di)];
 			btrfs_dir_item_key_to_cpu(leaf, di, &location);
 
+<<<<<<< HEAD
 
 			/* is this a reference to our own snapshot? If so
 			 * skip it.
@@ -4328,6 +5435,10 @@ static int btrfs_real_readdir(struct file *filp, void *dirent,
 			 * we won't find a reference to our own snapshot. We
 			 * still keep the following code for backward
 			 * compatibility.
+=======
+			/* is this a reference to our own snapshot? If so
+			 * skip it
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 */
 			if (location.type == BTRFS_ROOT_ITEM_KEY &&
 			    location.objectid == root->root_key.objectid) {
@@ -4390,7 +5501,11 @@ int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc)
 	if (BTRFS_I(inode)->dummy_inode)
 		return 0;
 
+<<<<<<< HEAD
 	if (btrfs_fs_closing(root->fs_info) && btrfs_is_free_space_inode(root, inode))
+=======
+	if (btrfs_fs_closing(root->fs_info) && is_free_space_inode(root, inode))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nolock = true;
 
 	if (wbc->sync_mode == WB_SYNC_ALL) {
@@ -4414,32 +5529,62 @@ int btrfs_write_inode(struct inode *inode, struct writeback_control *wbc)
  * FIXME, needs more benchmarking...there are no reasons other than performance
  * to keep or drop this code.
  */
+<<<<<<< HEAD
 int btrfs_dirty_inode(struct inode *inode)
+=======
+void btrfs_dirty_inode(struct inode *inode, int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_root *root = BTRFS_I(inode)->root;
 	struct btrfs_trans_handle *trans;
 	int ret;
 
 	if (BTRFS_I(inode)->dummy_inode)
+<<<<<<< HEAD
 		return 0;
 
 	trans = btrfs_join_transaction(root);
 	if (IS_ERR(trans))
 		return PTR_ERR(trans);
+=======
+		return;
+
+	trans = btrfs_join_transaction(root);
+	BUG_ON(IS_ERR(trans));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_update_inode(trans, root, inode);
 	if (ret && ret == -ENOSPC) {
 		/* whoops, lets try again with the full transaction */
 		btrfs_end_transaction(trans, root);
 		trans = btrfs_start_transaction(root, 1);
+<<<<<<< HEAD
 		if (IS_ERR(trans))
 			return PTR_ERR(trans);
 
 		ret = btrfs_update_inode(trans, root, inode);
+=======
+		if (IS_ERR(trans)) {
+			printk_ratelimited(KERN_ERR "btrfs: fail to "
+				       "dirty  inode %llu error %ld\n",
+				       (unsigned long long)btrfs_ino(inode),
+				       PTR_ERR(trans));
+			return;
+		}
+
+		ret = btrfs_update_inode(trans, root, inode);
+		if (ret) {
+			printk_ratelimited(KERN_ERR "btrfs: fail to "
+				       "dirty  inode %llu error %d\n",
+				       (unsigned long long)btrfs_ino(inode),
+				       ret);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	btrfs_end_transaction(trans, root);
 	if (BTRFS_I(inode)->delayed_node)
 		btrfs_balance_delayed_items(root);
+<<<<<<< HEAD
 
 	return ret;
 }
@@ -4488,6 +5633,8 @@ int btrfs_update_time(struct file *file)
 		mark_inode_dirty_sync(inode);
 	mnt_drop_write(file->f_path.mnt);
 	return ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -4574,8 +5721,13 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
 				     struct btrfs_root *root,
 				     struct inode *dir,
 				     const char *name, int name_len,
+<<<<<<< HEAD
 				     u64 ref_objectid, u64 objectid,
 				     umode_t mode, u64 *index)
+=======
+				     u64 ref_objectid, u64 objectid, int mode,
+				     u64 *index)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode;
 	struct btrfs_inode_item *inode_item;
@@ -4589,8 +5741,12 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
 	int owner;
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path)
 		return ERR_PTR(-ENOMEM);
+=======
+	BUG_ON(!path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	inode = new_inode(root->fs_info->sb);
 	if (!inode) {
@@ -4625,7 +5781,11 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
 	inode->i_generation = BTRFS_I(inode)->generation;
 	btrfs_set_inode_space_info(root, inode);
 
+<<<<<<< HEAD
 	if (S_ISDIR(mode))
+=======
+	if (mode & S_IFDIR)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		owner = 0;
 	else
 		owner = 1;
@@ -4670,7 +5830,11 @@ static struct inode *btrfs_new_inode(struct btrfs_trans_handle *trans,
 
 	btrfs_inherit_iflags(inode, dir);
 
+<<<<<<< HEAD
 	if (S_ISREG(mode)) {
+=======
+	if ((mode & S_IFREG)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (btrfs_test_opt(root, NODATASUM))
 			BTRFS_I(inode)->flags |= BTRFS_INODE_NODATASUM;
 		if (btrfs_test_opt(root, NODATACOW) ||
@@ -4731,6 +5895,7 @@ int btrfs_add_link(struct btrfs_trans_handle *trans,
 					     parent_ino, index);
 	}
 
+<<<<<<< HEAD
 	/* Nothing to clean up yet */
 	if (ret)
 		return ret;
@@ -4767,6 +5932,18 @@ fail_dir_item:
 
 		err = btrfs_del_inode_ref(trans, root, name, name_len,
 					  ino, parent_ino, &local_index);
+=======
+	if (ret == 0) {
+		ret = btrfs_insert_dir_item(trans, root, name, name_len,
+					    parent_inode, &key,
+					    btrfs_inode_type(inode), index);
+		BUG_ON(ret);
+
+		btrfs_i_size_write(parent_inode, parent_inode->i_size +
+				   name_len * 2);
+		parent_inode->i_mtime = parent_inode->i_ctime = CURRENT_TIME;
+		ret = btrfs_update_inode(trans, root, parent_inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return ret;
 }
@@ -4778,13 +5955,24 @@ static int btrfs_add_nondir(struct btrfs_trans_handle *trans,
 	int err = btrfs_add_link(trans, dir, inode,
 				 dentry->d_name.name, dentry->d_name.len,
 				 backref, index);
+<<<<<<< HEAD
+=======
+	if (!err) {
+		d_instantiate(dentry, inode);
+		return 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err > 0)
 		err = -EEXIST;
 	return err;
 }
 
 static int btrfs_mknod(struct inode *dir, struct dentry *dentry,
+<<<<<<< HEAD
 			umode_t mode, dev_t rdev)
+=======
+			int mode, dev_t rdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_trans_handle *trans;
 	struct btrfs_root *root = BTRFS_I(dir)->root;
@@ -4825,6 +6013,7 @@ static int btrfs_mknod(struct inode *dir, struct dentry *dentry,
 		goto out_unlock;
 	}
 
+<<<<<<< HEAD
 	/*
 	* If the active LSM wants to access the inode during
 	* d_instantiate it needs these. Smack checks to see
@@ -4833,10 +6022,13 @@ static int btrfs_mknod(struct inode *dir, struct dentry *dentry,
 	*/
 
 	inode->i_op = &btrfs_special_inode_operations;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = btrfs_add_nondir(trans, dir, dentry, inode, 0, index);
 	if (err)
 		drop_inode = 1;
 	else {
+<<<<<<< HEAD
 		init_special_inode(inode, inode->i_mode, rdev);
 		btrfs_update_inode(trans, root, inode);
 		d_instantiate(dentry, inode);
@@ -4844,6 +6036,15 @@ static int btrfs_mknod(struct inode *dir, struct dentry *dentry,
 out_unlock:
 	nr = trans->blocks_used;
 	btrfs_end_transaction(trans, root);
+=======
+		inode->i_op = &btrfs_special_inode_operations;
+		init_special_inode(inode, inode->i_mode, rdev);
+		btrfs_update_inode(trans, root, inode);
+	}
+out_unlock:
+	nr = trans->blocks_used;
+	btrfs_end_transaction_throttle(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_btree_balance_dirty(root, nr);
 	if (drop_inode) {
 		inode_dec_link_count(inode);
@@ -4853,7 +6054,11 @@ out_unlock:
 }
 
 static int btrfs_create(struct inode *dir, struct dentry *dentry,
+<<<<<<< HEAD
 			umode_t mode, struct nameidata *nd)
+=======
+			int mode, struct nameidata *nd)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_trans_handle *trans;
 	struct btrfs_root *root = BTRFS_I(dir)->root;
@@ -4891,6 +6096,7 @@ static int btrfs_create(struct inode *dir, struct dentry *dentry,
 		goto out_unlock;
 	}
 
+<<<<<<< HEAD
 	/*
 	* If the active LSM wants to access the inode during
 	* d_instantiate it needs these. Smack checks to see
@@ -4900,18 +6106,30 @@ static int btrfs_create(struct inode *dir, struct dentry *dentry,
 	inode->i_fop = &btrfs_file_operations;
 	inode->i_op = &btrfs_file_inode_operations;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = btrfs_add_nondir(trans, dir, dentry, inode, 0, index);
 	if (err)
 		drop_inode = 1;
 	else {
 		inode->i_mapping->a_ops = &btrfs_aops;
 		inode->i_mapping->backing_dev_info = &root->fs_info->bdi;
+<<<<<<< HEAD
 		BTRFS_I(inode)->io_tree.ops = &btrfs_extent_io_ops;
 		d_instantiate(dentry, inode);
 	}
 out_unlock:
 	nr = trans->blocks_used;
 	btrfs_end_transaction(trans, root);
+=======
+		inode->i_fop = &btrfs_file_operations;
+		inode->i_op = &btrfs_file_inode_operations;
+		BTRFS_I(inode)->io_tree.ops = &btrfs_extent_io_ops;
+	}
+out_unlock:
+	nr = trans->blocks_used;
+	btrfs_end_transaction_throttle(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (drop_inode) {
 		inode_dec_link_count(inode);
 		iput(inode);
@@ -4962,6 +6180,7 @@ static int btrfs_link(struct dentry *old_dentry, struct inode *dir,
 	if (err) {
 		drop_inode = 1;
 	} else {
+<<<<<<< HEAD
 		struct dentry *parent = dentry->d_parent;
 		err = btrfs_update_inode(trans, root, inode);
 		if (err)
@@ -4972,6 +6191,17 @@ static int btrfs_link(struct dentry *old_dentry, struct inode *dir,
 
 	nr = trans->blocks_used;
 	btrfs_end_transaction(trans, root);
+=======
+		struct dentry *parent = dget_parent(dentry);
+		err = btrfs_update_inode(trans, root, inode);
+		BUG_ON(err);
+		btrfs_log_new_name(trans, inode, NULL, parent);
+		dput(parent);
+	}
+
+	nr = trans->blocks_used;
+	btrfs_end_transaction_throttle(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 fail:
 	if (drop_inode) {
 		inode_dec_link_count(inode);
@@ -4981,7 +6211,11 @@ fail:
 	return err;
 }
 
+<<<<<<< HEAD
 static int btrfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+=======
+static int btrfs_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct inode *inode = NULL;
 	struct btrfs_trans_handle *trans;
@@ -5037,7 +6271,11 @@ static int btrfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 
 out_fail:
 	nr = trans->blocks_used;
+<<<<<<< HEAD
 	btrfs_end_transaction(trans, root);
+=======
+	btrfs_end_transaction_throttle(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (drop_on_err)
 		iput(inode);
 	btrfs_btree_balance_dirty(root, nr);
@@ -5096,12 +6334,20 @@ static noinline int uncompress_inline(struct btrfs_path *path,
 	ret = btrfs_decompress(compress_type, tmp, page,
 			       extent_offset, inline_size, max_size);
 	if (ret) {
+<<<<<<< HEAD
 		char *kaddr = kmap_atomic(page);
+=======
+		char *kaddr = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unsigned long copy_size = min_t(u64,
 				  PAGE_CACHE_SIZE - pg_offset,
 				  max_size - extent_offset);
 		memset(kaddr + pg_offset, 0, copy_size);
+<<<<<<< HEAD
 		kunmap_atomic(kaddr);
+=======
+		kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	kfree(tmp);
 	return 0;
@@ -5296,7 +6542,11 @@ again:
 				ret = uncompress_inline(path, inode, page,
 							pg_offset,
 							extent_offset, item);
+<<<<<<< HEAD
 				BUG_ON(ret); /* -ENOMEM */
+=======
+				BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				map = kmap(page);
 				read_extent_buffer(leaf, map + pg_offset, ptr,
@@ -5310,7 +6560,11 @@ again:
 			}
 			flush_dcache_page(page);
 		} else if (create && PageUptodate(page)) {
+<<<<<<< HEAD
 			BUG();
+=======
+			WARN_ON(1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!trans) {
 				kunmap(page);
 				free_extent_map(em);
@@ -5411,7 +6665,10 @@ out:
 		free_extent_map(em);
 		return ERR_PTR(err);
 	}
+<<<<<<< HEAD
 	BUG_ON(!em); /* Error is always set */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return em;
 }
 
@@ -5574,7 +6831,11 @@ static struct extent_map *btrfs_new_extent_direct(struct inode *inode,
 
 	alloc_hint = get_extent_allocation_hint(inode, start, len);
 	ret = btrfs_reserve_extent(trans, root, len, root->sectorsize, 0,
+<<<<<<< HEAD
 				   alloc_hint, &ins, 1);
+=======
+				   alloc_hint, (u64)-1, &ins, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		em = ERR_PTR(ret);
 		goto out;
@@ -5762,7 +7023,11 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
 		free_extent_map(em);
 		/* DIO will do one hole at a time, so just unlock a sector */
 		unlock_extent(&BTRFS_I(inode)->io_tree, start,
+<<<<<<< HEAD
 			      start + root->sectorsize - 1);
+=======
+			      start + root->sectorsize - 1, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 0;
 	}
 
@@ -5879,11 +7144,19 @@ static void btrfs_endio_direct_read(struct bio *bio, int err)
 			unsigned long flags;
 
 			local_irq_save(flags);
+<<<<<<< HEAD
 			kaddr = kmap_atomic(page);
 			csum = btrfs_csum_data(root, kaddr + bvec->bv_offset,
 					       csum, bvec->bv_len);
 			btrfs_csum_final(csum, (char *)&csum);
 			kunmap_atomic(kaddr);
+=======
+			kaddr = kmap_atomic(page, KM_IRQ0);
+			csum = btrfs_csum_data(root, kaddr + bvec->bv_offset,
+					       csum, bvec->bv_len);
+			btrfs_csum_final(csum, (char *)&csum);
+			kunmap_atomic(kaddr, KM_IRQ0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			local_irq_restore(flags);
 
 			flush_dcache_page(bvec->bv_page);
@@ -5903,7 +7176,11 @@ static void btrfs_endio_direct_read(struct bio *bio, int err)
 	} while (bvec <= bvec_end);
 
 	unlock_extent(&BTRFS_I(inode)->io_tree, dip->logical_offset,
+<<<<<<< HEAD
 		      dip->logical_offset + dip->bytes - 1);
+=======
+		      dip->logical_offset + dip->bytes - 1, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bio->bi_private = dip->private;
 
 	kfree(dip->csums);
@@ -5948,13 +7225,22 @@ again:
 	if (test_bit(BTRFS_ORDERED_NOCOW, &ordered->flags)) {
 		ret = btrfs_ordered_update_i_size(inode, 0, ordered);
 		if (!ret)
+<<<<<<< HEAD
 			err = btrfs_update_inode_fallback(trans, root, inode);
+=======
+			ret = btrfs_update_inode(trans, root, inode);
+		err = ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 
 	lock_extent_bits(&BTRFS_I(inode)->io_tree, ordered->file_offset,
 			 ordered->file_offset + ordered->len - 1, 0,
+<<<<<<< HEAD
 			 &cached_state);
+=======
+			 &cached_state, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (test_bit(BTRFS_ORDERED_PREALLOC, &ordered->flags)) {
 		ret = btrfs_mark_extent_written(trans, inode,
@@ -5985,8 +7271,13 @@ again:
 
 	add_pending_csums(trans, inode, ordered->file_offset, &ordered->list);
 	ret = btrfs_ordered_update_i_size(inode, 0, ordered);
+<<<<<<< HEAD
 	if (!ret || !test_bit(BTRFS_ORDERED_PREALLOC, &ordered->flags))
 		btrfs_update_inode_fallback(trans, root, inode);
+=======
+	if (!ret)
+		btrfs_update_inode(trans, root, inode);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = 0;
 out_unlock:
 	unlock_extent_cached(&BTRFS_I(inode)->io_tree, ordered->file_offset,
@@ -6028,7 +7319,11 @@ static int __btrfs_submit_bio_start_direct_io(struct inode *inode, int rw,
 	int ret;
 	struct btrfs_root *root = BTRFS_I(inode)->root;
 	ret = btrfs_csum_one_bio(root, inode, bio, offset, 1);
+<<<<<<< HEAD
 	BUG_ON(ret); /* -ENOMEM */
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -6369,7 +7664,11 @@ static ssize_t btrfs_direct_IO(int rw, struct kiocb *iocb,
 
 	while (1) {
 		lock_extent_bits(&BTRFS_I(inode)->io_tree, lockstart, lockend,
+<<<<<<< HEAD
 				 0, &cached_state);
+=======
+				 0, &cached_state, GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We're concerned with the entire range that we're going to be
 		 * doing DIO to, so we need to make sure theres no ordered
@@ -6393,7 +7692,11 @@ static ssize_t btrfs_direct_IO(int rw, struct kiocb *iocb,
 	if (writing) {
 		write_bits = EXTENT_DELALLOC | EXTENT_DO_ACCOUNTING;
 		ret = set_extent_bit(&BTRFS_I(inode)->io_tree, lockstart, lockend,
+<<<<<<< HEAD
 				     EXTENT_DELALLOC, NULL, &cached_state,
+=======
+				     EXTENT_DELALLOC, 0, NULL, &cached_state,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     GFP_NOFS);
 		if (ret) {
 			clear_extent_bit(&BTRFS_I(inode)->io_tree, lockstart,
@@ -6441,7 +7744,11 @@ int btrfs_readpage(struct file *file, struct page *page)
 {
 	struct extent_io_tree *tree;
 	tree = &BTRFS_I(page->mapping->host)->io_tree;
+<<<<<<< HEAD
 	return extent_read_full_page(tree, page, btrfs_get_extent, 0);
+=======
+	return extent_read_full_page(tree, page, btrfs_get_extent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int btrfs_writepage(struct page *page, struct writeback_control *wbc)
@@ -6523,7 +7830,12 @@ static void btrfs_invalidatepage(struct page *page, unsigned long offset)
 		btrfs_releasepage(page, GFP_NOFS);
 		return;
 	}
+<<<<<<< HEAD
 	lock_extent_bits(tree, page_start, page_end, 0, &cached_state);
+=======
+	lock_extent_bits(tree, page_start, page_end, 0, &cached_state,
+			 GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ordered = btrfs_lookup_ordered_extent(page->mapping->host,
 					   page_offset(page));
 	if (ordered) {
@@ -6545,7 +7857,12 @@ static void btrfs_invalidatepage(struct page *page, unsigned long offset)
 		}
 		btrfs_put_ordered_extent(ordered);
 		cached_state = NULL;
+<<<<<<< HEAD
 		lock_extent_bits(tree, page_start, page_end, 0, &cached_state);
+=======
+		lock_extent_bits(tree, page_start, page_end, 0, &cached_state,
+				 GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	clear_extent_bit(tree, page_start, page_end,
 		 EXTENT_LOCKED | EXTENT_DIRTY | EXTENT_DELALLOC |
@@ -6587,23 +7904,33 @@ int btrfs_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf)
 	unsigned long zero_start;
 	loff_t size;
 	int ret;
+<<<<<<< HEAD
 	int reserved = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 page_start;
 	u64 page_end;
 
 	ret  = btrfs_delalloc_reserve_space(inode, PAGE_CACHE_SIZE);
+<<<<<<< HEAD
 	if (!ret) {
 		ret = btrfs_update_time(vma->vm_file);
 		reserved = 1;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		if (ret == -ENOMEM)
 			ret = VM_FAULT_OOM;
 		else /* -ENOSPC, -EIO, etc */
 			ret = VM_FAULT_SIGBUS;
+<<<<<<< HEAD
 		if (reserved)
 			goto out;
 		goto out_noreserve;
+=======
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	ret = VM_FAULT_NOPAGE; /* make the VM retry the fault */
@@ -6620,7 +7947,12 @@ again:
 	}
 	wait_on_page_writeback(page);
 
+<<<<<<< HEAD
 	lock_extent_bits(io_tree, page_start, page_end, 0, &cached_state);
+=======
+	lock_extent_bits(io_tree, page_start, page_end, 0, &cached_state,
+			 GFP_NOFS);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	set_page_extent_mapped(page);
 
 	/*
@@ -6683,9 +8015,14 @@ out_unlock:
 	if (!ret)
 		return VM_FAULT_LOCKED;
 	unlock_page(page);
+<<<<<<< HEAD
 out:
 	btrfs_delalloc_release_space(inode, PAGE_CACHE_SIZE);
 out_noreserve:
+=======
+	btrfs_delalloc_release_space(inode, PAGE_CACHE_SIZE);
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -6698,7 +8035,10 @@ static int btrfs_truncate(struct inode *inode)
 	struct btrfs_trans_handle *trans;
 	unsigned long nr;
 	u64 mask = root->sectorsize - 1;
+<<<<<<< HEAD
 	u64 min_size = btrfs_calc_trunc_metadata_size(root, 1);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_truncate_page(inode->i_mapping, inode->i_size);
 	if (ret)
@@ -6746,6 +8086,7 @@ static int btrfs_truncate(struct inode *inode)
 	rsv = btrfs_alloc_block_rsv(root);
 	if (!rsv)
 		return -ENOMEM;
+<<<<<<< HEAD
 	rsv->size = min_size;
 
 	/*
@@ -6754,15 +8095,27 @@ static int btrfs_truncate(struct inode *inode)
 	 * 1 for the orphan item deletion
 	 * 1 for updating the inode.
 	 */
+=======
+	btrfs_add_durable_block_rsv(root->fs_info, rsv);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	trans = btrfs_start_transaction(root, 4);
 	if (IS_ERR(trans)) {
 		err = PTR_ERR(trans);
 		goto out;
 	}
 
+<<<<<<< HEAD
 	/* Migrate the slack space for the truncate to our reserve */
 	ret = btrfs_block_rsv_migrate(&root->fs_info->trans_block_rsv, rsv,
 				      min_size);
+=======
+	/*
+	 * Reserve space for the truncate process.  Truncate should be adding
+	 * space, but if there are snapshots it may end up using space.
+	 */
+	ret = btrfs_truncate_reserve_metadata(trans, root, rsv);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BUG_ON(ret);
 
 	ret = btrfs_orphan_add(trans, inode);
@@ -6771,6 +8124,24 @@ static int btrfs_truncate(struct inode *inode)
 		goto out;
 	}
 
+<<<<<<< HEAD
+=======
+	nr = trans->blocks_used;
+	btrfs_end_transaction(trans, root);
+	btrfs_btree_balance_dirty(root, nr);
+
+	/*
+	 * Ok so we've already migrated our bytes over for the truncate, so here
+	 * just reserve the one slot we need for updating the inode.
+	 */
+	trans = btrfs_start_transaction(root, 1);
+	if (IS_ERR(trans)) {
+		err = PTR_ERR(trans);
+		goto out;
+	}
+	trans->block_rsv = rsv;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * setattr is responsible for setting the ordered_data_close flag,
 	 * but that is only tested during the last file release.  That
@@ -6792,6 +8163,7 @@ static int btrfs_truncate(struct inode *inode)
 		btrfs_add_ordered_operation(trans, root, inode);
 
 	while (1) {
+<<<<<<< HEAD
 		ret = btrfs_block_rsv_refill(root, rsv, min_size);
 		if (ret) {
 			/*
@@ -6816,6 +8188,21 @@ static int btrfs_truncate(struct inode *inode)
 		}
 
 		trans->block_rsv = rsv;
+=======
+		if (!trans) {
+			trans = btrfs_start_transaction(root, 3);
+			if (IS_ERR(trans)) {
+				err = PTR_ERR(trans);
+				goto out;
+			}
+
+			ret = btrfs_truncate_reserve_metadata(trans, root,
+							      rsv);
+			BUG_ON(ret);
+
+			trans->block_rsv = rsv;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = btrfs_truncate_inode_items(trans, root, inode,
 						 inode->i_size,
@@ -6831,7 +8218,11 @@ static int btrfs_truncate(struct inode *inode)
 			err = ret;
 			break;
 		}
+<<<<<<< HEAD
 end_trans:
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nr = trans->blocks_used;
 		btrfs_end_transaction(trans, root);
 		trans = NULL;
@@ -6851,6 +8242,7 @@ end_trans:
 		ret = btrfs_orphan_del(NULL, inode);
 	}
 
+<<<<<<< HEAD
 	if (trans) {
 		trans->block_rsv = &root->fs_info->trans_block_rsv;
 		ret = btrfs_update_inode(trans, root, inode);
@@ -6861,6 +8253,16 @@ end_trans:
 		ret = btrfs_end_transaction(trans, root);
 		btrfs_btree_balance_dirty(root, nr);
 	}
+=======
+	trans->block_rsv = &root->fs_info->trans_block_rsv;
+	ret = btrfs_update_inode(trans, root, inode);
+	if (ret && !err)
+		err = ret;
+
+	nr = trans->blocks_used;
+	ret = btrfs_end_transaction_throttle(trans, root);
+	btrfs_btree_balance_dirty(root, nr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 out:
 	btrfs_free_block_rsv(root, rsv);
@@ -6881,15 +8283,21 @@ int btrfs_create_subvol_root(struct btrfs_trans_handle *trans,
 	int err;
 	u64 index = 0;
 
+<<<<<<< HEAD
 	inode = btrfs_new_inode(trans, new_root, NULL, "..", 2,
 				new_dirid, new_dirid,
 				S_IFDIR | (~current_umask() & S_IRWXUGO),
 				&index);
+=======
+	inode = btrfs_new_inode(trans, new_root, NULL, "..", 2, new_dirid,
+				new_dirid, S_IFDIR | 0700, &index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (IS_ERR(inode))
 		return PTR_ERR(inode);
 	inode->i_op = &btrfs_dir_inode_operations;
 	inode->i_fop = &btrfs_dir_file_operations;
 
+<<<<<<< HEAD
 	set_nlink(inode, 1);
 	btrfs_i_size_write(inode, 0);
 
@@ -6897,6 +8305,29 @@ int btrfs_create_subvol_root(struct btrfs_trans_handle *trans,
 
 	iput(inode);
 	return err;
+=======
+	inode->i_nlink = 1;
+	btrfs_i_size_write(inode, 0);
+
+	err = btrfs_update_inode(trans, new_root, inode);
+	BUG_ON(err);
+
+	iput(inode);
+	return 0;
+}
+
+/* helper function for file defrag and space balancing.  This
+ * forces readahead on a given range of bytes in an inode
+ */
+unsigned long btrfs_force_ra(struct address_space *mapping,
+			      struct file_ra_state *ra, struct file *file,
+			      pgoff_t offset, pgoff_t last_index)
+{
+	pgoff_t req_size = last_index - offset + 1;
+
+	page_cache_sync_readahead(mapping, ra, file, offset, req_size);
+	return offset + req_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 struct inode *btrfs_alloc_inode(struct super_block *sb)
@@ -6916,6 +8347,7 @@ struct inode *btrfs_alloc_inode(struct super_block *sb)
 	ei->last_sub_trans = 0;
 	ei->logged_trans = 0;
 	ei->delalloc_bytes = 0;
+<<<<<<< HEAD
 	ei->disk_i_size = 0;
 	ei->flags = 0;
 	ei->csum_bytes = 0;
@@ -6925,12 +8357,25 @@ struct inode *btrfs_alloc_inode(struct super_block *sb)
 	spin_lock_init(&ei->lock);
 	ei->outstanding_extents = 0;
 	ei->reserved_extents = 0;
+=======
+	ei->reserved_bytes = 0;
+	ei->disk_i_size = 0;
+	ei->flags = 0;
+	ei->index_cnt = (u64)-1;
+	ei->last_unlink_trans = 0;
+
+	atomic_set(&ei->outstanding_extents, 0);
+	atomic_set(&ei->reserved_extents, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ei->ordered_data_close = 0;
 	ei->orphan_meta_reserved = 0;
 	ei->dummy_inode = 0;
 	ei->in_defrag = 0;
+<<<<<<< HEAD
 	ei->delalloc_meta_reserved = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ei->force_compress = BTRFS_COMPRESS_NONE;
 
 	ei->delayed_node = NULL;
@@ -6939,10 +8384,14 @@ struct inode *btrfs_alloc_inode(struct super_block *sb)
 	extent_map_tree_init(&ei->extent_tree);
 	extent_io_tree_init(&ei->io_tree, &inode->i_data);
 	extent_io_tree_init(&ei->io_failure_tree, &inode->i_data);
+<<<<<<< HEAD
 	ei->io_tree.track_uptodate = 1;
 	ei->io_failure_tree.track_uptodate = 1;
 	mutex_init(&ei->log_mutex);
 	mutex_init(&ei->delalloc_mutex);
+=======
+	mutex_init(&ei->log_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_ordered_inode_tree_init(&ei->ordered_tree);
 	INIT_LIST_HEAD(&ei->i_orphan);
 	INIT_LIST_HEAD(&ei->delalloc_inodes);
@@ -6955,6 +8404,10 @@ struct inode *btrfs_alloc_inode(struct super_block *sb)
 static void btrfs_i_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
+<<<<<<< HEAD
+=======
+	INIT_LIST_HEAD(&inode->i_dentry);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
 }
 
@@ -6965,10 +8418,15 @@ void btrfs_destroy_inode(struct inode *inode)
 
 	WARN_ON(!list_empty(&inode->i_dentry));
 	WARN_ON(inode->i_data.nrpages);
+<<<<<<< HEAD
 	WARN_ON(BTRFS_I(inode)->outstanding_extents);
 	WARN_ON(BTRFS_I(inode)->reserved_extents);
 	WARN_ON(BTRFS_I(inode)->delalloc_bytes);
 	WARN_ON(BTRFS_I(inode)->csum_bytes);
+=======
+	WARN_ON(atomic_read(&BTRFS_I(inode)->outstanding_extents));
+	WARN_ON(atomic_read(&BTRFS_I(inode)->reserved_extents));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * This can happen where we create an inode, but somebody else also
@@ -7023,7 +8481,11 @@ int btrfs_drop_inode(struct inode *inode)
 	struct btrfs_root *root = BTRFS_I(inode)->root;
 
 	if (btrfs_root_refs(&root->root_item) == 0 &&
+<<<<<<< HEAD
 	    !btrfs_is_free_space_inode(root, inode))
+=======
+	    !is_free_space_inode(root, inode))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return 1;
 	else
 		return generic_drop_inode(inode);
@@ -7092,6 +8554,7 @@ static int btrfs_getattr(struct vfsmount *mnt,
 			 struct dentry *dentry, struct kstat *stat)
 {
 	struct inode *inode = dentry->d_inode;
+<<<<<<< HEAD
 	u32 blocksize = inode->i_sb->s_blocksize;
 
 	generic_fillattr(inode, stat);
@@ -7099,6 +8562,13 @@ static int btrfs_getattr(struct vfsmount *mnt,
 	stat->blksize = PAGE_CACHE_SIZE;
 	stat->blocks = (ALIGN(inode_get_bytes(inode), blocksize) +
 		ALIGN(BTRFS_I(inode)->delalloc_bytes, blocksize)) >> 9;
+=======
+	generic_fillattr(inode, stat);
+	stat->dev = BTRFS_I(inode)->root->anon_super.s_dev;
+	stat->blksize = PAGE_CACHE_SIZE;
+	stat->blocks = (inode_get_bytes(inode) +
+			BTRFS_I(inode)->delalloc_bytes) >> 9;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -7230,10 +8700,14 @@ static int btrfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 		if (!ret)
 			ret = btrfs_update_inode(trans, root, old_inode);
 	}
+<<<<<<< HEAD
 	if (ret) {
 		btrfs_abort_transaction(trans, root, ret);
 		goto out_fail;
 	}
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (new_inode) {
 		new_inode->i_ctime = CURRENT_TIME;
@@ -7251,6 +8725,7 @@ static int btrfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 						 new_dentry->d_name.name,
 						 new_dentry->d_name.len);
 		}
+<<<<<<< HEAD
 		if (!ret && new_inode->i_nlink == 0) {
 			ret = btrfs_orphan_add(trans, new_dentry->d_inode);
 			BUG_ON(ret);
@@ -7259,6 +8734,13 @@ static int btrfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 			btrfs_abort_transaction(trans, root, ret);
 			goto out_fail;
 		}
+=======
+		BUG_ON(ret);
+		if (new_inode->i_nlink == 0) {
+			ret = btrfs_orphan_add(trans, new_dentry->d_inode);
+			BUG_ON(ret);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	fixup_inode_flags(new_dir, old_inode);
@@ -7266,6 +8748,7 @@ static int btrfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 	ret = btrfs_add_link(trans, new_dir, old_inode,
 			     new_dentry->d_name.name,
 			     new_dentry->d_name.len, 0, index);
+<<<<<<< HEAD
 	if (ret) {
 		btrfs_abort_transaction(trans, root, ret);
 		goto out_fail;
@@ -7278,6 +8761,18 @@ static int btrfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 	}
 out_fail:
 	btrfs_end_transaction(trans, root);
+=======
+	BUG_ON(ret);
+
+	if (old_ino != BTRFS_FIRST_FREE_OBJECTID) {
+		struct dentry *parent = dget_parent(new_dentry);
+		btrfs_log_new_name(trans, old_inode, old_dir, parent);
+		dput(parent);
+		btrfs_end_log_trans(root);
+	}
+out_fail:
+	btrfs_end_transaction_throttle(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out_notrans:
 	if (old_ino == BTRFS_FIRST_FREE_OBJECTID)
 		up_read(&root->fs_info->subvol_sem);
@@ -7383,6 +8878,7 @@ static int btrfs_symlink(struct inode *dir, struct dentry *dentry,
 		goto out_unlock;
 	}
 
+<<<<<<< HEAD
 	/*
 	* If the active LSM wants to access the inode during
 	* d_instantiate it needs these. Smack checks to see
@@ -7392,23 +8888,34 @@ static int btrfs_symlink(struct inode *dir, struct dentry *dentry,
 	inode->i_fop = &btrfs_file_operations;
 	inode->i_op = &btrfs_file_inode_operations;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = btrfs_add_nondir(trans, dir, dentry, inode, 0, index);
 	if (err)
 		drop_inode = 1;
 	else {
 		inode->i_mapping->a_ops = &btrfs_aops;
 		inode->i_mapping->backing_dev_info = &root->fs_info->bdi;
+<<<<<<< HEAD
+=======
+		inode->i_fop = &btrfs_file_operations;
+		inode->i_op = &btrfs_file_inode_operations;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BTRFS_I(inode)->io_tree.ops = &btrfs_extent_io_ops;
 	}
 	if (drop_inode)
 		goto out_unlock;
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path) {
 		err = -ENOMEM;
 		drop_inode = 1;
 		goto out_unlock;
 	}
+=======
+	BUG_ON(!path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	key.objectid = btrfs_ino(inode);
 	key.offset = 0;
 	btrfs_set_key_type(&key, BTRFS_EXTENT_DATA_KEY);
@@ -7446,10 +8953,15 @@ static int btrfs_symlink(struct inode *dir, struct dentry *dentry,
 		drop_inode = 1;
 
 out_unlock:
+<<<<<<< HEAD
 	if (!err)
 		d_instantiate(dentry, inode);
 	nr = trans->blocks_used;
 	btrfs_end_transaction(trans, root);
+=======
+	nr = trans->blocks_used;
+	btrfs_end_transaction_throttle(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (drop_inode) {
 		inode_dec_link_count(inode);
 		iput(inode);
@@ -7482,7 +8994,11 @@ static int __btrfs_prealloc_file_range(struct inode *inode, int mode,
 		}
 
 		ret = btrfs_reserve_extent(trans, root, num_bytes, min_size,
+<<<<<<< HEAD
 					   0, *alloc_hint, &ins, 1);
+=======
+					   0, *alloc_hint, (u64)-1, &ins, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret) {
 			if (own_trans)
 				btrfs_end_transaction(trans, root);
@@ -7494,12 +9010,16 @@ static int __btrfs_prealloc_file_range(struct inode *inode, int mode,
 						  ins.offset, ins.offset,
 						  ins.offset, 0, 0, 0,
 						  BTRFS_FILE_EXTENT_PREALLOC);
+<<<<<<< HEAD
 		if (ret) {
 			btrfs_abort_transaction(trans, root, ret);
 			if (own_trans)
 				btrfs_end_transaction(trans, root);
 			break;
 		}
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		btrfs_drop_extent_cache(inode, cur_offset,
 					cur_offset + ins.offset -1, 0);
 
@@ -7521,6 +9041,7 @@ static int __btrfs_prealloc_file_range(struct inode *inode, int mode,
 		}
 
 		ret = btrfs_update_inode(trans, root, inode);
+<<<<<<< HEAD
 
 		if (ret) {
 			btrfs_abort_transaction(trans, root, ret);
@@ -7528,6 +9049,9 @@ static int __btrfs_prealloc_file_range(struct inode *inode, int mode,
 				btrfs_end_transaction(trans, root);
 			break;
 		}
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (own_trans)
 			btrfs_end_transaction(trans, root);
@@ -7558,6 +9082,7 @@ static int btrfs_set_page_dirty(struct page *page)
 	return __set_page_dirty_nobuffers(page);
 }
 
+<<<<<<< HEAD
 static int btrfs_permission(struct inode *inode, int mask)
 {
 	struct btrfs_root *root = BTRFS_I(inode)->root;
@@ -7571,6 +9096,17 @@ static int btrfs_permission(struct inode *inode, int mask)
 			return -EACCES;
 	}
 	return generic_permission(inode, mask);
+=======
+static int btrfs_permission(struct inode *inode, int mask, unsigned int flags)
+{
+	struct btrfs_root *root = BTRFS_I(inode)->root;
+
+	if (btrfs_root_readonly(root) && (mask & MAY_WRITE))
+		return -EROFS;
+	if ((BTRFS_I(inode)->flags & BTRFS_INODE_READONLY) && (mask & MAY_WRITE))
+		return -EACCES;
+	return generic_permission(inode, mask, flags, btrfs_check_acl);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct inode_operations btrfs_dir_inode_operations = {
@@ -7590,12 +9126,18 @@ static const struct inode_operations btrfs_dir_inode_operations = {
 	.listxattr	= btrfs_listxattr,
 	.removexattr	= btrfs_removexattr,
 	.permission	= btrfs_permission,
+<<<<<<< HEAD
 	.get_acl	= btrfs_get_acl,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 static const struct inode_operations btrfs_dir_ro_inode_operations = {
 	.lookup		= btrfs_lookup,
 	.permission	= btrfs_permission,
+<<<<<<< HEAD
 	.get_acl	= btrfs_get_acl,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct file_operations btrfs_dir_file_operations = {
@@ -7617,6 +9159,10 @@ static struct extent_io_ops btrfs_extent_io_ops = {
 	.readpage_end_io_hook = btrfs_readpage_end_io_hook,
 	.writepage_end_io_hook = btrfs_writepage_end_io_hook,
 	.writepage_start_hook = btrfs_writepage_start_hook,
+<<<<<<< HEAD
+=======
+	.readpage_io_failed_hook = btrfs_io_failed_hook,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.set_bit_hook = btrfs_set_bit_hook,
 	.clear_bit_hook = btrfs_clear_bit_hook,
 	.merge_extent_hook = btrfs_merge_extent_hook,
@@ -7663,7 +9209,10 @@ static const struct inode_operations btrfs_file_inode_operations = {
 	.removexattr	= btrfs_removexattr,
 	.permission	= btrfs_permission,
 	.fiemap		= btrfs_fiemap,
+<<<<<<< HEAD
 	.get_acl	= btrfs_get_acl,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 static const struct inode_operations btrfs_special_inode_operations = {
 	.getattr	= btrfs_getattr,
@@ -7673,23 +9222,35 @@ static const struct inode_operations btrfs_special_inode_operations = {
 	.getxattr	= btrfs_getxattr,
 	.listxattr	= btrfs_listxattr,
 	.removexattr	= btrfs_removexattr,
+<<<<<<< HEAD
 	.get_acl	= btrfs_get_acl,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 static const struct inode_operations btrfs_symlink_inode_operations = {
 	.readlink	= generic_readlink,
 	.follow_link	= page_follow_link_light,
 	.put_link	= page_put_link,
 	.getattr	= btrfs_getattr,
+<<<<<<< HEAD
 	.setattr	= btrfs_setattr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.permission	= btrfs_permission,
 	.setxattr	= btrfs_setxattr,
 	.getxattr	= btrfs_getxattr,
 	.listxattr	= btrfs_listxattr,
 	.removexattr	= btrfs_removexattr,
+<<<<<<< HEAD
 	.get_acl	= btrfs_get_acl,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 const struct dentry_operations btrfs_dentry_operations = {
 	.d_delete	= btrfs_dentry_delete,
+<<<<<<< HEAD
 	.d_release	= btrfs_dentry_release,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };

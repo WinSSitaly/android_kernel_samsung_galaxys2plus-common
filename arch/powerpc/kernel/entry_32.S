@@ -206,6 +206,7 @@ reenable_mmu:				/* re-enable mmu so we can */
 	andi.	r10,r10,MSR_EE		/* Did EE change? */
 	beq	1f
 
+<<<<<<< HEAD
 	/*
 	 * The trace_hardirqs_off will use CALLER_ADDR0 and CALLER_ADDR1.
 	 * If from user mode there is only one stack frame on the stack, and
@@ -243,6 +244,27 @@ reenable_mmu:				/* re-enable mmu so we can */
 	lwz	r6,GPR6(r1)
 	lwz	r7,GPR7(r1)
 	lwz	r8,GPR8(r1)
+=======
+	/* Save handler and return address into the 2 unused words
+	 * of the STACK_FRAME_OVERHEAD (sneak sneak sneak). Everything
+	 * else can be recovered from the pt_regs except r3 which for
+	 * normal interrupts has been set to pt_regs and for syscalls
+	 * is an argument, so we temporarily use ORIG_GPR3 to save it
+	 */
+	stw	r9,8(r1)
+	stw	r11,12(r1)
+	stw	r3,ORIG_GPR3(r1)
+	bl	trace_hardirqs_off
+	lwz	r0,GPR0(r1)
+	lwz	r3,ORIG_GPR3(r1)
+	lwz	r4,GPR4(r1)
+	lwz	r5,GPR5(r1)
+	lwz	r6,GPR6(r1)
+	lwz	r7,GPR7(r1)
+	lwz	r8,GPR8(r1)
+	lwz	r9,8(r1)
+	lwz	r11,12(r1)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 1:	mtctr	r11
 	mtlr	r9
 	bctr				/* jump to handler */
@@ -1216,7 +1238,11 @@ do_user_signal:			/* r10 contains MSR_KERNEL here */
 	stw	r3,_TRAP(r1)
 2:	addi	r3,r1,STACK_FRAME_OVERHEAD
 	mr	r4,r9
+<<<<<<< HEAD
 	bl	do_notify_resume
+=======
+	bl	do_signal
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	REST_NVGPRS(r1)
 	b	recheck
 

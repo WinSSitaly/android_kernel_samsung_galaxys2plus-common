@@ -29,7 +29,10 @@
 #include <sound/core.h>
 #include <sound/emu10k1.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "p17v.h"
 
 unsigned int snd_emu10k1_ptr_read(struct snd_emu10k1 * emu, unsigned int reg, unsigned int chn)

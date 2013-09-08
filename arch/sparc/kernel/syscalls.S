@@ -212,10 +212,15 @@ linux_sparc_syscall:
 3:	stx	%o0, [%sp + PTREGS_OFF + PT_V9_I0]
 ret_sys_call:
 	ldx	[%sp + PTREGS_OFF + PT_V9_TSTATE], %g3
+<<<<<<< HEAD
+=======
+	ldx	[%sp + PTREGS_OFF + PT_V9_TNPC], %l1 ! pc = npc
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sra	%o0, 0, %o0
 	mov	%ulo(TSTATE_XCARRY | TSTATE_ICARRY), %g2
 	sllx	%g2, 32, %g2
 
+<<<<<<< HEAD
 	cmp	%o0, -ERESTART_RESTARTBLOCK
 	bgeu,pn	%xcc, 1f
 	 andcc	%l0, (_TIF_SYSCALL_TRACE|_TIF_SECCOMP|_TIF_SYSCALL_AUDIT|_TIF_SYSCALL_TRACEPOINT), %g0
@@ -226,6 +231,21 @@ ret_sys_call:
 	/* System call success, clear Carry condition code. */
 	andn	%g3, %g2, %g3
 3:
+=======
+	/* Check if force_successful_syscall_return()
+	 * was invoked.
+	 */
+	ldub	[%g6 + TI_SYS_NOERROR], %l2
+	brnz,a,pn %l2, 80f
+	 stb	%g0, [%g6 + TI_SYS_NOERROR]
+
+	cmp	%o0, -ERESTART_RESTARTBLOCK
+	bgeu,pn	%xcc, 1f
+	 andcc	%l0, (_TIF_SYSCALL_TRACE|_TIF_SECCOMP|_TIF_SYSCALL_AUDIT|_TIF_SYSCALL_TRACEPOINT), %l6
+80:
+	/* System call success, clear Carry condition code. */
+	andn	%g3, %g2, %g3
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stx	%g3, [%sp + PTREGS_OFF + PT_V9_TSTATE]	
 	bne,pn	%icc, linux_syscall_trace2
 	 add	%l1, 0x4, %l2			! npc = npc+4
@@ -234,6 +254,7 @@ ret_sys_call:
 	 stx	%l2, [%sp + PTREGS_OFF + PT_V9_TNPC]
 
 1:
+<<<<<<< HEAD
 	/* Check if force_successful_syscall_return()
 	 * was invoked.
 	 */
@@ -248,6 +269,22 @@ ret_sys_call:
 	ba,pt	%xcc, 3b
 	 or	%g3, %g2, %g3
 
+=======
+	/* System call failure, set Carry condition code.
+	 * Also, get abs(errno) to return to the process.
+	 */
+	andcc	%l0, (_TIF_SYSCALL_TRACE|_TIF_SECCOMP|_TIF_SYSCALL_AUDIT|_TIF_SYSCALL_TRACEPOINT), %l6	
+	sub	%g0, %o0, %o0
+	or	%g3, %g2, %g3
+	stx	%o0, [%sp + PTREGS_OFF + PT_V9_I0]
+	stx	%g3, [%sp + PTREGS_OFF + PT_V9_TSTATE]
+	bne,pn	%icc, linux_syscall_trace2
+	 add	%l1, 0x4, %l2			! npc = npc+4
+	stx	%l1, [%sp + PTREGS_OFF + PT_V9_TPC]
+
+	b,pt	%xcc, rtrap
+	 stx	%l2, [%sp + PTREGS_OFF + PT_V9_TNPC]
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 linux_syscall_trace2:
 	call	syscall_trace_leave
 	 add	%sp, PTREGS_OFF, %o0

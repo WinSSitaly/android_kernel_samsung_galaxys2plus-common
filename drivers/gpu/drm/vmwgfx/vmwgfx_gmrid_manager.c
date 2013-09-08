@@ -40,8 +40,11 @@ struct vmwgfx_gmrid_man {
 	spinlock_t lock;
 	struct ida gmr_ida;
 	uint32_t max_gmr_ids;
+<<<<<<< HEAD
 	uint32_t max_gmr_pages;
 	uint32_t used_gmr_pages;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int vmw_gmrid_man_get_node(struct ttm_mem_type_manager *man,
@@ -51,11 +54,16 @@ static int vmw_gmrid_man_get_node(struct ttm_mem_type_manager *man,
 {
 	struct vmwgfx_gmrid_man *gman =
 		(struct vmwgfx_gmrid_man *)man->priv;
+<<<<<<< HEAD
 	int ret = 0;
+=======
+	int ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int id;
 
 	mem->mm_node = NULL;
 
+<<<<<<< HEAD
 	spin_lock(&gman->lock);
 
 	if (gman->max_gmr_pages > 0) {
@@ -78,11 +86,29 @@ static int vmw_gmrid_man_get_node(struct ttm_mem_type_manager *man,
 			ret = 0;
 			goto out_err_locked;
 		}
+=======
+	do {
+		if (unlikely(ida_pre_get(&gman->gmr_ida, GFP_KERNEL) == 0))
+			return -ENOMEM;
+
+		spin_lock(&gman->lock);
+		ret = ida_get_new(&gman->gmr_ida, &id);
+
+		if (unlikely(ret == 0 && id >= gman->max_gmr_ids)) {
+			ida_remove(&gman->gmr_ida, id);
+			spin_unlock(&gman->lock);
+			return 0;
+		}
+
+		spin_unlock(&gman->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} while (ret == -EAGAIN);
 
 	if (likely(ret == 0)) {
 		mem->mm_node = gman;
 		mem->start = id;
+<<<<<<< HEAD
 		mem->num_pages = bo->num_pages;
 	} else
 		goto out_err_locked;
@@ -95,6 +121,10 @@ out_err:
 out_err_locked:
 	gman->used_gmr_pages -= bo->num_pages;
 	spin_unlock(&gman->lock);
+=======
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -107,7 +137,10 @@ static void vmw_gmrid_man_put_node(struct ttm_mem_type_manager *man,
 	if (mem->mm_node) {
 		spin_lock(&gman->lock);
 		ida_remove(&gman->gmr_ida, mem->start);
+<<<<<<< HEAD
 		gman->used_gmr_pages -= mem->num_pages;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock(&gman->lock);
 		mem->mm_node = NULL;
 	}
@@ -116,8 +149,11 @@ static void vmw_gmrid_man_put_node(struct ttm_mem_type_manager *man,
 static int vmw_gmrid_man_init(struct ttm_mem_type_manager *man,
 			      unsigned long p_size)
 {
+<<<<<<< HEAD
 	struct vmw_private *dev_priv =
 		container_of(man->bdev, struct vmw_private, bdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct vmwgfx_gmrid_man *gman =
 		kzalloc(sizeof(*gman), GFP_KERNEL);
 
@@ -125,8 +161,11 @@ static int vmw_gmrid_man_init(struct ttm_mem_type_manager *man,
 		return -ENOMEM;
 
 	spin_lock_init(&gman->lock);
+<<<<<<< HEAD
 	gman->max_gmr_pages = dev_priv->max_gmr_pages;
 	gman->used_gmr_pages = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ida_init(&gman->gmr_ida);
 	gman->max_gmr_ids = p_size;
 	man->priv = (void *) gman;

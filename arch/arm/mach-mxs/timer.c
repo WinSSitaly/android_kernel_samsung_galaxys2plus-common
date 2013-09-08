@@ -245,7 +245,11 @@ static int __init mxs_clocksource_init(struct clk *timer_clk)
 
 void __init mxs_timer_init(struct clk *timer_clk, int irq)
 {
+<<<<<<< HEAD
 	clk_prepare_enable(timer_clk);
+=======
+	clk_enable(timer_clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Initialize timers to a known state

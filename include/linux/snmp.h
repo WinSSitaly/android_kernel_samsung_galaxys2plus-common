@@ -192,6 +192,10 @@ enum
 	LINUX_MIB_TCPPARTIALUNDO,		/* TCPPartialUndo */
 	LINUX_MIB_TCPDSACKUNDO,			/* TCPDSACKUndo */
 	LINUX_MIB_TCPLOSSUNDO,			/* TCPLossUndo */
+<<<<<<< HEAD
+=======
+	LINUX_MIB_TCPLOSS,			/* TCPLoss */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	LINUX_MIB_TCPLOSTRETRANSMIT,		/* TCPLostRetransmit */
 	LINUX_MIB_TCPRENOFAILURES,		/* TCPRenoFailures */
 	LINUX_MIB_TCPSACKFAILURES,		/* TCPSackFailures */
@@ -208,6 +212,10 @@ enum
 	LINUX_MIB_TCPDSACKOFOSENT,		/* TCPDSACKOfoSent */
 	LINUX_MIB_TCPDSACKRECV,			/* TCPDSACKRecv */
 	LINUX_MIB_TCPDSACKOFORECV,		/* TCPDSACKOfoRecv */
+<<<<<<< HEAD
+=======
+	LINUX_MIB_TCPABORTONSYN,		/* TCPAbortOnSyn */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	LINUX_MIB_TCPABORTONDATA,		/* TCPAbortOnData */
 	LINUX_MIB_TCPABORTONCLOSE,		/* TCPAbortOnClose */
 	LINUX_MIB_TCPABORTONMEMORY,		/* TCPAbortOnMemory */
@@ -229,12 +237,15 @@ enum
 	LINUX_MIB_TCPDEFERACCEPTDROP,
 	LINUX_MIB_IPRPFILTER, /* IP Reverse Path Filter (rp_filter) */
 	LINUX_MIB_TCPTIMEWAITOVERFLOW,		/* TCPTimeWaitOverflow */
+<<<<<<< HEAD
 	LINUX_MIB_TCPREQQFULLDOCOOKIES,		/* TCPReqQFullDoCookies */
 	LINUX_MIB_TCPREQQFULLDROP,		/* TCPReqQFullDrop */
 	LINUX_MIB_TCPRETRANSFAIL,		/* TCPRetransFail */
 	LINUX_MIB_TCPRCVCOALESCE,			/* TCPRcvCoalesce */
 	LINUX_MIB_TCPCHALLENGEACK,		/* TCPChallengeACK */
 	LINUX_MIB_TCPSYNCHALLENGE,		/* TCPSYNChallenge */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	__LINUX_MIB_MAX
 };
 

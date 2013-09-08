@@ -3,7 +3,11 @@
  *
  * Copyright 2007-2010 Wolfson Microelectronics PLC.
  * Author: Graeme Gregory
+<<<<<<< HEAD
  *         Graeme.Gregory@wolfsonmicro.com
+=======
+ *         linux@wolfsonmicro.com
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  This program is free software; you can redistribute  it and/or modify it
  *  under  the terms of  the GNU General  Public License as published by the
@@ -18,6 +22,10 @@
 #include <linux/delay.h>
 #include <linux/pm.h>
 #include <linux/i2c.h>
+<<<<<<< HEAD
+=======
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <sound/core.h>
 #include <sound/pcm.h>
@@ -392,7 +400,11 @@ static int inmixer_event(struct snd_soc_dapm_widget *w,
 			 (1 << WM8991_AINRMUX_PWR_BIT)))
 		reg |= WM8991_AINR_ENA;
 	else
+<<<<<<< HEAD
 		reg &= ~WM8991_AINR_ENA;
+=======
+		reg &= ~WM8991_AINL_ENA;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_write(w->codec, WM8991_POWER_MANAGEMENT_2, reg);
 	return 0;
@@ -769,8 +781,13 @@ static const struct snd_soc_dapm_widget wm8991_dapm_widgets[] = {
 		NULL, 0),
 
 	/* MICBIAS */
+<<<<<<< HEAD
 	SND_SOC_DAPM_SUPPLY("MICBIAS", WM8991_POWER_MANAGEMENT_1,
 			    WM8991_MICBIAS_ENA_BIT, 0, NULL, 0),
+=======
+	SND_SOC_DAPM_MICBIAS("MICBIAS", WM8991_POWER_MANAGEMENT_1,
+		WM8991_MICBIAS_ENA_BIT, 0),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	SND_SOC_DAPM_OUTPUT("LON"),
 	SND_SOC_DAPM_OUTPUT("LOP"),
@@ -1240,7 +1257,11 @@ static int wm8991_set_bias_level(struct snd_soc_codec *codec,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int wm8991_suspend(struct snd_soc_codec *codec)
+=======
+static int wm8991_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	wm8991_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	return 0;
@@ -1263,6 +1284,10 @@ static int wm8991_probe(struct snd_soc_codec *codec)
 {
 	struct wm8991_priv *wm8991;
 	int ret;
+<<<<<<< HEAD
+=======
+	unsigned int reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wm8991 = snd_soc_codec_get_drvdata(codec);
 
@@ -1280,6 +1305,7 @@ static int wm8991_probe(struct snd_soc_codec *codec)
 
 	wm8991_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 
+<<<<<<< HEAD
 	snd_soc_update_bits(codec, WM8991_AUDIO_INTERFACE_4,
 			    WM8991_ALRCGPIO1, WM8991_ALRCGPIO1);
 
@@ -1292,12 +1318,31 @@ static int wm8991_probe(struct snd_soc_codec *codec)
 
 	snd_soc_update_bits(codec, WM8991_POWER_MANAGEMENT_2,
 			    WM8991_OPCLK_ENA, WM8991_OPCLK_ENA);
+=======
+	reg = snd_soc_read(codec, WM8991_AUDIO_INTERFACE_4);
+	snd_soc_write(codec, WM8991_AUDIO_INTERFACE_4, reg | WM8991_ALRCGPIO1);
+
+	reg = snd_soc_read(codec, WM8991_GPIO1_GPIO2) &
+	      ~WM8991_GPIO1_SEL_MASK;
+	snd_soc_write(codec, WM8991_GPIO1_GPIO2, reg | 1);
+
+	reg = snd_soc_read(codec, WM8991_POWER_MANAGEMENT_1);
+	snd_soc_write(codec, WM8991_POWER_MANAGEMENT_1, reg | WM8991_VREF_ENA|
+		      WM8991_VMID_MODE_MASK);
+
+	reg = snd_soc_read(codec, WM8991_POWER_MANAGEMENT_2);
+	snd_soc_write(codec, WM8991_POWER_MANAGEMENT_2, reg | WM8991_OPCLK_ENA);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_write(codec, WM8991_DAC_CTRL, 0);
 	snd_soc_write(codec, WM8991_LEFT_OUTPUT_VOLUME, 0x50 | (1<<8));
 	snd_soc_write(codec, WM8991_RIGHT_OUTPUT_VOLUME, 0x50 | (1<<8));
 
+<<<<<<< HEAD
 	snd_soc_add_codec_controls(codec, wm8991_snd_controls,
+=======
+	snd_soc_add_controls(codec, wm8991_snd_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     ARRAY_SIZE(wm8991_snd_controls));
 
 	snd_soc_dapm_new_controls(&codec->dapm, wm8991_dapm_widgets,
@@ -1310,7 +1355,11 @@ static int wm8991_probe(struct snd_soc_codec *codec)
 #define WM8991_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |\
 			SNDRV_PCM_FMTBIT_S24_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8991_ops = {
+=======
+static struct snd_soc_dai_ops wm8991_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params = wm8991_hw_params,
 	.digital_mute = wm8991_mute,
 	.set_fmt = wm8991_set_dai_fmt,

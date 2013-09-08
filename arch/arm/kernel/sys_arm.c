@@ -12,7 +12,11 @@
  *  have a non-standard calling sequence on the Linux/arm
  *  platform.
  */
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/errno.h>
 #include <linux/sched.h>
 #include <linux/mm.h>
@@ -115,7 +119,11 @@ int kernel_execve(const char *filename,
 		  "Ir" (THREAD_START_SP - sizeof(regs)),
 		  "r" (&regs),
 		  "Ir" (sizeof(regs))
+<<<<<<< HEAD
 		: "r0", "r1", "r2", "r3", "r8", "r9", "ip", "lr", "memory");
+=======
+		: "r0", "r1", "r2", "r3", "ip", "lr", "memory");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
  out:
 	return ret;

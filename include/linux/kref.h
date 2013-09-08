@@ -15,14 +15,19 @@
 #ifndef _KREF_H_
 #define _KREF_H_
 
+<<<<<<< HEAD
 #include <linux/bug.h>
 #include <linux/atomic.h>
 #include <linux/kernel.h>
+=======
+#include <linux/types.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct kref {
 	atomic_t refcount;
 };
 
+<<<<<<< HEAD
 /**
  * kref_init - initialize object.
  * @kref: object in question.
@@ -114,4 +119,12 @@ static inline int __must_check kref_get_unless_zero(struct kref *kref)
 {
 	return atomic_add_unless(&kref->refcount, 1, 0);
 }
+=======
+void kref_init(struct kref *kref);
+void kref_get(struct kref *kref);
+int kref_put(struct kref *kref, void (*release) (struct kref *kref));
+int kref_sub(struct kref *kref, unsigned int count,
+	     void (*release) (struct kref *kref));
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _KREF_H_ */

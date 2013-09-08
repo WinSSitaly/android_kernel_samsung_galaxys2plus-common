@@ -612,12 +612,15 @@ You can set a pointer to a mutex_lock in struct video_device. Usually this
 will be either a top-level mutex or a mutex per device node. If you want
 finer-grained locking then you have to set it to NULL and do you own locking.
 
+<<<<<<< HEAD
 It is up to the driver developer to decide which method to use. However, if
 your driver has high-latency operations (for example, changing the exposure
 of a USB webcam might take a long time), then you might be better off with
 doing your own locking if you want to allow the user to do other things with
 the device while waiting for the high-latency command to finish.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 If a lock is specified then all file operations will be serialized on that
 lock. If you use videobuf then you must pass the same lock to the videobuf
 queue initialize function: if videobuf has to wait for a frame to arrive, then
@@ -625,11 +628,14 @@ it will temporarily unlock the lock and relock it afterwards. If your driver
 also waits in the code, then you should do the same to allow other processes
 to access the device node while the first process is waiting for something.
 
+<<<<<<< HEAD
 In the case of videobuf2 you will need to implement the wait_prepare and
 wait_finish callbacks to unlock/lock if applicable. In particular, if you use
 the lock in struct video_device then you must unlock/lock this mutex in
 wait_prepare and wait_finish.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 The implementation of a hotplug disconnect should also take the lock before
 calling v4l2_device_disconnect.
 
@@ -828,7 +834,15 @@ int my_open(struct file *file)
 
 	...
 
+<<<<<<< HEAD
 	v4l2_fh_init(&my_fh->fh, vfd);
+=======
+	ret = v4l2_fh_init(&my_fh->fh, vfd);
+	if (ret) {
+		kfree(my_fh);
+		return ret;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	...
 
@@ -851,7 +865,11 @@ int my_release(struct file *file)
 
 Below is a short description of the v4l2_fh functions used:
 
+<<<<<<< HEAD
 void v4l2_fh_init(struct v4l2_fh *fh, struct video_device *vdev)
+=======
+int v4l2_fh_init(struct v4l2_fh *fh, struct video_device *vdev)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
   Initialise the file handle. This *MUST* be performed in the driver's
   v4l2_file_operations->open() handler.
@@ -908,6 +926,7 @@ V4L2 events
 The V4L2 events provide a generic way to pass events to user space.
 The driver must use v4l2_fh to be able to support V4L2 events.
 
+<<<<<<< HEAD
 Events are defined by a type and an optional ID. The ID may refer to a V4L2
 object such as a control ID. If unused, then the ID is 0.
 
@@ -940,6 +959,16 @@ Note: these callbacks can be called from interrupt context, so they must be
 fast.
 
 Useful functions:
+=======
+Useful functions:
+
+- v4l2_event_alloc()
+
+  To use events, the driver must allocate events for the file handle. By
+  calling the function more than once, the driver may assure that at least n
+  events in total have been allocated. The function may not be called in
+  atomic context.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 - v4l2_event_queue()
 
@@ -951,9 +980,13 @@ Useful functions:
 
   The video_device->ioctl_ops->vidioc_subscribe_event must check the driver
   is able to produce events with specified event id. Then it calls
+<<<<<<< HEAD
   v4l2_event_subscribe() to subscribe the event. The last argument is the
   size of the event queue for this event. If it is 0, then the framework
   will fill in a default value (this depends on the event type).
+=======
+  v4l2_event_subscribe() to subscribe the event.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 - v4l2_event_unsubscribe()
 
@@ -968,8 +1001,19 @@ Useful functions:
 
   Returns the number of pending events. Useful when implementing poll.
 
+<<<<<<< HEAD
 Events are delivered to user space through the poll system call. The driver
 can use v4l2_fh->wait (a wait_queue_head_t) as the argument for poll_wait().
+=======
+Drivers do not initialise events directly. The events are initialised
+through v4l2_fh_init() if video_device->ioctl_ops->vidioc_subscribe_event is
+non-NULL. This *MUST* be performed in the driver's
+v4l2_file_operations->open() handler.
+
+Events are delivered to user space through the poll system call. The driver
+can use v4l2_fh->events->wait wait_queue_head_t as the argument for
+poll_wait().
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 There are standard and private events. New standard events must use the
 smallest available event type. The drivers must allocate their events from
@@ -979,4 +1023,9 @@ The first event type in the class is reserved for future use, so the first
 available event type is 'class base + 1'.
 
 An example on how the V4L2 events may be used can be found in the OMAP
+<<<<<<< HEAD
 3 ISP driver (drivers/media/video/omap3isp).
+=======
+3 ISP driver available at <URL:http://gitorious.org/omap3camera> as of
+writing this.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

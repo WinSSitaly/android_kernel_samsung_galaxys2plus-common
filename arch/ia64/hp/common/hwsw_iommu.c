@@ -15,7 +15,10 @@
 #include <linux/device.h>
 #include <linux/dma-mapping.h>
 #include <linux/swiotlb.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/machvec.h>
 
 extern struct dma_map_ops sba_dma_ops, swiotlb_dma_ops;

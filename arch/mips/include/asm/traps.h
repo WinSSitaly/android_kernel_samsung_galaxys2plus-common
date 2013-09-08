@@ -24,6 +24,7 @@ extern int (*board_be_handler)(struct pt_regs *regs, int is_fixup);
 extern void (*board_nmi_handler_setup)(void);
 extern void (*board_ejtag_handler_setup)(void);
 extern void (*board_bind_eic_interrupt)(int irq, int regset);
+<<<<<<< HEAD
 extern void (*board_ebase_setup)(void);
 
 extern int register_nmi_notifier(struct notifier_block *nb);
@@ -37,5 +38,7 @@ extern int register_nmi_notifier(struct notifier_block *nb);
 									\
 	register_nmi_notifier(&fn##_nb);				\
 })
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _ASM_TRAPS_H */

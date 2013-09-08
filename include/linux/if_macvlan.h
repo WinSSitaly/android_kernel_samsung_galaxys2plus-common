@@ -64,7 +64,10 @@ struct macvlan_dev {
 	int (*forward)(struct net_device *dev, struct sk_buff *skb);
 	struct macvtap_queue	*taps[MAX_MACVTAP_QUEUES];
 	int			numvtaps;
+<<<<<<< HEAD
 	int			minor;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline void macvlan_count_rx(const struct macvlan_dev *vlan,

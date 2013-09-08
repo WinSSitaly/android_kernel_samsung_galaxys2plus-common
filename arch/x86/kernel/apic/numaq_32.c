@@ -478,7 +478,10 @@ static struct apic __refdata apic_numaq = {
 	.name				= "NUMAQ",
 	.probe				= probe_numaq,
 	.acpi_madt_oem_check		= NULL,
+<<<<<<< HEAD
 	.apic_id_valid			= default_apic_id_valid,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.apic_id_registered		= numaq_apic_id_registered,
 
 	.irq_delivery_mode		= dest_LowestPrio,

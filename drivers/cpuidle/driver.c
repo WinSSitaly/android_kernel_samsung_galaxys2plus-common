@@ -17,6 +17,7 @@
 static struct cpuidle_driver *cpuidle_curr_driver;
 DEFINE_SPINLOCK(cpuidle_driver_lock);
 
+<<<<<<< HEAD
 static void __cpuidle_register_driver(struct cpuidle_driver *drv)
 {
 	int i;
@@ -41,24 +42,35 @@ static void __cpuidle_register_driver(struct cpuidle_driver *drv)
 }
 
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * cpuidle_register_driver - registers a driver
  * @drv: the driver
  */
 int cpuidle_register_driver(struct cpuidle_driver *drv)
 {
+<<<<<<< HEAD
 	if (!drv || !drv->state_count)
 		return -EINVAL;
 
 	if (cpuidle_disabled())
 		return -ENODEV;
 
+=======
+	if (!drv)
+		return -EINVAL;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&cpuidle_driver_lock);
 	if (cpuidle_curr_driver) {
 		spin_unlock(&cpuidle_driver_lock);
 		return -EBUSY;
 	}
+<<<<<<< HEAD
 	__cpuidle_register_driver(drv);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	cpuidle_curr_driver = drv;
 	spin_unlock(&cpuidle_driver_lock);
 

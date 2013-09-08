@@ -21,7 +21,10 @@
 #include <linux/types.h>
 #include <linux/scatterlist.h>
 #include <linux/crc32.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <scsi/libfc.h>
 #include <scsi/fc_encode.h>
@@ -105,13 +108,21 @@ module_exit(libfc_exit);
  * @sg: pointer to the pointer of the SG list.
  * @nents: pointer to the remaining number of entries in the SG list.
  * @offset: pointer to the current offset in the SG list.
+<<<<<<< HEAD
+=======
+ * @km_type: dedicated page table slot type for kmap_atomic.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @crc: pointer to the 32-bit crc value.
  *	 If crc is NULL, CRC is not calculated.
  */
 u32 fc_copy_buffer_to_sglist(void *buf, size_t len,
 			     struct scatterlist *sg,
 			     u32 *nents, size_t *offset,
+<<<<<<< HEAD
 			     u32 *crc)
+=======
+			     enum km_type km_type, u32 *crc)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	size_t remaining = len;
 	u32 copy_len = 0;
@@ -141,11 +152,20 @@ u32 fc_copy_buffer_to_sglist(void *buf, size_t len,
 		off = *offset + sg->offset;
 		sg_bytes = min(sg_bytes,
 			       (size_t)(PAGE_SIZE - (off & ~PAGE_MASK)));
+<<<<<<< HEAD
 		page_addr = kmap_atomic(sg_page(sg) + (off >> PAGE_SHIFT));
 		if (crc)
 			*crc = crc32(*crc, buf, sg_bytes);
 		memcpy((char *)page_addr + (off & ~PAGE_MASK), buf, sg_bytes);
 		kunmap_atomic(page_addr);
+=======
+		page_addr = kmap_atomic(sg_page(sg) + (off >> PAGE_SHIFT),
+					km_type);
+		if (crc)
+			*crc = crc32(*crc, buf, sg_bytes);
+		memcpy((char *)page_addr + (off & ~PAGE_MASK), buf, sg_bytes);
+		kunmap_atomic(page_addr, km_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		buf += sg_bytes;
 		*offset += sg_bytes;
 		remaining -= sg_bytes;

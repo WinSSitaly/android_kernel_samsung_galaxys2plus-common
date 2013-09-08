@@ -44,7 +44,11 @@
 
 #define KT_SPKUP 15
 
+<<<<<<< HEAD
 extern const struct old_serial_port *spk_serial_init(int index);
+=======
+extern struct serial_state *spk_serial_init(int index);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void stop_serial_interrupt(void);
 extern int wait_for_xmitr(void);
 extern unsigned char spk_serial_in(void);

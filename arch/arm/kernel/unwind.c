@@ -39,7 +39,11 @@
 
 #include <linux/kernel.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/slab.h>
 #include <linux/spinlock.h>
@@ -67,7 +71,11 @@ EXPORT_SYMBOL(__aeabi_unwind_cpp_pr2);
 
 struct unwind_ctrl_block {
 	unsigned long vrs[16];		/* virtual register set */
+<<<<<<< HEAD
 	const unsigned long *insn;	/* pointer to the current instructions word */
+=======
+	unsigned long *insn;		/* pointer to the current instructions word */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int entries;			/* number of entries left to interpret */
 	int byte;			/* current byte number in the instructions word */
 };
@@ -83,9 +91,14 @@ enum regs {
 	PC = 15
 };
 
+<<<<<<< HEAD
 extern const struct unwind_idx __start_unwind_idx[];
 static const struct unwind_idx *__origin_unwind_idx;
 extern const struct unwind_idx __stop_unwind_idx[];
+=======
+extern struct unwind_idx __start_unwind_idx[];
+extern struct unwind_idx __stop_unwind_idx[];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DEFINE_SPINLOCK(unwind_lock);
 static LIST_HEAD(unwind_tables);
@@ -99,6 +112,7 @@ static LIST_HEAD(unwind_tables);
 })
 
 /*
+<<<<<<< HEAD
  * Binary search in the unwind index. The entries are
  * guaranteed to be sorted in ascending order by the linker.
  *
@@ -177,10 +191,43 @@ static const struct unwind_idx *unwind_find_origin(
 static const struct unwind_idx *unwind_find_idx(unsigned long addr)
 {
 	const struct unwind_idx *idx = NULL;
+=======
+ * Binary search in the unwind index. The entries entries are
+ * guaranteed to be sorted in ascending order by the linker.
+ */
+static struct unwind_idx *search_index(unsigned long addr,
+				       struct unwind_idx *first,
+				       struct unwind_idx *last)
+{
+	pr_debug("%s(%08lx, %p, %p)\n", __func__, addr, first, last);
+
+	if (addr < first->addr) {
+		pr_warning("unwind: Unknown symbol address %08lx\n", addr);
+		return NULL;
+	} else if (addr >= last->addr)
+		return last;
+
+	while (first < last - 1) {
+		struct unwind_idx *mid = first + ((last - first + 1) >> 1);
+
+		if (addr < mid->addr)
+			last = mid;
+		else
+			first = mid;
+	}
+
+	return first;
+}
+
+static struct unwind_idx *unwind_find_idx(unsigned long addr)
+{
+	struct unwind_idx *idx = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unsigned long flags;
 
 	pr_debug("%s(%08lx)\n", __func__, addr);
 
+<<<<<<< HEAD
 	if (core_kernel_text(addr)) {
 		if (unlikely(!__origin_unwind_idx))
 			__origin_unwind_idx =
@@ -192,6 +239,13 @@ static const struct unwind_idx *unwind_find_idx(unsigned long addr)
 				   __origin_unwind_idx,
 				   __stop_unwind_idx);
 	} else {
+=======
+	if (core_kernel_text(addr))
+		/* main unwind table */
+		idx = search_index(addr, __start_unwind_idx,
+				   __stop_unwind_idx - 1);
+	else {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* module unwind tables */
 		struct unwind_table *table;
 
@@ -200,8 +254,12 @@ static const struct unwind_idx *unwind_find_idx(unsigned long addr)
 			if (addr >= table->begin_addr &&
 			    addr < table->end_addr) {
 				idx = search_index(addr, table->start,
+<<<<<<< HEAD
 						   table->origin,
 						   table->stop);
+=======
+						   table->stop - 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* Move-to-front to exploit common traces */
 				list_move(&table->list, &unwind_tables);
 				break;
@@ -330,7 +388,11 @@ static int unwind_exec_insn(struct unwind_ctrl_block *ctrl)
 int unwind_frame(struct stackframe *frame)
 {
 	unsigned long high, low;
+<<<<<<< HEAD
 	const struct unwind_idx *idx;
+=======
+	struct unwind_idx *idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct unwind_ctrl_block ctrl;
 
 	/* only go to a higher address on the stack */
@@ -455,6 +517,10 @@ struct unwind_table *unwind_table_add(unsigned long start, unsigned long size,
 				      unsigned long text_size)
 {
 	unsigned long flags;
+<<<<<<< HEAD
+=======
+	struct unwind_idx *idx;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct unwind_table *tab = kmalloc(sizeof(*tab), GFP_KERNEL);
 
 	pr_debug("%s(%08lx, %08lx, %08lx, %08lx)\n", __func__, start, size,
@@ -463,12 +529,24 @@ struct unwind_table *unwind_table_add(unsigned long start, unsigned long size,
 	if (!tab)
 		return tab;
 
+<<<<<<< HEAD
 	tab->start = (const struct unwind_idx *)start;
 	tab->stop = (const struct unwind_idx *)(start + size);
 	tab->origin = unwind_find_origin(tab->start, tab->stop);
 	tab->begin_addr = text_addr;
 	tab->end_addr = text_addr + text_size;
 
+=======
+	tab->start = (struct unwind_idx *)start;
+	tab->stop = (struct unwind_idx *)(start + size);
+	tab->begin_addr = text_addr;
+	tab->end_addr = text_addr + text_size;
+
+	/* Convert the symbol addresses to absolute values */
+	for (idx = tab->start; idx < tab->stop; idx++)
+		idx->addr = prel31_to_addr(&idx->addr);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock_irqsave(&unwind_lock, flags);
 	list_add_tail(&tab->list, &unwind_tables);
 	spin_unlock_irqrestore(&unwind_lock, flags);
@@ -489,3 +567,19 @@ void unwind_table_del(struct unwind_table *tab)
 
 	kfree(tab);
 }
+<<<<<<< HEAD
+=======
+
+int __init unwind_init(void)
+{
+	struct unwind_idx *idx;
+
+	/* Convert the symbol addresses to absolute values */
+	for (idx = __start_unwind_idx; idx < __stop_unwind_idx; idx++)
+		idx->addr = prel31_to_addr(&idx->addr);
+
+	pr_debug("unwind: ARM stack unwinding initialised\n");
+
+	return 0;
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

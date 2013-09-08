@@ -6,7 +6,10 @@
 #include <linux/percpu.h>
 #include <linux/cpumask.h>
 #include <linux/interrupt.h>
+<<<<<<< HEAD
 #include <linux/sched.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/irq.h>
 #include <asm/cputime.h>
 
@@ -16,6 +19,7 @@
  * used by rstatd/perfmeter
  */
 
+<<<<<<< HEAD
 enum cpu_usage_stat {
 	CPUTIME_USER,
 	CPUTIME_NICE,
@@ -35,6 +39,23 @@ struct kernel_cpustat {
 };
 
 struct kernel_stat {
+=======
+struct cpu_usage_stat {
+	cputime64_t user;
+	cputime64_t nice;
+	cputime64_t system;
+	cputime64_t softirq;
+	cputime64_t irq;
+	cputime64_t idle;
+	cputime64_t iowait;
+	cputime64_t steal;
+	cputime64_t guest;
+	cputime64_t guest_nice;
+};
+
+struct kernel_stat {
+	struct cpu_usage_stat	cpustat;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef CONFIG_GENERIC_HARDIRQS
        unsigned int irqs[NR_IRQS];
 #endif
@@ -43,6 +64,7 @@ struct kernel_stat {
 };
 
 DECLARE_PER_CPU(struct kernel_stat, kstat);
+<<<<<<< HEAD
 DECLARE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
 
 /* Must have preemption disabled for this to be meaningful. */
@@ -50,6 +72,12 @@ DECLARE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
 #define kcpustat_this_cpu (&__get_cpu_var(kernel_cpustat))
 #define kstat_cpu(cpu) per_cpu(kstat, cpu)
 #define kcpustat_cpu(cpu) per_cpu(kernel_cpustat, cpu)
+=======
+
+#define kstat_cpu(cpu)	per_cpu(kstat, cpu)
+/* Must have preemption disabled for this to be meaningful. */
+#define kstat_this_cpu	__get_cpu_var(kstat)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern unsigned long long nr_context_switches(void);
 

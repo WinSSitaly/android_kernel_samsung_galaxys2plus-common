@@ -580,9 +580,18 @@ static const u8 calc_sb_tbl[512] = {
    ctx->a[(j) + 1] = rol32(y, 9)
 
 /* Perform the key setup. */
+<<<<<<< HEAD
 int __twofish_setkey(struct twofish_ctx *ctx, const u8 *key,
 		     unsigned int key_len, u32 *flags)
 {
+=======
+int twofish_setkey(struct crypto_tfm *tfm, const u8 *key, unsigned int key_len)
+{
+
+	struct twofish_ctx *ctx = crypto_tfm_ctx(tfm);
+	u32 *flags = &tfm->crt_flags;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, j, k;
 
 	/* Temporaries for CALC_K. */
@@ -698,6 +707,7 @@ int __twofish_setkey(struct twofish_ctx *ctx, const u8 *key,
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(__twofish_setkey);
 
 int twofish_setkey(struct crypto_tfm *tfm, const u8 *key, unsigned int key_len)
@@ -705,6 +715,9 @@ int twofish_setkey(struct crypto_tfm *tfm, const u8 *key, unsigned int key_len)
 	return __twofish_setkey(crypto_tfm_ctx(tfm), key, key_len,
 				&tfm->crt_flags);
 }
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(twofish_setkey);
 
 MODULE_LICENSE("GPL");

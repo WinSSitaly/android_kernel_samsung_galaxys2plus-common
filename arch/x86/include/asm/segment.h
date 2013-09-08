@@ -162,7 +162,11 @@
 #define GDT_ENTRY_DEFAULT_USER32_CS 4
 #define GDT_ENTRY_DEFAULT_USER_DS 5
 #define GDT_ENTRY_DEFAULT_USER_CS 6
+<<<<<<< HEAD
 #define __USER32_CS   (GDT_ENTRY_DEFAULT_USER32_CS*8+3)
+=======
+#define __USER32_CS   (GDT_ENTRY_DEFAULT_USER32_CS * 8 + 3)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define __USER32_DS	__USER_DS
 
 #define GDT_ENTRY_TSS 8	/* needs two entries */
@@ -212,6 +216,7 @@
 #ifdef __KERNEL__
 #ifndef __ASSEMBLY__
 extern const char early_idt_handlers[NUM_EXCEPTION_VECTORS][10];
+<<<<<<< HEAD
 
 /*
  * Load a segment. Fall back on loading the zero
@@ -268,5 +273,9 @@ static inline unsigned long get_limit(unsigned long segment)
 
 #endif /* !__ASSEMBLY__ */
 #endif /* __KERNEL__ */
+=======
+#endif
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _ASM_X86_SEGMENT_H */

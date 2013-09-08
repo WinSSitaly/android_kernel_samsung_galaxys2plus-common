@@ -199,7 +199,11 @@ MODULE_FIRMWARE("orinoco_ezusb_fw");
 #define EZUSB_FRAME_DATA		1
 #define EZUSB_FRAME_CONTROL		2
 
+<<<<<<< HEAD
 #define DEF_TIMEOUT			(3 * HZ)
+=======
+#define DEF_TIMEOUT			(3*HZ)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define BULK_BUF_SIZE			2048
 
@@ -959,7 +963,11 @@ static int ezusb_access_ltv(struct ezusb_priv *upriv,
 	return retval;
 }
 
+<<<<<<< HEAD
 static int ezusb_write_ltv(struct hermes *hw, int bap, u16 rid,
+=======
+static int ezusb_write_ltv(hermes_t *hw, int bap, u16 rid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   u16 length, const void *data)
 {
 	struct ezusb_priv *upriv = hw->priv;
@@ -989,7 +997,11 @@ static int ezusb_write_ltv(struct hermes *hw, int bap, u16 rid,
 				NULL, 0, NULL);
 }
 
+<<<<<<< HEAD
 static int ezusb_read_ltv(struct hermes *hw, int bap, u16 rid,
+=======
+static int ezusb_read_ltv(hermes_t *hw, int bap, u16 rid,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			  unsigned bufsize, u16 *length, void *buf)
 {
 	struct ezusb_priv *upriv = hw->priv;
@@ -1006,7 +1018,11 @@ static int ezusb_read_ltv(struct hermes *hw, int bap, u16 rid,
 				buf, bufsize, length);
 }
 
+<<<<<<< HEAD
 static int ezusb_doicmd_wait(struct hermes *hw, u16 cmd, u16 parm0, u16 parm1,
+=======
+static int ezusb_doicmd_wait(hermes_t *hw, u16 cmd, u16 parm0, u16 parm1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     u16 parm2, struct hermes_response *resp)
 {
 	struct ezusb_priv *upriv = hw->priv;
@@ -1028,7 +1044,11 @@ static int ezusb_doicmd_wait(struct hermes *hw, u16 cmd, u16 parm0, u16 parm1,
 				EZUSB_FRAME_CONTROL, NULL, 0, NULL);
 }
 
+<<<<<<< HEAD
 static int ezusb_docmd_wait(struct hermes *hw, u16 cmd, u16 parm0,
+=======
+static int ezusb_docmd_wait(hermes_t *hw, u16 cmd, u16 parm0,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			    struct hermes_response *resp)
 {
 	struct ezusb_priv *upriv = hw->priv;
@@ -1196,7 +1216,11 @@ static netdev_tx_t ezusb_xmit(struct sk_buff *skb, struct net_device *dev)
 	struct orinoco_private *priv = ndev_priv(dev);
 	struct net_device_stats *stats = &priv->stats;
 	struct ezusb_priv *upriv = priv->card;
+<<<<<<< HEAD
 	u8 mic[MICHAEL_MIC_LEN + 1];
+=======
+	u8 mic[MICHAEL_MIC_LEN+1];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int err = 0;
 	int tx_control;
 	unsigned long flags;
@@ -1356,7 +1380,11 @@ static int ezusb_hard_reset(struct orinoco_private *priv)
 }
 
 
+<<<<<<< HEAD
 static int ezusb_init(struct hermes *hw)
+=======
+static int ezusb_init(hermes_t *hw)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ezusb_priv *upriv = hw->priv;
 	int retval;
@@ -1438,7 +1466,11 @@ static void ezusb_bulk_in_callback(struct urb *urb)
 	} else if (upriv->dev) {
 		struct net_device *dev = upriv->dev;
 		struct orinoco_private *priv = ndev_priv(dev);
+<<<<<<< HEAD
 		struct hermes *hw = &priv->hw;
+=======
+		hermes_t *hw = &priv->hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (hermes_rid == EZUSB_RID_RX) {
 			__orinoco_ev_rx(dev, hw);
@@ -1562,7 +1594,11 @@ static const struct net_device_ops ezusb_netdev_ops = {
 	.ndo_open		= orinoco_open,
 	.ndo_stop		= orinoco_stop,
 	.ndo_start_xmit		= ezusb_xmit,
+<<<<<<< HEAD
 	.ndo_set_rx_mode	= orinoco_set_multicast_list,
+=======
+	.ndo_set_multicast_list	= orinoco_set_multicast_list,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.ndo_change_mtu		= orinoco_change_mtu,
 	.ndo_set_mac_address	= eth_mac_addr,
 	.ndo_validate_addr	= eth_validate_addr,
@@ -1575,7 +1611,11 @@ static int ezusb_probe(struct usb_interface *interface,
 {
 	struct usb_device *udev = interface_to_usbdev(interface);
 	struct orinoco_private *priv;
+<<<<<<< HEAD
 	struct hermes *hw;
+=======
+	hermes_t *hw;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct ezusb_priv *upriv = NULL;
 	struct usb_interface_descriptor *iface_desc;
 	struct usb_endpoint_descriptor *ep;
@@ -1754,8 +1794,46 @@ static struct usb_driver orinoco_driver = {
 	.id_table = ezusb_table,
 };
 
+<<<<<<< HEAD
 module_usb_driver(orinoco_driver);
 
 MODULE_AUTHOR("Manuel Estrada Sainz");
 MODULE_DESCRIPTION("Driver for Orinoco wireless LAN cards using EZUSB bridge");
+=======
+/* Can't be declared "const" or the whole __initdata section will
+ * become const */
+static char version[] __initdata = DRIVER_NAME " " DRIVER_VERSION
+    " (Manuel Estrada Sainz)";
+
+static int __init ezusb_module_init(void)
+{
+	int err;
+
+	printk(KERN_DEBUG "%s\n", version);
+
+	/* register this driver with the USB subsystem */
+	err = usb_register(&orinoco_driver);
+	if (err < 0) {
+		printk(KERN_ERR PFX "usb_register failed, error %d\n",
+		       err);
+		return err;
+	}
+
+	return 0;
+}
+
+static void __exit ezusb_module_exit(void)
+{
+	/* deregister this driver with the USB subsystem */
+	usb_deregister(&orinoco_driver);
+}
+
+
+module_init(ezusb_module_init);
+module_exit(ezusb_module_exit);
+
+MODULE_AUTHOR("Manuel Estrada Sainz");
+MODULE_DESCRIPTION
+    ("Driver for Orinoco wireless LAN cards using EZUSB bridge");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("Dual MPL/GPL");

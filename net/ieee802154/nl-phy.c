@@ -24,7 +24,10 @@
 
 #include <linux/kernel.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/if_arp.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/netlink.h>
 #include <net/genetlink.h>
 #include <net/wpan-phy.h>
@@ -214,6 +217,7 @@ static int ieee802154_add_iface(struct sk_buff *skb,
 		goto nla_put_failure;
 	}
 
+<<<<<<< HEAD
 	if (info->attrs[IEEE802154_ATTR_HW_ADDR] &&
 	    nla_len(info->attrs[IEEE802154_ATTR_HW_ADDR]) !=
 			IEEE802154_ADDR_LEN) {
@@ -221,12 +225,15 @@ static int ieee802154_add_iface(struct sk_buff *skb,
 		goto nla_put_failure;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev = phy->add_iface(phy, devname);
 	if (IS_ERR(dev)) {
 		rc = PTR_ERR(dev);
 		goto nla_put_failure;
 	}
 
+<<<<<<< HEAD
 	if (info->attrs[IEEE802154_ATTR_HW_ADDR]) {
 		struct sockaddr addr;
 
@@ -245,6 +252,8 @@ static int ieee802154_add_iface(struct sk_buff *skb,
 			goto dev_unregister;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	NLA_PUT_STRING(msg, IEEE802154_ATTR_PHY_NAME, wpan_phy_name(phy));
 	NLA_PUT_STRING(msg, IEEE802154_ATTR_DEV_NAME, dev->name);
 
@@ -254,11 +263,14 @@ static int ieee802154_add_iface(struct sk_buff *skb,
 
 	return ieee802154_nl_reply(msg, info);
 
+<<<<<<< HEAD
 dev_unregister:
 	rtnl_lock(); /* del_iface must be called with RTNL lock */
 	phy->del_iface(phy, dev);
 	dev_put(dev);
 	rtnl_unlock();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 nla_put_failure:
 	nlmsg_free(msg);
 out_dev:

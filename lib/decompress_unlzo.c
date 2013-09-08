@@ -279,7 +279,11 @@ STATIC inline int INIT unlzo(u8 *input, int in_len,
 	ret = 0;
 exit_2:
 	if (!input)
+<<<<<<< HEAD
 		free(in_buf_save);
+=======
+		free(in_buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 exit_1:
 	if (!output)
 		free(out_buf);

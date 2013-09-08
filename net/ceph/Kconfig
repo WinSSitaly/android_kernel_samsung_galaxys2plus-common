@@ -27,6 +27,7 @@ config CEPH_LIB_PRETTYDEBUG
 
 	  If unsure, say N.
 
+<<<<<<< HEAD
 config CEPH_LIB_USE_DNS_RESOLVER
 	bool "Use in-kernel support for DNS lookup"
 	depends on CEPH_LIB
@@ -41,3 +42,5 @@ config CEPH_LIB_USE_DNS_RESOLVER
 
 	  If unsure, say N.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

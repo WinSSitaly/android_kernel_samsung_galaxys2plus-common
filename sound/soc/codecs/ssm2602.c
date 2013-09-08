@@ -33,6 +33,10 @@
 #include <linux/pm.h>
 #include <linux/i2c.h>
 #include <linux/spi/spi.h>
+<<<<<<< HEAD
+=======
+#include <linux/platform_device.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <sound/core.h>
 #include <sound/pcm.h>
@@ -58,7 +62,10 @@ struct ssm2602_priv {
 	struct snd_pcm_substream *slave_substream;
 
 	enum ssm2602_type type;
+<<<<<<< HEAD
 	unsigned int clk_out_pwr;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*
@@ -294,6 +301,10 @@ static int ssm2602_startup(struct snd_pcm_substream *substream,
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_codec *codec = rtd->codec;
 	struct ssm2602_priv *ssm2602 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
+=======
+	struct i2c_client *i2c = codec->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct snd_pcm_runtime *master_runtime;
 
 	/* The DAI has shared clocks so if we already have a playback or
@@ -302,7 +313,11 @@ static int ssm2602_startup(struct snd_pcm_substream *substream,
 	 */
 	if (ssm2602->master_substream) {
 		master_runtime = ssm2602->master_substream->runtime;
+<<<<<<< HEAD
 		dev_dbg(codec->dev, "Constraining to %d bits at %dHz\n",
+=======
+		dev_dbg(&i2c->dev, "Constraining to %d bits at %dHz\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			master_runtime->sample_bits,
 			master_runtime->rate);
 
@@ -342,6 +357,7 @@ static void ssm2602_shutdown(struct snd_pcm_substream *substream,
 static int ssm2602_mute(struct snd_soc_dai *dai, int mute)
 {
 	struct snd_soc_codec *codec = dai->codec;
+<<<<<<< HEAD
 
 	if (mute)
 		snd_soc_update_bits(codec, SSM2602_APDIGI,
@@ -350,6 +366,14 @@ static int ssm2602_mute(struct snd_soc_dai *dai, int mute)
 	else
 		snd_soc_update_bits(codec, SSM2602_APDIGI,
 				    APDIGI_ENABLE_DAC_MUTE, 0);
+=======
+	u16 mute_reg = snd_soc_read(codec, SSM2602_APDIGI) & ~APDIGI_ENABLE_DAC_MUTE;
+	if (mute)
+		snd_soc_write(codec, SSM2602_APDIGI,
+				mute_reg | APDIGI_ENABLE_DAC_MUTE);
+	else
+		snd_soc_write(codec, SSM2602_APDIGI, mute_reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -358,6 +382,7 @@ static int ssm2602_set_dai_sysclk(struct snd_soc_dai *codec_dai,
 {
 	struct snd_soc_codec *codec = codec_dai->codec;
 	struct ssm2602_priv *ssm2602 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 
 	if (dir == SND_SOC_CLOCK_IN) {
 		if (clk_id != SSM2602_SYSCLK)
@@ -398,6 +423,18 @@ static int ssm2602_set_dai_sysclk(struct snd_soc_dai *codec_dai,
 	}
 
 	return 0;
+=======
+	switch (freq) {
+	case 11289600:
+	case 12000000:
+	case 12288000:
+	case 16934400:
+	case 18432000:
+		ssm2602->sysclk = freq;
+		return 0;
+	}
+	return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ssm2602_set_dai_fmt(struct snd_soc_dai *codec_dai,
@@ -462,6 +499,7 @@ static int ssm2602_set_dai_fmt(struct snd_soc_dai *codec_dai,
 static int ssm2602_set_bias_level(struct snd_soc_codec *codec,
 				 enum snd_soc_bias_level level)
 {
+<<<<<<< HEAD
 	struct ssm2602_priv *ssm2602 = snd_soc_codec_get_drvdata(codec);
 
 	switch (level) {
@@ -470,11 +508,21 @@ static int ssm2602_set_bias_level(struct snd_soc_codec *codec,
 		snd_soc_update_bits(codec, SSM2602_PWR,
 			PWR_POWER_OFF | PWR_CLK_OUT_PDN | PWR_OSC_PDN,
 			ssm2602->clk_out_pwr);
+=======
+	u16 reg = snd_soc_read(codec, SSM2602_PWR);
+	reg &= ~(PWR_POWER_OFF | PWR_OSC_PDN);
+
+	switch (level) {
+	case SND_SOC_BIAS_ON:
+		/* vref/mid, osc on, dac unmute */
+		snd_soc_write(codec, SSM2602_PWR, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	case SND_SOC_BIAS_PREPARE:
 		break;
 	case SND_SOC_BIAS_STANDBY:
 		/* everything off except vref/vmid, */
+<<<<<<< HEAD
 		snd_soc_update_bits(codec, SSM2602_PWR,
 			PWR_POWER_OFF | PWR_CLK_OUT_PDN | PWR_OSC_PDN,
 			PWR_CLK_OUT_PDN | PWR_OSC_PDN);
@@ -483,6 +531,13 @@ static int ssm2602_set_bias_level(struct snd_soc_codec *codec,
 		/* everything off */
 		snd_soc_update_bits(codec, SSM2602_PWR,
 			PWR_POWER_OFF, PWR_POWER_OFF);
+=======
+		snd_soc_write(codec, SSM2602_PWR, reg | PWR_CLK_OUT_PDN);
+		break;
+	case SND_SOC_BIAS_OFF:
+		/* everything off, dac mute, inactive */
+		snd_soc_write(codec, SSM2602_PWR, 0xffff);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	}
@@ -497,7 +552,11 @@ static int ssm2602_set_bias_level(struct snd_soc_codec *codec,
 #define SSM2602_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |\
 		SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops ssm2602_dai_ops = {
+=======
+static struct snd_soc_dai_ops ssm2602_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.startup	= ssm2602_startup,
 	.hw_params	= ssm2602_hw_params,
 	.shutdown	= ssm2602_shutdown,
@@ -523,7 +582,11 @@ static struct snd_soc_dai_driver ssm2602_dai = {
 	.ops = &ssm2602_dai_ops,
 };
 
+<<<<<<< HEAD
 static int ssm2602_suspend(struct snd_soc_codec *codec)
+=======
+static int ssm2602_suspend(struct snd_soc_codec *codec, pm_message_t state)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	ssm2602_set_bias_level(codec, SND_SOC_BIAS_OFF);
 	return 0;
@@ -541,6 +604,7 @@ static int ssm2602_resume(struct snd_soc_codec *codec)
 static int ssm2602_probe(struct snd_soc_codec *codec)
 {
 	struct snd_soc_dapm_context *dapm = &codec->dapm;
+<<<<<<< HEAD
 	int ret;
 
 	snd_soc_update_bits(codec, SSM2602_LOUT1V,
@@ -549,6 +613,16 @@ static int ssm2602_probe(struct snd_soc_codec *codec)
 			    ROUT1V_RLHP_BOTH, ROUT1V_RLHP_BOTH);
 
 	ret = snd_soc_add_codec_controls(codec, ssm2602_snd_controls,
+=======
+	int ret, reg;
+
+	reg = snd_soc_read(codec, SSM2602_LOUT1V);
+	snd_soc_write(codec, SSM2602_LOUT1V, reg | LOUT1V_LRHP_BOTH);
+	reg = snd_soc_read(codec, SSM2602_ROUT1V);
+	snd_soc_write(codec, SSM2602_ROUT1V, reg | ROUT1V_RLHP_BOTH);
+
+	ret = snd_soc_add_controls(codec, ssm2602_snd_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ARRAY_SIZE(ssm2602_snd_controls));
 	if (ret)
 		return ret;
@@ -579,7 +653,11 @@ static int ssm2604_probe(struct snd_soc_codec *codec)
 static int ssm260x_probe(struct snd_soc_codec *codec)
 {
 	struct ssm2602_priv *ssm2602 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	int ret;
+=======
+	int ret, reg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pr_info("ssm2602 Audio Codec %s", SSM2602_VERSION);
 
@@ -596,10 +674,17 @@ static int ssm260x_probe(struct snd_soc_codec *codec)
 	}
 
 	/* set the update bits */
+<<<<<<< HEAD
 	snd_soc_update_bits(codec, SSM2602_LINVOL,
 			    LINVOL_LRIN_BOTH, LINVOL_LRIN_BOTH);
 	snd_soc_update_bits(codec, SSM2602_RINVOL,
 			    RINVOL_RLIN_BOTH, RINVOL_RLIN_BOTH);
+=======
+	reg = snd_soc_read(codec, SSM2602_LINVOL);
+	snd_soc_write(codec, SSM2602_LINVOL, reg | LINVOL_LRIN_BOTH);
+	reg = snd_soc_read(codec, SSM2602_RINVOL);
+	snd_soc_write(codec, SSM2602_RINVOL, reg | RINVOL_RLIN_BOTH);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*select Line in as default input*/
 	snd_soc_write(codec, SSM2602_APANA, APANA_SELECT_DAC |
 			APANA_ENABLE_MIC_BOOST);
@@ -613,12 +698,16 @@ static int ssm260x_probe(struct snd_soc_codec *codec)
 		break;
 	}
 
+<<<<<<< HEAD
 	if (ret)
 		return ret;
 
 	ssm2602_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
 
 	return 0;
+=======
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* remove everything here */
@@ -652,8 +741,12 @@ static int __devinit ssm2602_spi_probe(struct spi_device *spi)
 	struct ssm2602_priv *ssm2602;
 	int ret;
 
+<<<<<<< HEAD
 	ssm2602 = devm_kzalloc(&spi->dev, sizeof(struct ssm2602_priv),
 			       GFP_KERNEL);
+=======
+	ssm2602 = kzalloc(sizeof(struct ssm2602_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ssm2602 == NULL)
 		return -ENOMEM;
 
@@ -663,12 +756,21 @@ static int __devinit ssm2602_spi_probe(struct spi_device *spi)
 
 	ret = snd_soc_register_codec(&spi->dev,
 			&soc_codec_dev_ssm2602, &ssm2602_dai, 1);
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		kfree(ssm2602);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit ssm2602_spi_remove(struct spi_device *spi)
 {
 	snd_soc_unregister_codec(&spi->dev);
+<<<<<<< HEAD
+=======
+	kfree(spi_get_drvdata(spi));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -695,8 +797,12 @@ static int __devinit ssm2602_i2c_probe(struct i2c_client *i2c,
 	struct ssm2602_priv *ssm2602;
 	int ret;
 
+<<<<<<< HEAD
 	ssm2602 = devm_kzalloc(&i2c->dev, sizeof(struct ssm2602_priv),
 			       GFP_KERNEL);
+=======
+	ssm2602 = kzalloc(sizeof(struct ssm2602_priv), GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ssm2602 == NULL)
 		return -ENOMEM;
 
@@ -706,12 +812,21 @@ static int __devinit ssm2602_i2c_probe(struct i2c_client *i2c,
 
 	ret = snd_soc_register_codec(&i2c->dev,
 			&soc_codec_dev_ssm2602, &ssm2602_dai, 1);
+<<<<<<< HEAD
+=======
+	if (ret < 0)
+		kfree(ssm2602);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit ssm2602_i2c_remove(struct i2c_client *client)
 {
 	snd_soc_unregister_codec(&client->dev);
+<<<<<<< HEAD
+=======
+	kfree(i2c_get_clientdata(client));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 

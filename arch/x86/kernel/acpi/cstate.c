@@ -14,7 +14,10 @@
 #include <acpi/processor.h>
 #include <asm/acpi.h>
 #include <asm/mwait.h>
+<<<<<<< HEAD
 #include <asm/special_insns.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Initialize bm_flags based on the CPU cache properties
@@ -150,6 +153,7 @@ int acpi_processor_ffh_cstate_probe(unsigned int cpu,
 }
 EXPORT_SYMBOL_GPL(acpi_processor_ffh_cstate_probe);
 
+<<<<<<< HEAD
 /*
  * This uses new MONITOR/MWAIT instructions on P4 processors with PNI,
  * which can obviate IPI to trigger checking of need_resched.
@@ -173,6 +177,8 @@ void mwait_idle_with_hints(unsigned long ax, unsigned long cx)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void acpi_processor_ffh_cstate_enter(struct acpi_processor_cx *cx)
 {
 	unsigned int cpu = smp_processor_id();

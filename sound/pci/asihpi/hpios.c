@@ -1,7 +1,11 @@
 /******************************************************************************
 
     AudioScience HPI driver
+<<<<<<< HEAD
     Copyright (C) 1997-2012  AudioScience Inc. <support@audioscience.com>
+=======
+    Copyright (C) 1997-2010  AudioScience Inc. <support@audioscience.com>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of version 2 of the GNU General Public License as
@@ -39,9 +43,19 @@ void hpios_delay_micro_seconds(u32 num_micro_sec)
 
 }
 
+<<<<<<< HEAD
 /** Allocate an area of locked memory for bus master DMA operations.
 
 If allocation fails, return 1, and *pMemArea.size = 0
+=======
+void hpios_locked_mem_init(void)
+{
+}
+
+/** Allocated an area of locked memory for bus master DMA operations.
+
+On error, return -ENOMEM, and *pMemArea.size = 0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 */
 u16 hpios_locked_mem_alloc(struct consistent_dma_area *p_mem_area, u32 size,
 	struct pci_dev *pdev)
@@ -62,7 +76,11 @@ u16 hpios_locked_mem_alloc(struct consistent_dma_area *p_mem_area, u32 size,
 		HPI_DEBUG_LOG(WARNING,
 			"failed to allocate %d bytes locked memory\n", size);
 		p_mem_area->size = 0;
+<<<<<<< HEAD
 		return 1;
+=======
+		return -ENOMEM;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 
@@ -81,3 +99,10 @@ u16 hpios_locked_mem_free(struct consistent_dma_area *p_mem_area)
 		return 1;
 	}
 }
+<<<<<<< HEAD
+=======
+
+void hpios_locked_mem_free_all(void)
+{
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

@@ -17,6 +17,7 @@
 #define TRACER_ACCESSED_BIT	0
 #define TRACER_RUNNING_BIT	1
 #define TRACER_CYCLE_ACC_BIT	2
+<<<<<<< HEAD
 #define TRACER_ACCESSED		BIT(TRACER_ACCESSED_BIT)
 #define TRACER_RUNNING		BIT(TRACER_RUNNING_BIT)
 #define TRACER_CYCLE_ACC	BIT(TRACER_CYCLE_ACC_BIT)
@@ -26,6 +27,19 @@
 #define etm_writel(t, v, x) \
 	(__raw_writel((v), (t)->etm_regs + (x)))
 #define etm_readl(t, x) (__raw_readl((t)->etm_regs + (x)))
+=======
+#define TRACER_TRACE_DATA_BIT	3
+#define TRACER_ACCESSED		BIT(TRACER_ACCESSED_BIT)
+#define TRACER_RUNNING		BIT(TRACER_RUNNING_BIT)
+#define TRACER_CYCLE_ACC	BIT(TRACER_CYCLE_ACC_BIT)
+#define TRACER_TRACE_DATA	BIT(TRACER_TRACE_DATA_BIT)
+
+#define TRACER_TIMEOUT 10000
+
+#define etm_writel(t, id, v, x) \
+	(__raw_writel((v), (t)->etm_regs[(id)] + (x)))
+#define etm_readl(t, id, x) (__raw_readl((t)->etm_regs[(id)] + (x)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* CoreSight Management Registers */
 #define CSMR_LOCKACCESS 0xfb0
@@ -113,11 +127,27 @@
 #define ETMR_TRACEENCTRL	0x24
 #define ETMTE_INCLEXCL		BIT(24)
 #define ETMR_TRACEENEVT		0x20
+<<<<<<< HEAD
 #define ETMCTRL_OPTS		(ETMCTRL_DO_CPRT | \
 				ETMCTRL_DATA_DO_ADDR | \
 				ETMCTRL_BRANCH_OUTPUT | \
 				ETMCTRL_DO_CONTEXTID)
 
+=======
+
+#define ETMR_VIEWDATAEVT	0x30
+#define ETMR_VIEWDATACTRL1	0x34
+#define ETMR_VIEWDATACTRL2	0x38
+#define ETMR_VIEWDATACTRL3	0x3c
+#define ETMVDC3_EXCLONLY	BIT(16)
+
+#define ETMCTRL_OPTS		(ETMCTRL_DO_CPRT | \
+				ETMCTRL_BRANCH_OUTPUT | \
+				ETMCTRL_DO_CONTEXTID)
+
+#define ETMR_TRACEIDR		0x200
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ETM management registers, "ETM Architecture", 3.5.24 */
 #define ETMMR_OSLAR	0x300
 #define ETMMR_OSLSR	0x304
@@ -140,14 +170,25 @@
 #define ETBFF_TRIGIN		BIT(8)
 #define ETBFF_TRIGEVT		BIT(9)
 #define ETBFF_TRIGFL		BIT(10)
+<<<<<<< HEAD
+=======
+#define ETBFF_STOPFL		BIT(12)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define etb_writel(t, v, x) \
 	(__raw_writel((v), (t)->etb_regs + (x)))
 #define etb_readl(t, x) (__raw_readl((t)->etb_regs + (x)))
 
+<<<<<<< HEAD
 #define etm_lock(t) do { etm_writel((t), 0, CSMR_LOCKACCESS); } while (0)
 #define etm_unlock(t) \
 	do { etm_writel((t), UNLOCK_MAGIC, CSMR_LOCKACCESS); } while (0)
+=======
+#define etm_lock(t, id) \
+	do { etm_writel((t), (id), 0, CSMR_LOCKACCESS); } while (0)
+#define etm_unlock(t, id) \
+	do { etm_writel((t), (id), UNLOCK_MAGIC, CSMR_LOCKACCESS); } while (0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define etb_lock(t) do { etb_writel((t), 0, CSMR_LOCKACCESS); } while (0)
 #define etb_unlock(t) \

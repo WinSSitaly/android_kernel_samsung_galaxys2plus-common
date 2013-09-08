@@ -6,5 +6,9 @@ gspca_stv06xx-objs := stv06xx.o \
 		      stv06xx_pb0100.o \
 		      stv06xx_st6422.o
 
+<<<<<<< HEAD
 ccflags-y += -I$(srctree)/drivers/media/video/gspca
+=======
+EXTRA_CFLAGS += -Idrivers/media/video/gspca
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 

@@ -137,7 +137,11 @@ extern struct device_attribute macio_dev_attrs[];
 struct bus_type macio_bus_type = {
        .name	= "macio",
        .match	= macio_bus_match,
+<<<<<<< HEAD
        .uevent = of_device_uevent_modalias,
+=======
+       .uevent = of_device_uevent,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
        .probe	= macio_device_probe,
        .remove	= macio_device_remove,
        .shutdown = macio_device_shutdown,

@@ -21,7 +21,10 @@
 
 #include "flask.h"
 #include "av_permissions.h"
+<<<<<<< HEAD
 #include "security.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct nlmsg_perm {
 	u16	nlmsg_type;

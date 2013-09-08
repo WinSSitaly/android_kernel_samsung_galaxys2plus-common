@@ -44,8 +44,11 @@
  * PB_CFILLIN       = R5  = 0x0E (14 dec)     : Sets the frame rate
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "stv06xx_pb0100.h"
 
 static const struct ctrl pb0100_ctrl[] = {
@@ -192,7 +195,11 @@ static int pb0100_probe(struct sd *sd)
 		if (!sensor_settings)
 			return -ENOMEM;
 
+<<<<<<< HEAD
 		pr_info("Photobit pb0100 sensor detected\n");
+=======
+		info("Photobit pb0100 sensor detected");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		sd->gspca_dev.cam.cam_mode = pb0100_mode;
 		sd->gspca_dev.cam.nmodes = ARRAY_SIZE(pb0100_mode);

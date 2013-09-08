@@ -150,7 +150,11 @@ static ssize_t show_status(struct qib_pportdata *ppd, char *buf)
  * For userland compatibility, these offsets must remain fixed.
  * They are strings for QIB_STATUS_*
  */
+<<<<<<< HEAD
 static const char * const qib_status_str[] = {
+=======
+static const char *qib_status_str[] = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	"Initted",
 	"",
 	"",
@@ -507,6 +511,7 @@ static ssize_t show_nctxts(struct device *device,
 		dd->first_user_ctxt);
 }
 
+<<<<<<< HEAD
 static ssize_t show_nfreectxts(struct device *device,
 			   struct device_attribute *attr, char *buf)
 {
@@ -518,6 +523,8 @@ static ssize_t show_nfreectxts(struct device *device,
 	return scnprintf(buf, PAGE_SIZE, "%u\n", dd->freectxts);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static ssize_t show_serial(struct device *device,
 			   struct device_attribute *attr, char *buf)
 {
@@ -615,7 +622,10 @@ static DEVICE_ATTR(hca_type, S_IRUGO, show_hca, NULL);
 static DEVICE_ATTR(board_id, S_IRUGO, show_hca, NULL);
 static DEVICE_ATTR(version, S_IRUGO, show_version, NULL);
 static DEVICE_ATTR(nctxts, S_IRUGO, show_nctxts, NULL);
+<<<<<<< HEAD
 static DEVICE_ATTR(nfreectxts, S_IRUGO, show_nfreectxts, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static DEVICE_ATTR(serial, S_IRUGO, show_serial, NULL);
 static DEVICE_ATTR(boardversion, S_IRUGO, show_boardversion, NULL);
 static DEVICE_ATTR(logged_errors, S_IRUGO, show_logged_errs, NULL);
@@ -629,7 +639,10 @@ static struct device_attribute *qib_attributes[] = {
 	&dev_attr_board_id,
 	&dev_attr_version,
 	&dev_attr_nctxts,
+<<<<<<< HEAD
 	&dev_attr_nfreectxts,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&dev_attr_serial,
 	&dev_attr_boardversion,
 	&dev_attr_logged_errors,

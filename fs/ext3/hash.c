@@ -9,7 +9,13 @@
  * License.
  */
 
+<<<<<<< HEAD
 #include "ext3.h"
+=======
+#include <linux/fs.h>
+#include <linux/jbd.h>
+#include <linux/ext3_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/cryptohash.h>
 
 #define DELTA 0x9E3779B9

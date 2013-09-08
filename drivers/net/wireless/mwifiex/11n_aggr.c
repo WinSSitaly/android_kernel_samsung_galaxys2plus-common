@@ -84,7 +84,11 @@ mwifiex_11n_form_amsdu_pkt(struct sk_buff *skb_aggr,
 	/* Add payload */
 	skb_put(skb_aggr, skb_src->len);
 	memcpy(skb_aggr->data + sizeof(*tx_header), skb_src->data,
+<<<<<<< HEAD
 	       skb_src->len);
+=======
+							skb_src->len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	*pad = (((skb_src->len + LLC_SNAP_LEN) & 3)) ? (4 - (((skb_src->len +
 						      LLC_SNAP_LEN)) & 3)) : 0;
 	skb_put(skb_aggr, *pad);
@@ -119,14 +123,23 @@ mwifiex_11n_form_amsdu_txpd(struct mwifiex_private *priv,
 	local_tx_pd->tx_pkt_offset = cpu_to_le16(sizeof(struct txpd));
 	local_tx_pd->tx_pkt_type = cpu_to_le16(PKT_TYPE_AMSDU);
 	local_tx_pd->tx_pkt_length = cpu_to_le16(skb->len -
+<<<<<<< HEAD
 						 sizeof(*local_tx_pd));
+=======
+			sizeof(*local_tx_pd));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (local_tx_pd->tx_control == 0)
 		/* TxCtrl set by user or default */
 		local_tx_pd->tx_control = cpu_to_le32(priv->pkt_tx_ctrl);
 
+<<<<<<< HEAD
 	if (GET_BSS_ROLE(priv) == MWIFIEX_BSS_ROLE_STA &&
 	    priv->adapter->pps_uapsd_mode) {
+=======
+	if ((GET_BSS_ROLE(priv) == MWIFIEX_BSS_ROLE_STA) &&
+		(priv->adapter->pps_uapsd_mode)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (true == mwifiex_check_last_packet_indication(priv)) {
 			priv->adapter->tx_lock_flag = true;
 			local_tx_pd->flags =
@@ -164,13 +177,21 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 	struct mwifiex_tx_param tx_param;
 	struct txpd *ptx_pd = NULL;
 
+<<<<<<< HEAD
 	skb_src = skb_peek(&pra_list->skb_head);
 	if (!skb_src) {
+=======
+	if (skb_queue_empty(&pra_list->skb_head)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&priv->wmm.ra_list_spinlock,
 				       ra_list_flags);
 		return 0;
 	}
+<<<<<<< HEAD
 
+=======
+	skb_src = skb_peek(&pra_list->skb_head);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	tx_info_src = MWIFIEX_SKB_TXCB(skb_src);
 	skb_aggr = dev_alloc_skb(adapter->tx_buf_size);
 	if (!skb_aggr) {
@@ -182,6 +203,7 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 	skb_reserve(skb_aggr, headroom + sizeof(struct txpd));
 	tx_info_aggr =  MWIFIEX_SKB_TXCB(skb_aggr);
 
+<<<<<<< HEAD
 	tx_info_aggr->bss_type = tx_info_src->bss_type;
 	tx_info_aggr->bss_num = tx_info_src->bss_num;
 	skb_aggr->priority = skb_src->priority;
@@ -194,6 +216,22 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 		skb_src = skb_dequeue(&pra_list->skb_head);
 
 		pra_list->total_pkts_size -= skb_src->len;
+=======
+	tx_info_aggr->bss_index = tx_info_src->bss_index;
+	skb_aggr->priority = skb_src->priority;
+
+	while (skb_src && ((skb_headroom(skb_aggr) + skb_src->len
+					+ LLC_SNAP_LEN)
+				<= adapter->tx_buf_size)) {
+
+		if (!skb_queue_empty(&pra_list->skb_head))
+			skb_src = skb_dequeue(&pra_list->skb_head);
+		else
+			skb_src = NULL;
+
+		if (skb_src)
+			pra_list->total_pkts_size -= skb_src->len;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		atomic_dec(&priv->wmm.tx_pkts_queued);
 
@@ -211,6 +249,7 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 			return -1;
 		}
 
+<<<<<<< HEAD
 		if (skb_tailroom(skb_aggr) < pad) {
 			pad = 0;
 			break;
@@ -220,6 +259,13 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 		skb_src = skb_peek(&pra_list->skb_head);
 
 	} while (skb_src);
+=======
+		if (!skb_queue_empty(&pra_list->skb_head))
+			skb_src = skb_peek(&pra_list->skb_head);
+		else
+			skb_src = NULL;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	spin_unlock_irqrestore(&priv->wmm.ra_list_spinlock, ra_list_flags);
 
@@ -233,6 +279,7 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 
 	skb_push(skb_aggr, headroom);
 
+<<<<<<< HEAD
 	/*
 	 * Padding per MSDU will affect the length of next
 	 * packet and hence the exact length of next packet
@@ -248,6 +295,16 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 
 	ret = adapter->if_ops.host_to_card(adapter, MWIFIEX_TYPE_DATA,
 					   skb_aggr, &tx_param);
+=======
+	tx_param.next_pkt_len = ((pra_list->total_pkts_size) ?
+				 (((pra_list->total_pkts_size) >
+				   adapter->tx_buf_size) ? adapter->
+				  tx_buf_size : pra_list->total_pkts_size +
+				  LLC_SNAP_LEN + sizeof(struct txpd)) : 0);
+	ret = adapter->if_ops.host_to_card(adapter, MWIFIEX_TYPE_DATA,
+					     skb_aggr->data,
+					     skb_aggr->len, &tx_param);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (ret) {
 	case -EBUSY:
 		spin_lock_irqsave(&priv->wmm.ra_list_spinlock, ra_list_flags);
@@ -257,8 +314,14 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 			mwifiex_write_data_complete(adapter, skb_aggr, -1);
 			return -1;
 		}
+<<<<<<< HEAD
 		if (GET_BSS_ROLE(priv) == MWIFIEX_BSS_ROLE_STA &&
 		    adapter->pps_uapsd_mode && adapter->tx_lock_flag) {
+=======
+		if ((GET_BSS_ROLE(priv) == MWIFIEX_BSS_ROLE_STA) &&
+			(adapter->pps_uapsd_mode) &&
+			(adapter->tx_lock_flag)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				priv->adapter->tx_lock_flag = false;
 				if (ptx_pd)
 					ptx_pd->flags = 0;
@@ -278,7 +341,11 @@ mwifiex_11n_aggregate_pkt(struct mwifiex_private *priv,
 	case -1:
 		adapter->data_sent = false;
 		dev_err(adapter->dev, "%s: host_to_card failed: %#x\n",
+<<<<<<< HEAD
 			__func__, ret);
+=======
+						__func__, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		adapter->dbg.num_tx_host_to_card_failure++;
 		mwifiex_write_data_complete(adapter, skb_aggr, ret);
 		return 0;

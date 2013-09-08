@@ -15,9 +15,16 @@
 #include <linux/interrupt.h>
 
 #include <asm/processor.h>
+<<<<<<< HEAD
 #include <asm/uaccess.h>
 #include <asm/io.h>
 #include <linux/atomic.h>
+=======
+#include <asm/system.h>
+#include <asm/uaccess.h>
+#include <asm/io.h>
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/smp.h>
 #include <asm/pgalloc.h>
 #include <asm/busctl-regs.h>

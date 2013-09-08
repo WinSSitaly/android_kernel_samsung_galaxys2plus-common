@@ -21,10 +21,15 @@
 #include <linux/clk.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include <plat/hardware.h>
 #include <plat/clock.h>
 
 #include "iomap.h"
+=======
+#include <plat/clock.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "clock.h"
 #include "clock2xxx.h"
 #include "cm2xxx_3xxx.h"

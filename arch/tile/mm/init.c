@@ -38,6 +38,10 @@
 #include <linux/uaccess.h>
 #include <asm/mmu_context.h>
 #include <asm/processor.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/pgtable.h>
 #include <asm/pgalloc.h>
 #include <asm/dma.h>
@@ -254,6 +258,14 @@ static pgprot_t __init init_pgprot(ulong address)
 		return construct_pgprot(PAGE_KERNEL_RO, PAGE_HOME_IMMUTABLE);
 	}
 
+<<<<<<< HEAD
+=======
+	/* As a performance optimization, keep the boot init stack here. */
+	if (address >= (ulong)&init_thread_union &&
+	    address < (ulong)&init_thread_union + THREAD_SIZE)
+		return construct_pgprot(PAGE_KERNEL, smp_processor_id());
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifndef __tilegx__
 #if !ATOMIC_LOCKS_FOUND_VIA_TABLE()
 	/* Force the atomic_locks[] array page to be hash-for-home. */
@@ -552,7 +564,10 @@ static void __init kernel_physical_mapping_init(pgd_t *pgd_base)
 
 	address = MEM_SV_INTRPT;
 	pmd = get_pmd(pgtables, address);
+<<<<<<< HEAD
 	pfn = 0;  /* code starts at PA 0 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ktext_small) {
 		/* Allocate an L2 PTE for the kernel text */
 		int cpu = 0;
@@ -575,6 +590,7 @@ static void __init kernel_physical_mapping_init(pgd_t *pgd_base)
 		}
 
 		BUG_ON(address != (unsigned long)_stext);
+<<<<<<< HEAD
 		pte = NULL;
 		for (; address < (unsigned long)_einittext;
 		     pfn++, address += PAGE_SIZE) {
@@ -584,6 +600,12 @@ static void __init kernel_physical_mapping_init(pgd_t *pgd_base)
 					assign_pte(pmd++, pte);
 				pte = alloc_pte();
 			}
+=======
+		pfn = 0;  /* code starts at PA 0 */
+		pte = alloc_pte();
+		for (pte_ofs = 0; address < (unsigned long)_einittext;
+		     pfn++, pte_ofs++, address += PAGE_SIZE) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!ktext_local) {
 				prot = set_remote_cache_cpu(prot, cpu);
 				cpu = cpumask_next(cpu, &ktext_mask);
@@ -592,8 +614,12 @@ static void __init kernel_physical_mapping_init(pgd_t *pgd_base)
 			}
 			pte[pte_ofs] = pfn_pte(pfn, prot);
 		}
+<<<<<<< HEAD
 		if (pte)
 			assign_pte(pmd, pte);
+=======
+		assign_pte(pmd, pte);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else {
 		pte_t pteval = pfn_pte(0, PAGE_KERNEL_EXEC);
 		pteval = pte_mkhuge(pteval);
@@ -616,9 +642,13 @@ static void __init kernel_physical_mapping_init(pgd_t *pgd_base)
 		else
 			pteval = hv_pte_set_mode(pteval,
 						 HV_PTE_MODE_CACHE_NO_L3);
+<<<<<<< HEAD
 		for (; address < (unsigned long)_einittext;
 		     pfn += PFN_DOWN(HPAGE_SIZE), address += HPAGE_SIZE)
 			*(pte_t *)(pmd++) = pfn_pte(pfn, pteval);
+=======
+		*(pte_t *)pmd = pteval;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Set swapper_pgprot here so it is flushed to memory right away. */
@@ -839,7 +869,12 @@ void __init mem_init(void)
 #endif
 
 #ifdef CONFIG_FLATMEM
+<<<<<<< HEAD
 	BUG_ON(!mem_map);
+=======
+	if (!mem_map)
+		BUG();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 #ifdef CONFIG_HIGHMEM

@@ -17,7 +17,11 @@
 #include <linux/kernel.h>
 #include <linux/sched.h>
 #include <linux/syscalls.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/poll.h>
 #include <linux/personality.h> /* for STICKY_TIMEOUTS */
@@ -223,7 +227,11 @@ static void __pollwait(struct file *filp, wait_queue_head_t *wait_address,
 	get_file(filp);
 	entry->filp = filp;
 	entry->wait_address = wait_address;
+<<<<<<< HEAD
 	entry->key = p->_key;
+=======
+	entry->key = p->key;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	init_waitqueue_func_entry(&entry->wait, pollwake);
 	entry->wait.private = pwq;
 	add_wait_queue(wait_address, &entry->wait);
@@ -345,10 +353,17 @@ static int max_select_fd(unsigned long n, fd_set_bits *fds)
 	struct fdtable *fdt;
 
 	/* handle last in-complete long-word first */
+<<<<<<< HEAD
 	set = ~(~0UL << (n & (BITS_PER_LONG-1)));
 	n /= BITS_PER_LONG;
 	fdt = files_fdtable(current->files);
 	open_fds = fdt->open_fds + n;
+=======
+	set = ~(~0UL << (n & (__NFDBITS-1)));
+	n /= __NFDBITS;
+	fdt = files_fdtable(current->files);
+	open_fds = fdt->open_fds->fds_bits+n;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	max = 0;
 	if (set) {
 		set &= BITS(fds, n);
@@ -373,7 +388,11 @@ get_max:
 			max++;
 			set >>= 1;
 		} while (set);
+<<<<<<< HEAD
 		max += n * BITS_PER_LONG;
+=======
+		max += n * __NFDBITS;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return max;
@@ -386,11 +405,21 @@ get_max:
 static inline void wait_key_set(poll_table *wait, unsigned long in,
 				unsigned long out, unsigned long bit)
 {
+<<<<<<< HEAD
 	wait->_key = POLLEX_SET;
 	if (in & bit)
 		wait->_key |= POLLIN_SET;
 	if (out & bit)
 		wait->_key |= POLLOUT_SET;
+=======
+	if (wait) {
+		wait->key = POLLEX_SET;
+		if (in & bit)
+			wait->key |= POLLIN_SET;
+		if (out & bit)
+			wait->key |= POLLOUT_SET;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int do_select(int n, fd_set_bits *fds, struct timespec *end_time)
@@ -412,7 +441,11 @@ int do_select(int n, fd_set_bits *fds, struct timespec *end_time)
 	poll_initwait(&table);
 	wait = &table.pt;
 	if (end_time && !end_time->tv_sec && !end_time->tv_nsec) {
+<<<<<<< HEAD
 		wait->_qproc = NULL;
+=======
+		wait = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		timed_out = 1;
 	}
 
@@ -435,11 +468,19 @@ int do_select(int n, fd_set_bits *fds, struct timespec *end_time)
 			in = *inp++; out = *outp++; ex = *exp++;
 			all_bits = in | out | ex;
 			if (all_bits == 0) {
+<<<<<<< HEAD
 				i += BITS_PER_LONG;
 				continue;
 			}
 
 			for (j = 0; j < BITS_PER_LONG; ++j, ++i, bit <<= 1) {
+=======
+				i += __NFDBITS;
+				continue;
+			}
+
+			for (j = 0; j < __NFDBITS; ++j, ++i, bit <<= 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				int fput_needed;
 				if (i >= n)
 					break;
@@ -457,17 +498,29 @@ int do_select(int n, fd_set_bits *fds, struct timespec *end_time)
 					if ((mask & POLLIN_SET) && (in & bit)) {
 						res_in |= bit;
 						retval++;
+<<<<<<< HEAD
 						wait->_qproc = NULL;
+=======
+						wait = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 					if ((mask & POLLOUT_SET) && (out & bit)) {
 						res_out |= bit;
 						retval++;
+<<<<<<< HEAD
 						wait->_qproc = NULL;
+=======
+						wait = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 					if ((mask & POLLEX_SET) && (ex & bit)) {
 						res_ex |= bit;
 						retval++;
+<<<<<<< HEAD
 						wait->_qproc = NULL;
+=======
+						wait = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					}
 				}
 			}
@@ -479,7 +532,11 @@ int do_select(int n, fd_set_bits *fds, struct timespec *end_time)
 				*rexp = res_ex;
 			cond_resched();
 		}
+<<<<<<< HEAD
 		wait->_qproc = NULL;
+=======
+		wait = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (retval || timed_out || signal_pending(current))
 			break;
 		if (table.error) {
@@ -718,7 +775,11 @@ struct poll_list {
  * interested in events matching the pollfd->events mask, and the result
  * matching that mask is both recorded in pollfd->revents and returned. The
  * pwait poll_table will be used by the fd-provided poll handler for waiting,
+<<<<<<< HEAD
  * if pwait->_qproc is non-NULL.
+=======
+ * if non-NULL.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 static inline unsigned int do_pollfd(struct pollfd *pollfd, poll_table *pwait)
 {
@@ -736,7 +797,13 @@ static inline unsigned int do_pollfd(struct pollfd *pollfd, poll_table *pwait)
 		if (file != NULL) {
 			mask = DEFAULT_POLLMASK;
 			if (file->f_op && file->f_op->poll) {
+<<<<<<< HEAD
 				pwait->_key = pollfd->events|POLLERR|POLLHUP;
+=======
+				if (pwait)
+					pwait->key = pollfd->events |
+							POLLERR | POLLHUP;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				mask = file->f_op->poll(file, pwait);
 			}
 			/* Mask out unneeded events. */
@@ -759,7 +826,11 @@ static int do_poll(unsigned int nfds,  struct poll_list *list,
 
 	/* Optimise the no-wait case */
 	if (end_time && !end_time->tv_sec && !end_time->tv_nsec) {
+<<<<<<< HEAD
 		pt->_qproc = NULL;
+=======
+		pt = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		timed_out = 1;
 	}
 
@@ -777,22 +848,36 @@ static int do_poll(unsigned int nfds,  struct poll_list *list,
 			for (; pfd != pfd_end; pfd++) {
 				/*
 				 * Fish for events. If we found one, record it
+<<<<<<< HEAD
 				 * and kill poll_table->_qproc, so we don't
+=======
+				 * and kill the poll_table, so we don't
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 * needlessly register any other waiters after
 				 * this. They'll get immediately deregistered
 				 * when we break out and return.
 				 */
 				if (do_pollfd(pfd, pt)) {
 					count++;
+<<<<<<< HEAD
 					pt->_qproc = NULL;
+=======
+					pt = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				}
 			}
 		}
 		/*
 		 * All waiters have already been registered, so don't provide
+<<<<<<< HEAD
 		 * a poll_table->_qproc to them on the next loop iteration.
 		 */
 		pt->_qproc = NULL;
+=======
+		 * a poll_table to them on the next loop iteration.
+		 */
+		pt = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!count) {
 			count = wait->error;
 			if (signal_pending(current))
@@ -908,7 +993,11 @@ static long do_restart_poll(struct restart_block *restart_block)
 }
 
 SYSCALL_DEFINE3(poll, struct pollfd __user *, ufds, unsigned int, nfds,
+<<<<<<< HEAD
 		int, timeout_msecs)
+=======
+		long, timeout_msecs)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct timespec end_time, *to = NULL;
 	int ret;

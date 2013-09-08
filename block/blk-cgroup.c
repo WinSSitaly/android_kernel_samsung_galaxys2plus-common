@@ -28,10 +28,18 @@ static LIST_HEAD(blkio_list);
 struct blkio_cgroup blkio_root_cgroup = { .weight = 2*BLKIO_WEIGHT_DEFAULT };
 EXPORT_SYMBOL_GPL(blkio_root_cgroup);
 
+<<<<<<< HEAD
 static struct cgroup_subsys_state *blkiocg_create(struct cgroup *);
 static int blkiocg_can_attach(struct cgroup *, struct cgroup_taskset *);
 static void blkiocg_attach(struct cgroup *, struct cgroup_taskset *);
 static void blkiocg_destroy(struct cgroup *);
+=======
+static struct cgroup_subsys_state *blkiocg_create(struct cgroup_subsys *,
+						  struct cgroup *);
+static int blkiocg_can_attach_task(struct cgroup *, struct task_struct *);
+static void blkiocg_attach_task(struct cgroup *, struct task_struct *);
+static void blkiocg_destroy(struct cgroup_subsys *, struct cgroup *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int blkiocg_populate(struct cgroup_subsys *, struct cgroup *);
 
 /* for encoding cft->private value on file */
@@ -43,8 +51,13 @@ static int blkiocg_populate(struct cgroup_subsys *, struct cgroup *);
 struct cgroup_subsys blkio_subsys = {
 	.name = "blkio",
 	.create = blkiocg_create,
+<<<<<<< HEAD
 	.can_attach = blkiocg_can_attach,
 	.attach = blkiocg_attach,
+=======
+	.can_attach_task = blkiocg_can_attach_task,
+	.attach_task = blkiocg_attach_task,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.destroy = blkiocg_destroy,
 	.populate = blkiocg_populate,
 #ifdef CONFIG_BLK_CGROUP
@@ -767,6 +780,7 @@ static uint64_t blkio_get_stat(struct blkio_group *blkg,
 	return disk_total;
 }
 
+<<<<<<< HEAD
 static int blkio_policy_parse_and_set(char *buf,
 	struct blkio_policy_node *newpn, enum blkio_policy_id plid, int fileid)
 {
@@ -775,6 +789,27 @@ static int blkio_policy_parse_and_set(char *buf,
 	unsigned long major, minor;
 	int i = 0, ret = -EINVAL;
 	int part;
+=======
+static int blkio_check_dev_num(dev_t dev)
+{
+	int part = 0;
+	struct gendisk *disk;
+
+	disk = get_gendisk(dev, &part);
+	if (!disk || part)
+		return -ENODEV;
+
+	return 0;
+}
+
+static int blkio_policy_parse_and_set(char *buf,
+	struct blkio_policy_node *newpn, enum blkio_policy_id plid, int fileid)
+{
+	char *s[4], *p, *major_s = NULL, *minor_s = NULL;
+	int ret;
+	unsigned long major, minor;
+	int i = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_t dev;
 	u64 temp;
 
@@ -792,12 +827,17 @@ static int blkio_policy_parse_and_set(char *buf,
 	}
 
 	if (i != 2)
+<<<<<<< HEAD
 		goto out;
+=======
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	p = strsep(&s[0], ":");
 	if (p != NULL)
 		major_s = p;
 	else
+<<<<<<< HEAD
 		goto out;
 
 	minor_s = s[0];
@@ -822,6 +862,33 @@ static int blkio_policy_parse_and_set(char *buf,
 			ret = -ENODEV;
 			goto out;
 		}
+=======
+		return -EINVAL;
+
+	minor_s = s[0];
+	if (!minor_s)
+		return -EINVAL;
+
+	ret = strict_strtoul(major_s, 10, &major);
+	if (ret)
+		return -EINVAL;
+
+	ret = strict_strtoul(minor_s, 10, &minor);
+	if (ret)
+		return -EINVAL;
+
+	dev = MKDEV(major, minor);
+
+	ret = strict_strtoull(s[1], 10, &temp);
+	if (ret)
+		return -EINVAL;
+
+	/* For rule removal, do not check for device presence. */
+	if (temp) {
+		ret = blkio_check_dev_num(dev);
+		if (ret)
+			return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	newpn->dev = dev;
@@ -830,7 +897,11 @@ static int blkio_policy_parse_and_set(char *buf,
 	case BLKIO_POLICY_PROP:
 		if ((temp < BLKIO_WEIGHT_MIN && temp > 0) ||
 		     temp > BLKIO_WEIGHT_MAX)
+<<<<<<< HEAD
 			goto out;
+=======
+			return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		newpn->plid = plid;
 		newpn->fileid = fileid;
@@ -847,7 +918,11 @@ static int blkio_policy_parse_and_set(char *buf,
 		case BLKIO_THROTL_read_iops_device:
 		case BLKIO_THROTL_write_iops_device:
 			if (temp > THROTL_IOPS_MAX)
+<<<<<<< HEAD
 				goto out;
+=======
+				return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			newpn->plid = plid;
 			newpn->fileid = fileid;
@@ -858,24 +933,33 @@ static int blkio_policy_parse_and_set(char *buf,
 	default:
 		BUG();
 	}
+<<<<<<< HEAD
 	ret = 0;
 out:
 	put_disk(disk);
 	return ret;
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 unsigned int blkcg_get_weight(struct blkio_cgroup *blkcg,
 			      dev_t dev)
 {
 	struct blkio_policy_node *pn;
+<<<<<<< HEAD
 	unsigned long flags;
 	unsigned int weight;
 
 	spin_lock_irqsave(&blkcg->lock, flags);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	pn = blkio_policy_search_node(blkcg, dev, BLKIO_POLICY_PROP,
 				BLKIO_PROP_weight_device);
 	if (pn)
+<<<<<<< HEAD
 		weight = pn->val.weight;
 	else
 		weight = blkcg->weight;
@@ -883,12 +967,18 @@ unsigned int blkcg_get_weight(struct blkio_cgroup *blkcg,
 	spin_unlock_irqrestore(&blkcg->lock, flags);
 
 	return weight;
+=======
+		return pn->val.weight;
+	else
+		return blkcg->weight;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(blkcg_get_weight);
 
 uint64_t blkcg_get_read_bps(struct blkio_cgroup *blkcg, dev_t dev)
 {
 	struct blkio_policy_node *pn;
+<<<<<<< HEAD
 	unsigned long flags;
 	uint64_t bps = -1;
 
@@ -900,11 +990,21 @@ uint64_t blkcg_get_read_bps(struct blkio_cgroup *blkcg, dev_t dev)
 	spin_unlock_irqrestore(&blkcg->lock, flags);
 
 	return bps;
+=======
+
+	pn = blkio_policy_search_node(blkcg, dev, BLKIO_POLICY_THROTL,
+				BLKIO_THROTL_read_bps_device);
+	if (pn)
+		return pn->val.bps;
+	else
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 uint64_t blkcg_get_write_bps(struct blkio_cgroup *blkcg, dev_t dev)
 {
 	struct blkio_policy_node *pn;
+<<<<<<< HEAD
 	unsigned long flags;
 	uint64_t bps = -1;
 
@@ -916,11 +1016,20 @@ uint64_t blkcg_get_write_bps(struct blkio_cgroup *blkcg, dev_t dev)
 	spin_unlock_irqrestore(&blkcg->lock, flags);
 
 	return bps;
+=======
+	pn = blkio_policy_search_node(blkcg, dev, BLKIO_POLICY_THROTL,
+				BLKIO_THROTL_write_bps_device);
+	if (pn)
+		return pn->val.bps;
+	else
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 unsigned int blkcg_get_read_iops(struct blkio_cgroup *blkcg, dev_t dev)
 {
 	struct blkio_policy_node *pn;
+<<<<<<< HEAD
 	unsigned long flags;
 	unsigned int iops = -1;
 
@@ -932,11 +1041,21 @@ unsigned int blkcg_get_read_iops(struct blkio_cgroup *blkcg, dev_t dev)
 	spin_unlock_irqrestore(&blkcg->lock, flags);
 
 	return iops;
+=======
+
+	pn = blkio_policy_search_node(blkcg, dev, BLKIO_POLICY_THROTL,
+				BLKIO_THROTL_read_iops_device);
+	if (pn)
+		return pn->val.iops;
+	else
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 unsigned int blkcg_get_write_iops(struct blkio_cgroup *blkcg, dev_t dev)
 {
 	struct blkio_policy_node *pn;
+<<<<<<< HEAD
 	unsigned long flags;
 	unsigned int iops = -1;
 
@@ -948,6 +1067,14 @@ unsigned int blkcg_get_write_iops(struct blkio_cgroup *blkcg, dev_t dev)
 	spin_unlock_irqrestore(&blkcg->lock, flags);
 
 	return iops;
+=======
+	pn = blkio_policy_search_node(blkcg, dev, BLKIO_POLICY_THROTL,
+				BLKIO_THROTL_write_iops_device);
+	if (pn)
+		return pn->val.iops;
+	else
+		return -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Checks whether user asked for deleting a policy rule */
@@ -1100,7 +1227,10 @@ static int blkiocg_file_write(struct cgroup *cgrp, struct cftype *cft,
 
 	if (blkio_delete_rule_command(newpn)) {
 		blkio_policy_delete_node(pn);
+<<<<<<< HEAD
 		kfree(pn);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irq(&blkcg->lock);
 		goto update_io_group;
 	}
@@ -1545,7 +1675,11 @@ static int blkiocg_populate(struct cgroup_subsys *subsys, struct cgroup *cgroup)
 				ARRAY_SIZE(blkio_files));
 }
 
+<<<<<<< HEAD
 static void blkiocg_destroy(struct cgroup *cgroup)
+=======
+static void blkiocg_destroy(struct cgroup_subsys *subsys, struct cgroup *cgroup)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct blkio_cgroup *blkcg = cgroup_to_blkio_cgroup(cgroup);
 	unsigned long flags;
@@ -1595,7 +1729,12 @@ static void blkiocg_destroy(struct cgroup *cgroup)
 		kfree(blkcg);
 }
 
+<<<<<<< HEAD
 static struct cgroup_subsys_state *blkiocg_create(struct cgroup *cgroup)
+=======
+static struct cgroup_subsys_state *
+blkiocg_create(struct cgroup_subsys *subsys, struct cgroup *cgroup)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct blkio_cgroup *blkcg;
 	struct cgroup *parent = cgroup->parent;
@@ -1624,13 +1763,19 @@ done:
  * of the main cic data structures.  For now we allow a task to change
  * its cgroup only if it's the only owner of its ioc.
  */
+<<<<<<< HEAD
 static int blkiocg_can_attach(struct cgroup *cgrp, struct cgroup_taskset *tset)
 {
 	struct task_struct *task;
+=======
+static int blkiocg_can_attach_task(struct cgroup *cgrp, struct task_struct *tsk)
+{
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct io_context *ioc;
 	int ret = 0;
 
 	/* task_lock() is needed to avoid races with exit_io_context() */
+<<<<<<< HEAD
 	cgroup_taskset_for_each(task, cgrp, tset) {
 		task_lock(task);
 		ioc = task->io_context;
@@ -1656,6 +1801,26 @@ static void blkiocg_attach(struct cgroup *cgrp, struct cgroup_taskset *tset)
 			put_io_context(ioc);
 		}
 	}
+=======
+	task_lock(tsk);
+	ioc = tsk->io_context;
+	if (ioc && atomic_read(&ioc->nr_tasks) > 1)
+		ret = -EINVAL;
+	task_unlock(tsk);
+
+	return ret;
+}
+
+static void blkiocg_attach_task(struct cgroup *cgrp, struct task_struct *tsk)
+{
+	struct io_context *ioc;
+
+	task_lock(tsk);
+	ioc = tsk->io_context;
+	if (ioc)
+		ioc->cgroup_changed = 1;
+	task_unlock(tsk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void blkio_policy_register(struct blkio_policy_type *blkiop)

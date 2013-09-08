@@ -6,7 +6,11 @@
 #include <linux/io.h>
 #include "pci-sh4.h"
 
+<<<<<<< HEAD
 int __init pcibios_map_platform_irq(const struct pci_dev *, u8 slot, u8 pin)
+=======
+int __init pcibios_map_platform_irq(struct pci_dev *, u8 slot, u8 pin)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
         switch (slot) {
         case 0: return 13;

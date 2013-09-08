@@ -17,6 +17,7 @@
  * Authors: Alexander Graf <agraf@suse.de>
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
 #include <asm/kvm_book3s.h>
 
@@ -24,6 +25,14 @@
 EXPORT_SYMBOL_GPL(kvmppc_hv_entry_trampoline);
 #else
 EXPORT_SYMBOL_GPL(kvmppc_entry_trampoline);
+=======
+#include <linux/module.h>
+#include <asm/kvm_book3s.h>
+
+EXPORT_SYMBOL_GPL(kvmppc_trampoline_enter);
+EXPORT_SYMBOL_GPL(kvmppc_trampoline_lowmem);
+EXPORT_SYMBOL_GPL(kvmppc_rmcall);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 EXPORT_SYMBOL_GPL(kvmppc_load_up_fpu);
 #ifdef CONFIG_ALTIVEC
 EXPORT_SYMBOL_GPL(kvmppc_load_up_altivec);
@@ -31,5 +40,8 @@ EXPORT_SYMBOL_GPL(kvmppc_load_up_altivec);
 #ifdef CONFIG_VSX
 EXPORT_SYMBOL_GPL(kvmppc_load_up_vsx);
 #endif
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

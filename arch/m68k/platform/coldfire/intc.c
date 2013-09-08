@@ -139,6 +139,10 @@ void __init init_IRQ(void)
 {
 	int irq;
 
+<<<<<<< HEAD
+=======
+	init_vectors();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mcf_maskimr(0xffffffff);
 
 	for (irq = 0; (irq < NR_IRQS); irq++) {

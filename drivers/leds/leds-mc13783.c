@@ -21,13 +21,21 @@
 #include <linux/platform_device.h>
 #include <linux/leds.h>
 #include <linux/workqueue.h>
+<<<<<<< HEAD
 #include <linux/mfd/mc13xxx.h>
+=======
+#include <linux/mfd/mc13783.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 
 struct mc13783_led {
 	struct led_classdev	cdev;
 	struct work_struct	work;
+<<<<<<< HEAD
 	struct mc13xxx		*master;
+=======
+	struct mc13783		*master;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	enum led_brightness	new_brightness;
 	int			id;
 };
@@ -111,11 +119,19 @@ static void mc13783_led_work(struct work_struct *work)
 		break;
 	}
 
+<<<<<<< HEAD
 	mc13xxx_lock(led->master);
 
 	mc13xxx_reg_rmw(led->master, reg, mask, value);
 
 	mc13xxx_unlock(led->master);
+=======
+	mc13783_lock(led->master);
+
+	mc13783_reg_rmw(led->master, reg, mask, value);
+
+	mc13783_unlock(led->master);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void mc13783_led_set(struct led_classdev *led_cdev,
@@ -172,23 +188,41 @@ static int __devinit mc13783_led_setup(struct mc13783_led *led, int max_current)
 		break;
 	}
 
+<<<<<<< HEAD
 	mc13xxx_lock(led->master);
 
 	ret = mc13xxx_reg_rmw(led->master, reg, mask << shift,
 						value << shift);
 
 	mc13xxx_unlock(led->master);
+=======
+	mc13783_lock(led->master);
+
+	ret = mc13783_reg_rmw(led->master, reg, mask << shift,
+						value << shift);
+
+	mc13783_unlock(led->master);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devinit mc13783_leds_prepare(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
 	struct mc13xxx *dev = dev_get_drvdata(pdev->dev.parent);
 	int ret = 0;
 	int reg = 0;
 
 	mc13xxx_lock(dev);
+=======
+	struct mc13783_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
+	struct mc13783 *dev = dev_get_drvdata(pdev->dev.parent);
+	int ret = 0;
+	int reg = 0;
+
+	mc13783_lock(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (pdata->flags & MC13783_LED_TC1HALF)
 		reg |= MC13783_LED_C1_TC1HALF_BIT;
@@ -196,7 +230,11 @@ static int __devinit mc13783_leds_prepare(struct platform_device *pdev)
 	if (pdata->flags & MC13783_LED_SLEWLIMTC)
 		reg |= MC13783_LED_Cx_SLEWLIM_BIT;
 
+<<<<<<< HEAD
 	ret = mc13xxx_reg_write(dev, MC13783_REG_LED_CONTROL_1, reg);
+=======
+	ret = mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_1, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -206,7 +244,11 @@ static int __devinit mc13783_leds_prepare(struct platform_device *pdev)
 	if (pdata->flags & MC13783_LED_SLEWLIMBL)
 		reg |= MC13783_LED_Cx_SLEWLIM_BIT;
 
+<<<<<<< HEAD
 	ret = mc13xxx_reg_write(dev, MC13783_REG_LED_CONTROL_2, reg);
+=======
+	ret = mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_2, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -216,7 +258,11 @@ static int __devinit mc13783_leds_prepare(struct platform_device *pdev)
 	if (pdata->flags & MC13783_LED_TRIODE_TC1)
 		reg |= MC13783_LED_Cx_TRIODE_TC_BIT;
 
+<<<<<<< HEAD
 	ret = mc13xxx_reg_write(dev, MC13783_REG_LED_CONTROL_3, reg);
+=======
+	ret = mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_3, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -226,7 +272,11 @@ static int __devinit mc13783_leds_prepare(struct platform_device *pdev)
 	if (pdata->flags & MC13783_LED_TRIODE_TC2)
 		reg |= MC13783_LED_Cx_TRIODE_TC_BIT;
 
+<<<<<<< HEAD
 	ret = mc13xxx_reg_write(dev, MC13783_REG_LED_CONTROL_4, reg);
+=======
+	ret = mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_4, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -236,7 +286,11 @@ static int __devinit mc13783_leds_prepare(struct platform_device *pdev)
 	if (pdata->flags & MC13783_LED_TRIODE_TC3)
 		reg |= MC13783_LED_Cx_TRIODE_TC_BIT;
 
+<<<<<<< HEAD
 	ret = mc13xxx_reg_write(dev, MC13783_REG_LED_CONTROL_5, reg);
+=======
+	ret = mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_5, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out;
 
@@ -255,17 +309,29 @@ static int __devinit mc13783_leds_prepare(struct platform_device *pdev)
 	reg |= (pdata->abref & MC13783_LED_C0_ABREF_MASK) <<
 							MC13783_LED_C0_ABREF;
 
+<<<<<<< HEAD
 	ret = mc13xxx_reg_write(dev, MC13783_REG_LED_CONTROL_0, reg);
 
 out:
 	mc13xxx_unlock(dev);
+=======
+	ret = mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_0, reg);
+
+out:
+	mc13783_unlock(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devinit mc13783_led_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
 	struct mc13xxx_led_platform_data *led_cur;
+=======
+	struct mc13783_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
+	struct mc13783_led_platform_data *led_cur;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct mc13783_led *led, *led_dat;
 	int ret, i;
 	int init_led = 0;
@@ -275,7 +341,11 @@ static int __devinit mc13783_led_probe(struct platform_device *pdev)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	if (pdata->num_leds < 1 || pdata->num_leds > (MC13783_LED_MAX + 1)) {
+=======
+	if (pdata->num_leds < 1 || pdata->num_leds > MC13783_LED_MAX) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_err(&pdev->dev, "Invalid led count %d\n", pdata->num_leds);
 		return -EINVAL;
 	}
@@ -351,9 +421,15 @@ err_free:
 
 static int __devexit mc13783_led_remove(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct mc13xxx_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
 	struct mc13783_led *led = platform_get_drvdata(pdev);
 	struct mc13xxx *dev = dev_get_drvdata(pdev->dev.parent);
+=======
+	struct mc13783_leds_platform_data *pdata = dev_get_platdata(&pdev->dev);
+	struct mc13783_led *led = platform_get_drvdata(pdev);
+	struct mc13783 *dev = dev_get_drvdata(pdev->dev.parent);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i;
 
 	for (i = 0; i < pdata->num_leds; i++) {
@@ -361,6 +437,7 @@ static int __devexit mc13783_led_remove(struct platform_device *pdev)
 		cancel_work_sync(&led[i].work);
 	}
 
+<<<<<<< HEAD
 	mc13xxx_lock(dev);
 
 	mc13xxx_reg_write(dev, MC13783_REG_LED_CONTROL_0, 0);
@@ -371,6 +448,18 @@ static int __devexit mc13783_led_remove(struct platform_device *pdev)
 	mc13xxx_reg_write(dev, MC13783_REG_LED_CONTROL_5, 0);
 
 	mc13xxx_unlock(dev);
+=======
+	mc13783_lock(dev);
+
+	mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_0, 0);
+	mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_1, 0);
+	mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_2, 0);
+	mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_3, 0);
+	mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_4, 0);
+	mc13783_reg_write(dev, MC13783_REG_LED_CONTROL_5, 0);
+
+	mc13783_unlock(dev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	kfree(led);
 	return 0;
@@ -385,7 +474,21 @@ static struct platform_driver mc13783_led_driver = {
 	.remove		= __devexit_p(mc13783_led_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(mc13783_led_driver);
+=======
+static int __init mc13783_led_init(void)
+{
+	return platform_driver_register(&mc13783_led_driver);
+}
+module_init(mc13783_led_init);
+
+static void __exit mc13783_led_exit(void)
+{
+	platform_driver_unregister(&mc13783_led_driver);
+}
+module_exit(mc13783_led_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("LEDs driver for Freescale MC13783 PMIC");
 MODULE_AUTHOR("Philippe Retornaz <philippe.retornaz@epfl.ch>");

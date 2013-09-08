@@ -35,15 +35,26 @@
 #define LAYER4		0x02
 #define LAYER2		0x01
 #define MAX_RXTS	64
+<<<<<<< HEAD
 #define N_EXT_TS	6
+=======
+#define N_EXT_TS	1
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PSF_PTPVER	2
 #define PSF_EVNT	0x4000
 #define PSF_RX		0x2000
 #define PSF_TX		0x1000
 #define EXT_EVENT	1
+<<<<<<< HEAD
 #define CAL_EVENT	7
 #define CAL_TRIGGER	7
 #define PER_TRIGGER	6
+=======
+#define EXT_GPIO	1
+#define CAL_EVENT	2
+#define CAL_GPIO	9
+#define CAL_TRIGGER	2
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* phyter seems to miss the mark by 16 ns */
 #define ADJTIME_FIX	16
@@ -130,6 +141,7 @@ struct dp83640_clock {
 
 /* globals */
 
+<<<<<<< HEAD
 enum {
 	CALIBRATE_GPIO,
 	PEROUT_GPIO,
@@ -154,6 +166,18 @@ MODULE_PARM_DESC(chosen_phy, \
 	"The address of the PHY to use for the ancillary clock features");
 MODULE_PARM_DESC(gpio_tab, \
 	"Which GPIO line to use for which purpose: cal,perout,extts1,...,extts6");
+=======
+static int chosen_phy = -1;
+static ushort cal_gpio = 4;
+
+module_param(chosen_phy, int, 0444);
+module_param(cal_gpio, ushort, 0444);
+
+MODULE_PARM_DESC(chosen_phy, \
+	"The address of the PHY to use for the ancillary clock features");
+MODULE_PARM_DESC(cal_gpio, \
+	"Which GPIO line to use for synchronizing multiple PHYs");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* a list of clocks and a mutex to protect it */
 static LIST_HEAD(phyter_clocks);
@@ -248,6 +272,7 @@ static u64 phy2txts(struct phy_txts *p)
 	return ns;
 }
 
+<<<<<<< HEAD
 static void periodic_output(struct dp83640_clock *clock,
 			    struct ptp_clock_request *clkreq, bool on)
 {
@@ -303,6 +328,8 @@ static void periodic_output(struct dp83640_clock *clock,
 	mutex_unlock(&clock->extreg_lock);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ptp clock methods */
 
 static int ptp_dp83640_adjfreq(struct ptp_clock_info *ptp, s32 ppb)
@@ -406,6 +433,7 @@ static int ptp_dp83640_enable(struct ptp_clock_info *ptp,
 	struct dp83640_clock *clock =
 		container_of(ptp, struct dp83640_clock, caps);
 	struct phy_device *phydev = clock->chosen->phydev;
+<<<<<<< HEAD
 	int index;
 	u16 evnt, event_num, gpio_num;
 
@@ -419,10 +447,22 @@ static int ptp_dp83640_enable(struct ptp_clock_info *ptp,
 		if (on) {
 			gpio_num = gpio_tab[EXTTS0_GPIO + index];
 			evnt |= (gpio_num & EVNT_GPIO_MASK) << EVNT_GPIO_SHIFT;
+=======
+	u16 evnt;
+
+	switch (rq->type) {
+	case PTP_CLK_REQ_EXTTS:
+		if (rq->extts.index != 0)
+			return -EINVAL;
+		evnt = EVNT_WR | (EXT_EVENT & EVNT_SEL_MASK) << EVNT_SEL_SHIFT;
+		if (on) {
+			evnt |= (EXT_GPIO & EVNT_GPIO_MASK) << EVNT_GPIO_SHIFT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			evnt |= EVNT_RISE;
 		}
 		ext_write(0, phydev, PAGE5, PTP_EVNT, evnt);
 		return 0;
+<<<<<<< HEAD
 
 	case PTP_CLK_REQ_PEROUT:
 		if (rq->perout.index != 0)
@@ -430,6 +470,8 @@ static int ptp_dp83640_enable(struct ptp_clock_info *ptp,
 		periodic_output(clock, rq, on);
 		return 0;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		break;
 	}
@@ -520,10 +562,16 @@ static void recalibrate(struct dp83640_clock *clock)
 	struct list_head *this;
 	struct dp83640_private *tmp;
 	struct phy_device *master = clock->chosen->phydev;
+<<<<<<< HEAD
 	u16 cal_gpio, cfg0, evnt, ptp_trig, trigger, val;
 
 	trigger = CAL_TRIGGER;
 	cal_gpio = gpio_tab[CALIBRATE_GPIO];
+=======
+	u16 cfg0, evnt, ptp_trig, trigger, val;
+
+	trigger = CAL_TRIGGER;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_lock(&clock->extreg_lock);
 
@@ -622,17 +670,23 @@ static void recalibrate(struct dp83640_clock *clock)
 
 /* time stamping methods */
 
+<<<<<<< HEAD
 static inline u16 exts_chan_to_edata(int ch)
 {
 	return 1 << ((ch + EXT_EVENT) * 2);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int decode_evnt(struct dp83640_private *dp83640,
 		       void *data, u16 ests)
 {
 	struct phy_txts *phy_txts;
 	struct ptp_clock_event event;
+<<<<<<< HEAD
 	int i, parsed;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int words = (ests >> EVNT_TS_LEN_SHIFT) & EVNT_TS_LEN_MASK;
 	u16 ext_status = 0;
 
@@ -654,6 +708,7 @@ static int decode_evnt(struct dp83640_private *dp83640,
 		dp83640->edata.ns_lo = phy_txts->ns_lo;
 	}
 
+<<<<<<< HEAD
 	if (ext_status) {
 		parsed = words + 2;
 	} else {
@@ -673,6 +728,16 @@ static int decode_evnt(struct dp83640_private *dp83640,
 	}
 
 	return parsed * sizeof(u16);
+=======
+	event.type = PTP_CLOCK_EXTTS;
+	event.index = 0;
+	event.timestamp = phy2txts(&dp83640->edata);
+
+	ptp_clock_event(dp83640->clock->ptp_clock, &event);
+
+	words = ext_status ? words + 2 : words + 1;
+	return words * sizeof(u16);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void decode_rxts(struct dp83640_private *dp83640,
@@ -686,7 +751,11 @@ static void decode_rxts(struct dp83640_private *dp83640,
 	prune_rx_ts(dp83640);
 
 	if (list_empty(&dp83640->rxpool)) {
+<<<<<<< HEAD
 		pr_debug("dp83640: rx timestamp pool is empty\n");
+=======
+		pr_warning("dp83640: rx timestamp pool is empty\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 	rxts = list_first_entry(&dp83640->rxpool, struct rxts, list);
@@ -709,7 +778,11 @@ static void decode_txts(struct dp83640_private *dp83640,
 	skb = skb_dequeue(&dp83640->tx_queue);
 
 	if (!skb) {
+<<<<<<< HEAD
 		pr_debug("dp83640: have timestamp but tx_queue empty\n");
+=======
+		pr_warning("dp83640: have timestamp but tx_queue empty\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 	ns = phy2txts(phy_txts);
@@ -761,6 +834,7 @@ static void decode_status_frame(struct dp83640_private *dp83640,
 	}
 }
 
+<<<<<<< HEAD
 static int is_sync(struct sk_buff *skb, int type)
 {
 	u8 *data = skb->data, *msgtype;
@@ -796,6 +870,8 @@ static int is_sync(struct sk_buff *skb, int type)
 	return (*msgtype & 0xf) == 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int match(struct sk_buff *skb, unsigned int type, struct rxts *rxts)
 {
 	u16 *seqid;
@@ -872,7 +948,11 @@ static void dp83640_clock_init(struct dp83640_clock *clock, struct mii_bus *bus)
 	clock->caps.max_adj	= 1953124;
 	clock->caps.n_alarm	= 0;
 	clock->caps.n_ext_ts	= N_EXT_TS;
+<<<<<<< HEAD
 	clock->caps.n_per_out	= 1;
+=======
+	clock->caps.n_per_out	= 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	clock->caps.pps		= 0;
 	clock->caps.adjfreq	= ptp_dp83640_adjfreq;
 	clock->caps.adjtime	= ptp_dp83640_adjtime;
@@ -1052,10 +1132,23 @@ static int dp83640_hwtstamp(struct phy_device *phydev, struct ifreq *ifr)
 	if (cfg.flags) /* reserved for future extensions */
 		return -EINVAL;
 
+<<<<<<< HEAD
 	if (cfg.tx_type < 0 || cfg.tx_type > HWTSTAMP_TX_ONESTEP_SYNC)
 		return -ERANGE;
 
 	dp83640->hwts_tx_en = cfg.tx_type;
+=======
+	switch (cfg.tx_type) {
+	case HWTSTAMP_TX_OFF:
+		dp83640->hwts_tx_en = 0;
+		break;
+	case HWTSTAMP_TX_ON:
+		dp83640->hwts_tx_en = 1;
+		break;
+	default:
+		return -ERANGE;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (cfg.rx_filter) {
 	case HWTSTAMP_FILTER_NONE:
@@ -1110,9 +1203,12 @@ static int dp83640_hwtstamp(struct phy_device *phydev, struct ifreq *ifr)
 	if (dp83640->hwts_tx_en)
 		txcfg0 |= TX_TS_EN;
 
+<<<<<<< HEAD
 	if (dp83640->hwts_tx_en == HWTSTAMP_TX_ONESTEP_SYNC)
 		txcfg0 |= SYNC_1STEP | CHK_1STEP;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (dp83640->hwts_rx_en)
 		rxcfg0 |= RX_TS_EN;
 
@@ -1159,7 +1255,11 @@ static void rx_timestamp_work(struct work_struct *work)
 			}
 		}
 		spin_unlock_irqrestore(&dp83640->rx_lock, flags);
+<<<<<<< HEAD
 		netif_rx_ni(skb);
+=======
+		netif_rx(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Clear out expired time stamps. */
@@ -1195,6 +1295,7 @@ static void dp83640_txtstamp(struct phy_device *phydev,
 {
 	struct dp83640_private *dp83640 = phydev->priv;
 
+<<<<<<< HEAD
 	switch (dp83640->hwts_tx_en) {
 
 	case HWTSTAMP_TX_ONESTEP_SYNC:
@@ -1213,6 +1314,14 @@ static void dp83640_txtstamp(struct phy_device *phydev,
 		skb_complete_tx_timestamp(skb, NULL);
 		break;
 	}
+=======
+	if (!dp83640->hwts_tx_en) {
+		skb_complete_tx_timestamp(skb, NULL);
+		return;
+	}
+	skb_queue_tail(&dp83640->tx_queue, skb);
+	schedule_work(&dp83640->ts_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct phy_driver dp83640_driver = {
@@ -1243,7 +1352,11 @@ static void __exit dp83640_exit(void)
 }
 
 MODULE_DESCRIPTION("National Semiconductor DP83640 PHY driver");
+<<<<<<< HEAD
 MODULE_AUTHOR("Richard Cochran <richardcochran@gmail.at>");
+=======
+MODULE_AUTHOR("Richard Cochran <richard.cochran@omicron.at>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_LICENSE("GPL");
 
 module_init(dp83640_init);

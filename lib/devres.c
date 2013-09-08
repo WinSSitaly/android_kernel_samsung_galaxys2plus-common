@@ -1,7 +1,11 @@
 #include <linux/pci.h>
 #include <linux/io.h>
 #include <linux/gfp.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void devm_ioremap_release(struct device *dev, void *res)
 {
@@ -79,6 +83,7 @@ EXPORT_SYMBOL(devm_ioremap_nocache);
  */
 void devm_iounmap(struct device *dev, void __iomem *addr)
 {
+<<<<<<< HEAD
 	WARN_ON(devres_destroy(dev, devm_ioremap_release, devm_ioremap_match,
 			       (void *)addr));
 	iounmap(addr);
@@ -136,6 +141,14 @@ void __iomem *devm_request_and_ioremap(struct device *dev,
 }
 EXPORT_SYMBOL(devm_request_and_ioremap);
 
+=======
+	iounmap(addr);
+	WARN_ON(devres_destroy(dev, devm_ioremap_release, devm_ioremap_match,
+			       (void *)addr));
+}
+EXPORT_SYMBOL(devm_iounmap);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_HAS_IOPORT
 /*
  * Generic iomap devres
@@ -304,7 +317,11 @@ EXPORT_SYMBOL(pcim_iounmap);
  *
  * Request and iomap regions specified by @mask.
  */
+<<<<<<< HEAD
 int pcim_iomap_regions(struct pci_dev *pdev, int mask, const char *name)
+=======
+int pcim_iomap_regions(struct pci_dev *pdev, u16 mask, const char *name)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __iomem * const *iomap;
 	int i, rc;
@@ -357,7 +374,11 @@ EXPORT_SYMBOL(pcim_iomap_regions);
  *
  * Request all PCI BARs and iomap regions specified by @mask.
  */
+<<<<<<< HEAD
 int pcim_iomap_regions_request_all(struct pci_dev *pdev, int mask,
+=======
+int pcim_iomap_regions_request_all(struct pci_dev *pdev, u16 mask,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   const char *name)
 {
 	int request_mask = ((1 << 6) - 1) & ~mask;
@@ -381,7 +402,11 @@ EXPORT_SYMBOL(pcim_iomap_regions_request_all);
  *
  * Unmap and release regions specified by @mask.
  */
+<<<<<<< HEAD
 void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
+=======
+void pcim_iounmap_regions(struct pci_dev *pdev, u16 mask)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	void __iomem * const *iomap;
 	int i;
@@ -399,5 +424,10 @@ void pcim_iounmap_regions(struct pci_dev *pdev, int mask)
 	}
 }
 EXPORT_SYMBOL(pcim_iounmap_regions);
+<<<<<<< HEAD
 #endif /* CONFIG_PCI */
 #endif /* CONFIG_HAS_IOPORT */
+=======
+#endif
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

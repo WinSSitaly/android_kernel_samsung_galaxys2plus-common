@@ -11,13 +11,20 @@
 
 #define pr_fmt(fmt) KBUILD_MODNAME ":%s(): " fmt, __func__
 
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/if_arp.h>
 #include <linux/net.h>
 #include <linux/netdevice.h>
 #include <linux/mutex.h>
+<<<<<<< HEAD
 #include <linux/module.h>
 #include <linux/spinlock.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <net/netns/generic.h>
 #include <net/net_namespace.h>
 #include <net/pkt_sched.h>
@@ -25,7 +32,10 @@
 #include <net/caif/caif_layer.h>
 #include <net/caif/cfpkt.h>
 #include <net/caif/cfcnfg.h>
+<<<<<<< HEAD
 #include <net/caif/cfserl.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 
@@ -35,10 +45,13 @@ struct caif_device_entry {
 	struct list_head list;
 	struct net_device *netdev;
 	int __percpu *pcpu_refcnt;
+<<<<<<< HEAD
 	spinlock_t flow_lock;
 	struct sk_buff *xoff_skb;
 	void (*xoff_skb_dtor)(struct sk_buff *skb);
 	bool xoff;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct caif_device_entry_list {
@@ -53,11 +66,18 @@ struct caif_net {
 };
 
 static int caif_net_id;
+<<<<<<< HEAD
 static int q_high = 50; /* Percent */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct cfcnfg *get_cfcnfg(struct net *net)
 {
 	struct caif_net *caifn;
+<<<<<<< HEAD
+=======
+	BUG_ON(!net);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	caifn = net_generic(net, caif_net_id);
 	return caifn->cfg;
 }
@@ -66,18 +86,30 @@ EXPORT_SYMBOL(get_cfcnfg);
 static struct caif_device_entry_list *caif_device_list(struct net *net)
 {
 	struct caif_net *caifn;
+<<<<<<< HEAD
+=======
+	BUG_ON(!net);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	caifn = net_generic(net, caif_net_id);
 	return &caifn->caifdevs;
 }
 
 static void caifd_put(struct caif_device_entry *e)
 {
+<<<<<<< HEAD
 	this_cpu_dec(*e->pcpu_refcnt);
+=======
+	irqsafe_cpu_dec(*e->pcpu_refcnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void caifd_hold(struct caif_device_entry *e)
 {
+<<<<<<< HEAD
 	this_cpu_inc(*e->pcpu_refcnt);
+=======
+	irqsafe_cpu_inc(*e->pcpu_refcnt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int caifd_refcnt_read(struct caif_device_entry *e)
@@ -96,6 +128,7 @@ static struct caif_device_entry *caif_device_alloc(struct net_device *dev)
 
 	caifdevs = caif_device_list(dev_net(dev));
 
+<<<<<<< HEAD
 	caifd = kzalloc(sizeof(*caifd), GFP_KERNEL);
 	if (!caifd)
 		return NULL;
@@ -104,6 +137,12 @@ static struct caif_device_entry *caif_device_alloc(struct net_device *dev)
 		kfree(caifd);
 		return NULL;
 	}
+=======
+	caifd = kzalloc(sizeof(*caifd), GFP_ATOMIC);
+	if (!caifd)
+		return NULL;
+	caifd->pcpu_refcnt = alloc_percpu(int);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	caifd->netdev = dev;
 	dev_hold(dev);
 	return caifd;
@@ -122,6 +161,7 @@ static struct caif_device_entry *caif_get(struct net_device *dev)
 	return NULL;
 }
 
+<<<<<<< HEAD
 void caif_flow_cb(struct sk_buff *skb)
 {
 	struct caif_device_entry *caifd;
@@ -222,6 +262,17 @@ static int transmit(struct cflayer *layer, struct cfpkt *pkt)
 					caifd->layer.id);
 noxoff:
 	rcu_read_unlock_bh();
+=======
+static int transmit(struct cflayer *layer, struct cfpkt *pkt)
+{
+	int err;
+	struct caif_device_entry *caifd =
+	    container_of(layer, struct caif_device_entry, layer);
+	struct sk_buff *skb;
+
+	skb = cfpkt_tonative(pkt);
+	skb->dev = caifd->netdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = dev_queue_xmit(skb);
 	if (err > 0)
@@ -265,10 +316,14 @@ static int receive(struct sk_buff *skb, struct net_device *dev,
 
 	/* Release reference to stack upwards */
 	caifd_put(caifd);
+<<<<<<< HEAD
 
 	if (err != 0)
 		err = NET_RX_DROP;
 	return err;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct packet_type caif_packet_type __read_mostly = {
@@ -299,6 +354,7 @@ static void dev_flowctrl(struct net_device *dev, int on)
 	caifd_put(caifd);
 }
 
+<<<<<<< HEAD
 void caif_enroll_dev(struct net_device *dev, struct caif_dev_common *caifdev,
 			struct cflayer *link_support, int head_room,
 			struct cflayer **layer, int (**rcv_func)(
@@ -348,6 +404,8 @@ void caif_enroll_dev(struct net_device *dev, struct caif_dev_common *caifdev,
 }
 EXPORT_SYMBOL(caif_enroll_dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* notify Caif of device events */
 static int caif_device_notify(struct notifier_block *me, unsigned long what,
 			      void *arg)
@@ -355,6 +413,7 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
 	struct net_device *dev = arg;
 	struct caif_device_entry *caifd = NULL;
 	struct caif_dev_common *caifdev;
+<<<<<<< HEAD
 	struct cfcnfg *cfg;
 	struct cflayer *layer, *link_support;
 	int head_room = 0;
@@ -387,6 +446,64 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
 		caif_enroll_dev(dev, caifdev, link_support, head_room,
 				&layer, NULL);
 		caifdev->flowctrl = dev_flowctrl;
+=======
+	enum cfcnfg_phy_preference pref;
+	enum cfcnfg_phy_type phy_type;
+	struct cfcnfg *cfg;
+	struct caif_device_entry_list *caifdevs;
+
+	if (dev->type != ARPHRD_CAIF)
+		return 0;
+
+	cfg = get_cfcnfg(dev_net(dev));
+	if (cfg == NULL)
+		return 0;
+
+	caifdevs = caif_device_list(dev_net(dev));
+
+	switch (what) {
+	case NETDEV_REGISTER:
+		caifd = caif_device_alloc(dev);
+		if (!caifd)
+			return 0;
+
+		caifdev = netdev_priv(dev);
+		caifdev->flowctrl = dev_flowctrl;
+
+		caifd->layer.transmit = transmit;
+
+		if (caifdev->use_frag)
+			phy_type = CFPHYTYPE_FRAG;
+		else
+			phy_type = CFPHYTYPE_CAIF;
+
+		switch (caifdev->link_select) {
+		case CAIF_LINK_HIGH_BANDW:
+			pref = CFPHYPREF_HIGH_BW;
+			break;
+		case CAIF_LINK_LOW_LATENCY:
+			pref = CFPHYPREF_LOW_LAT;
+			break;
+		default:
+			pref = CFPHYPREF_HIGH_BW;
+			break;
+		}
+		strncpy(caifd->layer.name, dev->name,
+			sizeof(caifd->layer.name) - 1);
+		caifd->layer.name[sizeof(caifd->layer.name) - 1] = 0;
+
+		mutex_lock(&caifdevs->lock);
+		list_add_rcu(&caifd->list, &caifdevs->list);
+
+		cfcnfg_add_phy_layer(cfg,
+				     phy_type,
+				     dev,
+				     &caifd->layer,
+				     pref,
+				     caifdev->use_fcs,
+				     caifdev->use_stx);
+		mutex_unlock(&caifdevs->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case NETDEV_UP:
@@ -398,7 +515,10 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
 			break;
 		}
 
+<<<<<<< HEAD
 		caifd->xoff = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		cfcnfg_set_phy_state(cfg, &caifd->layer, true);
 		rcu_read_unlock();
 
@@ -420,6 +540,7 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
 		caifd->layer.up->ctrlcmd(caifd->layer.up,
 					 _CAIF_CTRLCMD_PHYIF_DOWN_IND,
 					 caifd->layer.id);
+<<<<<<< HEAD
 
 		spin_lock_bh(&caifd->flow_lock);
 
@@ -438,6 +559,8 @@ static int caif_device_notify(struct notifier_block *me, unsigned long what,
 		caifd->xoff_skb = NULL;
 
 		spin_unlock_bh(&caifd->flow_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		caifd_put(caifd);
 		break;
 
@@ -493,12 +616,23 @@ static struct notifier_block caif_device_notifier = {
 static int caif_init_net(struct net *net)
 {
 	struct caif_net *caifn = net_generic(net, caif_net_id);
+<<<<<<< HEAD
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	INIT_LIST_HEAD(&caifn->caifdevs.list);
 	mutex_init(&caifn->caifdevs.lock);
 
 	caifn->cfg = cfcnfg_create();
+<<<<<<< HEAD
 	if (!caifn->cfg)
 		return -ENOMEM;
+=======
+	if (!caifn->cfg) {
+		pr_warn("can't create cfcnfg\n");
+		return -ENOMEM;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -508,11 +642,24 @@ static void caif_exit_net(struct net *net)
 	struct caif_device_entry *caifd, *tmp;
 	struct caif_device_entry_list *caifdevs =
 	    caif_device_list(net);
+<<<<<<< HEAD
 	struct cfcnfg *cfg =  get_cfcnfg(net);
+=======
+	struct cfcnfg *cfg;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	rtnl_lock();
 	mutex_lock(&caifdevs->lock);
 
+<<<<<<< HEAD
+=======
+	cfg = get_cfcnfg(net);
+	if (cfg == NULL) {
+		mutex_unlock(&caifdevs->lock);
+		return;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	list_for_each_entry_safe(caifd, tmp, &caifdevs->list, list) {
 		int i = 0;
 		list_del_rcu(&caifd->list);
@@ -562,9 +709,15 @@ static int __init caif_device_init(void)
 
 static void __exit caif_device_exit(void)
 {
+<<<<<<< HEAD
 	unregister_netdevice_notifier(&caif_device_notifier);
 	dev_remove_pack(&caif_packet_type);
 	unregister_pernet_subsys(&caif_net_ops);
+=======
+	unregister_pernet_subsys(&caif_net_ops);
+	unregister_netdevice_notifier(&caif_device_notifier);
+	dev_remove_pack(&caif_packet_type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 module_init(caif_device_init);

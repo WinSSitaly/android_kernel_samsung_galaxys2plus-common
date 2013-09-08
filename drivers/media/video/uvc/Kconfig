@@ -1,6 +1,9 @@
 config USB_VIDEO_CLASS
 	tristate "USB Video Class (UVC)"
+<<<<<<< HEAD
 	select VIDEOBUF2_VMALLOC
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	---help---
 	  Support for the USB Video Class (UVC).  Currently only video
 	  input devices, such as webcams, are supported.

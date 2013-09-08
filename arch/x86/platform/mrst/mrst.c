@@ -14,8 +14,11 @@
 
 #include <linux/init.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
 #include <linux/scatterlist.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sfi.h>
 #include <linux/intel_pmic_gpio.h>
 #include <linux/spi/spi.h>
@@ -26,10 +29,13 @@
 #include <linux/platform_device.h>
 #include <linux/irq.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/notifier.h>
 #include <linux/mfd/intel_msic.h>
 #include <linux/gpio.h>
 #include <linux/i2c/tc35876x.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/setup.h>
 #include <asm/mpspec_def.h>
@@ -78,6 +84,7 @@ struct sfi_rtc_table_entry sfi_mrtc_array[SFI_MRTC_MAX];
 EXPORT_SYMBOL_GPL(sfi_mrtc_array);
 int sfi_mrtc_num;
 
+<<<<<<< HEAD
 static void mrst_power_off(void)
 {
 }
@@ -87,6 +94,8 @@ static void mrst_reboot(void)
 	intel_scu_ipc_simple_command(IPCMSG_COLD_BOOT, 0);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* parse all the mtimer info to a static mtimer array */
 static int __init sfi_parse_mtmr(struct sfi_table_header *table)
 {
@@ -197,6 +206,7 @@ int __init sfi_parse_mrtc(struct sfi_table_header *table)
 
 static unsigned long __init mrst_calibrate_tsc(void)
 {
+<<<<<<< HEAD
 	unsigned long fast_calibrate;
 	u32 lo, hi, ratio, fsb;
 
@@ -220,6 +230,14 @@ static unsigned long __init mrst_calibrate_tsc(void)
 	/* mark tsc clocksource as reliable */
 	set_cpu_cap(&boot_cpu_data, X86_FEATURE_TSC_RELIABLE);
 	
+=======
+	unsigned long flags, fast_calibrate;
+
+	local_irq_save(flags);
+	fast_calibrate = apbt_quick_calibrate();
+	local_irq_restore(flags);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (fast_calibrate)
 		return fast_calibrate;
 
@@ -252,11 +270,24 @@ static void __cpuinit mrst_arch_setup(void)
 {
 	if (boot_cpu_data.x86 == 6 && boot_cpu_data.x86_model == 0x27)
 		__mrst_cpu_chip = MRST_CPU_CHIP_PENWELL;
+<<<<<<< HEAD
 	else {
 		pr_err("Unknown Intel MID CPU (%d:%d), default to Penwell\n",
 			boot_cpu_data.x86, boot_cpu_data.x86_model);
 		__mrst_cpu_chip = MRST_CPU_CHIP_PENWELL;
 	}
+=======
+	else if (boot_cpu_data.x86 == 6 && boot_cpu_data.x86_model == 0x26)
+		__mrst_cpu_chip = MRST_CPU_CHIP_LINCROFT;
+	else {
+		pr_err("Unknown Moorestown CPU (%d:%d), default to Lincroft\n",
+			boot_cpu_data.x86, boot_cpu_data.x86_model);
+		__mrst_cpu_chip = MRST_CPU_CHIP_LINCROFT;
+	}
+	pr_debug("Moorestown CPU %s identified\n",
+		(__mrst_cpu_chip == MRST_CPU_CHIP_LINCROFT) ?
+		"Lincroft" : "Penwell");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* MID systems don't have i8042 controller */
@@ -265,6 +296,7 @@ static int mrst_i8042_detect(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 /*
  * Moorestown does not have external NMI source nor port 0x61 to report
  * NMI status. The possible NMI sources are from pmu as a result of NMI
@@ -274,6 +306,17 @@ static int mrst_i8042_detect(void)
 static unsigned char mrst_get_nmi_reason(void)
 {
 	return 0;
+=======
+/* Reboot and power off are handled by the SCU on a MID device */
+static void mrst_power_off(void)
+{
+	intel_scu_ipc_simple_command(0xf1, 1);
+}
+
+static void mrst_reboot(void)
+{
+	intel_scu_ipc_simple_command(0xf1, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -297,8 +340,11 @@ void __init x86_mrst_early_setup(void)
 	x86_platform.calibrate_tsc = mrst_calibrate_tsc;
 	x86_platform.i8042_detect = mrst_i8042_detect;
 	x86_init.timers.wallclock_init = mrst_rtc_init;
+<<<<<<< HEAD
 	x86_platform.get_nmi_reason = mrst_get_nmi_reason;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	x86_init.pci.init = pci_mrst_init;
 	x86_init.pci.fixup_irqs = x86_init_noop;
 
@@ -421,7 +467,10 @@ static void __init *max3111_platform_data(void *info)
 	struct spi_board_info *spi_info = info;
 	int intr = get_gpio_by_name("max3111_int");
 
+<<<<<<< HEAD
 	spi_info->mode = SPI_MODE_0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (intr == -1)
 		return NULL;
 	spi_info->irq = intr + MRST_IRQ_OFFSET;
@@ -473,6 +522,7 @@ static void __init *max7315_platform_data(void *info)
 	return max7315;
 }
 
+<<<<<<< HEAD
 static void *tca6416_platform_data(void *info)
 {
 	static struct pca953x_platform_data tca6416;
@@ -513,6 +563,8 @@ static void *mpu3050_platform_data(void *info)
 	return NULL;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void __init *emc1403_platform_data(void *info)
 {
 	static short intr2nd_pdata;
@@ -550,6 +602,7 @@ static void __init *no_platform_data(void *info)
 	return NULL;
 }
 
+<<<<<<< HEAD
 static struct resource msic_resources[] = {
 	{
 		.start	= INTEL_MSIC_IRQ_PHYS_BASE,
@@ -712,6 +765,17 @@ static const struct devs_id __initconst device_ids[] = {
 	{"msic_ocd", SFI_DEV_TYPE_IPC, 1, &msic_ocd_platform_data},
 	{"msic_thermal", SFI_DEV_TYPE_IPC, 1, &msic_thermal_platform_data},
 
+=======
+static const struct devs_id __initconst device_ids[] = {
+	{"pmic_gpio", SFI_DEV_TYPE_SPI, 1, &pmic_gpio_platform_data},
+	{"spi_max3111", SFI_DEV_TYPE_SPI, 0, &max3111_platform_data},
+	{"i2c_max7315", SFI_DEV_TYPE_I2C, 1, &max7315_platform_data},
+	{"i2c_max7315_2", SFI_DEV_TYPE_I2C, 1, &max7315_platform_data},
+	{"emc1403", SFI_DEV_TYPE_I2C, 1, &emc1403_platform_data},
+	{"i2c_accel", SFI_DEV_TYPE_I2C, 0, &lis331dl_platform_data},
+	{"pmic_audio", SFI_DEV_TYPE_IPC, 1, &no_platform_data},
+	{"msic_audio", SFI_DEV_TYPE_IPC, 1, &no_platform_data},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	{},
 };
 
@@ -778,9 +842,12 @@ static void __init intel_scu_i2c_device_register(int bus,
 	i2c_devs[i2c_next_dev++] = new_dev;
 }
 
+<<<<<<< HEAD
 BLOCKING_NOTIFIER_HEAD(intel_scu_notifier);
 EXPORT_SYMBOL_GPL(intel_scu_notifier);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Called by IPC driver */
 void intel_scu_devices_create(void)
 {
@@ -805,7 +872,10 @@ void intel_scu_devices_create(void)
 		} else
 			i2c_register_board_info(i2c_bus[i], i2c_devs[i], 1);
 	}
+<<<<<<< HEAD
 	intel_scu_notifier_post(SCU_AVAILABLE, NULL);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(intel_scu_devices_create);
 
@@ -814,8 +884,11 @@ void intel_scu_devices_destroy(void)
 {
 	int i;
 
+<<<<<<< HEAD
 	intel_scu_notifier_post(SCU_DOWN, NULL);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ipc_next_dev; i++)
 		platform_device_del(ipc_devs[i]);
 }
@@ -832,20 +905,32 @@ static void __init install_irq_resource(struct platform_device *pdev, int irq)
 	platform_device_add_resources(pdev, &res, 1);
 }
 
+<<<<<<< HEAD
 static void __init sfi_handle_ipc_dev(struct sfi_device_table_entry *entry)
 {
 	const struct devs_id *dev = device_ids;
 	struct platform_device *pdev;
+=======
+static void __init sfi_handle_ipc_dev(struct platform_device *pdev)
+{
+	const struct devs_id *dev = device_ids;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	void *pdata = NULL;
 
 	while (dev->name[0]) {
 		if (dev->type == SFI_DEV_TYPE_IPC &&
+<<<<<<< HEAD
 			!strncmp(dev->name, entry->name, SFI_NAME_LEN)) {
 			pdata = dev->get_platform_data(entry);
+=======
+			!strncmp(dev->name, pdev->name, SFI_NAME_LEN)) {
+			pdata = dev->get_platform_data(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		}
 		dev++;
 	}
+<<<<<<< HEAD
 
 	/*
 	 * On Medfield the platform device creation is handled by the MSIC
@@ -862,6 +947,8 @@ static void __init sfi_handle_ipc_dev(struct sfi_device_table_entry *entry)
 	}
 	install_irq_resource(pdev, entry->irq);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	pdev->dev.platform_data = pdata;
 	intel_scu_device_register(pdev);
 }
@@ -914,6 +1001,10 @@ static int __init sfi_parse_devs(struct sfi_table_header *table)
 	struct sfi_device_table_entry *pentry;
 	struct spi_board_info spi_info;
 	struct i2c_board_info i2c_info;
+<<<<<<< HEAD
+=======
+	struct platform_device *pdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int num, i, bus;
 	int ioapic;
 	struct io_apic_irq_attr irq_attr;
@@ -941,9 +1032,23 @@ static int __init sfi_parse_devs(struct sfi_table_header *table)
 
 		switch (pentry->type) {
 		case SFI_DEV_TYPE_IPC:
+<<<<<<< HEAD
 			pr_debug("info[%2d]: IPC bus, name = %16.16s, "
 				"irq = 0x%2x\n", i, pentry->name, pentry->irq);
 			sfi_handle_ipc_dev(pentry);
+=======
+			/* ID as IRQ is a hack that will go away */
+			pdev = platform_device_alloc(pentry->name, irq);
+			if (pdev == NULL) {
+				pr_err("out of memory for SFI platform device '%s'.\n",
+							pentry->name);
+				continue;
+			}
+			install_irq_resource(pdev, irq);
+			pr_debug("info[%2d]: IPC bus, name = %16.16s, "
+				"irq = 0x%2x\n", i, pentry->name, irq);
+			sfi_handle_ipc_dev(pdev);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 		case SFI_DEV_TYPE_SPI:
 			memset(&spi_info, 0, sizeof(spi_info));
@@ -1035,7 +1140,10 @@ static int __init pb_keys_init(void)
 	num = sizeof(gpio_button) / sizeof(struct gpio_keys_button);
 	for (i = 0; i < num; i++) {
 		gb[i].gpio = get_gpio_by_name(gb[i].desc);
+<<<<<<< HEAD
 		pr_debug("info[%2d]: name = %s, gpio = %d\n", i, gb[i].desc, gb[i].gpio);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (gb[i].gpio == -1)
 			continue;
 

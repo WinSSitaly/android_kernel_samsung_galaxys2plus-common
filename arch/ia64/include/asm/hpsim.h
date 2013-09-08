@@ -10,7 +10,11 @@ int simcons_register(void);
 struct tty_driver;
 extern struct tty_driver *hp_simserial_driver;
 
+<<<<<<< HEAD
 extern int hpsim_get_irq(int intr);
+=======
+void ia64_ssc_connect_irq(long intr, long irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void ia64_ctl_trace(long on);
 
 #endif

@@ -53,7 +53,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <scsi/sas.h>
+<<<<<<< HEAD
 #include <linux/bitops.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "isci.h"
 #include "port.h"
 #include "remote_device.h"
@@ -62,6 +65,7 @@
 #include "scu_event_codes.h"
 #include "task.h"
 
+<<<<<<< HEAD
 #undef C
 #define C(a) (#a)
 const char *dev_state_name(enum sci_remote_device_states state)
@@ -72,6 +76,8 @@ const char *dev_state_name(enum sci_remote_device_states state)
 }
 #undef C
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * isci_remote_device_not_ready() - This function is called by the ihost when
  *    the remote device is not ready. We mark the isci device as ready (not
@@ -177,8 +183,13 @@ enum sci_status sci_remote_device_stop(struct isci_remote_device *idev,
 	case SCI_DEV_FAILED:
 	case SCI_DEV_FINAL:
 	default:
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	case SCI_DEV_STOPPED:
 		return SCI_SUCCESS;
@@ -236,8 +247,13 @@ enum sci_status sci_remote_device_reset(struct isci_remote_device *idev)
 	case SCI_DEV_RESETTING:
 	case SCI_DEV_FINAL:
 	default:
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	case SCI_DEV_READY:
 	case SCI_STP_DEV_IDLE:
@@ -256,8 +272,13 @@ enum sci_status sci_remote_device_reset_complete(struct isci_remote_device *idev
 	enum sci_remote_device_states state = sm->current_state_id;
 
 	if (state != SCI_DEV_RESETTING) {
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 
@@ -272,8 +293,13 @@ enum sci_status sci_remote_device_suspend(struct isci_remote_device *idev,
 	enum sci_remote_device_states state = sm->current_state_id;
 
 	if (state != SCI_STP_DEV_CMD) {
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 
@@ -297,8 +323,13 @@ enum sci_status sci_remote_device_frame_handler(struct isci_remote_device *idev,
 	case SCI_SMP_DEV_IDLE:
 	case SCI_DEV_FINAL:
 	default:
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Return the frame back to the controller */
 		sci_controller_release_frame(ihost, frame_index);
 		return SCI_FAILURE_INVALID_STATE;
@@ -397,6 +428,7 @@ static bool is_remote_device_ready(struct isci_remote_device *idev)
 	}
 }
 
+<<<<<<< HEAD
 /*
  * called once the remote node context has transisitioned to a ready
  * state (after suspending RX and/or TX due to early D2H fis)
@@ -409,6 +441,8 @@ static void atapi_remote_device_resume_done(void *_dev)
 	sci_change_state(&ireq->sm, SCI_REQ_COMPLETED);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum sci_status sci_remote_device_event_handler(struct isci_remote_device *idev,
 						     u32 event_code)
 {
@@ -455,6 +489,7 @@ enum sci_status sci_remote_device_event_handler(struct isci_remote_device *idev,
 	if (status != SCI_SUCCESS)
 		return status;
 
+<<<<<<< HEAD
 	if (state == SCI_STP_DEV_ATAPI_ERROR) {
 		/* For ATAPI error state resume the RNC right away. */
 		if (scu_get_event_type(event_code) == SCU_EVENT_TYPE_RNC_SUSPEND_TX ||
@@ -465,6 +500,8 @@ enum sci_status sci_remote_device_event_handler(struct isci_remote_device *idev,
 		}
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (state == SCI_STP_DEV_IDLE) {
 
 		/* We pick up suspension events to handle specifically to this
@@ -512,8 +549,13 @@ enum sci_status sci_remote_device_start_io(struct isci_host *ihost,
 	case SCI_DEV_RESETTING:
 	case SCI_DEV_FINAL:
 	default:
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	case SCI_DEV_READY:
 		/* attempt to start an io request for this device object. The remote
@@ -647,8 +689,13 @@ enum sci_status sci_remote_device_complete_io(struct isci_host *ihost,
 	case SCI_DEV_FAILED:
 	case SCI_DEV_FINAL:
 	default:
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	case SCI_DEV_READY:
 	case SCI_STP_DEV_AWAIT_RESET:
@@ -658,7 +705,10 @@ enum sci_status sci_remote_device_complete_io(struct isci_host *ihost,
 	case SCI_STP_DEV_CMD:
 	case SCI_STP_DEV_NCQ:
 	case SCI_STP_DEV_NCQ_ERROR:
+<<<<<<< HEAD
 	case SCI_STP_DEV_ATAPI_ERROR:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		status = common_complete_io(iport, idev, ireq);
 		if (status != SCI_SUCCESS)
 			break;
@@ -731,8 +781,13 @@ enum sci_status sci_remote_device_start_task(struct isci_host *ihost,
 	case SCI_DEV_RESETTING:
 	case SCI_DEV_FINAL:
 	default:
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	case SCI_STP_DEV_IDLE:
 	case SCI_STP_DEV_CMD:
@@ -863,8 +918,13 @@ static enum sci_status sci_remote_device_destruct(struct isci_remote_device *ide
 	struct isci_host *ihost;
 
 	if (state != SCI_DEV_STOPPED) {
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 
@@ -1054,7 +1114,10 @@ static const struct sci_base_state sci_remote_device_state_table[] = {
 	[SCI_STP_DEV_NCQ_ERROR] = {
 		.enter_state = sci_stp_remote_device_ready_ncq_error_substate_enter,
 	},
+<<<<<<< HEAD
 	[SCI_STP_DEV_ATAPI_ERROR] = { },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	[SCI_STP_DEV_AWAIT_RESET] = { },
 	[SCI_SMP_DEV_IDLE] = {
 		.enter_state = sci_smp_remote_device_ready_idle_substate_enter,
@@ -1112,7 +1175,10 @@ static enum sci_status sci_remote_device_da_construct(struct isci_port *iport,
 						       struct isci_remote_device *idev)
 {
 	enum sci_status status;
+<<<<<<< HEAD
 	struct sci_port_properties properties;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct domain_device *dev = idev->domain_dev;
 
 	sci_remote_device_construct(iport, idev);
@@ -1122,11 +1188,14 @@ static enum sci_status sci_remote_device_da_construct(struct isci_port *iport,
 	 * entries will be needed to store the remote node.
 	 */
 	idev->is_direct_attached = true;
+<<<<<<< HEAD
 
 	sci_port_get_properties(iport, &properties);
 	/* Get accurate port width from port's phy mask for a DA device. */
 	idev->device_port_width = hweight32(properties.phy_mask);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	status = sci_controller_allocate_remote_node_context(iport->owning_controller,
 								  idev,
 								  &idev->rnc.remote_node_index);
@@ -1142,6 +1211,12 @@ static enum sci_status sci_remote_device_da_construct(struct isci_port *iport,
 
 	idev->connection_rate = sci_port_get_max_allowed_speed(iport);
 
+<<<<<<< HEAD
+=======
+	/* / @todo Should I assign the port width by reading all of the phys on the port? */
+	idev->device_port_width = 1;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return SCI_SUCCESS;
 }
 
@@ -1214,8 +1289,13 @@ static enum sci_status sci_remote_device_start(struct isci_remote_device *idev,
 	enum sci_status status;
 
 	if (state != SCI_DEV_STOPPED) {
+<<<<<<< HEAD
 		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %s\n",
 			 __func__, dev_state_name(state));
+=======
+		dev_warn(scirdev_to_dev(idev), "%s: in wrong state: %d\n",
+			 __func__, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return SCI_FAILURE_INVALID_STATE;
 	}
 
@@ -1318,6 +1398,10 @@ void isci_remote_device_release(struct kref *kref)
 	clear_bit(IDEV_STOP_PENDING, &idev->flags);
 	clear_bit(IDEV_IO_READY, &idev->flags);
 	clear_bit(IDEV_GONE, &idev->flags);
+<<<<<<< HEAD
+=======
+	clear_bit(IDEV_EH, &idev->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	smp_mb__before_clear_bit();
 	clear_bit(IDEV_ALLOCATED, &idev->flags);
 	wake_up(&ihost->eventq);
@@ -1390,17 +1474,47 @@ void isci_remote_device_gone(struct domain_device *dev)
  *
  * status, zero indicates success.
  */
+<<<<<<< HEAD
 int isci_remote_device_found(struct domain_device *dev)
 {
 	struct isci_host *isci_host = dev_to_ihost(dev);
 	struct isci_port *isci_port = dev->port->lldd_port;
+=======
+int isci_remote_device_found(struct domain_device *domain_dev)
+{
+	struct isci_host *isci_host = dev_to_ihost(domain_dev);
+	struct isci_port *isci_port;
+	struct isci_phy *isci_phy;
+	struct asd_sas_port *sas_port;
+	struct asd_sas_phy *sas_phy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct isci_remote_device *isci_device;
 	enum sci_status status;
 
 	dev_dbg(&isci_host->pdev->dev,
+<<<<<<< HEAD
 		"%s: domain_device = %p\n", __func__, dev);
 
 	if (!isci_port)
+=======
+		"%s: domain_device = %p\n", __func__, domain_dev);
+
+	wait_for_start(isci_host);
+
+	sas_port = domain_dev->port;
+	sas_phy = list_first_entry(&sas_port->phy_list, struct asd_sas_phy,
+				   port_phy_el);
+	isci_phy = to_iphy(sas_phy);
+	isci_port = isci_phy->isci_port;
+
+	/* we are being called for a device on this port,
+	 * so it has to come up eventually
+	 */
+	wait_for_completion(&isci_port->start_complete);
+
+	if ((isci_stopping == isci_port_get_state(isci_port)) ||
+	    (isci_stopped == isci_port_get_state(isci_port)))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 
 	isci_device = isci_remote_device_alloc(isci_host, isci_port);
@@ -1411,7 +1525,11 @@ int isci_remote_device_found(struct domain_device *dev)
 	INIT_LIST_HEAD(&isci_device->node);
 
 	spin_lock_irq(&isci_host->scic_lock);
+<<<<<<< HEAD
 	isci_device->domain_dev = dev;
+=======
+	isci_device->domain_dev = domain_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	isci_device->isci_port = isci_port;
 	list_add_tail(&isci_device->node, &isci_port->remote_dev_list);
 
@@ -1424,7 +1542,11 @@ int isci_remote_device_found(struct domain_device *dev)
 
 	if (status == SCI_SUCCESS) {
 		/* device came up, advertise it to the world */
+<<<<<<< HEAD
 		dev->lldd_dev = isci_device;
+=======
+		domain_dev->lldd_dev = isci_device;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else
 		isci_put_device(isci_device);
 	spin_unlock_irq(&isci_host->scic_lock);
@@ -1434,3 +1556,91 @@ int isci_remote_device_found(struct domain_device *dev)
 
 	return status == SCI_SUCCESS ? 0 : -ENODEV;
 }
+<<<<<<< HEAD
+=======
+/**
+ * isci_device_is_reset_pending() - This function will check if there is any
+ *    pending reset condition on the device.
+ * @request: This parameter is the isci_device object.
+ *
+ * true if there is a reset pending for the device.
+ */
+bool isci_device_is_reset_pending(
+	struct isci_host *isci_host,
+	struct isci_remote_device *isci_device)
+{
+	struct isci_request *isci_request;
+	struct isci_request *tmp_req;
+	bool reset_is_pending = false;
+	unsigned long flags;
+
+	dev_dbg(&isci_host->pdev->dev,
+		"%s: isci_device = %p\n", __func__, isci_device);
+
+	spin_lock_irqsave(&isci_host->scic_lock, flags);
+
+	/* Check for reset on all pending requests. */
+	list_for_each_entry_safe(isci_request, tmp_req,
+				 &isci_device->reqs_in_process, dev_node) {
+		dev_dbg(&isci_host->pdev->dev,
+			"%s: isci_device = %p request = %p\n",
+			__func__, isci_device, isci_request);
+
+		if (isci_request->ttype == io_task) {
+			struct sas_task *task = isci_request_access_task(
+				isci_request);
+
+			spin_lock(&task->task_state_lock);
+			if (task->task_state_flags & SAS_TASK_NEED_DEV_RESET)
+				reset_is_pending = true;
+			spin_unlock(&task->task_state_lock);
+		}
+	}
+
+	spin_unlock_irqrestore(&isci_host->scic_lock, flags);
+
+	dev_dbg(&isci_host->pdev->dev,
+		"%s: isci_device = %p reset_is_pending = %d\n",
+		__func__, isci_device, reset_is_pending);
+
+	return reset_is_pending;
+}
+
+/**
+ * isci_device_clear_reset_pending() - This function will clear if any pending
+ *    reset condition flags on the device.
+ * @request: This parameter is the isci_device object.
+ *
+ * true if there is a reset pending for the device.
+ */
+void isci_device_clear_reset_pending(struct isci_host *ihost, struct isci_remote_device *idev)
+{
+	struct isci_request *isci_request;
+	struct isci_request *tmp_req;
+	unsigned long flags = 0;
+
+	dev_dbg(&ihost->pdev->dev, "%s: idev=%p, ihost=%p\n",
+		 __func__, idev, ihost);
+
+	spin_lock_irqsave(&ihost->scic_lock, flags);
+
+	/* Clear reset pending on all pending requests. */
+	list_for_each_entry_safe(isci_request, tmp_req,
+				 &idev->reqs_in_process, dev_node) {
+		dev_dbg(&ihost->pdev->dev, "%s: idev = %p request = %p\n",
+			 __func__, idev, isci_request);
+
+		if (isci_request->ttype == io_task) {
+
+			unsigned long flags2;
+			struct sas_task *task = isci_request_access_task(
+				isci_request);
+
+			spin_lock_irqsave(&task->task_state_lock, flags2);
+			task->task_state_flags &= ~SAS_TASK_NEED_DEV_RESET;
+			spin_unlock_irqrestore(&task->task_state_lock, flags2);
+		}
+	}
+	spin_unlock_irqrestore(&ihost->scic_lock, flags);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

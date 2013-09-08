@@ -26,7 +26,10 @@
 #include <linux/mm.h>
 #include <linux/highmem.h>
 #include <linux/hrtimer.h>
+<<<<<<< HEAD
 #include <linux/backing-dev.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __journal_temp_unlink_buffer(struct journal_head *jh);
 
@@ -100,10 +103,18 @@ static int start_this_handle(journal_t *journal, handle_t *handle)
 
 alloc_transaction:
 	if (!journal->j_running_transaction) {
+<<<<<<< HEAD
 		new_transaction = kzalloc(sizeof(*new_transaction), GFP_NOFS);
 		if (!new_transaction) {
 			congestion_wait(BLK_RW_ASYNC, HZ/50);
 			goto alloc_transaction;
+=======
+		new_transaction = kzalloc(sizeof(*new_transaction),
+						GFP_NOFS|__GFP_NOFAIL);
+		if (!new_transaction) {
+			ret = -ENOMEM;
+			goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
@@ -426,6 +437,7 @@ int journal_restart(handle_t *handle, int nblocks)
  * void journal_lock_updates () - establish a transaction barrier.
  * @journal:  Journal to establish a barrier on.
  *
+<<<<<<< HEAD
  * This locks out any further updates from being started, and blocks until all
  * existing updates have completed, returning only once the journal is in a
  * quiescent state with no updates running.
@@ -435,11 +447,19 @@ int journal_restart(handle_t *handle, int nblocks)
  * hibernate needs to lock filesystem but locked mutex then blocks hibernation.
  * Since locking filesystem is rare operation, we use simple counter and
  * waitqueue for locking.
+=======
+ * This locks out any further updates from being started, and blocks
+ * until all existing updates have completed, returning only once the
+ * journal is in a quiescent state with no updates running.
+ *
+ * The journal lock should not be held on entry.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void journal_lock_updates(journal_t *journal)
 {
 	DEFINE_WAIT(wait);
 
+<<<<<<< HEAD
 wait:
 	/* Wait for previous locked operation to finish */
 	wait_event(journal->j_wait_transaction_locked,
@@ -454,6 +474,9 @@ wait:
 		spin_unlock(&journal->j_state_lock);
 		goto wait;
 	}
+=======
+	spin_lock(&journal->j_state_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	++journal->j_barrier_count;
 
 	/* Wait until there are no running updates */
@@ -477,6 +500,17 @@ wait:
 		spin_lock(&journal->j_state_lock);
 	}
 	spin_unlock(&journal->j_state_lock);
+<<<<<<< HEAD
+=======
+
+	/*
+	 * We have now established a barrier against other normal updates, but
+	 * we also need to barrier against other journal_lock_updates() calls
+	 * to make sure that we serialise special journal-locked operations
+	 * too.
+	 */
+	mutex_lock(&journal->j_barrier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -484,11 +518,20 @@ wait:
  * @journal:  Journal to release the barrier on.
  *
  * Release a transaction barrier obtained with journal_lock_updates().
+<<<<<<< HEAD
+=======
+ *
+ * Should be called without the journal lock held.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void journal_unlock_updates (journal_t *journal)
 {
 	J_ASSERT(journal->j_barrier_count != 0);
 
+<<<<<<< HEAD
+=======
+	mutex_unlock(&journal->j_barrier);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_lock(&journal->j_state_lock);
 	--journal->j_barrier_count;
 	spin_unlock(&journal->j_state_lock);
@@ -702,6 +745,10 @@ repeat:
 	if (!jh->b_transaction) {
 		JBUFFER_TRACE(jh, "no transaction");
 		J_ASSERT_JH(jh, !jh->b_next_transaction);
+<<<<<<< HEAD
+=======
+		jh->b_transaction = transaction;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		JBUFFER_TRACE(jh, "file as BJ_Reserved");
 		spin_lock(&journal->j_list_lock);
 		__journal_file_buffer(jh, transaction, BJ_Reserved);
@@ -718,9 +765,15 @@ done:
 			    "Possible IO failure.\n");
 		page = jh2bh(jh)->b_page;
 		offset = offset_in_page(jh2bh(jh)->b_data);
+<<<<<<< HEAD
 		source = kmap_atomic(page);
 		memcpy(jh->b_frozen_data, source+offset, jh2bh(jh)->b_size);
 		kunmap_atomic(source);
+=======
+		source = kmap_atomic(page, KM_USER0);
+		memcpy(jh->b_frozen_data, source+offset, jh2bh(jh)->b_size);
+		kunmap_atomic(source, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	jbd_unlock_bh_state(bh);
 
@@ -823,6 +876,10 @@ int journal_get_create_access(handle_t *handle, struct buffer_head *bh)
 		 * committed and so it's safe to clear the dirty bit.
 		 */
 		clear_buffer_dirty(jh2bh(jh));
+<<<<<<< HEAD
+=======
+		jh->b_transaction = transaction;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* first access by this transaction */
 		jh->b_modified = 0;
@@ -848,8 +905,13 @@ int journal_get_create_access(handle_t *handle, struct buffer_head *bh)
 	 */
 	JBUFFER_TRACE(jh, "cancelling revoke");
 	journal_cancel_revoke(handle, jh);
+<<<<<<< HEAD
 out:
 	journal_put_journal_head(jh);
+=======
+	journal_put_journal_head(jh);
+out:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return err;
 }
 
@@ -1073,9 +1135,14 @@ int journal_dirty_data(handle_t *handle, struct buffer_head *bh)
 				ret = -EIO;
 				goto no_journal;
 			}
+<<<<<<< HEAD
 			/* We might have slept so buffer could be refiled now */
 			if (jh->b_transaction != NULL &&
 			    jh->b_transaction != handle->h_transaction) {
+=======
+
+			if (jh->b_transaction != NULL) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				JBUFFER_TRACE(jh, "unfile from commit");
 				__journal_temp_unlink_buffer(jh);
 				/* It still points to the committing
@@ -1096,6 +1163,11 @@ int journal_dirty_data(handle_t *handle, struct buffer_head *bh)
 		if (jh->b_jlist != BJ_SyncData && jh->b_jlist != BJ_Locked) {
 			JBUFFER_TRACE(jh, "not on correct data list: unfile");
 			J_ASSERT_JH(jh, jh->b_jlist != BJ_Shadow);
+<<<<<<< HEAD
+=======
+			__journal_temp_unlink_buffer(jh);
+			jh->b_transaction = handle->h_transaction;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			JBUFFER_TRACE(jh, "file as data");
 			__journal_file_buffer(jh, handle->h_transaction,
 						BJ_SyncData);
@@ -1303,6 +1375,11 @@ int journal_forget (handle_t *handle, struct buffer_head *bh)
 			__journal_file_buffer(jh, transaction, BJ_Forget);
 		} else {
 			__journal_unfile_buffer(jh);
+<<<<<<< HEAD
+=======
+			journal_remove_journal_head(bh);
+			__brelse(bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			if (!buffer_jbd(bh)) {
 				spin_unlock(&journal->j_list_lock);
 				jbd_unlock_bh_state(bh);
@@ -1623,6 +1700,7 @@ static void __journal_temp_unlink_buffer(struct journal_head *jh)
 		mark_buffer_dirty(bh);	/* Expose it to the VM */
 }
 
+<<<<<<< HEAD
 /*
  * Remove buffer from all transactions.
  *
@@ -1630,15 +1708,21 @@ static void __journal_temp_unlink_buffer(struct journal_head *jh)
  *
  * jh and bh may be already freed when this function returns.
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void __journal_unfile_buffer(struct journal_head *jh)
 {
 	__journal_temp_unlink_buffer(jh);
 	jh->b_transaction = NULL;
+<<<<<<< HEAD
 	journal_put_journal_head(jh);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void journal_unfile_buffer(journal_t *journal, struct journal_head *jh)
 {
+<<<<<<< HEAD
 	struct buffer_head *bh = jh2bh(jh);
 
 	/* Get reference so that buffer cannot be freed before we unlock it */
@@ -1649,6 +1733,13 @@ void journal_unfile_buffer(journal_t *journal, struct journal_head *jh)
 	spin_unlock(&journal->j_list_lock);
 	jbd_unlock_bh_state(bh);
 	__brelse(bh);
+=======
+	jbd_lock_bh_state(jh2bh(jh));
+	spin_lock(&journal->j_list_lock);
+	__journal_unfile_buffer(jh);
+	spin_unlock(&journal->j_list_lock);
+	jbd_unlock_bh_state(jh2bh(jh));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -1675,12 +1766,22 @@ __journal_try_to_free_buffer(journal_t *journal, struct buffer_head *bh)
 			/* A written-back ordered data buffer */
 			JBUFFER_TRACE(jh, "release data");
 			__journal_unfile_buffer(jh);
+<<<<<<< HEAD
+=======
+			journal_remove_journal_head(bh);
+			__brelse(bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else if (jh->b_cp_transaction != NULL && jh->b_transaction == NULL) {
 		/* written-back checkpointed metadata buffer */
 		if (jh->b_jlist == BJ_None) {
 			JBUFFER_TRACE(jh, "remove from checkpoint list");
 			__journal_remove_checkpoint(jh);
+<<<<<<< HEAD
+=======
+			journal_remove_journal_head(bh);
+			__brelse(bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	spin_unlock(&journal->j_list_lock);
@@ -1743,7 +1844,11 @@ int journal_try_to_free_buffers(journal_t *journal,
 		/*
 		 * We take our own ref against the journal_head here to avoid
 		 * having to add tons of locking around each instance of
+<<<<<<< HEAD
 		 * journal_put_journal_head().
+=======
+		 * journal_remove_journal_head() and journal_put_journal_head().
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		jh = journal_grab_journal_head(bh);
 		if (!jh)
@@ -1780,9 +1885,16 @@ static int __dispose_buffer(struct journal_head *jh, transaction_t *transaction)
 	int may_free = 1;
 	struct buffer_head *bh = jh2bh(jh);
 
+<<<<<<< HEAD
 	if (jh->b_cp_transaction) {
 		JBUFFER_TRACE(jh, "on running+cp transaction");
 		__journal_temp_unlink_buffer(jh);
+=======
+	__journal_unfile_buffer(jh);
+
+	if (jh->b_cp_transaction) {
+		JBUFFER_TRACE(jh, "on running+cp transaction");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * We don't want to write the buffer anymore, clear the
 		 * bit so that we don't confuse checks in
@@ -1793,7 +1905,12 @@ static int __dispose_buffer(struct journal_head *jh, transaction_t *transaction)
 		may_free = 0;
 	} else {
 		JBUFFER_TRACE(jh, "on running transaction");
+<<<<<<< HEAD
 		__journal_unfile_buffer(jh);
+=======
+		journal_remove_journal_head(bh);
+		__brelse(bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return may_free;
 }
@@ -1845,16 +1962,27 @@ static int __dispose_buffer(struct journal_head *jh, transaction_t *transaction)
  * We're outside-transaction here.  Either or both of j_running_transaction
  * and j_committing_transaction may be NULL.
  */
+<<<<<<< HEAD
 static int journal_unmap_buffer(journal_t *journal, struct buffer_head *bh,
 				int partial_page)
+=======
+static int journal_unmap_buffer(journal_t *journal, struct buffer_head *bh)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	transaction_t *transaction;
 	struct journal_head *jh;
 	int may_free = 1;
+<<<<<<< HEAD
 
 	BUFFER_TRACE(bh, "entry");
 
 retry:
+=======
+	int ret;
+
+	BUFFER_TRACE(bh, "entry");
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * It is safe to proceed here without the j_list_lock because the
 	 * buffers cannot be stolen by try_to_free_buffers as long as we are
@@ -1882,6 +2010,7 @@ retry:
 	 * clear the buffer dirty bit at latest at the moment when the
 	 * transaction marking the buffer as freed in the filesystem
 	 * structures is committed because from that moment on the
+<<<<<<< HEAD
 	 * block can be reallocated and used by a different page.
 	 * Since the block hasn't been freed yet but the inode has
 	 * already been added to orphan list, it is safe for us to add
@@ -1894,6 +2023,12 @@ retry:
 	 * up keeping around invalidated buffers attached to transactions'
 	 * BJ_Forget list just to stop checkpointing code from cleaning up
 	 * the transaction this buffer was modified in.
+=======
+	 * buffer can be reallocated and used by a different page.
+	 * Since the block hasn't been freed yet but the inode has
+	 * already been added to orphan list, it is safe for us to add
+	 * the buffer to BJ_Forget list of the newest transaction.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	transaction = jh->b_transaction;
 	if (transaction == NULL) {
@@ -1920,9 +2055,19 @@ retry:
 			 * committed, the buffer won't be needed any
 			 * longer. */
 			JBUFFER_TRACE(jh, "checkpointed: add to BJ_Forget");
+<<<<<<< HEAD
 			may_free = __dispose_buffer(jh,
 					journal->j_running_transaction);
 			goto zap_buffer;
+=======
+			ret = __dispose_buffer(jh,
+					journal->j_running_transaction);
+			journal_put_journal_head(jh);
+			spin_unlock(&journal->j_list_lock);
+			jbd_unlock_bh_state(bh);
+			spin_unlock(&journal->j_state_lock);
+			return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			/* There is no currently-running transaction. So the
 			 * orphan record which we wrote for this file must have
@@ -1930,9 +2075,19 @@ retry:
 			 * the committing transaction, if it exists. */
 			if (journal->j_committing_transaction) {
 				JBUFFER_TRACE(jh, "give to committing trans");
+<<<<<<< HEAD
 				may_free = __dispose_buffer(jh,
 					journal->j_committing_transaction);
 				goto zap_buffer;
+=======
+				ret = __dispose_buffer(jh,
+					journal->j_committing_transaction);
+				journal_put_journal_head(jh);
+				spin_unlock(&journal->j_list_lock);
+				jbd_unlock_bh_state(bh);
+				spin_unlock(&journal->j_state_lock);
+				return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			} else {
 				/* The orphan record's transaction has
 				 * committed.  We can cleanse this buffer */
@@ -1953,6 +2108,7 @@ retry:
 		}
 		/*
 		 * The buffer is committing, we simply cannot touch
+<<<<<<< HEAD
 		 * it. If the page is straddling i_size we have to wait
 		 * for commit and try again.
 		 */
@@ -1973,6 +2129,12 @@ retry:
 		 * j_next_transaction to the running transaction (if there is
 		 * one) and mark buffer as freed so that commit code knows it
 		 * should clear dirty bits when it is done with the buffer.
+=======
+		 * it. So we just set j_next_transaction to the
+		 * running transaction (if there is one) and mark
+		 * buffer as freed so that commit code knows it should
+		 * clear dirty bits when it is done with the buffer.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		set_buffer_freed(bh);
 		if (journal->j_running_transaction && buffer_jbddirty(bh))
@@ -1995,6 +2157,7 @@ retry:
 	}
 
 zap_buffer:
+<<<<<<< HEAD
 	/*
 	 * This is tricky. Although the buffer is truncated, it may be reused
 	 * if blocksize < pagesize and it is attached to the page straddling
@@ -2003,6 +2166,8 @@ zap_buffer:
 	 * b_modified and credit accounting gets confused. So clear b_modified
 	 * here. */
 	jh->b_modified = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	journal_put_journal_head(jh);
 zap_buffer_no_jh:
 	spin_unlock(&journal->j_list_lock);
@@ -2051,8 +2216,12 @@ void journal_invalidatepage(journal_t *journal,
 		if (offset <= curr_off) {
 			/* This block is wholly outside the truncation point */
 			lock_buffer(bh);
+<<<<<<< HEAD
 			may_free &= journal_unmap_buffer(journal, bh,
 							 offset > 0);
+=======
+			may_free &= journal_unmap_buffer(journal, bh);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			unlock_buffer(bh);
 		}
 		curr_off = next_off;
@@ -2104,8 +2273,11 @@ void __journal_file_buffer(struct journal_head *jh,
 
 	if (jh->b_transaction)
 		__journal_temp_unlink_buffer(jh);
+<<<<<<< HEAD
 	else
 		journal_grab_journal_head(bh);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jh->b_transaction = transaction;
 
 	switch (jlist) {
@@ -2163,10 +2335,16 @@ void journal_file_buffer(struct journal_head *jh,
  * already started to be used by a subsequent transaction, refile the
  * buffer on that transaction's metadata list.
  *
+<<<<<<< HEAD
  * Called under j_list_lock
  * Called under jbd_lock_bh_state(jh2bh(jh))
  *
  * jh and bh may be already free when this function returns
+=======
+ * Called under journal->j_list_lock
+ *
+ * Called under jbd_lock_bh_state(jh2bh(jh))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void __journal_refile_buffer(struct journal_head *jh)
 {
@@ -2190,11 +2368,14 @@ void __journal_refile_buffer(struct journal_head *jh)
 
 	was_dirty = test_clear_buffer_jbddirty(bh);
 	__journal_temp_unlink_buffer(jh);
+<<<<<<< HEAD
 	/*
 	 * We set b_transaction here because b_next_transaction will inherit
 	 * our jh reference and thus __journal_file_buffer() must not take a
 	 * new one.
 	 */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	jh->b_transaction = jh->b_next_transaction;
 	jh->b_next_transaction = NULL;
 	if (buffer_freed(bh))
@@ -2211,21 +2392,46 @@ void __journal_refile_buffer(struct journal_head *jh)
 }
 
 /*
+<<<<<<< HEAD
  * __journal_refile_buffer() with necessary locking added. We take our bh
  * reference so that we can safely unlock bh.
  *
  * The jh and bh may be freed by this call.
+=======
+ * For the unlocked version of this call, also make sure that any
+ * hanging journal_head is cleaned up if necessary.
+ *
+ * __journal_refile_buffer is usually called as part of a single locked
+ * operation on a buffer_head, in which the caller is probably going to
+ * be hooking the journal_head onto other lists.  In that case it is up
+ * to the caller to remove the journal_head if necessary.  For the
+ * unlocked journal_refile_buffer call, the caller isn't going to be
+ * doing anything else to the buffer so we need to do the cleanup
+ * ourselves to avoid a jh leak.
+ *
+ * *** The journal_head may be freed by this call! ***
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 void journal_refile_buffer(journal_t *journal, struct journal_head *jh)
 {
 	struct buffer_head *bh = jh2bh(jh);
 
+<<<<<<< HEAD
 	/* Get reference so that buffer cannot be freed before we unlock it */
 	get_bh(bh);
 	jbd_lock_bh_state(bh);
 	spin_lock(&journal->j_list_lock);
 	__journal_refile_buffer(jh);
 	jbd_unlock_bh_state(bh);
+=======
+	jbd_lock_bh_state(bh);
+	spin_lock(&journal->j_list_lock);
+
+	__journal_refile_buffer(jh);
+	jbd_unlock_bh_state(bh);
+	journal_remove_journal_head(bh);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock(&journal->j_list_lock);
 	__brelse(bh);
 }

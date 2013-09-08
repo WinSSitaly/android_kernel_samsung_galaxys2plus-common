@@ -37,6 +37,10 @@
 #include <linux/proc_fs.h>	// Necessary because we use the proc fs
 #include <linux/if_arp.h>
 #include <linux/random.h>
+<<<<<<< HEAD
+=======
+#include <linux/version.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include "ieee80211/ieee80211.h"
 

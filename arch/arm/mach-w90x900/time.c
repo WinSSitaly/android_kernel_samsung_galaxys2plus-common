@@ -33,8 +33,11 @@
 #include <mach/map.h>
 #include <mach/regs-timer.h>
 
+<<<<<<< HEAD
 #include "nuc9xx.h"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RESETINT	0x1f
 #define PERIOD		(0x01 << 27)
 #define ONESHOT		(0x00 << 27)

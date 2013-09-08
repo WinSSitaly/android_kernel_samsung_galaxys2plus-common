@@ -81,13 +81,22 @@ static int generic_set_mode(struct ata_link *link, struct ata_device **unused)
 				xfer_mask |= ata_xfer_mode2mask(XFER_MW_DMA_0);
 			}
 
+<<<<<<< HEAD
 			ata_dev_info(dev, "configured for %s\n", name);
+=======
+			ata_dev_printk(dev, KERN_INFO, "configured for %s\n",
+				       name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			dev->xfer_mode = ata_xfer_mask2mode(xfer_mask);
 			dev->xfer_shift = ata_xfer_mode2shift(dev->xfer_mode);
 			dev->flags &= ~ATA_DFLAG_PIO;
 		} else {
+<<<<<<< HEAD
 			ata_dev_info(dev, "configured for PIO\n");
+=======
+			ata_dev_printk(dev, KERN_INFO, "configured for PIO\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev->xfer_mode = XFER_PIO_0;
 			dev->xfer_shift = ATA_SHIFT_PIO;
 			dev->flags |= ATA_DFLAG_PIO;

@@ -901,7 +901,30 @@ static struct usb_driver irda_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(irda_driver);
+=======
+/*
+ * Module insertion
+ */
+static int __init ks959_init(void)
+{
+	return usb_register(&irda_driver);
+}
+
+module_init(ks959_init);
+
+/*
+ * Module removal
+ */
+static void __exit ks959_cleanup(void)
+{
+	/* Deregister the driver and remove all pending instances */
+	usb_deregister(&irda_driver);
+}
+
+module_exit(ks959_cleanup);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Alex Villacís Lasso <a_villacis@palosanto.com>");
 MODULE_DESCRIPTION("IrDA-USB Dongle Driver for KingSun KS-959");

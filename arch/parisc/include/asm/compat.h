@@ -105,8 +105,12 @@ struct compat_statfs {
 	__kernel_fsid_t	f_fsid;
 	s32		f_namelen;
 	s32		f_frsize;
+<<<<<<< HEAD
 	s32		f_flags;
 	s32		f_spare[4];
+=======
+	s32		f_spare[5];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 struct compat_sigcontext {

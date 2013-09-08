@@ -42,14 +42,23 @@
 #include <linux/ioctl.h>
 #include <net/sock.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/uaccess.h>
 #include <asm/unaligned.h>
 
 #include <net/bluetooth/bluetooth.h>
 #include <net/bluetooth/hci_core.h>
+<<<<<<< HEAD
 #include <net/bluetooth/hci_mon.h>
 
 static atomic_t monitor_promisc = ATOMIC_INIT(0);
+=======
+
+static int enable_mgmt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* ----- HCI socket interface ----- */
 
@@ -85,20 +94,37 @@ static struct bt_sock_list hci_sk_list = {
 };
 
 /* Send frame to RAW socket */
+<<<<<<< HEAD
 void hci_send_to_sock(struct hci_dev *hdev, struct sk_buff *skb)
 {
 	struct sock *sk;
 	struct hlist_node *node;
 	struct sk_buff *skb_copy = NULL;
+=======
+void hci_send_to_sock(struct hci_dev *hdev, struct sk_buff *skb,
+							struct sock *skip_sk)
+{
+	struct sock *sk;
+	struct hlist_node *node;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	BT_DBG("hdev %p len %d", hdev, skb->len);
 
 	read_lock(&hci_sk_list.lock);
+<<<<<<< HEAD
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sk_for_each(sk, node, &hci_sk_list.head) {
 		struct hci_filter *flt;
 		struct sk_buff *nskb;
 
+<<<<<<< HEAD
+=======
+		if (sk == skip_sk)
+			continue;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (sk->sk_state != BT_BOUND || hci_pi(sk)->hdev != hdev)
 			continue;
 
@@ -106,9 +132,18 @@ void hci_send_to_sock(struct hci_dev *hdev, struct sk_buff *skb)
 		if (skb->sk == sk)
 			continue;
 
+<<<<<<< HEAD
 		if (hci_pi(sk)->channel != HCI_CHANNEL_RAW)
 			continue;
 
+=======
+		if (bt_cb(skb)->channel != hci_pi(sk)->channel)
+			continue;
+
+		if (bt_cb(skb)->channel == HCI_CHANNEL_CONTROL)
+			goto clone;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* Apply filter */
 		flt = &hci_pi(sk)->filter;
 
@@ -132,6 +167,7 @@ void hci_send_to_sock(struct hci_dev *hdev, struct sk_buff *skb)
 				continue;
 		}
 
+<<<<<<< HEAD
 		if (!skb_copy) {
 			/* Create a private copy with headroom */
 			skb_copy = __pskb_copy(skb, 1, GFP_ATOMIC);
@@ -178,10 +214,14 @@ void hci_send_to_control(struct sk_buff *skb, struct sock *skip_sk)
 		if (hci_pi(sk)->channel != HCI_CHANNEL_CONTROL)
 			continue;
 
+=======
+clone:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		nskb = skb_clone(skb, GFP_ATOMIC);
 		if (!nskb)
 			continue;
 
+<<<<<<< HEAD
 		if (sock_queue_rcv_skb(sk, nskb))
 			kfree_skb(nskb);
 	}
@@ -285,10 +325,16 @@ static void send_monitor_event(struct sk_buff *skb)
 		nskb = skb_clone(skb, GFP_ATOMIC);
 		if (!nskb)
 			continue;
+=======
+		/* Put type byte before the data */
+		if (bt_cb(skb)->channel == HCI_CHANNEL_RAW)
+			memcpy(skb_push(nskb, 1), &bt_cb(nskb)->pkt_type, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (sock_queue_rcv_skb(sk, nskb))
 			kfree_skb(nskb);
 	}
+<<<<<<< HEAD
 
 	read_unlock(&hci_sk_list.lock);
 }
@@ -429,6 +475,11 @@ void hci_sock_dev_event(struct hci_dev *hdev, int event)
 	}
 }
 
+=======
+	read_unlock(&hci_sk_list.lock);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int hci_sock_release(struct socket *sock)
 {
 	struct sock *sk = sock->sk;
@@ -441,9 +492,12 @@ static int hci_sock_release(struct socket *sock)
 
 	hdev = hci_pi(sk)->hdev;
 
+<<<<<<< HEAD
 	if (hci_pi(sk)->channel == HCI_CHANNEL_MONITOR)
 		atomic_dec(&monitor_promisc);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	bt_sock_unlink(&hci_sk_list, sk);
 
 	if (hdev) {
@@ -463,11 +517,15 @@ static int hci_sock_release(struct socket *sock)
 static int hci_sock_blacklist_add(struct hci_dev *hdev, void __user *arg)
 {
 	bdaddr_t bdaddr;
+<<<<<<< HEAD
 	int err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (copy_from_user(&bdaddr, arg, sizeof(bdaddr)))
 		return -EFAULT;
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
 
 	err = hci_blacklist_add(hdev, &bdaddr, 0);
@@ -475,16 +533,23 @@ static int hci_sock_blacklist_add(struct hci_dev *hdev, void __user *arg)
 	hci_dev_unlock(hdev);
 
 	return err;
+=======
+	return hci_blacklist_add(hdev, &bdaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int hci_sock_blacklist_del(struct hci_dev *hdev, void __user *arg)
 {
 	bdaddr_t bdaddr;
+<<<<<<< HEAD
 	int err;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (copy_from_user(&bdaddr, arg, sizeof(bdaddr)))
 		return -EFAULT;
 
+<<<<<<< HEAD
 	hci_dev_lock(hdev);
 
 	err = hci_blacklist_del(hdev, &bdaddr, 0);
@@ -492,6 +557,9 @@ static int hci_sock_blacklist_del(struct hci_dev *hdev, void __user *arg)
 	hci_dev_unlock(hdev);
 
 	return err;
+=======
+	return hci_blacklist_del(hdev, &bdaddr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* Ioctls that require bound socket */
@@ -620,13 +688,26 @@ static int hci_sock_bind(struct socket *sock, struct sockaddr *addr, int addr_le
 	if (haddr.hci_family != AF_BLUETOOTH)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	lock_sock(sk);
 
 	if (sk->sk_state == BT_BOUND) {
+=======
+	if (haddr.hci_channel > HCI_CHANNEL_CONTROL)
+		return -EINVAL;
+
+	if (haddr.hci_channel == HCI_CHANNEL_CONTROL && !enable_mgmt)
+		return -EINVAL;
+
+	lock_sock(sk);
+
+	if (sk->sk_state == BT_BOUND || hci_pi(sk)->hdev) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		err = -EALREADY;
 		goto done;
 	}
 
+<<<<<<< HEAD
 	switch (haddr.hci_channel) {
 	case HCI_CHANNEL_RAW:
 		if (hci_pi(sk)->hdev) {
@@ -683,6 +764,20 @@ static int hci_sock_bind(struct socket *sock, struct sockaddr *addr, int addr_le
 
 
 	hci_pi(sk)->channel = haddr.hci_channel;
+=======
+	if (haddr.hci_dev != HCI_DEV_NONE) {
+		hdev = hci_dev_get(haddr.hci_dev);
+		if (!hdev) {
+			err = -ENODEV;
+			goto done;
+		}
+
+		atomic_inc(&hdev->promisc);
+	}
+
+	hci_pi(sk)->channel = haddr.hci_channel;
+	hci_pi(sk)->hdev = hdev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	sk->sk_state = BT_BOUND;
 
 done:
@@ -706,7 +801,10 @@ static int hci_sock_getname(struct socket *sock, struct sockaddr *addr, int *add
 	*addr_len = sizeof(*haddr);
 	haddr->hci_family = AF_BLUETOOTH;
 	haddr->hci_dev    = hdev->id;
+<<<<<<< HEAD
 	haddr->hci_channel= 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	release_sock(sk);
 	return 0;
@@ -734,8 +832,12 @@ static inline void hci_sock_cmsg(struct sock *sk, struct msghdr *msg, struct sk_
 		data = &tv;
 		len = sizeof(tv);
 #ifdef CONFIG_COMPAT
+<<<<<<< HEAD
 		if (!COMPAT_USE_64BIT_TIME &&
 		    (msg->msg_flags & MSG_CMSG_COMPAT)) {
+=======
+		if (msg->msg_flags & MSG_CMSG_COMPAT) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			ctv.tv_sec = tv.tv_sec;
 			ctv.tv_usec = tv.tv_usec;
 			data = &ctv;
@@ -778,6 +880,7 @@ static int hci_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
 	skb_reset_transport_header(skb);
 	err = skb_copy_datagram_iovec(skb, 0, msg->msg_iov, copied);
 
+<<<<<<< HEAD
 	switch (hci_pi(sk)->channel) {
 	case HCI_CHANNEL_RAW:
 		hci_sock_cmsg(sk, msg, skb);
@@ -787,6 +890,9 @@ static int hci_sock_recvmsg(struct kiocb *iocb, struct socket *sock,
 		sock_recv_timestamp(msg, sk, skb);
 		break;
 	}
+=======
+	hci_sock_cmsg(sk, msg, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	skb_free_datagram(sk, skb);
 
@@ -820,9 +926,12 @@ static int hci_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
 	case HCI_CHANNEL_CONTROL:
 		err = mgmt_control(sk, msg, len);
 		goto done;
+<<<<<<< HEAD
 	case HCI_CHANNEL_MONITOR:
 		err = -EOPNOTSUPP;
 		goto done;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		err = -EINVAL;
 		goto done;
@@ -866,10 +975,17 @@ static int hci_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
 
 		if (test_bit(HCI_RAW, &hdev->flags) || (ogf == 0x3f)) {
 			skb_queue_tail(&hdev->raw_q, skb);
+<<<<<<< HEAD
 			queue_work(hdev->workqueue, &hdev->tx_work);
 		} else {
 			skb_queue_tail(&hdev->cmd_q, skb);
 			queue_work(hdev->workqueue, &hdev->cmd_work);
+=======
+			tasklet_schedule(&hdev->tx_task);
+		} else {
+			skb_queue_tail(&hdev->cmd_q, skb);
+			tasklet_schedule(&hdev->cmd_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		if (!capable(CAP_NET_RAW)) {
@@ -878,7 +994,11 @@ static int hci_sock_sendmsg(struct kiocb *iocb, struct socket *sock,
 		}
 
 		skb_queue_tail(&hdev->raw_q, skb);
+<<<<<<< HEAD
 		queue_work(hdev->workqueue, &hdev->tx_work);
+=======
+		tasklet_schedule(&hdev->tx_task);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	err = len;
@@ -902,11 +1022,14 @@ static int hci_sock_setsockopt(struct socket *sock, int level, int optname, char
 
 	lock_sock(sk);
 
+<<<<<<< HEAD
 	if (hci_pi(sk)->channel != HCI_CHANNEL_RAW) {
 		err = -EINVAL;
 		goto done;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (optname) {
 	case HCI_DATA_DIR:
 		if (get_user(opt, (int __user *)optval)) {
@@ -969,7 +1092,10 @@ static int hci_sock_setsockopt(struct socket *sock, int level, int optname, char
 		break;
 	}
 
+<<<<<<< HEAD
 done:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	release_sock(sk);
 	return err;
 }
@@ -978,13 +1104,18 @@ static int hci_sock_getsockopt(struct socket *sock, int level, int optname, char
 {
 	struct hci_ufilter uf;
 	struct sock *sk = sock->sk;
+<<<<<<< HEAD
 	int len, opt, err = 0;
 
 	BT_DBG("sk %p, opt %d", sk, optname);
+=======
+	int len, opt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (get_user(len, optlen))
 		return -EFAULT;
 
+<<<<<<< HEAD
 	lock_sock(sk);
 
 	if (hci_pi(sk)->channel != HCI_CHANNEL_RAW) {
@@ -992,6 +1123,8 @@ static int hci_sock_getsockopt(struct socket *sock, int level, int optname, char
 		goto done;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (optname) {
 	case HCI_DATA_DIR:
 		if (hci_pi(sk)->cmsg_mask & HCI_CMSG_DIR)
@@ -1000,7 +1133,11 @@ static int hci_sock_getsockopt(struct socket *sock, int level, int optname, char
 			opt = 0;
 
 		if (put_user(opt, optval))
+<<<<<<< HEAD
 			err = -EFAULT;
+=======
+			return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case HCI_TIME_STAMP:
@@ -1010,14 +1147,21 @@ static int hci_sock_getsockopt(struct socket *sock, int level, int optname, char
 			opt = 0;
 
 		if (put_user(opt, optval))
+<<<<<<< HEAD
 			err = -EFAULT;
+=======
+			return -EFAULT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case HCI_FILTER:
 		{
 			struct hci_filter *f = &hci_pi(sk)->filter;
 
+<<<<<<< HEAD
 			memset(&uf, 0, sizeof(uf));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			uf.type_mask = f->type_mask;
 			uf.opcode    = f->opcode;
 			uf.event_mask[0] = *((u32 *) f->event_mask + 0);
@@ -1026,6 +1170,7 @@ static int hci_sock_getsockopt(struct socket *sock, int level, int optname, char
 
 		len = min_t(unsigned int, len, sizeof(uf));
 		if (copy_to_user(optval, &uf, len))
+<<<<<<< HEAD
 			err = -EFAULT;
 		break;
 
@@ -1037,6 +1182,17 @@ static int hci_sock_getsockopt(struct socket *sock, int level, int optname, char
 done:
 	release_sock(sk);
 	return err;
+=======
+			return -EFAULT;
+		break;
+
+	default:
+		return -ENOPROTOOPT;
+		break;
+	}
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static const struct proto_ops hci_sock_ops = {
@@ -1094,12 +1250,60 @@ static int hci_sock_create(struct net *net, struct socket *sock, int protocol,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int hci_sock_dev_event(struct notifier_block *this, unsigned long event, void *ptr)
+{
+	struct hci_dev *hdev = (struct hci_dev *) ptr;
+	struct hci_ev_si_device ev;
+
+	BT_DBG("hdev %s event %ld", hdev->name, event);
+
+	/* Send event to sockets */
+	ev.event  = event;
+	ev.dev_id = hdev->id;
+	hci_si_event(NULL, HCI_EV_SI_DEVICE, sizeof(ev), &ev);
+
+	if (event == HCI_DEV_UNREG) {
+		struct sock *sk;
+		struct hlist_node *node;
+
+		/* Detach sockets from device */
+		read_lock(&hci_sk_list.lock);
+		sk_for_each(sk, node, &hci_sk_list.head) {
+			local_bh_disable();
+			bh_lock_sock_nested(sk);
+			if (hci_pi(sk)->hdev == hdev) {
+				hci_pi(sk)->hdev = NULL;
+				sk->sk_err = EPIPE;
+				sk->sk_state = BT_OPEN;
+				sk->sk_state_change(sk);
+
+				hci_dev_put(hdev);
+			}
+			bh_unlock_sock(sk);
+			local_bh_enable();
+		}
+		read_unlock(&hci_sk_list.lock);
+	}
+
+	return NOTIFY_DONE;
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static const struct net_proto_family hci_sock_family_ops = {
 	.family	= PF_BLUETOOTH,
 	.owner	= THIS_MODULE,
 	.create	= hci_sock_create,
 };
 
+<<<<<<< HEAD
+=======
+static struct notifier_block hci_sock_nblock = {
+	.notifier_call = hci_sock_dev_event
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int __init hci_sock_init(void)
 {
 	int err;
@@ -1112,6 +1316,11 @@ int __init hci_sock_init(void)
 	if (err < 0)
 		goto error;
 
+<<<<<<< HEAD
+=======
+	hci_register_notifier(&hci_sock_nblock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	BT_INFO("HCI socket layer initialized");
 
 	return 0;
@@ -1127,5 +1336,15 @@ void hci_sock_cleanup(void)
 	if (bt_sock_unregister(BTPROTO_HCI) < 0)
 		BT_ERR("HCI socket unregistration failed");
 
+<<<<<<< HEAD
 	proto_unregister(&hci_sk_proto);
 }
+=======
+	hci_unregister_notifier(&hci_sock_nblock);
+
+	proto_unregister(&hci_sk_proto);
+}
+
+module_param(enable_mgmt, bool, 0644);
+MODULE_PARM_DESC(enable_mgmt, "Enable Management interface");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

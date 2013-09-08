@@ -32,8 +32,11 @@
  *		2 of the License, or (at your option) any later version.
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/types.h>
@@ -54,6 +57,10 @@
 #include <linux/sdla.h>
 #include <linux/bitops.h>
 
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/io.h>
 #include <asm/dma.h>
 #include <asm/uaccess.h>
@@ -351,24 +358,42 @@ static void sdla_errors(struct net_device *dev, int cmd, int dlci, int ret, int 
 		case SDLA_RET_MODEM:
 			state = data;
 			if (*state & SDLA_MODEM_DCD_LOW)
+<<<<<<< HEAD
 				netdev_info(dev, "Modem DCD unexpectedly low!\n");
 			if (*state & SDLA_MODEM_CTS_LOW)
 				netdev_info(dev, "Modem CTS unexpectedly low!\n");
+=======
+				printk(KERN_INFO "%s: Modem DCD unexpectedly low!\n", dev->name);
+			if (*state & SDLA_MODEM_CTS_LOW)
+				printk(KERN_INFO "%s: Modem CTS unexpectedly low!\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* I should probably do something about this! */
 			break;
 
 		case SDLA_RET_CHANNEL_OFF:
+<<<<<<< HEAD
 			netdev_info(dev, "Channel became inoperative!\n");
+=======
+			printk(KERN_INFO "%s: Channel became inoperative!\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* same here */
 			break;
 
 		case SDLA_RET_CHANNEL_ON:
+<<<<<<< HEAD
 			netdev_info(dev, "Channel became operative!\n");
+=======
+			printk(KERN_INFO "%s: Channel became operative!\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* same here */
 			break;
 
 		case SDLA_RET_DLCI_STATUS:
+<<<<<<< HEAD
 			netdev_info(dev, "Status change reported by Access Node\n");
+=======
+			printk(KERN_INFO "%s: Status change reported by Access Node.\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			len /= sizeof(struct _dlci_stat);
 			for(pstatus = data, i=0;i < len;i++,pstatus++)
 			{
@@ -383,13 +408,18 @@ static void sdla_errors(struct net_device *dev, int cmd, int dlci, int ret, int 
 					sprintf(line, "unknown status: %02X", pstatus->flags);
 					state = line;
 				}
+<<<<<<< HEAD
 				netdev_info(dev, "DLCI %i: %s\n",
 					    pstatus->dlci, state);
+=======
+				printk(KERN_INFO "%s: DLCI %i: %s.\n", dev->name, pstatus->dlci, state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				/* same here */
 			}
 			break;
 
 		case SDLA_RET_DLCI_UNKNOWN:
+<<<<<<< HEAD
 			netdev_info(dev, "Received unknown DLCIs:");
 			len /= sizeof(short);
 			for(pdlci = data,i=0;i < len;i++,pdlci++)
@@ -409,6 +439,25 @@ static void sdla_errors(struct net_device *dev, int cmd, int dlci, int ret, int 
 		case SDLA_RET_BUF_TOO_BIG:
 			netdev_info(dev, "Buffer size over specified max of %i\n",
 				    len);
+=======
+			printk(KERN_INFO "%s: Received unknown DLCIs:", dev->name);
+			len /= sizeof(short);
+			for(pdlci = data,i=0;i < len;i++,pdlci++)
+				printk(" %i", *pdlci);
+			printk("\n");
+			break;
+
+		case SDLA_RET_TIMEOUT:
+			printk(KERN_ERR "%s: Command timed out!\n", dev->name);
+			break;
+
+		case SDLA_RET_BUF_OVERSIZE:
+			printk(KERN_INFO "%s: Bc/CIR overflow, acceptable size is %i\n", dev->name, len);
+			break;
+
+		case SDLA_RET_BUF_TOO_BIG:
+			printk(KERN_INFO "%s: Buffer size over specified max of %i\n", dev->name, len);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 
 		case SDLA_RET_CHANNEL_INACTIVE:
@@ -419,8 +468,12 @@ static void sdla_errors(struct net_device *dev, int cmd, int dlci, int ret, int 
 				break;
 
 		default: 
+<<<<<<< HEAD
 			netdev_dbg(dev, "Cmd 0x%02X generated return code 0x%02X\n",
 				   cmd, ret);
+=======
+			printk(KERN_DEBUG "%s: Cmd 0x%2.2X generated return code 0x%2.2X\n", dev->name, cmd, ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* Further processing could be done here */
 			break;
 	}
@@ -683,14 +736,22 @@ static netdev_tx_t sdla_transmit(struct sk_buff *skb,
 		case ARPHRD_FRAD:
 			if (skb->dev->type != ARPHRD_DLCI)
 			{
+<<<<<<< HEAD
 				netdev_warn(dev, "Non DLCI device, type %i, tried to send on FRAD module\n",
 					    skb->dev->type);
+=======
+				printk(KERN_WARNING "%s: Non DLCI device, type %i, tried to send on FRAD module.\n", dev->name, skb->dev->type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				accept = 0;
 			}
 			break;
 		default:
+<<<<<<< HEAD
 			netdev_warn(dev, "unknown firmware type 0x%04X\n",
 				    dev->type);
+=======
+			printk(KERN_WARNING "%s: unknown firmware type 0x%4.4X\n", dev->name, dev->type);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			accept = 0;
 			break;
 	}
@@ -814,8 +875,12 @@ static void sdla_receive(struct net_device *dev)
 
 		if (i == CONFIG_DLCI_MAX)
 		{
+<<<<<<< HEAD
 			netdev_notice(dev, "Received packet from invalid DLCI %i, ignoring\n",
 				      dlci);
+=======
+			printk(KERN_NOTICE "%s: Received packet from invalid DLCI %i, ignoring.", dev->name, dlci);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev->stats.rx_errors++;
 			success = 0;
 		}
@@ -827,7 +892,11 @@ static void sdla_receive(struct net_device *dev)
 		skb = dev_alloc_skb(len + sizeof(struct frhdr));
 		if (skb == NULL) 
 		{
+<<<<<<< HEAD
 			netdev_notice(dev, "Memory squeeze, dropping packet\n");
+=======
+			printk(KERN_NOTICE "%s: Memory squeeze, dropping packet.\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			dev->stats.rx_dropped++;
 			success = 0;
 		}
@@ -888,7 +957,12 @@ static irqreturn_t sdla_isr(int dummy, void *dev_id)
 
 	if (!flp->initialized)
 	{
+<<<<<<< HEAD
 		netdev_warn(dev, "irq %d for uninitialized device\n", dev->irq);
+=======
+		printk(KERN_WARNING "%s: irq %d for uninitialized device.\n",
+		       dev->name, dev->irq);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return IRQ_NONE;
 	}
 
@@ -908,7 +982,11 @@ static irqreturn_t sdla_isr(int dummy, void *dev_id)
 		case SDLA_INTR_TX:
 		case SDLA_INTR_COMPLETE:
 		case SDLA_INTR_TIMER:
+<<<<<<< HEAD
 			netdev_warn(dev, "invalid irq flag 0x%02X\n", byte);
+=======
+			printk(KERN_WARNING "%s: invalid irq flag 0x%02X.\n", dev->name, byte);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			break;
 	}
 
@@ -1354,7 +1432,11 @@ static int sdla_set_config(struct net_device *dev, struct ifmap *map)
 		return -EINVAL;
 
 	if (!request_region(map->base_addr, SDLA_IO_EXTENTS, dev->name)){
+<<<<<<< HEAD
 		pr_warn("io-port 0x%04lx in use\n", dev->base_addr);
+=======
+		printk(KERN_WARNING "SDLA: io-port 0x%04lx in use\n", dev->base_addr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EINVAL;
 	}
 	base = map->base_addr;
@@ -1419,7 +1501,11 @@ static int sdla_set_config(struct net_device *dev, struct ifmap *map)
 		}
 	}
 
+<<<<<<< HEAD
 	netdev_notice(dev, "Unknown card type\n");
+=======
+	printk(KERN_NOTICE "%s: Unknown card type\n", dev->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = -ENODEV;
 	goto fail;
 

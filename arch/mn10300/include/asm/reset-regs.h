@@ -17,6 +17,13 @@
 
 #ifdef __KERNEL__
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MN10300_WD_TIMER
+#define ARCH_HAS_NMI_WATCHDOG		/* See include/linux/nmi.h */
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * watchdog timer registers
  */

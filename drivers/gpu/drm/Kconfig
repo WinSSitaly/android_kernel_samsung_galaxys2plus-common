@@ -9,7 +9,11 @@ menuconfig DRM
 	depends on (AGP || AGP=n) && !EMULATED_CMPXCHG && MMU
 	select I2C
 	select I2C_ALGOBIT
+<<<<<<< HEAD
 	select DMA_SHARED_BUFFER
+=======
+	select SLOW_WORK
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	help
 	  Kernel-level support for the Direct Rendering Infrastructure (DRI)
 	  introduced in XFree86 4.0. If you say Y here, you need to select
@@ -19,11 +23,14 @@ menuconfig DRM
 	  details.  You should also select and configure AGP
 	  (/dev/agpgart) support if it is available for your platform.
 
+<<<<<<< HEAD
 config DRM_USB
 	tristate
 	depends on DRM
 	select USB
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config DRM_KMS_HELPER
 	tristate
 	depends on DRM
@@ -33,6 +40,7 @@ config DRM_KMS_HELPER
 	help
 	  FB and CRTC helpers for KMS drivers.
 
+<<<<<<< HEAD
 config DRM_LOAD_EDID_FIRMWARE
 	bool "Allow to specify an EDID data set instead of probing for it"
 	depends on DRM_KMS_HELPER
@@ -45,6 +53,8 @@ config DRM_LOAD_EDID_FIRMWARE
 	  default case is N. Details and instructions how to build your own
 	  EDID data are given in Documentation/EDID/HOWTO.txt.
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config DRM_TTM
 	tristate
 	depends on DRM
@@ -89,8 +99,11 @@ config DRM_RADEON
 
 source "drivers/gpu/drm/radeon/Kconfig"
 
+<<<<<<< HEAD
 source "drivers/gpu/drm/nouveau/Kconfig"
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config DRM_I810
 	tristate "Intel I810"
 	# !PREEMPT because of missing ioctl locking
@@ -115,7 +128,10 @@ config DRM_I915
 	select FB_CFB_IMAGEBLIT
 	# i915 depends on ACPI_VIDEO when ACPI is enabled
 	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
+<<<<<<< HEAD
 	select BACKLIGHT_LCD_SUPPORT if ACPI
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	select BACKLIGHT_CLASS_DEVICE if ACPI
 	select VIDEO_OUTPUT_CONTROL if ACPI
 	select INPUT if ACPI
@@ -178,6 +194,7 @@ config DRM_SAVAGE
 	help
 	  Choose this option if you have a Savage3D/4/SuperSavage/Pro/Twister
 	  chipset. If M is selected the module will be called savage.
+<<<<<<< HEAD
 
 source "drivers/gpu/drm/exynos/Kconfig"
 
@@ -186,3 +203,5 @@ source "drivers/gpu/drm/vmwgfx/Kconfig"
 source "drivers/gpu/drm/gma500/Kconfig"
 
 source "drivers/gpu/drm/udl/Kconfig"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

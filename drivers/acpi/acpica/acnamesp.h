@@ -5,7 +5,11 @@
  *****************************************************************************/
 
 /*
+<<<<<<< HEAD
  * Copyright (C) 2000 - 2012, Intel Corp.
+=======
+ * Copyright (C) 2000 - 2011, Intel Corp.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -283,9 +287,14 @@ acpi_ns_repair_object(struct acpi_predefined_data *data,
 		      union acpi_operand_object **return_object_ptr);
 
 acpi_status
+<<<<<<< HEAD
 acpi_ns_wrap_with_package(struct acpi_predefined_data *data,
 			  union acpi_operand_object *original_object,
 			  union acpi_operand_object **obj_desc_ptr);
+=======
+acpi_ns_repair_package_list(struct acpi_predefined_data *data,
+			    union acpi_operand_object **obj_desc_ptr);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 acpi_status
 acpi_ns_repair_null_element(struct acpi_predefined_data *data,

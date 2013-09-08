@@ -91,7 +91,11 @@ static irqreturn_t hub_rt_counter_handler(int irq, void *dev_id)
 
 struct irqaction hub_rt_irqaction = {
 	.handler	= hub_rt_counter_handler,
+<<<<<<< HEAD
 	.flags		= IRQF_PERCPU | IRQF_TIMER,
+=======
+	.flags		= IRQF_DISABLED | IRQF_PERCPU | IRQF_TIMER,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.name		= "hub-rt",
 };
 

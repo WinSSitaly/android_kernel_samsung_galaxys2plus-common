@@ -3,7 +3,15 @@
  * Handler for storing security labels as extended attributes.
  */
 
+<<<<<<< HEAD
 #include "ext2.h"
+=======
+#include <linux/module.h>
+#include <linux/slab.h>
+#include <linux/string.h>
+#include <linux/fs.h>
+#include <linux/ext2_fs.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/security.h>
 #include "xattr.h"
 
@@ -42,6 +50,7 @@ ext2_xattr_security_set(struct dentry *dentry, const char *name,
 			      value, size, flags);
 }
 
+<<<<<<< HEAD
 int ext2_initxattrs(struct inode *inode, const struct xattr *xattr_array,
 		    void *fs_info)
 {
@@ -58,12 +67,33 @@ int ext2_initxattrs(struct inode *inode, const struct xattr *xattr_array,
 	return err;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 int
 ext2_init_security(struct inode *inode, struct inode *dir,
 		   const struct qstr *qstr)
 {
+<<<<<<< HEAD
 	return security_inode_init_security(inode, dir, qstr,
 					    &ext2_initxattrs, NULL);
+=======
+	int err;
+	size_t len;
+	void *value;
+	char *name;
+
+	err = security_inode_init_security(inode, dir, qstr, &name, &value, &len);
+	if (err) {
+		if (err == -EOPNOTSUPP)
+			return 0;
+		return err;
+	}
+	err = ext2_xattr_set(inode, EXT2_XATTR_INDEX_SECURITY,
+			     name, value, len, 0);
+	kfree(name);
+	kfree(value);
+	return err;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 const struct xattr_handler ext2_xattr_security_handler = {

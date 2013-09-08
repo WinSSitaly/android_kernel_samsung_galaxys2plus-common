@@ -14,16 +14,77 @@
 #include <linux/platform_device.h>
 #include <asm/mach-au1x00/au1000.h>
 
+<<<<<<< HEAD
 
 extern int usb_disabled(void);
 
+=======
+#define USB_HOST_CONFIG   (USB_MSR_BASE + USB_MSR_MCFG)
+#define USB_MCFG_PFEN     (1<<31)
+#define USB_MCFG_RDCOMB   (1<<30)
+#define USB_MCFG_SSDEN    (1<<23)
+#define USB_MCFG_PHYPLLEN (1<<19)
+#define USB_MCFG_UCECLKEN (1<<18)
+#define USB_MCFG_EHCCLKEN (1<<17)
+#ifdef CONFIG_DMA_COHERENT
+#define USB_MCFG_UCAM     (1<<7)
+#else
+#define USB_MCFG_UCAM     (0)
+#endif
+#define USB_MCFG_EBMEN    (1<<3)
+#define USB_MCFG_EMEMEN   (1<<2)
+
+#define USBH_ENABLE_CE	(USB_MCFG_PHYPLLEN | USB_MCFG_EHCCLKEN)
+#define USBH_ENABLE_INIT (USB_MCFG_PFEN  | USB_MCFG_RDCOMB |	\
+			  USBH_ENABLE_CE | USB_MCFG_SSDEN  |	\
+			  USB_MCFG_UCAM  | USB_MCFG_EBMEN  |	\
+			  USB_MCFG_EMEMEN)
+
+#define USBH_DISABLE      (USB_MCFG_EBMEN | USB_MCFG_EMEMEN)
+
+extern int usb_disabled(void);
+
+static void au1xxx_start_ehc(void)
+{
+	/* enable clock to EHCI block and HS PHY PLL*/
+	au_writel(au_readl(USB_HOST_CONFIG) | USBH_ENABLE_CE, USB_HOST_CONFIG);
+	au_sync();
+	udelay(1000);
+
+	/* enable EHCI mmio */
+	au_writel(au_readl(USB_HOST_CONFIG) | USBH_ENABLE_INIT, USB_HOST_CONFIG);
+	au_sync();
+	udelay(1000);
+}
+
+static void au1xxx_stop_ehc(void)
+{
+	unsigned long c;
+
+	/* Disable mem */
+	au_writel(au_readl(USB_HOST_CONFIG) & ~USBH_DISABLE, USB_HOST_CONFIG);
+	au_sync();
+	udelay(1000);
+
+	/* Disable EHC clock. If the HS PHY is unused disable it too. */
+	c = au_readl(USB_HOST_CONFIG) & ~USB_MCFG_EHCCLKEN;
+	if (!(c & USB_MCFG_UCECLKEN))		/* UDC disabled? */
+		c &= ~USB_MCFG_PHYPLLEN;	/* yes: disable HS PHY PLL */
+	au_writel(c, USB_HOST_CONFIG);
+	au_sync();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int au1xxx_ehci_setup(struct usb_hcd *hcd)
 {
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 	int ret = ehci_init(hcd);
 
 	ehci->need_io_watchdog = 0;
+<<<<<<< HEAD
 	ehci_reset(ehci);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -85,6 +146,19 @@ static int ehci_hcd_au1xxx_drv_probe(struct platform_device *pdev)
 	if (usb_disabled())
 		return -ENODEV;
 
+<<<<<<< HEAD
+=======
+#if defined(CONFIG_SOC_AU1200) && defined(CONFIG_DMA_COHERENT)
+	/* Au1200 AB USB does not support coherent memory */
+	if (!(read_c0_prid() & 0xff)) {
+		printk(KERN_INFO "%s: this is chip revision AB!\n", pdev->name);
+		printk(KERN_INFO "%s: update your board or re-configure"
+				 " the kernel\n", pdev->name);
+		return -ENODEV;
+	}
+#endif
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (pdev->resource[1].flags != IORESOURCE_IRQ) {
 		pr_debug("resource[1] is not IORESOURCE_IRQ");
 		return -ENOMEM;
@@ -110,11 +184,15 @@ static int ehci_hcd_au1xxx_drv_probe(struct platform_device *pdev)
 		goto err2;
 	}
 
+<<<<<<< HEAD
 	if (alchemy_usb_control(ALCHEMY_USB_EHCI0, 1)) {
 		printk(KERN_INFO "%s: controller init failed!\n", pdev->name);
 		ret = -ENODEV;
 		goto err3;
 	}
+=======
+	au1xxx_start_ehc();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ehci = hcd_to_ehci(hcd);
 	ehci->caps = hcd->regs;
@@ -124,14 +202,22 @@ static int ehci_hcd_au1xxx_drv_probe(struct platform_device *pdev)
 	ehci->hcs_params = readl(&ehci->caps->hcs_params);
 
 	ret = usb_add_hcd(hcd, pdev->resource[1].start,
+<<<<<<< HEAD
 			  IRQF_SHARED);
+=======
+			  IRQF_DISABLED | IRQF_SHARED);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret == 0) {
 		platform_set_drvdata(pdev, hcd);
 		return ret;
 	}
 
+<<<<<<< HEAD
 	alchemy_usb_control(ALCHEMY_USB_EHCI0, 0);
 err3:
+=======
+	au1xxx_stop_ehc();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	iounmap(hcd->regs);
 err2:
 	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
@@ -145,10 +231,17 @@ static int ehci_hcd_au1xxx_drv_remove(struct platform_device *pdev)
 	struct usb_hcd *hcd = platform_get_drvdata(pdev);
 
 	usb_remove_hcd(hcd);
+<<<<<<< HEAD
 	alchemy_usb_control(ALCHEMY_USB_EHCI0, 0);
 	iounmap(hcd->regs);
 	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
 	usb_put_hcd(hcd);
+=======
+	iounmap(hcd->regs);
+	release_mem_region(hcd->rsrc_start, hcd->rsrc_len);
+	usb_put_hcd(hcd);
+	au1xxx_stop_ehc();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	platform_set_drvdata(pdev, NULL);
 
 	return 0;
@@ -180,7 +273,11 @@ static int ehci_hcd_au1xxx_drv_suspend(struct device *dev)
 	// could save FLADJ in case of Vaux power loss
 	// ... we'd only use it to handle clock skew
 
+<<<<<<< HEAD
 	alchemy_usb_control(ALCHEMY_USB_EHCI0, 0);
+=======
+	au1xxx_stop_ehc();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return rc;
 }
@@ -190,7 +287,11 @@ static int ehci_hcd_au1xxx_drv_resume(struct device *dev)
 	struct usb_hcd *hcd = dev_get_drvdata(dev);
 	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
 
+<<<<<<< HEAD
 	alchemy_usb_control(ALCHEMY_USB_EHCI0, 1);
+=======
+	au1xxx_start_ehc();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	// maybe restore FLADJ
 
@@ -237,7 +338,11 @@ static int ehci_hcd_au1xxx_drv_resume(struct device *dev)
 	/* here we "know" root ports should always stay powered */
 	ehci_port_power(ehci, 1);
 
+<<<<<<< HEAD
 	ehci->rh_state = EHCI_RH_SUSPENDED;
+=======
+	hcd->state = HC_STATE_SUSPENDED;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }

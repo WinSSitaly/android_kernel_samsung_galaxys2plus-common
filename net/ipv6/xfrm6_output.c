@@ -28,6 +28,7 @@ int xfrm6_find_1stfragopt(struct xfrm_state *x, struct sk_buff *skb,
 
 EXPORT_SYMBOL(xfrm6_find_1stfragopt);
 
+<<<<<<< HEAD
 static int xfrm6_local_dontfrag(struct sk_buff *skb)
 {
 	int proto;
@@ -65,6 +66,8 @@ static void xfrm6_local_error(struct sk_buff *skb, u32 mtu)
 	ipv6_local_error(sk, EMSGSIZE, &fl6, mtu);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int xfrm6_tunnel_check_size(struct sk_buff *skb)
 {
 	int mtu, ret = 0;
@@ -76,6 +79,7 @@ static int xfrm6_tunnel_check_size(struct sk_buff *skb)
 
 	if (!skb->local_df && skb->len > mtu) {
 		skb->dev = dst->dev;
+<<<<<<< HEAD
 
 		if (xfrm6_local_dontfrag(skb))
 			xfrm6_local_rxpmtu(skb, mtu);
@@ -83,6 +87,9 @@ static int xfrm6_tunnel_check_size(struct sk_buff *skb)
 			xfrm6_local_error(skb, mtu);
 		else
 			icmpv6_send(skb, ICMPV6_PKT_TOOBIG, 0, mtu);
+=======
+		icmpv6_send(skb, ICMPV6_PKT_TOOBIG, 0, mtu);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		ret = -EMSGSIZE;
 	}
 
@@ -136,6 +143,7 @@ static int __xfrm6_output(struct sk_buff *skb)
 {
 	struct dst_entry *dst = skb_dst(skb);
 	struct xfrm_state *x = dst->xfrm;
+<<<<<<< HEAD
 	int mtu = ip6_skb_dst_mtu(skb);
 
 	if (skb->len > mtu && xfrm6_local_dontfrag(skb)) {
@@ -148,6 +156,11 @@ static int __xfrm6_output(struct sk_buff *skb)
 
 	if (x->props.mode == XFRM_MODE_TUNNEL &&
 	    ((skb->len > mtu && !skb_is_gso(skb)) ||
+=======
+
+	if ((x && x->props.mode == XFRM_MODE_TUNNEL) &&
+	    ((skb->len > ip6_skb_dst_mtu(skb) && !skb_is_gso(skb)) ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dst_allfrag(skb_dst(skb)))) {
 			return ip6_fragment(skb, x->outer_mode->afinfo->output_finish);
 	}

@@ -1,10 +1,14 @@
 #ifndef _PSERIES_PLPAR_WRAPPERS_H
 #define _PSERIES_PLPAR_WRAPPERS_H
 
+<<<<<<< HEAD
 #include <linux/string.h>
 
 #include <asm/hvcall.h>
 #include <asm/paca.h>
+=======
+#include <asm/hvcall.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/page.h>
 
 /* Get state of physical CPU from query_cpu_stopped */
@@ -56,9 +60,15 @@ static inline long vpa_call(unsigned long flags, unsigned long cpu,
 	return plpar_hcall_norets(H_REGISTER_VPA, flags, cpu, vpa);
 }
 
+<<<<<<< HEAD
 static inline long unregister_vpa(unsigned long cpu)
 {
 	return vpa_call(0x5, cpu, 0);
+=======
+static inline long unregister_vpa(unsigned long cpu, unsigned long vpa)
+{
+	return vpa_call(0x5, cpu, vpa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline long register_vpa(unsigned long cpu, unsigned long vpa)
@@ -66,9 +76,15 @@ static inline long register_vpa(unsigned long cpu, unsigned long vpa)
 	return vpa_call(0x1, cpu, vpa);
 }
 
+<<<<<<< HEAD
 static inline long unregister_slb_shadow(unsigned long cpu)
 {
 	return vpa_call(0x7, cpu, 0);
+=======
+static inline long unregister_slb_shadow(unsigned long cpu, unsigned long vpa)
+{
+	return vpa_call(0x7, cpu, vpa);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline long register_slb_shadow(unsigned long cpu, unsigned long vpa)

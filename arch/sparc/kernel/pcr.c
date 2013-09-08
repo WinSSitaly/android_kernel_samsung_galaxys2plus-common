@@ -3,7 +3,11 @@
  * Copyright (C) 2009 David S. Miller (davem@davemloft.net)
  */
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/init.h>
 #include <linux/irq.h>
 
@@ -13,8 +17,11 @@
 #include <asm/pil.h>
 #include <asm/pcr.h>
 #include <asm/nmi.h>
+<<<<<<< HEAD
 #include <asm/spitfire.h>
 #include <asm/perfctr.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* This code is shared between various users of the performance
  * counters.  Users will be oprofile, pseudo-NMI watchdog, and the

@@ -335,12 +335,20 @@ unsigned int aa_dfa_match_len(struct aa_dfa *dfa, unsigned int start,
 }
 
 /**
+<<<<<<< HEAD
  * aa_dfa_match - traverse @dfa to find state @str stops at
+=======
+ * aa_dfa_next_state - traverse @dfa to find state @str stops at
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @dfa: the dfa to match @str against  (NOT NULL)
  * @start: the state of the dfa to start matching in
  * @str: the null terminated string of bytes to match against the dfa (NOT NULL)
  *
+<<<<<<< HEAD
  * aa_dfa_match will match @str against the dfa and return the state it
+=======
+ * aa_dfa_next_state will match @str against the dfa and return the state it
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * finished matching in. The final state can be used to look up the accepting
  * label, or as the start state of a continuing match.
  *
@@ -349,6 +357,7 @@ unsigned int aa_dfa_match_len(struct aa_dfa *dfa, unsigned int start,
 unsigned int aa_dfa_match(struct aa_dfa *dfa, unsigned int start,
 			  const char *str)
 {
+<<<<<<< HEAD
 	u16 *def = DEFAULT_TABLE(dfa);
 	u32 *base = BASE_TABLE(dfa);
 	u16 *next = NEXT_TABLE(dfa);
@@ -424,4 +433,7 @@ unsigned int aa_dfa_next(struct aa_dfa *dfa, unsigned int state,
 	}
 
 	return state;
+=======
+	return aa_dfa_match_len(dfa, start, str, strlen(str));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

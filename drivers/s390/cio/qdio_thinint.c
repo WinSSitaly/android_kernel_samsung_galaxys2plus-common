@@ -9,7 +9,11 @@
 #include <linux/io.h>
 #include <linux/slab.h>
 #include <linux/kernel_stat.h>
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/debug.h>
 #include <asm/qdio.h>
 #include <asm/airq.h>
@@ -26,6 +30,7 @@
  */
 #define TIQDIO_NR_NONSHARED_IND		63
 #define TIQDIO_NR_INDICATORS		(TIQDIO_NR_NONSHARED_IND + 1)
+<<<<<<< HEAD
 #define TIQDIO_SHARED_IND		63
 
 /* device state change indicators */
@@ -37,13 +42,25 @@ struct indicator_t {
 /* list of thin interrupt input queues */
 static LIST_HEAD(tiq_list);
 static DEFINE_MUTEX(tiq_list_lock);
+=======
+
+/* list of thin interrupt input queues */
+static LIST_HEAD(tiq_list);
+DEFINE_MUTEX(tiq_list_lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* adapter local summary indicator */
 static u8 *tiqdio_alsi;
 
+<<<<<<< HEAD
 static struct indicator_t *q_indicators;
 
 u64 last_ai_time;
+=======
+struct indicator_t *q_indicators;
+
+static u64 last_ai_time;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* returns addr for the device state change indicator */
 static u32 *get_indicator(void)
@@ -74,9 +91,18 @@ static void put_indicator(u32 *addr)
 
 void tiqdio_add_input_queues(struct qdio_irq *irq_ptr)
 {
+<<<<<<< HEAD
 	mutex_lock(&tiq_list_lock);
 	BUG_ON(irq_ptr->nr_input_qs < 1);
 	list_add_rcu(&irq_ptr->input_qs[0]->entry, &tiq_list);
+=======
+	struct qdio_q *q;
+	int i;
+
+	mutex_lock(&tiq_list_lock);
+	for_each_input_queue(irq_ptr, q, i)
+		list_add_rcu(&q->entry, &tiq_list);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&tiq_list_lock);
 	xchg(irq_ptr->dsci, 1 << 7);
 }
@@ -84,6 +110,7 @@ void tiqdio_add_input_queues(struct qdio_irq *irq_ptr)
 void tiqdio_remove_input_queues(struct qdio_irq *irq_ptr)
 {
 	struct qdio_q *q;
+<<<<<<< HEAD
 
 	BUG_ON(irq_ptr->nr_input_qs < 1);
 	q = irq_ptr->input_qs[0];
@@ -132,6 +159,21 @@ int test_nonshared_ind(struct qdio_irq *irq_ptr)
 		return 1;
 	else
 		return 0;
+=======
+	int i;
+
+	for (i = 0; i < irq_ptr->nr_input_qs; i++) {
+		q = irq_ptr->input_qs[i];
+		/* if establish triggered an error */
+		if (!q || !q->entry.prev || !q->entry.next)
+			continue;
+
+		mutex_lock(&tiq_list_lock);
+		list_del_rcu(&q->entry);
+		mutex_unlock(&tiq_list_lock);
+		synchronize_rcu();
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static inline u32 clear_shared_ind(void)
@@ -141,6 +183,7 @@ static inline u32 clear_shared_ind(void)
 	return xchg(&q_indicators[TIQDIO_SHARED_IND].ind, 0);
 }
 
+<<<<<<< HEAD
 static inline void tiqdio_call_inq_handlers(struct qdio_irq *irq)
 {
 	struct qdio_q *q;
@@ -175,6 +218,8 @@ static inline void tiqdio_call_inq_handlers(struct qdio_irq *irq)
 	}
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /**
  * tiqdio_thinint_handler - thin interrupt handler for qdio
  * @alsi: pointer to adapter local summary indicator
@@ -193,6 +238,7 @@ static void tiqdio_thinint_handler(void *alsi, void *data)
 
 	/* check for work on all inbound thinint queues */
 	list_for_each_entry_rcu(q, &tiq_list, entry) {
+<<<<<<< HEAD
 		struct qdio_irq *irq;
 
 		/* only process queues from changed sets */
@@ -205,6 +251,37 @@ static void tiqdio_thinint_handler(void *alsi, void *data)
 
 		tiqdio_call_inq_handlers(irq);
 
+=======
+
+		/* only process queues from changed sets */
+		if (unlikely(shared_ind(q->irq_ptr->dsci))) {
+			if (!si_used)
+				continue;
+		} else if (!*q->irq_ptr->dsci)
+			continue;
+
+		if (q->u.in.queue_start_poll) {
+			/* skip if polling is enabled or already in work */
+			if (test_and_set_bit(QDIO_QUEUE_IRQS_DISABLED,
+					     &q->u.in.queue_irq_state)) {
+				qperf_inc(q, int_discarded);
+				continue;
+			}
+
+			/* avoid dsci clear here, done after processing */
+			q->u.in.queue_start_poll(q->irq_ptr->cdev, q->nr,
+						 q->irq_ptr->int_parm);
+		} else {
+			/* only clear it if the indicator is non-shared */
+			if (!shared_ind(q->irq_ptr->dsci))
+				xchg(q->irq_ptr->dsci, 0);
+			/*
+			 * Call inbound processing but not directly
+			 * since that could starve other thinint queues.
+			 */
+			tasklet_schedule(&q->tasklet);
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		qperf_inc(q, adapter_int);
 	}
 	rcu_read_unlock();

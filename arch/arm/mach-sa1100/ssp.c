@@ -19,8 +19,13 @@
 #include <linux/init.h>
 #include <linux/io.h>
 
+<<<<<<< HEAD
 #include <mach/hardware.h>
 #include <mach/irqs.h>
+=======
+#include <asm/irq.h>
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/hardware/ssp.h>
 
 #define TIMEOUT 100000

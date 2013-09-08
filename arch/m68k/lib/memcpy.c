@@ -22,6 +22,7 @@ void *memcpy(void *to, const void *from, size_t n)
 		from = cfrom;
 		n--;
 	}
+<<<<<<< HEAD
 #if defined(CONFIG_M68000)
 	if ((long)from & 1) {
 		char *cto = to;
@@ -31,6 +32,8 @@ void *memcpy(void *to, const void *from, size_t n)
 		return xto;
 	}
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (n > 2 && (long)to & 2) {
 		short *sto = to;
 		const short *sfrom = from;

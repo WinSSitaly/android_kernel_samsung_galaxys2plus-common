@@ -13,11 +13,19 @@
 #include <linux/serial_8250.h>
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
+<<<<<<< HEAD
+=======
+#include <linux/gpio.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/spi/spi.h>
 
 #include <asm/mach/map.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/dm355.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <mach/cputype.h>
 #include <mach/edma.h>
 #include <mach/psc.h>
@@ -28,9 +36,13 @@
 #include <mach/common.h>
 #include <mach/asp.h>
 #include <mach/spi.h>
+<<<<<<< HEAD
 #include <mach/gpio-davinci.h>
 
 #include "davinci.h"
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "clock.h"
 #include "mux.h"
 
@@ -591,7 +603,10 @@ static struct edma_soc_info edma_cc0_info = {
 	.n_cc			= 1,
 	.queue_tc_mapping	= queue_tc_mapping,
 	.queue_priority_mapping	= queue_priority_mapping,
+<<<<<<< HEAD
 	.default_queue		= EVENTQ_1,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct edma_soc_info *dm355_edma_info[EDMA_MAX_CC] = {
@@ -853,6 +868,10 @@ static struct davinci_soc_info davinci_soc_info_dm355 = {
 	.serial_dev		= &dm355_serial_device,
 	.sram_dma		= 0x00010000,
 	.sram_len		= SZ_32K,
+<<<<<<< HEAD
+=======
+	.reset_device		= &davinci_wdt_device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void __init dm355_init_asp1(u32 evt_enable, struct snd_platform_data *pdata)
@@ -871,7 +890,10 @@ void __init dm355_init_asp1(u32 evt_enable, struct snd_platform_data *pdata)
 void __init dm355_init(void)
 {
 	davinci_common_init(&davinci_soc_info_dm355);
+<<<<<<< HEAD
 	davinci_map_sysmod();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int __init dm355_init_devices(void)

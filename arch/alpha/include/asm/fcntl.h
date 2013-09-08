@@ -51,6 +51,11 @@
 #define F_EXLCK		16	/* or 3 */
 #define F_SHLCK		32	/* or 4 */
 
+<<<<<<< HEAD
+=======
+#define F_INPROGRESS	64
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm-generic/fcntl.h>
 
 #endif

@@ -1,7 +1,11 @@
 /*
  * linux/arch/arm/mach-at91/board-flexibity.c
  *
+<<<<<<< HEAD
  *  Copyright (C) 2010-2011 Flexibity
+=======
+ *  Copyright (C) 2010 Flexibity
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *  Copyright (C) 2005 SAN People
  *  Copyright (C) 2006 Atmel
  *
@@ -40,7 +44,11 @@
 static void __init flexibity_init_early(void)
 {
 	/* Initialize processor: 18.432 MHz crystal */
+<<<<<<< HEAD
 	at91_initialize(18432000);
+=======
+	at91sam9260_initialize(18432000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* DBGU on ttyS0. (Rx & Tx only) */
 	at91_register_uart(0, 0, 0);
@@ -49,16 +57,28 @@ static void __init flexibity_init_early(void)
 	at91_set_serial_console(0);
 }
 
+<<<<<<< HEAD
 /* USB Host port */
 static struct at91_usbh_data __initdata flexibity_usbh_data = {
 	.ports		= 2,
 	.vbus_pin	= {-EINVAL, -EINVAL},
 	.overcurrent_pin= {-EINVAL, -EINVAL},
+=======
+static void __init flexibity_init_irq(void)
+{
+	at91sam9260_init_interrupts(NULL);
+}
+
+/* USB Host port */
+static struct at91_usbh_data __initdata flexibity_usbh_data = {
+	.ports		= 2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* USB Device port */
 static struct at91_udc_data __initdata flexibity_udc_data = {
 	.vbus_pin	= AT91_PIN_PC5,
+<<<<<<< HEAD
 	.pullup_pin	= -EINVAL,		/* pull-up driven by UDC */
 };
 
@@ -67,6 +87,9 @@ static struct i2c_board_info __initdata flexibity_i2c_devices[] = {
 	{
 		I2C_BOARD_INFO("ds1307", 0x68),
 	},
+=======
+	.pullup_pin	= 0,		/* pull-up driven by UDC */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* SPI devices */
@@ -85,7 +108,10 @@ static struct at91_mmc_data __initdata flexibity_mmc_data = {
 	.wire4		= 1,
 	.det_pin	= AT91_PIN_PC9,
 	.wp_pin		= AT91_PIN_PC4,
+<<<<<<< HEAD
 	.vcc_pin	= -EINVAL,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /* LEDs */
@@ -148,9 +174,12 @@ static void __init flexibity_board_init(void)
 	at91_add_device_usbh(&flexibity_usbh_data);
 	/* USB Device */
 	at91_add_device_udc(&flexibity_udc_data);
+<<<<<<< HEAD
 	/* I2C */
 	at91_add_device_i2c(flexibity_i2c_devices,
 		ARRAY_SIZE(flexibity_i2c_devices));
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* SPI */
 	at91_add_device_spi(flexibity_spi_devices,
 		ARRAY_SIZE(flexibity_spi_devices));
@@ -163,8 +192,14 @@ static void __init flexibity_board_init(void)
 MACHINE_START(FLEXIBITY, "Flexibity Connect")
 	/* Maintainer: Maxim Osipov */
 	.timer		= &at91sam926x_timer,
+<<<<<<< HEAD
 	.map_io		= at91_map_io,
 	.init_early	= flexibity_init_early,
 	.init_irq	= at91_init_irq_default,
+=======
+	.map_io		= at91sam9260_map_io,
+	.init_early	= flexibity_init_early,
+	.init_irq	= flexibity_init_irq,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.init_machine	= flexibity_board_init,
 MACHINE_END

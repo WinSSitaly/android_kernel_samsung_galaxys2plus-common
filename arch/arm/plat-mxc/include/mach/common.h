@@ -13,7 +13,10 @@
 
 struct platform_device;
 struct clk;
+<<<<<<< HEAD
 enum mxc_cpu_pwr_mode;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern void mx1_map_io(void);
 extern void mx21_map_io(void);
@@ -44,6 +47,7 @@ extern void mx35_init_irq(void);
 extern void mx50_init_irq(void);
 extern void mx51_init_irq(void);
 extern void mx53_init_irq(void);
+<<<<<<< HEAD
 extern void imx1_soc_init(void);
 extern void imx21_soc_init(void);
 extern void imx25_soc_init(void);
@@ -53,6 +57,8 @@ extern void imx35_soc_init(void);
 extern void imx50_soc_init(void);
 extern void imx51_soc_init(void);
 extern void imx53_soc_init(void);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern void epit_timer_init(struct clk *timer_clk, void __iomem *base, int irq);
 extern void mxc_timer_init(struct clk *timer_clk, void __iomem *, int);
 extern int mx1_clocks_init(unsigned long fref);
@@ -65,6 +71,7 @@ extern int mx51_clocks_init(unsigned long ckil, unsigned long osc,
 			unsigned long ckih1, unsigned long ckih2);
 extern int mx53_clocks_init(unsigned long ckil, unsigned long osc,
 			unsigned long ckih1, unsigned long ckih2);
+<<<<<<< HEAD
 extern int mx27_clocks_init_dt(void);
 extern int mx51_clocks_init_dt(void);
 extern int mx53_clocks_init_dt(void);
@@ -149,4 +156,13 @@ extern void imx6q_pm_init(void);
 static inline void imx6q_pm_init(void) {}
 #endif
 
+=======
+extern int mxc_register_gpios(void);
+extern int mxc_register_device(struct platform_device *pdev, void *data);
+extern void mxc_set_cpu_type(unsigned int type);
+extern void mxc_arch_reset_init(void __iomem *);
+extern void mx51_efikamx_reset(void);
+extern int mx53_revision(void);
+extern int mx53_display_revision(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif

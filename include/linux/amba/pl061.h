@@ -7,7 +7,12 @@ struct pl061_platform_data {
 	unsigned	gpio_base;
 
 	/* number of the first IRQ.
+<<<<<<< HEAD
 	 * If the IRQ functionality in not desired this must be set to 0.
+=======
+	 * If the IRQ functionality in not desired this must be set to
+	 * (unsigned) -1.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	unsigned	irq_base;
 

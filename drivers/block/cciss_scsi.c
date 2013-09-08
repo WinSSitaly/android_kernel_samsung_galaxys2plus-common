@@ -33,7 +33,11 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
+=======
+#include <asm/atomic.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <scsi/scsi_cmnd.h>
 #include <scsi/scsi_device.h>
@@ -763,7 +767,20 @@ static void complete_scsi_command(CommandList_struct *c, int timeout,
 		{
 			case CMD_TARGET_STATUS:
 				/* Pass it up to the upper layers... */
+<<<<<<< HEAD
 				if (!ei->ScsiStatus) {
+=======
+				if( ei->ScsiStatus)
+                		{
+#if 0
+                    			printk(KERN_WARNING "cciss: cmd %p "
+						"has SCSI Status = %x\n",
+						c, ei->ScsiStatus);
+#endif
+					cmd->result |= (ei->ScsiStatus << 1);
+                		}
+				else {  /* scsi status is zero??? How??? */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					
 	/* Ordinarily, this case should never happen, but there is a bug
 	   in some released firmware revisions that allows it to happen
@@ -795,7 +812,10 @@ static void complete_scsi_command(CommandList_struct *c, int timeout,
 				}
 			break;
 			case CMD_PROTOCOL_ERR:
+<<<<<<< HEAD
 				cmd->result = DID_ERROR << 16;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				dev_warn(&h->pdev->dev,
 					"%p has protocol error\n", c);
                         break;
@@ -1713,6 +1733,9 @@ static int  cciss_eh_abort_handler(struct scsi_cmnd *scsicmd)
 /* If no tape support, then these become defined out of existence */
 
 #define cciss_scsi_setup(cntl_num)
+<<<<<<< HEAD
 #define cciss_engage_scsi(h)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* CONFIG_CISS_SCSI_TAPE */

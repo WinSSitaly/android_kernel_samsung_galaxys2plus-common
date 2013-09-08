@@ -15,7 +15,10 @@
 #include <linux/bug.h>
 #include <linux/err.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/regulator/driver.h>
 #include <linux/mfd/wm8400-private.h>
 
@@ -78,14 +81,22 @@ static int wm8400_ldo_set_voltage(struct regulator_dev *dev,
 
 	if (min_uV < 1700000) {
 		/* Steps of 50mV from 900mV;  */
+<<<<<<< HEAD
 		val = DIV_ROUND_UP(min_uV - 900000, 50000);
+=======
+		val = (min_uV - 850001) / 50000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if ((val * 50000) + 900000 > max_uV)
 			return -EINVAL;
 		BUG_ON((val * 50000) + 900000 < min_uV);
 	} else {
 		/* Steps of 100mV from 1700mV */
+<<<<<<< HEAD
 		val = DIV_ROUND_UP(min_uV - 1700000, 100000);
+=======
+		val = ((min_uV - 1600001) / 100000);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if ((val * 100000) + 1700000 > max_uV)
 			return -EINVAL;
@@ -168,7 +179,11 @@ static int wm8400_dcdc_set_voltage(struct regulator_dev *dev,
 	if (min_uV < 850000)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	val = DIV_ROUND_UP(min_uV - 850000, 25000);
+=======
+	val = (min_uV - 825001) / 25000;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (850000 + (25000 * val) > max_uV)
 		return -EINVAL;
@@ -326,7 +341,11 @@ static int __devinit wm8400_regulator_probe(struct platform_device *pdev)
 	struct regulator_dev *rdev;
 
 	rdev = regulator_register(&regulators[pdev->id], &pdev->dev,
+<<<<<<< HEAD
 				  pdev->dev.platform_data, wm8400, NULL);
+=======
+				  pdev->dev.platform_data, wm8400);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (IS_ERR(rdev))
 		return PTR_ERR(rdev);

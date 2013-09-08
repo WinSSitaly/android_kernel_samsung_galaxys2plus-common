@@ -16,12 +16,15 @@
 
 #include <asm/sizes.h>
 
+<<<<<<< HEAD
 /* DBGU base */
 /* rm9200, 9260/9g20, 9261/9g10, 9rl */
 #define AT91_BASE_DBGU0	0xfffff200
 /* 9263, 9g45 */
 #define AT91_BASE_DBGU1	0xffffee00
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #if defined(CONFIG_ARCH_AT91RM9200)
 #include <mach/at91rm9200.h>
 #elif defined(CONFIG_ARCH_AT91SAM9260) || defined(CONFIG_ARCH_AT91SAM9G20)
@@ -34,14 +37,20 @@
 #include <mach/at91sam9rl.h>
 #elif defined(CONFIG_ARCH_AT91SAM9G45)
 #include <mach/at91sam9g45.h>
+<<<<<<< HEAD
 #elif defined(CONFIG_ARCH_AT91SAM9X5)
 #include <mach/at91sam9x5.h>
+=======
+#elif defined(CONFIG_ARCH_AT91CAP9)
+#include <mach/at91cap9.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #elif defined(CONFIG_ARCH_AT91X40)
 #include <mach/at91x40.h>
 #else
 #error "Unsupported AT91 processor"
 #endif
 
+<<<<<<< HEAD
 #if !defined(CONFIG_ARCH_AT91X40)
 /*
  * On all at91 except rm9200 and x40 have the System Controller starts
@@ -63,6 +72,8 @@
  */
 #define AT91_AIC	0xfffff000
 #define AT91_PMC	0xfffffc00
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Peripheral identifiers/interrupts.

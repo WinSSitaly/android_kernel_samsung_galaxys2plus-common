@@ -114,14 +114,52 @@ static struct xen_blkif *xen_blkif_alloc(domid_t domid)
 	spin_lock_init(&blkif->blk_ring_lock);
 	atomic_set(&blkif->refcnt, 1);
 	init_waitqueue_head(&blkif->wq);
+<<<<<<< HEAD
 	init_completion(&blkif->drain_complete);
 	atomic_set(&blkif->drain, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	blkif->st_print = jiffies;
 	init_waitqueue_head(&blkif->waiting_to_free);
 
 	return blkif;
 }
 
+<<<<<<< HEAD
+=======
+static int map_frontend_page(struct xen_blkif *blkif, unsigned long shared_page)
+{
+	struct gnttab_map_grant_ref op;
+
+	gnttab_set_map_op(&op, (unsigned long)blkif->blk_ring_area->addr,
+			  GNTMAP_host_map, shared_page, blkif->domid);
+
+	if (HYPERVISOR_grant_table_op(GNTTABOP_map_grant_ref, &op, 1))
+		BUG();
+
+	if (op.status) {
+		DPRINTK("Grant table operation failure !\n");
+		return op.status;
+	}
+
+	blkif->shmem_ref = shared_page;
+	blkif->shmem_handle = op.handle;
+
+	return 0;
+}
+
+static void unmap_frontend_page(struct xen_blkif *blkif)
+{
+	struct gnttab_unmap_grant_ref op;
+
+	gnttab_set_unmap_op(&op, (unsigned long)blkif->blk_ring_area->addr,
+			    GNTMAP_host_map, blkif->shmem_handle);
+
+	if (HYPERVISOR_grant_table_op(GNTTABOP_unmap_grant_ref, &op, 1))
+		BUG();
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int xen_blkif_map(struct xen_blkif *blkif, unsigned long shared_page,
 			 unsigned int evtchn)
 {
@@ -131,29 +169,53 @@ static int xen_blkif_map(struct xen_blkif *blkif, unsigned long shared_page,
 	if (blkif->irq)
 		return 0;
 
+<<<<<<< HEAD
 	err = xenbus_map_ring_valloc(blkif->be->dev, shared_page, &blkif->blk_ring);
 	if (err < 0)
 		return err;
+=======
+	blkif->blk_ring_area = alloc_vm_area(PAGE_SIZE);
+	if (!blkif->blk_ring_area)
+		return -ENOMEM;
+
+	err = map_frontend_page(blkif, shared_page);
+	if (err) {
+		free_vm_area(blkif->blk_ring_area);
+		return err;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (blkif->blk_protocol) {
 	case BLKIF_PROTOCOL_NATIVE:
 	{
 		struct blkif_sring *sring;
+<<<<<<< HEAD
 		sring = (struct blkif_sring *)blkif->blk_ring;
+=======
+		sring = (struct blkif_sring *)blkif->blk_ring_area->addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BACK_RING_INIT(&blkif->blk_rings.native, sring, PAGE_SIZE);
 		break;
 	}
 	case BLKIF_PROTOCOL_X86_32:
 	{
 		struct blkif_x86_32_sring *sring_x86_32;
+<<<<<<< HEAD
 		sring_x86_32 = (struct blkif_x86_32_sring *)blkif->blk_ring;
+=======
+		sring_x86_32 = (struct blkif_x86_32_sring *)blkif->blk_ring_area->addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BACK_RING_INIT(&blkif->blk_rings.x86_32, sring_x86_32, PAGE_SIZE);
 		break;
 	}
 	case BLKIF_PROTOCOL_X86_64:
 	{
 		struct blkif_x86_64_sring *sring_x86_64;
+<<<<<<< HEAD
 		sring_x86_64 = (struct blkif_x86_64_sring *)blkif->blk_ring;
+=======
+		sring_x86_64 = (struct blkif_x86_64_sring *)blkif->blk_ring_area->addr;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		BACK_RING_INIT(&blkif->blk_rings.x86_64, sring_x86_64, PAGE_SIZE);
 		break;
 	}
@@ -165,7 +227,12 @@ static int xen_blkif_map(struct xen_blkif *blkif, unsigned long shared_page,
 						    xen_blkif_be_int, 0,
 						    "blkif-backend", blkif);
 	if (err < 0) {
+<<<<<<< HEAD
 		xenbus_unmap_ring_vfree(blkif->be->dev, blkif->blk_ring);
+=======
+		unmap_frontend_page(blkif);
+		free_vm_area(blkif->blk_ring_area);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		blkif->blk_rings.common.sring = NULL;
 		return err;
 	}
@@ -191,7 +258,12 @@ static void xen_blkif_disconnect(struct xen_blkif *blkif)
 	}
 
 	if (blkif->blk_rings.common.sring) {
+<<<<<<< HEAD
 		xenbus_unmap_ring_vfree(blkif->be->dev, blkif->blk_ring);
+=======
+		unmap_frontend_page(blkif);
+		free_vm_area(blkif->blk_ring_area);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		blkif->blk_rings.common.sring = NULL;
 	}
 }
@@ -234,7 +306,10 @@ VBD_SHOW(oo_req,  "%d\n", be->blkif->st_oo_req);
 VBD_SHOW(rd_req,  "%d\n", be->blkif->st_rd_req);
 VBD_SHOW(wr_req,  "%d\n", be->blkif->st_wr_req);
 VBD_SHOW(f_req,  "%d\n", be->blkif->st_f_req);
+<<<<<<< HEAD
 VBD_SHOW(ds_req,  "%d\n", be->blkif->st_ds_req);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 VBD_SHOW(rd_sect, "%d\n", be->blkif->st_rd_sect);
 VBD_SHOW(wr_sect, "%d\n", be->blkif->st_wr_sect);
 
@@ -243,7 +318,10 @@ static struct attribute *xen_vbdstat_attrs[] = {
 	&dev_attr_rd_req.attr,
 	&dev_attr_wr_req.attr,
 	&dev_attr_f_req.attr,
+<<<<<<< HEAD
 	&dev_attr_ds_req.attr,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	&dev_attr_rd_sect.attr,
 	&dev_attr_wr_sect.attr,
 	NULL
@@ -338,9 +416,12 @@ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
 	if (q && q->flush_flags)
 		vbd->flush_support = true;
 
+<<<<<<< HEAD
 	if (q && blk_queue_secdiscard(q))
 		vbd->discard_secure = true;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	DPRINTK("Successful creation of handle=%04x (dom=%u)\n",
 		handle, blkif->domid);
 	return 0;
@@ -367,7 +448,10 @@ static int xen_blkbk_remove(struct xenbus_device *dev)
 		be->blkif = NULL;
 	}
 
+<<<<<<< HEAD
 	kfree(be->mode);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(be);
 	dev_set_drvdata(&dev->dev, NULL);
 	return 0;
@@ -382,6 +466,7 @@ int xen_blkbk_flush_diskcache(struct xenbus_transaction xbt,
 	err = xenbus_printf(xbt, dev->nodename, "feature-flush-cache",
 			    "%d", state);
 	if (err)
+<<<<<<< HEAD
 		dev_warn(&dev->dev, "writing feature-flush-cache (%d)", err);
 
 	return err;
@@ -436,6 +521,9 @@ int xen_blkbk_barrier(struct xenbus_transaction xbt,
 			    "%d", state);
 	if (err)
 		dev_warn(&dev->dev, "writing feature-barrier (%d)", err);
+=======
+		xenbus_dev_fatal(dev, err, "writing feature-flush-cache");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return err;
 }
@@ -503,7 +591,10 @@ static void backend_changed(struct xenbus_watch *watch,
 		= container_of(watch, struct backend_info, backend_watch);
 	struct xenbus_device *dev = be->dev;
 	int cdrom = 0;
+<<<<<<< HEAD
 	unsigned long handle;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	char *device_type;
 
 	DPRINTK("");
@@ -523,10 +614,17 @@ static void backend_changed(struct xenbus_watch *watch,
 		return;
 	}
 
+<<<<<<< HEAD
 	if (be->major | be->minor) {
 		if (be->major != major || be->minor != minor)
 			pr_warn(DRV_PFX "changing physical device (from %x:%x to %x:%x) not supported.\n",
 				be->major, be->minor, major, minor);
+=======
+	if ((be->major || be->minor) &&
+	    ((be->major != major) || (be->minor != minor))) {
+		pr_warn(DRV_PFX "changing physical device (from %x:%x to %x:%x) not supported.\n",
+			be->major, be->minor, major, minor);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return;
 	}
 
@@ -544,6 +642,7 @@ static void backend_changed(struct xenbus_watch *watch,
 		kfree(device_type);
 	}
 
+<<<<<<< HEAD
 	/* Front end dir is a number, which is used as the handle. */
 	err = strict_strtoul(strrchr(dev->otherend, '/') + 1, 0, &handle);
 	if (err)
@@ -571,6 +670,38 @@ static void backend_changed(struct xenbus_watch *watch,
 		be->major = 0;
 		be->minor = 0;
 	} else {
+=======
+	if (be->major == 0 && be->minor == 0) {
+		/* Front end dir is a number, which is used as the handle. */
+
+		char *p = strrchr(dev->otherend, '/') + 1;
+		long handle;
+		err = strict_strtoul(p, 0, &handle);
+		if (err)
+			return;
+
+		be->major = major;
+		be->minor = minor;
+
+		err = xen_vbd_create(be->blkif, handle, major, minor,
+				 (NULL == strchr(be->mode, 'w')), cdrom);
+		if (err) {
+			be->major = 0;
+			be->minor = 0;
+			xenbus_dev_fatal(dev, err, "creating vbd structure");
+			return;
+		}
+
+		err = xenvbd_sysfs_addif(dev);
+		if (err) {
+			xen_vbd_free(&be->blkif->vbd);
+			be->major = 0;
+			be->minor = 0;
+			xenbus_dev_fatal(dev, err, "creating sysfs entries");
+			return;
+		}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* We're potentially connected now */
 		xen_update_blkif_status(be->blkif);
 	}
@@ -601,7 +732,11 @@ static void frontend_changed(struct xenbus_device *dev,
 	case XenbusStateConnected:
 		/*
 		 * Ensure we connect even when two watches fire in
+<<<<<<< HEAD
 		 * close succession and we miss the intermediate value
+=======
+		 * close successsion and we miss the intermediate value
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 * of frontend_state.
 		 */
 		if (dev->state == XenbusStateConnected)
@@ -609,7 +744,11 @@ static void frontend_changed(struct xenbus_device *dev,
 
 		/*
 		 * Enforce precondition before potential leak point.
+<<<<<<< HEAD
 		 * xen_blkif_disconnect() is idempotent.
+=======
+		 * blkif_disconnect() is idempotent.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 */
 		xen_blkif_disconnect(be->blkif);
 
@@ -620,17 +759,28 @@ static void frontend_changed(struct xenbus_device *dev,
 		break;
 
 	case XenbusStateClosing:
+<<<<<<< HEAD
+=======
+		xen_blkif_disconnect(be->blkif);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xenbus_switch_state(dev, XenbusStateClosing);
 		break;
 
 	case XenbusStateClosed:
+<<<<<<< HEAD
 		xen_blkif_disconnect(be->blkif);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		xenbus_switch_state(dev, XenbusStateClosed);
 		if (xenbus_dev_is_online(dev))
 			break;
 		/* fall through if not online */
 	case XenbusStateUnknown:
+<<<<<<< HEAD
 		/* implies xen_blkif_disconnect() via xen_blkbk_remove() */
+=======
+		/* implies blkif_disconnect() via blkback_remove() */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		device_unregister(&dev->dev);
 		break;
 
@@ -665,12 +815,18 @@ again:
 		return;
 	}
 
+<<<<<<< HEAD
 	/* If we can't advertise it is OK. */
 	xen_blkbk_flush_diskcache(xbt, be, be->blkif->vbd.flush_support);
 
 	xen_blkbk_discard(xbt, be);
 
 	xen_blkbk_barrier(xbt, be, be->blkif->vbd.flush_support);
+=======
+	err = xen_blkbk_flush_diskcache(xbt, be, be->blkif->vbd.flush_support);
+	if (err)
+		goto abort;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = xenbus_printf(xbt, dev->nodename, "sectors", "%llu",
 			    (unsigned long long)vbd_sz(&be->blkif->vbd));
@@ -706,7 +862,11 @@ again:
 
 	err = xenbus_switch_state(dev, XenbusStateConnected);
 	if (err)
+<<<<<<< HEAD
 		xenbus_dev_fatal(dev, err, "%s: switching to Connected state",
+=======
+		xenbus_dev_fatal(dev, err, "switching to Connected state",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 dev->nodename);
 
 	return;
@@ -773,14 +933,29 @@ static const struct xenbus_device_id xen_blkbk_ids[] = {
 };
 
 
+<<<<<<< HEAD
 static DEFINE_XENBUS_DRIVER(xen_blkbk, ,
 	.probe = xen_blkbk_probe,
 	.remove = xen_blkbk_remove,
 	.otherend_changed = frontend_changed
 );
+=======
+static struct xenbus_driver xen_blkbk = {
+	.name = "vbd",
+	.owner = THIS_MODULE,
+	.ids = xen_blkbk_ids,
+	.probe = xen_blkbk_probe,
+	.remove = xen_blkbk_remove,
+	.otherend_changed = frontend_changed
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 int xen_blkif_xenbus_init(void)
 {
+<<<<<<< HEAD
 	return xenbus_register_backend(&xen_blkbk_driver);
+=======
+	return xenbus_register_backend(&xen_blkbk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

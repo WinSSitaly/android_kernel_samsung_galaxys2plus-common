@@ -29,7 +29,10 @@
 #include <linux/rfkill.h>
 #include <linux/sched.h>
 #include <linux/spinlock.h>
+<<<<<<< HEAD
 #include <linux/device.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/miscdevice.h>
 #include <linux/wait.h>
 #include <linux/poll.h>
@@ -236,7 +239,11 @@ static bool __rfkill_set_hw_state(struct rfkill *rfkill,
 	else
 		rfkill->state &= ~RFKILL_BLOCK_HW;
 	*change = prev != blocked;
+<<<<<<< HEAD
 	any = !!(rfkill->state & RFKILL_BLOCK_ANY);
+=======
+	any = rfkill->state & RFKILL_BLOCK_ANY;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&rfkill->lock, flags);
 
 	rfkill_led_trigger_event(rfkill);
@@ -645,7 +652,11 @@ static ssize_t rfkill_soft_store(struct device *dev,
 	if (!capable(CAP_NET_ADMIN))
 		return -EPERM;
 
+<<<<<<< HEAD
 	err = kstrtoul(buf, 0, &state);
+=======
+	err = strict_strtoul(buf, 0, &state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		return err;
 
@@ -689,7 +700,11 @@ static ssize_t rfkill_state_store(struct device *dev,
 	if (!capable(CAP_NET_ADMIN))
 		return -EPERM;
 
+<<<<<<< HEAD
 	err = kstrtoul(buf, 0, &state);
+=======
+	err = strict_strtoul(buf, 0, &state);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (err)
 		return err;
 
@@ -770,6 +785,10 @@ void rfkill_pause_polling(struct rfkill *rfkill)
 }
 EXPORT_SYMBOL(rfkill_pause_polling);
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_RFKILL_PM
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void rfkill_resume_polling(struct rfkill *rfkill)
 {
 	BUG_ON(!rfkill);
@@ -804,14 +823,25 @@ static int rfkill_resume(struct device *dev)
 
 	return 0;
 }
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static struct class rfkill_class = {
 	.name		= "rfkill",
 	.dev_release	= rfkill_release,
 	.dev_attrs	= rfkill_dev_attrs,
 	.dev_uevent	= rfkill_dev_uevent,
+<<<<<<< HEAD
 	.suspend	= rfkill_suspend,
 	.resume		= rfkill_resume,
+=======
+#ifdef CONFIG_RFKILL_PM
+	.suspend	= rfkill_suspend,
+	.resume		= rfkill_resume,
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 bool rfkill_blocked(struct rfkill *rfkill)

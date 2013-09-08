@@ -52,7 +52,10 @@ SECTIONS
 
 	EXCEPTION_TABLE(4)
 
+<<<<<<< HEAD
 	_sdata = .;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	RODATA
 
 	. = ALIGN (4);

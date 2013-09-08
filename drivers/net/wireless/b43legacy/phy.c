@@ -4,7 +4,11 @@
 
   Copyright (c) 2005 Martin Langer <martin-langer@gmx.de>,
 		     Stefano Brivio <stefano.brivio@polimi.it>
+<<<<<<< HEAD
 		     Michael Buesch <m@bues.ch>
+=======
+		     Michael Buesch <mbuesch@freenet.de>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		     Danny van Dyk <kugelfang@gentoo.org>
      Andreas Jaggi <andreas.jaggi@waterwave.ch>
   Copyright (c) 2007 Larry Finger <Larry.Finger@lwfinger.net>
@@ -1860,7 +1864,11 @@ void b43legacy_phy_xmitpower(struct b43legacy_wldev *dev)
 	 * which accounts for the factor of 4 */
 #define REG_MAX_PWR 20
 	max_pwr = min(REG_MAX_PWR * 4
+<<<<<<< HEAD
 		      - dev->dev->bus->sprom.antenna_gain.a0
+=======
+		      - dev->dev->bus->sprom.antenna_gain.ghz24.a0
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      - 0x6, max_pwr);
 
 	/* find the desired power in Q5.2 - power_level is in dBm

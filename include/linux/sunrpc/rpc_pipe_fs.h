@@ -21,17 +21,29 @@ struct rpc_pipe_ops {
 	void (*destroy_msg)(struct rpc_pipe_msg *);
 };
 
+<<<<<<< HEAD
 struct rpc_pipe {
+=======
+struct rpc_inode {
+	struct inode vfs_inode;
+	void *private;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct list_head pipe;
 	struct list_head in_upcall;
 	struct list_head in_downcall;
 	int pipelen;
 	int nreaders;
 	int nwriters;
+<<<<<<< HEAD
+=======
+	int nkern_readwriters;
+	wait_queue_head_t waitq;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define RPC_PIPE_WAIT_FOR_OPEN	1
 	int flags;
 	struct delayed_work queue_timeout;
 	const struct rpc_pipe_ops *ops;
+<<<<<<< HEAD
 	spinlock_t lock;
 	struct dentry *dentry;
 };
@@ -41,6 +53,8 @@ struct rpc_inode {
 	void *private;
 	struct rpc_pipe *pipe;
 	wait_queue_head_t waitq;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static inline struct rpc_inode *
@@ -49,6 +63,7 @@ RPC_I(struct inode *inode)
 	return container_of(inode, struct rpc_inode, vfs_inode);
 }
 
+<<<<<<< HEAD
 enum {
 	SUNRPC_PIPEFS_NFS_PRIO,
 	SUNRPC_PIPEFS_RPC_PRIO,
@@ -71,6 +86,9 @@ extern void rpc_put_sb_net(const struct net *net);
 extern ssize_t rpc_pipe_generic_upcall(struct file *, struct rpc_pipe_msg *,
 				       char __user *, size_t);
 extern int rpc_queue_upcall(struct rpc_pipe *, struct rpc_pipe_msg *);
+=======
+extern int rpc_queue_upcall(struct inode *, struct rpc_pipe_msg *);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 struct rpc_clnt;
 extern struct dentry *rpc_create_client_dir(struct dentry *, struct qstr *, struct rpc_clnt *);
@@ -79,6 +97,7 @@ extern int rpc_remove_client_dir(struct dentry *);
 struct cache_detail;
 extern struct dentry *rpc_create_cache_dir(struct dentry *,
 					   struct qstr *,
+<<<<<<< HEAD
 					   umode_t umode,
 					   struct cache_detail *);
 extern void rpc_remove_cache_dir(struct dentry *);
@@ -90,6 +109,17 @@ void rpc_destroy_pipe_data(struct rpc_pipe *pipe);
 extern struct dentry *rpc_mkpipe_dentry(struct dentry *, const char *, void *,
 					struct rpc_pipe *);
 extern int rpc_unlink(struct dentry *);
+=======
+					   mode_t umode,
+					   struct cache_detail *);
+extern void rpc_remove_cache_dir(struct dentry *);
+
+extern struct dentry *rpc_mkpipe(struct dentry *, const char *, void *,
+				 const struct rpc_pipe_ops *, int flags);
+extern int rpc_unlink(struct dentry *);
+extern struct vfsmount *rpc_get_mount(void);
+extern void rpc_put_mount(void);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 extern int register_rpc_pipefs(void);
 extern void unregister_rpc_pipefs(void);
 

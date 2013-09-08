@@ -32,7 +32,10 @@
 #include <linux/slab.h>
 #include <linux/delay.h>
 #include <linux/videodev2.h>
+<<<<<<< HEAD
 #include <linux/module.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <media/v4l2-device.h>
 #include <media/v4l2-common.h>
@@ -52,7 +55,11 @@
 #define LOCK_RETRY_DELAY                (200)
 
 /* Debug functions */
+<<<<<<< HEAD
 static bool debug;
+=======
+static int debug;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 module_param(debug, bool, 0644);
 MODULE_PARM_DESC(debug, "Debug level (0-1)");
 
@@ -1163,4 +1170,19 @@ static struct i2c_driver tvp514x_driver = {
 	.id_table = tvp514x_id,
 };
 
+<<<<<<< HEAD
 module_i2c_driver(tvp514x_driver);
+=======
+static int __init tvp514x_init(void)
+{
+	return i2c_add_driver(&tvp514x_driver);
+}
+
+static void __exit tvp514x_exit(void)
+{
+	i2c_del_driver(&tvp514x_driver);
+}
+
+module_init(tvp514x_init);
+module_exit(tvp514x_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

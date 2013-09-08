@@ -2,7 +2,11 @@
  * Interface between ext3 and JBD
  */
 
+<<<<<<< HEAD
 #include "ext3.h"
+=======
+#include <linux/ext3_jbd.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 int __ext3_journal_get_undo_access(const char *where, handle_t *handle,
 				struct buffer_head *bh)

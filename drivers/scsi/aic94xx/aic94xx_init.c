@@ -68,6 +68,10 @@ static struct scsi_host_template aic94xx_sht = {
 	.queuecommand		= sas_queuecommand,
 	.target_alloc		= sas_target_alloc,
 	.slave_configure	= sas_slave_configure,
+<<<<<<< HEAD
+=======
+	.slave_destroy		= sas_slave_destroy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.scan_finished		= asd_scan_finished,
 	.scan_start		= asd_scan_start,
 	.change_queue_depth	= sas_change_queue_depth,
@@ -81,6 +85,10 @@ static struct scsi_host_template aic94xx_sht = {
 	.use_clustering		= ENABLE_CLUSTERING,
 	.eh_device_reset_handler	= sas_eh_device_reset_handler,
 	.eh_bus_reset_handler	= sas_eh_bus_reset_handler,
+<<<<<<< HEAD
+=======
+	.slave_alloc		= sas_slave_alloc,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.target_destroy		= sas_target_destroy,
 	.ioctl			= sas_ioctl,
 };
@@ -970,7 +978,11 @@ static int asd_scan_finished(struct Scsi_Host *shost, unsigned long time)
 	if (time < HZ)
 		return 0;
 	/* Wait for discovery to finish */
+<<<<<<< HEAD
 	sas_drain_work(SHOST_TO_SAS_HA(shost));
+=======
+	scsi_flush_work(shost);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 1;
 }
 
@@ -1008,8 +1020,11 @@ static struct sas_domain_function_template aic94xx_transport_functions = {
 	.lldd_clear_nexus_ha	= asd_clear_nexus_ha,
 
 	.lldd_control_phy	= asd_control_phy,
+<<<<<<< HEAD
 
 	.lldd_ata_set_dmamode	= asd_set_dmamode,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct pci_device_id aic94xx_pci_table[] __devinitdata = {

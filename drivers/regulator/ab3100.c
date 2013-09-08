@@ -634,7 +634,11 @@ static int __devinit ab3100_regulators_probe(struct platform_device *pdev)
 		rdev = regulator_register(&ab3100_regulator_desc[i],
 					  &pdev->dev,
 					  &plfdata->reg_constraints[i],
+<<<<<<< HEAD
 					  reg, NULL);
+=======
+					  reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (IS_ERR(rdev)) {
 			err = PTR_ERR(rdev);

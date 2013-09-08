@@ -32,10 +32,27 @@ static struct resource s5p_uart0_resource[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= IRQ_UART0,
 		.end	= IRQ_UART0,
 		.flags	= IORESOURCE_IRQ,
 	},
+=======
+		.start	= IRQ_S5P_UART_RX0,
+		.end	= IRQ_S5P_UART_RX0,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[2] = {
+		.start	= IRQ_S5P_UART_TX0,
+		.end	= IRQ_S5P_UART_TX0,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[3] = {
+		.start	= IRQ_S5P_UART_ERR0,
+		.end	= IRQ_S5P_UART_ERR0,
+		.flags	= IORESOURCE_IRQ,
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static struct resource s5p_uart1_resource[] = {
@@ -45,8 +62,23 @@ static struct resource s5p_uart1_resource[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= IRQ_UART1,
 		.end	= IRQ_UART1,
+=======
+		.start	= IRQ_S5P_UART_RX1,
+		.end	= IRQ_S5P_UART_RX1,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[2] = {
+		.start	= IRQ_S5P_UART_TX1,
+		.end	= IRQ_S5P_UART_TX1,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[3] = {
+		.start	= IRQ_S5P_UART_ERR1,
+		.end	= IRQ_S5P_UART_ERR1,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ,
 	},
 };
@@ -58,8 +90,23 @@ static struct resource s5p_uart2_resource[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= IRQ_UART2,
 		.end	= IRQ_UART2,
+=======
+		.start	= IRQ_S5P_UART_RX2,
+		.end	= IRQ_S5P_UART_RX2,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[2] = {
+		.start	= IRQ_S5P_UART_TX2,
+		.end	= IRQ_S5P_UART_TX2,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[3] = {
+		.start	= IRQ_S5P_UART_ERR2,
+		.end	= IRQ_S5P_UART_ERR2,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ,
 	},
 };
@@ -72,8 +119,23 @@ static struct resource s5p_uart3_resource[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= IRQ_UART3,
 		.end	= IRQ_UART3,
+=======
+		.start	= IRQ_S5P_UART_RX3,
+		.end	= IRQ_S5P_UART_RX3,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[2] = {
+		.start	= IRQ_S5P_UART_TX3,
+		.end	= IRQ_S5P_UART_TX3,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[3] = {
+		.start	= IRQ_S5P_UART_ERR3,
+		.end	= IRQ_S5P_UART_ERR3,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ,
 	},
 #endif
@@ -87,8 +149,23 @@ static struct resource s5p_uart4_resource[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= IRQ_UART4,
 		.end	= IRQ_UART4,
+=======
+		.start	= IRQ_S5P_UART_RX4,
+		.end	= IRQ_S5P_UART_RX4,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[2] = {
+		.start	= IRQ_S5P_UART_TX4,
+		.end	= IRQ_S5P_UART_TX4,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[3] = {
+		.start	= IRQ_S5P_UART_ERR4,
+		.end	= IRQ_S5P_UART_ERR4,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ,
 	},
 #endif
@@ -102,8 +179,23 @@ static struct resource s5p_uart5_resource[] = {
 		.flags	= IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start	= IRQ_UART5,
 		.end	= IRQ_UART5,
+=======
+		.start	= IRQ_S5P_UART_RX5,
+		.end	= IRQ_S5P_UART_RX5,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[2] = {
+		.start	= IRQ_S5P_UART_TX5,
+		.end	= IRQ_S5P_UART_TX5,
+		.flags	= IORESOURCE_IRQ,
+	},
+	[3] = {
+		.start	= IRQ_S5P_UART_ERR5,
+		.end	= IRQ_S5P_UART_ERR5,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags	= IORESOURCE_IRQ,
 	},
 #endif

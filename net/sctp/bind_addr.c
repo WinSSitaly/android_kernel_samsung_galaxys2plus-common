@@ -430,7 +430,11 @@ union sctp_addr *sctp_find_unmatch_addr(struct sctp_bind_addr	*bp,
 	list_for_each_entry(laddr, &bp->address_list, list) {
 		addr_buf = (union sctp_addr *)addrs;
 		for (i = 0; i < addrcnt; i++) {
+<<<<<<< HEAD
 			addr = addr_buf;
+=======
+			addr = (union sctp_addr *)addr_buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			af = sctp_get_af_specific(addr->v4.sin_family);
 			if (!af)
 				break;
@@ -534,6 +538,7 @@ int sctp_in_scope(const union sctp_addr *addr, sctp_scope_t scope)
 	return 0;
 }
 
+<<<<<<< HEAD
 int sctp_is_ep_boundall(struct sock *sk)
 {
 	struct sctp_bind_addr *bp;
@@ -549,6 +554,8 @@ int sctp_is_ep_boundall(struct sock *sk)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /********************************************************************
  * 3rd Level Abstractions
  ********************************************************************/

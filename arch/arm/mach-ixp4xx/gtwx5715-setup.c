@@ -165,6 +165,7 @@ static void __init gtwx5715_init(void)
 MACHINE_START(GTWX5715, "Gemtek GTWX5715 (Linksys WRV54G)")
 	/* Maintainer: George Joseph */
 	.map_io		= ixp4xx_map_io,
+<<<<<<< HEAD
 	.init_early	= ixp4xx_init_early,
 	.init_irq	= ixp4xx_init_irq,
 	.timer		= &ixp4xx_timer,
@@ -174,6 +175,12 @@ MACHINE_START(GTWX5715, "Gemtek GTWX5715 (Linksys WRV54G)")
 	.dma_zone_size	= SZ_64M,
 #endif
 	.restart	= ixp4xx_restart,
+=======
+	.init_irq	= ixp4xx_init_irq,
+	.timer		= &ixp4xx_timer,
+	.boot_params	= 0x0100,
+	.init_machine	= gtwx5715_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
 
 

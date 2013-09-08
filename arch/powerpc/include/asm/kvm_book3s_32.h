@@ -20,15 +20,22 @@
 #ifndef __ASM_KVM_BOOK3S_32_H__
 #define __ASM_KVM_BOOK3S_32_H__
 
+<<<<<<< HEAD
 static inline struct kvmppc_book3s_shadow_vcpu *svcpu_get(struct kvm_vcpu *vcpu)
+=======
+static inline struct kvmppc_book3s_shadow_vcpu *to_svcpu(struct kvm_vcpu *vcpu)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	return to_book3s(vcpu)->shadow_vcpu;
 }
 
+<<<<<<< HEAD
 static inline void svcpu_put(struct kvmppc_book3s_shadow_vcpu *svcpu)
 {
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define PTE_SIZE	12
 #define VSID_ALL	0
 #define SR_INVALID	0x00000001	/* VSID 1 should always be unused */

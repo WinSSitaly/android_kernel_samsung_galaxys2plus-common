@@ -12,7 +12,11 @@ Drivers can register a regulator by calling :-
 
 struct regulator_dev *regulator_register(struct regulator_desc *regulator_desc,
 	struct device *dev, struct regulator_init_data *init_data,
+<<<<<<< HEAD
 	void *driver_data, struct device_node *of_node);
+=======
+	void *driver_data);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 This will register the regulators capabilities and operations to the regulator
 core.

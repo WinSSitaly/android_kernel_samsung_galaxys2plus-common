@@ -19,14 +19,21 @@
 #include "include/capability.h"
 #include "include/context.h"
 #include "include/policy.h"
+<<<<<<< HEAD
 #include "include/ipc.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* call back to audit ptrace fields */
 static void audit_cb(struct audit_buffer *ab, void *va)
 {
 	struct common_audit_data *sa = va;
 	audit_log_format(ab, " target=");
+<<<<<<< HEAD
 	audit_log_untrustedstring(ab, sa->aad->target);
+=======
+	audit_log_untrustedstring(ab, sa->aad.target);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -41,12 +48,19 @@ static int aa_audit_ptrace(struct aa_profile *profile,
 			   struct aa_profile *target, int error)
 {
 	struct common_audit_data sa;
+<<<<<<< HEAD
 	struct apparmor_audit_data aad = {0,};
 	COMMON_AUDIT_DATA_INIT(&sa, NONE);
 	sa.aad = &aad;
 	aad.op = OP_PTRACE;
 	aad.target = target;
 	aad.error = error;
+=======
+	COMMON_AUDIT_DATA_INIT(&sa, NONE);
+	sa.aad.op = OP_PTRACE;
+	sa.aad.target = target;
+	sa.aad.error = error;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return aa_audit(AUDIT_APPARMOR_AUTO, profile, GFP_ATOMIC, &sa,
 			audit_cb);

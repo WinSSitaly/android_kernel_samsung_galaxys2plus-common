@@ -237,7 +237,11 @@ struct spufs_inode_info {
 struct spufs_tree_descr {
 	const char *name;
 	const struct file_operations *ops;
+<<<<<<< HEAD
 	umode_t mode;
+=======
+	int mode;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	size_t size;
 };
 
@@ -248,8 +252,13 @@ extern const struct spufs_tree_descr spufs_dir_debug_contents[];
 /* system call implementation */
 extern struct spufs_calls spufs_calls;
 long spufs_run_spu(struct spu_context *ctx, u32 *npc, u32 *status);
+<<<<<<< HEAD
 long spufs_create(struct path *nd, struct dentry *dentry, unsigned int flags,
 			umode_t mode, struct file *filp);
+=======
+long spufs_create(struct nameidata *nd, unsigned int flags,
+			mode_t mode, struct file *filp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* ELF coredump callbacks for writing SPU ELF notes */
 extern int spufs_coredump_extra_notes_size(void);
 extern int spufs_coredump_extra_notes_write(struct file *file, loff_t *foffset);

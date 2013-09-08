@@ -11,6 +11,11 @@
 #ifndef __ASM_ARCH_DOVE_H
 #define __ASM_ARCH_DOVE_H
 
+<<<<<<< HEAD
+=======
+#include <mach/vmalloc.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Marvell Dove address maps.
  *
@@ -78,7 +83,10 @@
 
 /* North-South Bridge */
 #define BRIDGE_VIRT_BASE	(DOVE_SB_REGS_VIRT_BASE | 0x20000)
+<<<<<<< HEAD
 #define BRIDGE_PHYS_BASE	(DOVE_SB_REGS_PHYS_BASE | 0x20000)
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /* Cryptographic Engine */
 #define DOVE_CRYPT_PHYS_BASE	(DOVE_SB_REGS_PHYS_BASE | 0x30000)

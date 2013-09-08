@@ -22,10 +22,18 @@
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/partitions.h>
 
+<<<<<<< HEAD
+=======
+#include <mach/hardware.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/mach-types.h>
 #include <asm/setup.h>
 #include <asm/page.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
+=======
+#include <asm/irq.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/arch.h>
 #include <asm/mach/flash.h>
@@ -33,9 +41,12 @@
 #include <asm/mach/irq.h>
 #include <asm/mach/serial_sa1100.h>
 
+<<<<<<< HEAD
 #include <mach/hardware.h>
 #include <mach/irqs.h>
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "generic.h"
 
 /**********************************************************************
@@ -180,8 +191,16 @@ static struct flash_platform_data hackkit_flash_data = {
 	.nr_parts	= ARRAY_SIZE(hackkit_partitions),
 };
 
+<<<<<<< HEAD
 static struct resource hackkit_flash_resource =
 	DEFINE_RES_MEM(SA1100_CS0_PHYS, SZ_32M);
+=======
+static struct resource hackkit_flash_resource = {
+	.start		= SA1100_CS0_PHYS,
+	.end		= SA1100_CS0_PHYS + SZ_32M,
+	.flags		= IORESOURCE_MEM,
+};
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static void __init hackkit_init(void)
 {
@@ -193,6 +212,7 @@ static void __init hackkit_init(void)
  */
 
 MACHINE_START(HACKKIT, "HackKit Cpu Board")
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= hackkit_map_io,
 	.nr_irqs	= SA1100_NR_IRQS,
@@ -200,4 +220,11 @@ MACHINE_START(HACKKIT, "HackKit Cpu Board")
 	.timer		= &sa1100_timer,
 	.init_machine	= hackkit_init,
 	.restart	= sa11x0_restart,
+=======
+	.boot_params	= 0xc0000100,
+	.map_io		= hackkit_map_io,
+	.init_irq	= sa1100_init_irq,
+	.timer		= &sa1100_timer,
+	.init_machine	= hackkit_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END

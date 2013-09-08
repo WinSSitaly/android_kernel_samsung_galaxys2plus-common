@@ -31,8 +31,11 @@ extern const struct seq_operations cpuinfo_op;
 /* Do necessary setup to start up a newly executed thread. */
 void start_thread(struct pt_regs *regs, unsigned long pc, unsigned long usp);
 
+<<<<<<< HEAD
 extern void ret_from_fork(void);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 # endif /* __ASSEMBLY__ */
 
 # ifndef CONFIG_MMU
@@ -127,6 +130,13 @@ struct thread_struct {
 	.pgdir = swapper_pg_dir, \
 }
 
+<<<<<<< HEAD
+=======
+/* Do necessary setup to start up a newly executed thread.  */
+void start_thread(struct pt_regs *regs,
+		unsigned long pc, unsigned long usp);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Free all resources held by a thread. */
 extern inline void release_thread(struct task_struct *dead_task)
 {
@@ -167,6 +177,7 @@ unsigned long get_wchan(struct task_struct *p);
 #  define STACK_TOP	TASK_SIZE
 #  define STACK_TOP_MAX	STACK_TOP
 
+<<<<<<< HEAD
 void disable_hlt(void);
 void enable_hlt(void);
 void default_idle(void);
@@ -175,6 +186,8 @@ void default_idle(void);
 extern struct dentry *of_debugfs_root;
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #  endif /* __ASSEMBLY__ */
 # endif /* CONFIG_MMU */
 #endif /* _ASM_MICROBLAZE_PROCESSOR_H */

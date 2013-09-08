@@ -24,7 +24,10 @@
 #include <linux/err.h>
 #include <linux/clk.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <mach/hardware.h>
 #include <mach/cpufreq.h>
@@ -95,7 +98,11 @@ static int davinci_target(struct cpufreq_policy *policy,
 	if (freqs.old == freqs.new)
 		return ret;
 
+<<<<<<< HEAD
 	dev_dbg(cpufreq.dev, "transition: %u --> %u\n", freqs.old, freqs.new);
+=======
+	dev_dbg(&cpufreq.dev, "transition: %u --> %u\n", freqs.old, freqs.new);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = cpufreq_frequency_table_target(policy, pdata->freq_table,
 						freqs.new, relation, &idx);

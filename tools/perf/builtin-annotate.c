@@ -27,6 +27,7 @@
 #include "util/sort.h"
 #include "util/hist.h"
 #include "util/session.h"
+<<<<<<< HEAD
 #include "util/tool.h"
 
 #include <linux/bitmap.h>
@@ -46,13 +47,35 @@ static int perf_evsel__add_sample(struct perf_evsel *evsel,
 				  struct perf_sample *sample,
 				  struct addr_location *al,
 				  struct perf_annotate *ann)
+=======
+
+static char		const *input_name = "perf.data";
+
+static bool		force, use_tui, use_stdio;
+
+static bool		full_paths;
+
+static bool		print_line;
+
+static const char *sym_hist_filter;
+
+static int perf_evlist__add_sample(struct perf_evlist *evlist,
+				   struct perf_sample *sample,
+				   struct perf_evsel *evsel,
+				   struct addr_location *al)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct hist_entry *he;
 	int ret;
 
+<<<<<<< HEAD
 	if (ann->sym_hist_filter != NULL &&
 	    (al->sym == NULL ||
 	     strcmp(ann->sym_hist_filter, al->sym->name) != 0)) {
+=======
+	if (sym_hist_filter != NULL &&
+	    (al->sym == NULL || strcmp(sym_hist_filter, al->sym->name) != 0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* We're only interested in a symbol named sym_hist_filter */
 		if (al->sym != NULL) {
 			rb_erase(&al->sym->rb_node,
@@ -69,7 +92,12 @@ static int perf_evsel__add_sample(struct perf_evsel *evsel,
 	ret = 0;
 	if (he->ms.sym != NULL) {
 		struct annotation *notes = symbol__annotation(he->ms.sym);
+<<<<<<< HEAD
 		if (notes->src == NULL && symbol__alloc_hist(he->ms.sym) < 0)
+=======
+		if (notes->src == NULL &&
+		    symbol__alloc_hist(he->ms.sym, evlist->nr_entries) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return -ENOMEM;
 
 		ret = hist_entry__inc_addr_samples(he, evsel->idx, al->addr);
@@ -80,6 +108,7 @@ static int perf_evsel__add_sample(struct perf_evsel *evsel,
 	return ret;
 }
 
+<<<<<<< HEAD
 static int process_sample_event(struct perf_tool *tool,
 				union perf_event *event,
 				struct perf_sample *sample,
@@ -90,16 +119,31 @@ static int process_sample_event(struct perf_tool *tool,
 	struct addr_location al;
 
 	if (perf_event__preprocess_sample(event, machine, &al, sample,
+=======
+static int process_sample_event(union perf_event *event,
+				struct perf_sample *sample,
+				struct perf_evsel *evsel,
+				struct perf_session *session)
+{
+	struct addr_location al;
+
+	if (perf_event__preprocess_sample(event, session, &al, sample,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					  symbol__annotate_init) < 0) {
 		pr_warning("problem processing %d event, skipping it.\n",
 			   event->header.type);
 		return -1;
 	}
 
+<<<<<<< HEAD
 	if (ann->cpu_list && !test_bit(sample->cpu, ann->cpu_bitmap))
 		return 0;
 
 	if (!al.filtered && perf_evsel__add_sample(evsel, sample, &al, ann)) {
+=======
+	if (!al.filtered &&
+	    perf_evlist__add_sample(session->evlist, sample, evsel, &al)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		pr_warning("problem incrementing symbol count, "
 			   "skipping event\n");
 		return -1;
@@ -108,6 +152,7 @@ static int process_sample_event(struct perf_tool *tool,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int hist_entry__tty_annotate(struct hist_entry *he, int evidx,
 				    struct perf_annotate *ann)
 {
@@ -120,6 +165,18 @@ static void hists__find_annotations(struct hists *self, int evidx,
 {
 	struct rb_node *nd = rb_first(&self->entries), *next;
 	int key = K_RIGHT;
+=======
+static int hist_entry__tty_annotate(struct hist_entry *he, int evidx)
+{
+	return symbol__tty_annotate(he->ms.sym, he->ms.map, evidx,
+				    print_line, full_paths, 0, 0);
+}
+
+static void hists__find_annotations(struct hists *self, int evidx)
+{
+	struct rb_node *nd = rb_first(&self->entries), *next;
+	int key = KEY_RIGHT;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	while (nd) {
 		struct hist_entry *he = rb_entry(nd, struct hist_entry, rb_node);
@@ -131,7 +188,11 @@ static void hists__find_annotations(struct hists *self, int evidx,
 		notes = symbol__annotation(he->ms.sym);
 		if (notes->src == NULL) {
 find_next:
+<<<<<<< HEAD
 			if (key == K_LEFT)
+=======
+			if (key == KEY_LEFT)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				nd = rb_prev(nd);
 			else
 				nd = rb_next(nd);
@@ -139,12 +200,21 @@ find_next:
 		}
 
 		if (use_browser > 0) {
+<<<<<<< HEAD
 			key = hist_entry__tui_annotate(he, evidx, NULL, NULL, 0);
 			switch (key) {
 			case K_RIGHT:
 				next = rb_next(nd);
 				break;
 			case K_LEFT:
+=======
+			key = hist_entry__tui_annotate(he, evidx);
+			switch (key) {
+			case KEY_RIGHT:
+				next = rb_next(nd);
+				break;
+			case KEY_LEFT:
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				next = rb_prev(nd);
 				break;
 			default:
@@ -154,7 +224,11 @@ find_next:
 			if (next != NULL)
 				nd = next;
 		} else {
+<<<<<<< HEAD
 			hist_entry__tty_annotate(he, evidx, ann);
+=======
+			hist_entry__tty_annotate(he, evidx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			nd = rb_next(nd);
 			/*
 			 * Since we have a hist_entry per IP for the same
@@ -167,13 +241,27 @@ find_next:
 	}
 }
 
+<<<<<<< HEAD
 static int __cmd_annotate(struct perf_annotate *ann)
+=======
+static struct perf_event_ops event_ops = {
+	.sample	= process_sample_event,
+	.mmap	= perf_event__process_mmap,
+	.comm	= perf_event__process_comm,
+	.fork	= perf_event__process_task,
+	.ordered_samples = true,
+	.ordering_requires_timestamps = true,
+};
+
+static int __cmd_annotate(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int ret;
 	struct perf_session *session;
 	struct perf_evsel *pos;
 	u64 total_nr_samples;
 
+<<<<<<< HEAD
 	session = perf_session__new(ann->input_name, O_RDONLY,
 				    ann->force, false, &ann->tool);
 	if (session == NULL)
@@ -187,6 +275,13 @@ static int __cmd_annotate(struct perf_annotate *ann)
 	}
 
 	ret = perf_session__process_events(session, &ann->tool);
+=======
+	session = perf_session__new(input_name, O_RDONLY, force, false, &event_ops);
+	if (session == NULL)
+		return -ENOMEM;
+
+	ret = perf_session__process_events(session, &event_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret)
 		goto out_delete;
 
@@ -210,12 +305,20 @@ static int __cmd_annotate(struct perf_annotate *ann)
 			total_nr_samples += nr_samples;
 			hists__collapse_resort(hists);
 			hists__output_resort(hists);
+<<<<<<< HEAD
 			hists__find_annotations(hists, pos->idx, ann);
+=======
+			hists__find_annotations(hists, pos->idx);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	if (total_nr_samples == 0) {
+<<<<<<< HEAD
 		ui__warning("The %s file has no samples!\n", session->filename);
+=======
+		ui__warning("The %s file has no samples!\n", input_name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out_delete;
 	}
 out_delete:
@@ -235,6 +338,7 @@ out_delete:
 }
 
 static const char * const annotate_usage[] = {
+<<<<<<< HEAD
 	"perf annotate [<options>]",
 	NULL
 };
@@ -259,16 +363,36 @@ int cmd_annotate(int argc, const char **argv, const char *prefix __used)
 	OPT_STRING('s', "symbol", &annotate.sym_hist_filter, "symbol",
 		    "symbol to annotate"),
 	OPT_BOOLEAN('f', "force", &annotate.force, "don't complain, do it"),
+=======
+	"perf annotate [<options>] <command>",
+	NULL
+};
+
+static const struct option options[] = {
+	OPT_STRING('i', "input", &input_name, "file",
+		    "input file name"),
+	OPT_STRING('d', "dsos", &symbol_conf.dso_list_str, "dso[,dso...]",
+		   "only consider symbols in these dsos"),
+	OPT_STRING('s', "symbol", &sym_hist_filter, "symbol",
+		    "symbol to annotate"),
+	OPT_BOOLEAN('f', "force", &force, "don't complain, do it"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OPT_INCR('v', "verbose", &verbose,
 		    "be more verbose (show symbol address, etc)"),
 	OPT_BOOLEAN('D', "dump-raw-trace", &dump_trace,
 		    "dump raw trace in ASCII"),
+<<<<<<< HEAD
 	OPT_BOOLEAN(0, "tui", &annotate.use_tui, "Use the TUI interface"),
 	OPT_BOOLEAN(0, "stdio", &annotate.use_stdio, "Use the stdio interface"),
+=======
+	OPT_BOOLEAN(0, "tui", &use_tui, "Use the TUI interface"),
+	OPT_BOOLEAN(0, "stdio", &use_stdio, "Use the stdio interface"),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	OPT_STRING('k', "vmlinux", &symbol_conf.vmlinux_name,
 		   "file", "vmlinux pathname"),
 	OPT_BOOLEAN('m', "modules", &symbol_conf.use_modules,
 		    "load module symbols - WARNING: use only with -k and LIVE kernel"),
+<<<<<<< HEAD
 	OPT_BOOLEAN('l', "print-line", &annotate.print_line,
 		    "print matching source lines (may be slow)"),
 	OPT_BOOLEAN('P', "full-paths", &annotate.full_paths,
@@ -290,6 +414,22 @@ int cmd_annotate(int argc, const char **argv, const char *prefix __used)
 	if (annotate.use_stdio)
 		use_browser = 0;
 	else if (annotate.use_tui)
+=======
+	OPT_BOOLEAN('l', "print-line", &print_line,
+		    "print matching source lines (may be slow)"),
+	OPT_BOOLEAN('P', "full-paths", &full_paths,
+		    "Don't shorten the displayed pathnames"),
+	OPT_END()
+};
+
+int cmd_annotate(int argc, const char **argv, const char *prefix __used)
+{
+	argc = parse_options(argc, argv, options, annotate_usage, 0);
+
+	if (use_stdio)
+		use_browser = 0;
+	else if (use_tui)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		use_browser = 1;
 
 	setup_browser(true);
@@ -310,8 +450,20 @@ int cmd_annotate(int argc, const char **argv, const char *prefix __used)
 		if (argc > 1)
 			usage_with_options(annotate_usage, options);
 
+<<<<<<< HEAD
 		annotate.sym_hist_filter = argv[0];
 	}
 
 	return __cmd_annotate(&annotate);
+=======
+		sym_hist_filter = argv[0];
+	}
+
+	if (field_sep && *field_sep == '.') {
+		pr_err("'.' is the only non valid --field-separator argument\n");
+		return -1;
+	}
+
+	return __cmd_annotate();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

@@ -134,6 +134,10 @@ extern void fc_fc4_conf_lport_params(struct fc_lport *, enum fc_fh_type);
 u32 fc_copy_buffer_to_sglist(void *buf, size_t len,
 			     struct scatterlist *sg,
 			     u32 *nents, size_t *offset,
+<<<<<<< HEAD
 			     u32 *crc);
+=======
+			     enum km_type km_type, u32 *crc);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* _FC_LIBFC_H_ */

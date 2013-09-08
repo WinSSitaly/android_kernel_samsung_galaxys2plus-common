@@ -8,22 +8,33 @@
  * it under the terms of the GNU General Public License version 2 as
  * published by the Free Software Foundation.
  */
+<<<<<<< HEAD
 #include <linux/types.h>
 #include <linux/cpu.h>
 #include <linux/cpu_pm.h>
 #include <linux/hardirq.h>
+=======
+#include <linux/module.h>
+#include <linux/types.h>
+#include <linux/cpu.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/kernel.h>
 #include <linux/notifier.h>
 #include <linux/signal.h>
 #include <linux/sched.h>
 #include <linux/smp.h>
 #include <linux/init.h>
+<<<<<<< HEAD
 #include <linux/uaccess.h>
 #include <linux/user.h>
 
 #include <asm/cp15.h>
 #include <asm/cputype.h>
 #include <asm/system_info.h>
+=======
+
+#include <asm/cputype.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/thread_notify.h>
 #include <asm/vfp.h>
 
@@ -40,6 +51,7 @@ void vfp_null_entry(void);
 void (*vfp_vector)(void) = vfp_null_entry;
 
 /*
+<<<<<<< HEAD
  * Dual-use variable.
  * Used in startup: set to non-zero if VFP checks fail
  * After startup, holds VFP architecture
@@ -54,10 +66,16 @@ unsigned int VFP_arch;
  * For UP, this is sufficient to tell which thread owns the VFP context.
  * However, for SMP, we also need to check the CPU number stored in the
  * saved state too to catch migrations.
+=======
+ * The pointer to the vfpstate structure of the thread which currently
+ * owns the context held in the VFP hardware, or NULL if the hardware
+ * context is invalid.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  */
 union vfp_state *vfp_current_hw_state[NR_CPUS];
 
 /*
+<<<<<<< HEAD
  * Is 'thread's most up to date state stored in this CPUs hardware?
  * Must be called from non-preemptible context.
  */
@@ -85,6 +103,13 @@ static void vfp_force_reload(unsigned int cpu, struct thread_info *thread)
 	thread->vfpstate.hard.cpu = NR_CPUS;
 #endif
 }
+=======
+ * Dual-use variable.
+ * Used in startup: set to non-zero if VFP checks fail
+ * After startup, holds VFP architecture
+ */
+unsigned int VFP_arch;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Per-thread VFP initialization.
@@ -94,6 +119,7 @@ static void vfp_thread_flush(struct thread_info *thread)
 	union vfp_state *vfp = &thread->vfpstate;
 	unsigned int cpu;
 
+<<<<<<< HEAD
 	/*
 	 * Disable VFP to ensure we initialize it first.  We must ensure
 	 * that the modification of vfp_current_hw_state[] and hardware
@@ -101,12 +127,24 @@ static void vfp_thread_flush(struct thread_info *thread)
 	 *
 	 * Do this first to ensure that preemption won't overwrite our
 	 * state saving should access to the VFP be enabled at this point.
+=======
+	memset(vfp, 0, sizeof(union vfp_state));
+
+	vfp->hard.fpexc = FPEXC_EN;
+	vfp->hard.fpscr = FPSCR_ROUND_NEAREST;
+
+	/*
+	 * Disable VFP to ensure we initialize it first.  We must ensure
+	 * that the modification of vfp_current_hw_state[] and hardware disable
+	 * are done for the same CPU and without preemption.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 */
 	cpu = get_cpu();
 	if (vfp_current_hw_state[cpu] == vfp)
 		vfp_current_hw_state[cpu] = NULL;
 	fmxr(FPEXC, fmrx(FPEXC) & ~FPEXC_EN);
 	put_cpu();
+<<<<<<< HEAD
 
 	memset(vfp, 0, sizeof(union vfp_state));
 
@@ -115,6 +153,8 @@ static void vfp_thread_flush(struct thread_info *thread)
 #ifdef CONFIG_SMP
 	vfp->hard.cpu = NR_CPUS;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void vfp_thread_exit(struct thread_info *thread)
@@ -134,9 +174,12 @@ static void vfp_thread_copy(struct thread_info *thread)
 
 	vfp_sync_hwstate(parent);
 	thread->vfpstate = parent->vfpstate;
+<<<<<<< HEAD
 #ifdef CONFIG_SMP
 	thread->vfpstate.hard.cpu = NR_CPUS;
 #endif
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -182,8 +225,22 @@ static int vfp_notifier(struct notifier_block *self, unsigned long cmd, void *v)
 		 * case the thread migrates to a different CPU. The
 		 * restoring is done lazily.
 		 */
+<<<<<<< HEAD
 		if ((fpexc & FPEXC_EN) && vfp_current_hw_state[cpu])
 			vfp_save_state(vfp_current_hw_state[cpu], fpexc);
+=======
+		if ((fpexc & FPEXC_EN) && vfp_current_hw_state[cpu]) {
+			vfp_save_state(vfp_current_hw_state[cpu], fpexc);
+			vfp_current_hw_state[cpu]->hard.cpu = cpu;
+		}
+		/*
+		 * Thread migration, just force the reloading of the
+		 * state on the new CPU in case the VFP registers
+		 * contain stale data.
+		 */
+		if (thread->vfpstate.hard.cpu != cpu)
+			vfp_current_hw_state[cpu] = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 		/*
@@ -413,7 +470,11 @@ void VFP_bounce(u32 trigger, u32 fpexc, struct pt_regs *regs)
 	 * If there isn't a second FP instruction, exit now. Note that
 	 * the FPEXC.FP2V bit is valid only if FPEXC.EX is 1.
 	 */
+<<<<<<< HEAD
 	if ((fpexc & (FPEXC_EX | FPEXC_FP2V)) != (FPEXC_EX | FPEXC_FP2V))
+=======
+	if (fpexc ^ (FPEXC_EX | FPEXC_FP2V))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto exit;
 
 	/*
@@ -433,10 +494,14 @@ void VFP_bounce(u32 trigger, u32 fpexc, struct pt_regs *regs)
 
 static void vfp_enable(void *unused)
 {
+<<<<<<< HEAD
 	u32 access;
 
 	BUG_ON(preemptible());
 	access = get_copro_access();
+=======
+	u32 access = get_copro_access();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Enable full access to VFP (cp10 and cp11)
@@ -444,7 +509,13 @@ static void vfp_enable(void *unused)
 	set_copro_access(access | CPACC_FULL(10) | CPACC_FULL(11));
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_CPU_PM
+=======
+#ifdef CONFIG_PM
+#include <linux/syscore_ops.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int vfp_pm_suspend(void)
 {
 	struct thread_info *ti = current_thread_info();
@@ -480,6 +551,7 @@ static void vfp_pm_resume(void)
 	fmxr(FPEXC, fmrx(FPEXC) & ~FPEXC_EN);
 }
 
+<<<<<<< HEAD
 static int vfp_cpu_pm_notifier(struct notifier_block *self, unsigned long cmd,
 	void *v)
 {
@@ -497,26 +569,48 @@ static int vfp_cpu_pm_notifier(struct notifier_block *self, unsigned long cmd,
 
 static struct notifier_block vfp_cpu_pm_notifier_block = {
 	.notifier_call = vfp_cpu_pm_notifier,
+=======
+static struct syscore_ops vfp_pm_syscore_ops = {
+	.suspend	= vfp_pm_suspend,
+	.resume		= vfp_pm_resume,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static void vfp_pm_init(void)
 {
+<<<<<<< HEAD
 	cpu_pm_register_notifier(&vfp_cpu_pm_notifier_block);
+=======
+	register_syscore_ops(&vfp_pm_syscore_ops);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 #else
 static inline void vfp_pm_init(void) { }
+<<<<<<< HEAD
 #endif /* CONFIG_CPU_PM */
 
 /*
  * Ensure that the VFP state stored in 'thread->vfpstate' is up to date
  * with the hardware state.
  */
+=======
+#endif /* CONFIG_PM */
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void vfp_sync_hwstate(struct thread_info *thread)
 {
 	unsigned int cpu = get_cpu();
 
+<<<<<<< HEAD
 	if (vfp_state_in_hw(cpu, thread)) {
+=======
+	/*
+	 * If the thread we're interested in is the current owner of the
+	 * hardware VFP state, then we need to save its state.
+	 */
+	if (vfp_current_hw_state[cpu] == &thread->vfpstate) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		u32 fpexc = fmrx(FPEXC);
 
 		/*
@@ -530,11 +624,15 @@ void vfp_sync_hwstate(struct thread_info *thread)
 	put_cpu();
 }
 
+<<<<<<< HEAD
 /* Ensure that the thread reloads the hardware VFP state on the next use. */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void vfp_flush_hwstate(struct thread_info *thread)
 {
 	unsigned int cpu = get_cpu();
 
+<<<<<<< HEAD
 	vfp_force_reload(cpu, thread);
 
 	put_cpu();
@@ -625,6 +723,35 @@ int vfp_restore_user_hwstate(struct user_vfp __user *ufp,
 	__get_user_error(hwstate->fpinst2, &ufp_exc->fpinst2, err);
 
 	return err ? -EFAULT : 0;
+=======
+	/*
+	 * If the thread we're interested in is the current owner of the
+	 * hardware VFP state, then we need to save its state.
+	 */
+	if (vfp_current_hw_state[cpu] == &thread->vfpstate) {
+		u32 fpexc = fmrx(FPEXC);
+
+		fmxr(FPEXC, fpexc & ~FPEXC_EN);
+
+		/*
+		 * Set the context to NULL to force a reload the next time
+		 * the thread uses the VFP.
+		 */
+		vfp_current_hw_state[cpu] = NULL;
+	}
+
+#ifdef CONFIG_SMP
+	/*
+	 * For SMP we still have to take care of the case where the thread
+	 * migrates to another CPU and then back to the original CPU on which
+	 * the last VFP user is still the same thread. Mark the thread VFP
+	 * state as belonging to a non-existent CPU so that the saved one will
+	 * be reloaded in the above case.
+	 */
+	thread->vfpstate.hard.cpu = NR_CPUS;
+#endif
+	put_cpu();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -642,7 +769,12 @@ static int vfp_hotplug(struct notifier_block *b, unsigned long action,
 	void *hcpu)
 {
 	if (action == CPU_DYING || action == CPU_DYING_FROZEN) {
+<<<<<<< HEAD
 		vfp_force_reload((long)hcpu, current_thread_info());
+=======
+		unsigned int cpu = (long)hcpu;
+		vfp_current_hw_state[cpu] = NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (action == CPU_STARTING || action == CPU_STARTING_FROZEN)
 		vfp_enable(NULL);
 	return NOTIFY_OK;
@@ -657,7 +789,11 @@ static int __init vfp_init(void)
 	unsigned int cpu_arch = cpu_architecture();
 
 	if (cpu_arch >= CPU_ARCH_ARMv6)
+<<<<<<< HEAD
 		on_each_cpu(vfp_enable, NULL, 1);
+=======
+		vfp_enable(NULL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * First check that there is a VFP that we can use.
@@ -678,6 +814,11 @@ static int __init vfp_init(void)
 	} else {
 		hotcpu_notifier(vfp_hotplug, 0);
 
+<<<<<<< HEAD
+=======
+		smp_call_function(vfp_enable, NULL, 1);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		VFP_arch = (vfpsid & FPSID_ARCH_MASK) >> FPSID_ARCH_BIT;  /* Extract the architecture version */
 		printk("implementor %02x architecture %d part %02x variant %x rev %x\n",
 			(vfpsid & FPSID_IMPLEMENTER_MASK) >> FPSID_IMPLEMENTER_BIT,
@@ -701,6 +842,7 @@ static int __init vfp_init(void)
 			elf_hwcap |= HWCAP_VFPv3;
 
 			/*
+<<<<<<< HEAD
 			 * Check for VFPv3 D16 and VFPv4 D16.  CPUs in
 			 * this configuration only have 16 x 64bit
 			 * registers.
@@ -711,6 +853,16 @@ static int __init vfp_init(void)
 				elf_hwcap |= HWCAP_VFPD32;
 		}
 #endif
+=======
+			 * Check for VFPv3 D16. CPUs in this configuration
+			 * only have 16 x 64bit registers.
+			 */
+			if (((fmrx(MVFR0) & MVFR0_A_SIMD_MASK)) == 1)
+				elf_hwcap |= HWCAP_VFPv3D16;
+		}
+#endif
+#ifdef CONFIG_NEON
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * Check for the presence of the Advanced SIMD
 		 * load/store instructions, integer and single
@@ -718,6 +870,7 @@ static int __init vfp_init(void)
 		 * for NEON if the hardware has the MVFR registers.
 		 */
 		if ((read_cpuid_id() & 0x000f0000) == 0x000f0000) {
+<<<<<<< HEAD
 #ifdef CONFIG_NEON
 			if ((fmrx(MVFR1) & 0x000fff00) == 0x00011100)
 				elf_hwcap |= HWCAP_NEON;
@@ -727,6 +880,12 @@ static int __init vfp_init(void)
 				elf_hwcap |= HWCAP_VFPv4;
 #endif
 		}
+=======
+			if ((fmrx(MVFR1) & 0x000fff00) == 0x00011100)
+				elf_hwcap |= HWCAP_NEON;
+		}
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	return 0;
 }

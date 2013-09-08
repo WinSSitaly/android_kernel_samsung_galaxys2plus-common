@@ -11,8 +11,12 @@
 
 #include <linux/types.h>
 #include <asm/assembler.h>
+<<<<<<< HEAD
 #include <asm/cmpxchg.h>
 #include <asm/dcache_clear.h>
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /*
  * Atomic operations that C can't guarantee us.  Useful for
@@ -240,15 +244,25 @@ static __inline__ int atomic_dec_return(atomic_t *v)
 #define atomic_xchg(v, new) (xchg(&((v)->counter), new))
 
 /**
+<<<<<<< HEAD
  * __atomic_add_unless - add unless the number is a given value
+=======
+ * atomic_add_unless - add unless the number is a given value
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @v: pointer of type atomic_t
  * @a: the amount to add to v...
  * @u: ...unless v is equal to u.
  *
  * Atomically adds @a to @v, so long as it was not @u.
+<<<<<<< HEAD
  * Returns the old value of @v.
  */
 static __inline__ int __atomic_add_unless(atomic_t *v, int a, int u)
+=======
+ * Returns non-zero if @v was not @u, and zero otherwise.
+ */
+static __inline__ int atomic_add_unless(atomic_t *v, int a, int u)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int c, old;
 	c = atomic_read(v);
@@ -260,9 +274,16 @@ static __inline__ int __atomic_add_unless(atomic_t *v, int a, int u)
 			break;
 		c = old;
 	}
+<<<<<<< HEAD
 	return c;
 }
 
+=======
+	return c != (u);
+}
+
+#define atomic_inc_not_zero(v) atomic_add_unless((v), 1, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static __inline__ void atomic_clear_mask(unsigned long  mask, atomic_t *addr)
 {
@@ -314,4 +335,8 @@ static __inline__ void atomic_set_mask(unsigned long  mask, atomic_t *addr)
 #define smp_mb__before_atomic_inc()	barrier()
 #define smp_mb__after_atomic_inc()	barrier()
 
+<<<<<<< HEAD
+=======
+#include <asm-generic/atomic-long.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif	/* _ASM_M32R_ATOMIC_H */

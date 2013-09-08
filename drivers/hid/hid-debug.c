@@ -31,7 +31,10 @@
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/slab.h>
 #include <linux/uaccess.h>
 #include <linux/poll.h>
@@ -114,6 +117,7 @@ static const struct hid_usage_entry hid_usage_table[] = {
       {0, 0xbd, "FlareRelease"},
       {0, 0xbe, "LandingGear"},
       {0, 0xbf, "ToeBrake"},
+<<<<<<< HEAD
   {  6, 0, "GenericDeviceControls" },
       {0, 0x20, "BatteryStrength" },
       {0, 0x21, "WirelessChannel" },
@@ -122,6 +126,8 @@ static const struct hid_usage_entry hid_usage_table[] = {
       {0, 0x24, "SecurityCodeCharacterEntered" },
       {0, 0x25, "SecurityCodeCharactedErased" },
       {0, 0x26, "SecurityCodeCleared" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
   {  7, 0, "Keyboard" },
   {  8, 0, "LED" },
       {0, 0x01, "NumLock"},

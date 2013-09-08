@@ -41,7 +41,10 @@
 #include <linux/types.h>
 #include <linux/ioctl.h>
 #include <linux/magic.h>
+<<<<<<< HEAD
 #include <linux/bug.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 
 #define NILFS_INODE_BMAP_SIZE	7

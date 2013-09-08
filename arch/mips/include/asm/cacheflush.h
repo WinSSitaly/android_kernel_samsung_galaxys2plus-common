@@ -114,6 +114,7 @@ unsigned long run_uncached(void *func);
 extern void *kmap_coherent(struct page *page, unsigned long addr);
 extern void kunmap_coherent(void);
 
+<<<<<<< HEAD
 #define ARCH_HAS_FLUSH_KERNEL_DCACHE_PAGE
 static inline void flush_kernel_dcache_page(struct page *page)
 {
@@ -138,4 +139,6 @@ static inline void invalidate_kernel_vmap_range(void *vaddr, int size)
 		__flush_kernel_vmap_range((unsigned long) vaddr, size);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ASM_CACHEFLUSH_H */

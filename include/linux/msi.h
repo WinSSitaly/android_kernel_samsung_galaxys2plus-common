@@ -1,7 +1,10 @@
 #ifndef LINUX_MSI_H
 #define LINUX_MSI_H
 
+<<<<<<< HEAD
 #include <linux/kobject.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/list.h>
 
 struct msi_msg {
@@ -45,8 +48,11 @@ struct msi_desc {
 
 	/* Last set MSI message */
 	struct msi_msg msg;
+<<<<<<< HEAD
 
 	struct kobject kobj;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 /*

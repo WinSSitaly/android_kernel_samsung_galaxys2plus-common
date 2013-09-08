@@ -16,8 +16,11 @@
  *    SDL Inc. PPP/HDLC/CISCO driver
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/capability.h>
@@ -343,55 +346,94 @@ static int __init n2_run(unsigned long io, unsigned long irq,
 	int i;
 
 	if (io < 0x200 || io > 0x3FF || (io % N2_IOPORTS) != 0) {
+<<<<<<< HEAD
 		pr_err("invalid I/O port value\n");
+=======
+		printk(KERN_ERR "n2: invalid I/O port value\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	if (irq < 3 || irq > 15 || irq == 6) /* FIXME */ {
+<<<<<<< HEAD
 		pr_err("invalid IRQ value\n");
+=======
+		printk(KERN_ERR "n2: invalid IRQ value\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	if (winbase < 0xA0000 || winbase > 0xFFFFF || (winbase & 0xFFF) != 0) {
+<<<<<<< HEAD
 		pr_err("invalid RAM value\n");
+=======
+		printk(KERN_ERR "n2: invalid RAM value\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -ENODEV;
 	}
 
 	card = kzalloc(sizeof(card_t), GFP_KERNEL);
+<<<<<<< HEAD
 	if (card == NULL)
 		return -ENOBUFS;
+=======
+	if (card == NULL) {
+		printk(KERN_ERR "n2: unable to allocate memory\n");
+		return -ENOBUFS;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	card->ports[0].dev = alloc_hdlcdev(&card->ports[0]);
 	card->ports[1].dev = alloc_hdlcdev(&card->ports[1]);
 	if (!card->ports[0].dev || !card->ports[1].dev) {
+<<<<<<< HEAD
 		pr_err("unable to allocate memory\n");
+=======
+		printk(KERN_ERR "n2: unable to allocate memory\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		n2_destroy_card(card);
 		return -ENOMEM;
 	}
 
 	if (!request_region(io, N2_IOPORTS, devname)) {
+<<<<<<< HEAD
 		pr_err("I/O port region in use\n");
+=======
+		printk(KERN_ERR "n2: I/O port region in use\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		n2_destroy_card(card);
 		return -EBUSY;
 	}
 	card->io = io;
 
 	if (request_irq(irq, sca_intr, 0, devname, card)) {
+<<<<<<< HEAD
 		pr_err("could not allocate IRQ\n");
+=======
+		printk(KERN_ERR "n2: could not allocate IRQ\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		n2_destroy_card(card);
 		return -EBUSY;
 	}
 	card->irq = irq;
 
 	if (!request_mem_region(winbase, USE_WINDOWSIZE, devname)) {
+<<<<<<< HEAD
 		pr_err("could not request RAM window\n");
+=======
+		printk(KERN_ERR "n2: could not request RAM window\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		n2_destroy_card(card);
 		return -EBUSY;
 	}
 	card->phy_winbase = winbase;
 	card->winbase = ioremap(winbase, USE_WINDOWSIZE);
 	if (!card->winbase) {
+<<<<<<< HEAD
 		pr_err("ioremap() failed\n");
+=======
+		printk(KERN_ERR "n2: ioremap() failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		n2_destroy_card(card);
 		return -EFAULT;
 	}
@@ -413,7 +455,11 @@ static int __init n2_run(unsigned long io, unsigned long irq,
 		break;
 
 	default:
+<<<<<<< HEAD
 		pr_err("invalid window size\n");
+=======
+		printk(KERN_ERR "n2: invalid window size\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		n2_destroy_card(card);
 		return -ENODEV;
 	}
@@ -433,12 +479,21 @@ static int __init n2_run(unsigned long io, unsigned long irq,
 	card->buff_offset = (valid0 + valid1) * sizeof(pkt_desc) *
 		(card->tx_ring_buffers + card->rx_ring_buffers);
 
+<<<<<<< HEAD
 	pr_info("RISCom/N2 %u KB RAM, IRQ%u, using %u TX + %u RX packets rings\n",
 		card->ram_size / 1024, card->irq,
 		card->tx_ring_buffers, card->rx_ring_buffers);
 
 	if (card->tx_ring_buffers < 1) {
 		pr_err("RAM test failed\n");
+=======
+	printk(KERN_INFO "n2: RISCom/N2 %u KB RAM, IRQ%u, "
+	       "using %u TX + %u RX packets rings\n", card->ram_size / 1024,
+	       card->irq, card->tx_ring_buffers, card->rx_ring_buffers);
+
+	if (card->tx_ring_buffers < 1) {
+		printk(KERN_ERR "n2: RAM test failed\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		n2_destroy_card(card);
 		return -EIO;
 	}
@@ -474,14 +529,24 @@ static int __init n2_run(unsigned long io, unsigned long irq,
 		port->card = card;
 
 		if (register_hdlc_device(dev)) {
+<<<<<<< HEAD
 			pr_warn("unable to register hdlc device\n");
+=======
+			printk(KERN_WARNING "n2: unable to register hdlc "
+			       "device\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			port->card = NULL;
 			n2_destroy_card(card);
 			return -ENOBUFS;
 		}
 		sca_init_port(port); /* Set up SCA memory */
 
+<<<<<<< HEAD
 		netdev_info(dev, "RISCom/N2 node %d\n", port->phy_node);
+=======
+		printk(KERN_INFO "%s: RISCom/N2 node %d\n",
+		       dev->name, port->phy_node);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	*new_card = card;
@@ -496,12 +561,20 @@ static int __init n2_init(void)
 {
 	if (hw==NULL) {
 #ifdef MODULE
+<<<<<<< HEAD
 		pr_info("no card initialized\n");
+=======
+		printk(KERN_INFO "n2: no card initialized\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 		return -EINVAL;	/* no parameters specified, abort */
 	}
 
+<<<<<<< HEAD
 	pr_info("%s\n", version);
+=======
+	printk(KERN_INFO "%s\n", version);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	do {
 		unsigned long io, irq, ram;
@@ -539,7 +612,11 @@ static int __init n2_init(void)
 			return first_card ? 0 : -EINVAL;
 	}while(*hw++ == ':');
 
+<<<<<<< HEAD
 	pr_err("invalid hardware parameters\n");
+=======
+	printk(KERN_ERR "n2: invalid hardware parameters\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return first_card ? 0 : -EINVAL;
 }
 

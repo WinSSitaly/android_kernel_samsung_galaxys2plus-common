@@ -26,6 +26,7 @@ static char nvram_buf[NVRAM_SPACE];
 /* Probe for NVRAM header */
 static void early_nvram_init(void)
 {
+<<<<<<< HEAD
 #ifdef CONFIG_BCM47XX_SSB
 	struct ssb_mipscore *mcore_ssb;
 #endif
@@ -55,6 +56,16 @@ static void early_nvram_init(void)
 		break;
 #endif
 	}
+=======
+	struct ssb_mipscore *mcore = &ssb_bcm47xx.mipscore;
+	struct nvram_header *header;
+	int i;
+	u32 base, lim, off;
+	u32 *src, *dst;
+
+	base = mcore->flash_window;
+	lim = mcore->flash_window_size;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	off = FLASH_MIN;
 	while (off <= lim) {
@@ -107,7 +118,12 @@ int nvram_getenv(char *name, char *val, size_t val_len)
 		value = eq + 1;
 		if ((eq - var) == strlen(name) &&
 			strncmp(var, name, (eq - var)) == 0) {
+<<<<<<< HEAD
 			return snprintf(val, val_len, "%s", value);
+=======
+			snprintf(val, val_len, "%s", value);
+			return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 	return NVRAM_ERR_ENVNOTFOUND;

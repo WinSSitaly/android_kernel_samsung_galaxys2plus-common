@@ -17,7 +17,11 @@
  *
  */
 
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/sched.h>
 #include <linux/kernel.h>
 #include <linux/errno.h>
@@ -34,7 +38,10 @@
 #include <linux/suspend.h>
 #include <linux/memblock.h>
 #include <linux/hugetlb.h>
+<<<<<<< HEAD
 #include <linux/slab.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/pgalloc.h>
 #include <asm/prom.h>
@@ -51,7 +58,10 @@
 #include <asm/vdso.h>
 #include <asm/fixmap.h>
 #include <asm/swiotlb.h>
+<<<<<<< HEAD
 #include <asm/rtas.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "mmu_decl.h"
 
@@ -200,7 +210,11 @@ void __init do_init_bootmem(void)
 		unsigned long start_pfn, end_pfn;
 		start_pfn = memblock_region_memory_base_pfn(reg);
 		end_pfn = memblock_region_memory_end_pfn(reg);
+<<<<<<< HEAD
 		memblock_set_node(0, (phys_addr_t)ULLONG_MAX, 0);
+=======
+		add_active_range(0, start_pfn, end_pfn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* Add all physical memory to the bootmem map, mark each area
@@ -252,7 +266,11 @@ static int __init mark_nonram_nosave(void)
  */
 void __init paging_init(void)
 {
+<<<<<<< HEAD
 	unsigned long long total_ram = memblock_phys_mem_size();
+=======
+	unsigned long total_ram = memblock_phys_mem_size();
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	phys_addr_t top_of_ram = memblock_end_of_DRAM();
 	unsigned long max_zone_pfns[MAX_NR_ZONES];
 
@@ -272,7 +290,11 @@ void __init paging_init(void)
 	kmap_prot = PAGE_KERNEL;
 #endif /* CONFIG_HIGHMEM */
 
+<<<<<<< HEAD
 	printk(KERN_DEBUG "Top of RAM: 0x%llx, Total RAM: 0x%llx\n",
+=======
+	printk(KERN_DEBUG "Top of RAM: 0x%llx, Total RAM: 0x%lx\n",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       (unsigned long long)top_of_ram, total_ram);
 	printk(KERN_DEBUG "Memory hole size: %ldMB\n",
 	       (long int)((top_of_ram - total_ram) >> 20));
@@ -340,9 +362,14 @@ void __init mem_init(void)
 
 		highmem_mapnr = lowmem_end_addr >> PAGE_SHIFT;
 		for (pfn = highmem_mapnr; pfn < max_mapnr; ++pfn) {
+<<<<<<< HEAD
 			phys_addr_t paddr = (phys_addr_t)pfn << PAGE_SHIFT;
 			struct page *page = pfn_to_page(pfn);
 			if (memblock_is_reserved(paddr))
+=======
+			struct page *page = pfn_to_page(pfn);
+			if (memblock_is_reserved(pfn << PAGE_SHIFT))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				continue;
 			ClearPageReserved(page);
 			init_page_count(page);
@@ -356,6 +383,7 @@ void __init mem_init(void)
 	}
 #endif /* CONFIG_HIGHMEM */
 
+<<<<<<< HEAD
 #if defined(CONFIG_PPC_FSL_BOOK3E) && !defined(CONFIG_SMP)
 	/*
 	 * If smp is enabled, next_tlbcam_idx is initialized in the cpu up
@@ -365,6 +393,8 @@ void __init mem_init(void)
 		(mfspr(SPRN_TLB1CFG) & TLBnCFG_N_ENTRY) - 1;
 #endif
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	printk(KERN_INFO "Memory: %luk/%luk available (%luk kernel code, "
 	       "%luk reserved, %luk data, %luk bss, %luk init)\n",
 		nr_free_pages() << (PAGE_SHIFT-10),
@@ -395,6 +425,7 @@ void __init mem_init(void)
 	mem_init_done = 1;
 }
 
+<<<<<<< HEAD
 void free_initmem(void)
 {
 	unsigned long addr;
@@ -414,6 +445,8 @@ void free_initmem(void)
 		(unsigned long)__init_begin) >> 10);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_BLK_DEV_INITRD
 void __init free_initrd_mem(unsigned long start, unsigned long end)
 {
@@ -458,9 +491,15 @@ void flush_dcache_icache_page(struct page *page)
 #endif
 #ifdef CONFIG_BOOKE
 	{
+<<<<<<< HEAD
 		void *start = kmap_atomic(page);
 		__flush_dcache_icache(start);
 		kunmap_atomic(start);
+=======
+		void *start = kmap_atomic(page, KM_PPC_SYNC_ICACHE);
+		__flush_dcache_icache(start);
+		kunmap_atomic(start, KM_PPC_SYNC_ICACHE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 #elif defined(CONFIG_8xx) || defined(CONFIG_PPC64)
 	/* On 8xx there is no need to kmap since highmem is not supported */
@@ -551,6 +590,7 @@ void update_mmu_cache(struct vm_area_struct *vma, unsigned long address,
 		return;
 	hash_preload(vma->vm_mm, address, access, trap);
 #endif /* CONFIG_PPC_STD_MMU */
+<<<<<<< HEAD
 #if (defined(CONFIG_PPC_BOOK3E_64) || defined(CONFIG_PPC_FSL_BOOK3E)) \
 	&& defined(CONFIG_HUGETLB_PAGE)
 	if (is_vm_hugetlb_page(vma))
@@ -606,3 +646,6 @@ int devmem_is_allowed(unsigned long pfn)
 	return 0;
 }
 #endif /* CONFIG_STRICT_DEVMEM */
+=======
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

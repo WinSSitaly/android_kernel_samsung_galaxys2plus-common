@@ -14,7 +14,11 @@
  */
 #include <linux/mutex.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/poison.h>
 #include <linux/sched.h>
 #include <linux/spinlock.h>

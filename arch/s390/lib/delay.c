@@ -13,7 +13,10 @@
 #include <linux/irqflags.h>
 #include <linux/interrupt.h>
 #include <asm/div64.h>
+<<<<<<< HEAD
 #include <asm/timer.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 void __delay(unsigned long loops)
 {
@@ -29,6 +32,7 @@ void __delay(unsigned long loops)
 
 static void __udelay_disabled(unsigned long long usecs)
 {
+<<<<<<< HEAD
 	unsigned long cr0, cr6, new;
 	u64 clock_saved, end;
 
@@ -49,13 +53,42 @@ static void __udelay_disabled(unsigned long long usecs)
 	lockdep_on();
 	__ctl_load(cr0, 0, 0);
 	__ctl_load(cr6, 6, 6);
+=======
+	unsigned long mask, cr0, cr0_saved;
+	u64 clock_saved;
+	u64 end;
+
+	mask = psw_kernel_bits | PSW_MASK_WAIT | PSW_MASK_EXT;
+	end = get_clock() + (usecs << 12);
+	clock_saved = local_tick_disable();
+	__ctl_store(cr0_saved, 0, 0);
+	cr0 = (cr0_saved & 0xffff00e0) | 0x00000800;
+	__ctl_load(cr0 , 0, 0);
+	lockdep_off();
+	do {
+		set_clock_comparator(end);
+		trace_hardirqs_on();
+		__load_psw_mask(mask);
+		local_irq_disable();
+	} while (get_clock() < end);
+	lockdep_on();
+	__ctl_load(cr0_saved, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	local_tick_enable(clock_saved);
 }
 
 static void __udelay_enabled(unsigned long long usecs)
 {
+<<<<<<< HEAD
 	u64 clock_saved, end;
 
+=======
+	unsigned long mask;
+	u64 clock_saved;
+	u64 end;
+
+	mask = psw_kernel_bits | PSW_MASK_WAIT | PSW_MASK_EXT | PSW_MASK_IO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	end = get_clock() + (usecs << 12);
 	do {
 		clock_saved = 0;
@@ -63,7 +96,12 @@ static void __udelay_enabled(unsigned long long usecs)
 			clock_saved = local_tick_disable();
 			set_clock_comparator(end);
 		}
+<<<<<<< HEAD
 		vtime_stop_cpu();
+=======
+		trace_hardirqs_on();
+		__load_psw_mask(mask);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		local_irq_disable();
 		if (clock_saved)
 			local_tick_enable(clock_saved);

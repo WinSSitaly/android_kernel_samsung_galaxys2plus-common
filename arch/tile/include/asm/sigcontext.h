@@ -15,8 +15,11 @@
 #ifndef _ASM_TILE_SIGCONTEXT_H
 #define _ASM_TILE_SIGCONTEXT_H
 
+<<<<<<< HEAD
 /* Don't pollute the namespace since <signal.h> includes this file. */
 #define __need_int_reg_t
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <arch/abi.h>
 
 /*
@@ -24,6 +27,7 @@
  * but is simplified since we know the fault is from userspace.
  */
 struct sigcontext {
+<<<<<<< HEAD
 	__uint_reg_t gregs[53];	/* General-purpose registers.  */
 	__uint_reg_t tp;	/* Aliases gregs[TREG_TP].  */
 	__uint_reg_t sp;	/* Aliases gregs[TREG_SP].  */
@@ -32,6 +36,16 @@ struct sigcontext {
 	__uint_reg_t ics;	/* In Interrupt Critical Section?  */
 	__uint_reg_t faultnum;	/* Fault number.  */
 	__uint_reg_t pad[5];
+=======
+	uint_reg_t gregs[53];	/* General-purpose registers.  */
+	uint_reg_t tp;		/* Aliases gregs[TREG_TP].  */
+	uint_reg_t sp;		/* Aliases gregs[TREG_SP].  */
+	uint_reg_t lr;		/* Aliases gregs[TREG_LR].  */
+	uint_reg_t pc;		/* Program counter.  */
+	uint_reg_t ics;		/* In Interrupt Critical Section?  */
+	uint_reg_t faultnum;	/* Fault number.  */
+	uint_reg_t pad[5];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #endif /* _ASM_TILE_SIGCONTEXT_H */

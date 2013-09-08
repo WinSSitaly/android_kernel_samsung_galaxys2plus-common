@@ -177,7 +177,10 @@ static inline int page_test_and_clear_young(unsigned long pfn)
 struct page;
 void arch_free_page(struct page *page, int order);
 void arch_alloc_page(struct page *page, int order);
+<<<<<<< HEAD
 void arch_set_page_states(int make_stable);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static inline int devmem_is_allowed(unsigned long pfn)
 {

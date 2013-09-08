@@ -26,9 +26,13 @@
 #include <linux/slab.h>
 #include <linux/i2c.h>
 #include <linux/fb.h>
+<<<<<<< HEAD
 #include <drm/drm_edid.h>
 #include "drmP.h"
 #include "drm_edid.h"
+=======
+#include "drmP.h"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "intel_drv.h"
 #include "i915_drv.h"
 
@@ -43,13 +47,21 @@ bool intel_ddc_probe(struct intel_encoder *intel_encoder, int ddc_bus)
 	u8 buf[2];
 	struct i2c_msg msgs[] = {
 		{
+<<<<<<< HEAD
 			.addr = DDC_ADDR,
+=======
+			.addr = 0x50,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.flags = 0,
 			.len = 1,
 			.buf = out_buf,
 		},
 		{
+<<<<<<< HEAD
 			.addr = DDC_ADDR,
+=======
+			.addr = 0x50,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			.flags = I2C_M_RD,
 			.len = 1,
 			.buf = buf,
@@ -60,6 +72,7 @@ bool intel_ddc_probe(struct intel_encoder *intel_encoder, int ddc_bus)
 }
 
 /**
+<<<<<<< HEAD
  * intel_connector_update_modes - update connector from edid
  * @connector: DRM connector device to use
  * @edid: previously read EDID information
@@ -79,6 +92,8 @@ int intel_connector_update_modes(struct drm_connector *connector,
 }
 
 /**
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * intel_ddc_get_modes - get modelist from monitor
  * @connector: DRM connector device to use
  * @adapter: i2c adapter
@@ -89,6 +104,7 @@ int intel_ddc_get_modes(struct drm_connector *connector,
 			struct i2c_adapter *adapter)
 {
 	struct edid *edid;
+<<<<<<< HEAD
 
 	edid = drm_get_edid(connector, adapter);
 	if (!edid)
@@ -102,6 +118,25 @@ static const struct drm_prop_enum_list force_audio_names[] = {
 	{ HDMI_AUDIO_OFF, "off" },
 	{ HDMI_AUDIO_AUTO, "auto" },
 	{ HDMI_AUDIO_ON, "on" },
+=======
+	int ret = 0;
+
+	edid = drm_get_edid(connector, adapter);
+	if (edid) {
+		drm_mode_connector_update_edid_property(connector, edid);
+		ret = drm_add_edid_modes(connector, edid);
+		connector->display_info.raw_edid = NULL;
+		kfree(edid);
+	}
+
+	return ret;
+}
+
+static const char *force_audio_names[] = {
+	"off",
+	"auto",
+	"on",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void
@@ -110,24 +145,45 @@ intel_attach_force_audio_property(struct drm_connector *connector)
 	struct drm_device *dev = connector->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	struct drm_property *prop;
+<<<<<<< HEAD
 
 	prop = dev_priv->force_audio_property;
 	if (prop == NULL) {
 		prop = drm_property_create_enum(dev, 0,
 					   "audio",
 					   force_audio_names,
+=======
+	int i;
+
+	prop = dev_priv->force_audio_property;
+	if (prop == NULL) {
+		prop = drm_property_create(dev, DRM_MODE_PROP_ENUM,
+					   "audio",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   ARRAY_SIZE(force_audio_names));
 		if (prop == NULL)
 			return;
 
+<<<<<<< HEAD
+=======
+		for (i = 0; i < ARRAY_SIZE(force_audio_names); i++)
+			drm_property_add_enum(prop, i, i-1, force_audio_names[i]);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_priv->force_audio_property = prop;
 	}
 	drm_connector_attach_property(connector, prop, 0);
 }
 
+<<<<<<< HEAD
 static const struct drm_prop_enum_list broadcast_rgb_names[] = {
 	{ 0, "Full" },
 	{ 1, "Limited 16:235" },
+=======
+static const char *broadcast_rgb_names[] = {
+	"Full",
+	"Limited 16:235",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 void
@@ -136,16 +192,31 @@ intel_attach_broadcast_rgb_property(struct drm_connector *connector)
 	struct drm_device *dev = connector->dev;
 	struct drm_i915_private *dev_priv = dev->dev_private;
 	struct drm_property *prop;
+<<<<<<< HEAD
 
 	prop = dev_priv->broadcast_rgb_property;
 	if (prop == NULL) {
 		prop = drm_property_create_enum(dev, DRM_MODE_PROP_ENUM,
 					   "Broadcast RGB",
 					   broadcast_rgb_names,
+=======
+	int i;
+
+	prop = dev_priv->broadcast_rgb_property;
+	if (prop == NULL) {
+		prop = drm_property_create(dev, DRM_MODE_PROP_ENUM,
+					   "Broadcast RGB",
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   ARRAY_SIZE(broadcast_rgb_names));
 		if (prop == NULL)
 			return;
 
+<<<<<<< HEAD
+=======
+		for (i = 0; i < ARRAY_SIZE(broadcast_rgb_names); i++)
+			drm_property_add_enum(prop, i, i, broadcast_rgb_names[i]);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		dev_priv->broadcast_rgb_property = prop;
 	}
 

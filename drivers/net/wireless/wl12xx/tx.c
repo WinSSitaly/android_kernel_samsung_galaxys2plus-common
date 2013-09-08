@@ -26,11 +26,15 @@
 #include <linux/etherdevice.h>
 
 #include "wl12xx.h"
+<<<<<<< HEAD
 #include "debug.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "io.h"
 #include "reg.h"
 #include "ps.h"
 #include "tx.h"
+<<<<<<< HEAD
 #include "event.h"
 
 static int wl1271_set_default_wep_key(struct wl1271 *wl,
@@ -44,6 +48,18 @@ static int wl1271_set_default_wep_key(struct wl1271 *wl,
 						     wlvif->ap.bcast_hlid);
 	else
 		ret = wl12xx_cmd_set_default_wep_key(wl, id, wlvif->sta.hlid);
+=======
+
+static int wl1271_set_default_wep_key(struct wl1271 *wl, u8 id)
+{
+	int ret;
+	bool is_ap = (wl->bss_type == BSS_TYPE_AP_BSS);
+
+	if (is_ap)
+		ret = wl1271_cmd_set_ap_default_wep_key(wl, id);
+	else
+		ret = wl1271_cmd_set_sta_default_wep_key(wl, id);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (ret < 0)
 		return ret;
@@ -77,6 +93,31 @@ static void wl1271_free_tx_id(struct wl1271 *wl, int id)
 	}
 }
 
+<<<<<<< HEAD
+=======
+static int wl1271_tx_update_filters(struct wl1271 *wl,
+						 struct sk_buff *skb)
+{
+	struct ieee80211_hdr *hdr;
+
+	hdr = (struct ieee80211_hdr *)(skb->data +
+				       sizeof(struct wl1271_tx_hw_descr));
+
+	/*
+	 * stop bssid-based filtering before transmitting authentication
+	 * requests. this way the hw will never drop authentication
+	 * responses coming from BSSIDs it isn't familiar with (e.g. on
+	 * roaming)
+	 */
+	if (!ieee80211_is_auth(hdr->frame_control))
+		return 0;
+
+	wl1271_configure_filters(wl, FIF_OTHER_BSS);
+
+	return wl1271_acx_rx_config(wl, wl->rx_config, wl->rx_filter);
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wl1271_tx_ap_update_inconnection_sta(struct wl1271 *wl,
 						 struct sk_buff *skb)
 {
@@ -93,6 +134,7 @@ static void wl1271_tx_ap_update_inconnection_sta(struct wl1271 *wl,
 		wl1271_acx_set_inconnection_sta(wl, hdr->addr1);
 }
 
+<<<<<<< HEAD
 static void wl1271_tx_regulate_link(struct wl1271 *wl,
 				    struct wl12xx_vif *wlvif,
 				    u8 hlid)
@@ -106,10 +148,24 @@ static void wl1271_tx_regulate_link(struct wl1271 *wl,
 	fw_ps = test_bit(hlid, (unsigned long *)&wl->ap_fw_ps_map);
 	tx_pkts = wl->links[hlid].allocated_pkts;
 	single_sta = (wl->active_sta_count == 1);
+=======
+static void wl1271_tx_regulate_link(struct wl1271 *wl, u8 hlid)
+{
+	bool fw_ps;
+	u8 tx_blks;
+
+	/* only regulate station links */
+	if (hlid < WL1271_AP_STA_HLID_START)
+		return;
+
+	fw_ps = test_bit(hlid, (unsigned long *)&wl->ap_fw_ps_map);
+	tx_blks = wl->links[hlid].allocated_blks;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * if in FW PS and there is enough data in FW we can put the link
 	 * into high-level PS and clean out its TX queues.
+<<<<<<< HEAD
 	 * Make an exception if this is the only connected station. In this
 	 * case FW-memory congestion is not a problem.
 	 */
@@ -124,6 +180,14 @@ bool wl12xx_is_dummy_packet(struct wl1271 *wl, struct sk_buff *skb)
 
 u8 wl12xx_tx_get_hlid_ap(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			 struct sk_buff *skb)
+=======
+	 */
+	if (fw_ps && tx_blks >= WL1271_PS_STA_MAX_BLOCKS)
+		wl1271_ps_link_start(wl, hlid, true);
+}
+
+u8 wl1271_tx_get_hlid(struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_tx_info *control = IEEE80211_SKB_CB(skb);
 
@@ -136,6 +200,7 @@ u8 wl12xx_tx_get_hlid_ap(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	} else {
 		struct ieee80211_hdr *hdr;
 
+<<<<<<< HEAD
 		if (!test_bit(WLVIF_FLAG_AP_STARTED, &wlvif->flags))
 			return wl->system_hlid;
 
@@ -179,14 +244,45 @@ static unsigned int wl12xx_calc_packet_alignment(struct wl1271 *wl,
 static int wl1271_tx_allocate(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			      struct sk_buff *skb, u32 extra, u32 buf_offset,
 			      u8 hlid)
+=======
+		hdr = (struct ieee80211_hdr *)skb->data;
+		if (ieee80211_is_mgmt(hdr->frame_control))
+			return WL1271_AP_GLOBAL_HLID;
+		else
+			return WL1271_AP_BROADCAST_HLID;
+	}
+}
+
+static unsigned int wl12xx_calc_packet_alignment(struct wl1271 *wl,
+						unsigned int packet_length)
+{
+	if (wl->quirks & WL12XX_QUIRK_BLOCKSIZE_ALIGNMENT)
+		return ALIGN(packet_length, WL12XX_BUS_BLOCK_SIZE);
+	else
+		return ALIGN(packet_length, WL1271_TX_ALIGN_TO);
+}
+
+static int wl1271_tx_allocate(struct wl1271 *wl, struct sk_buff *skb, u32 extra,
+				u32 buf_offset, u8 hlid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct wl1271_tx_hw_descr *desc;
 	u32 total_len = skb->len + sizeof(struct wl1271_tx_hw_descr) + extra;
 	u32 len;
 	u32 total_blocks;
+<<<<<<< HEAD
 	int id, ret = -EBUSY, ac;
 	u32 spare_blocks = wl->tx_spare_blocks;
 	bool is_dummy = false;
+=======
+	int id, ret = -EBUSY;
+	u32 spare_blocks;
+
+	if (unlikely(wl->quirks & WL12XX_QUIRK_USE_2_SPARE_BLOCKS))
+		spare_blocks = 2;
+	else
+		spare_blocks = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (buf_offset + total_len > WL1271_AGGR_BUFFER_SIZE)
 		return -EAGAIN;
@@ -200,12 +296,15 @@ static int wl1271_tx_allocate(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	   in the firmware */
 	len = wl12xx_calc_packet_alignment(wl, total_len);
 
+<<<<<<< HEAD
 	/* in case of a dummy packet, use default amount of spare mem blocks */
 	if (unlikely(wl12xx_is_dummy_packet(wl, skb))) {
 		is_dummy = true;
 		spare_blocks = TX_HW_BLOCK_SPARE_DEFAULT;
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	total_blocks = (len + TX_HW_BLOCK_SIZE - 1) / TX_HW_BLOCK_SIZE +
 		spare_blocks;
 
@@ -226,6 +325,7 @@ static int wl1271_tx_allocate(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		wl->tx_blocks_available -= total_blocks;
 		wl->tx_allocated_blocks += total_blocks;
 
+<<<<<<< HEAD
 		/* If the FW was empty before, arm the Tx watchdog */
 		if (wl->tx_allocated_blocks == total_blocks)
 			wl12xx_rearm_tx_watchdog_locked(wl);
@@ -237,6 +337,10 @@ static int wl1271_tx_allocate(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		    wlvif->bss_type == BSS_TYPE_AP_BSS &&
 		    test_bit(hlid, wlvif->ap.sta_hlid_map))
 			wl->links[hlid].allocated_pkts++;
+=======
+		if (wl->bss_type == BSS_TYPE_AP_BSS)
+			wl->links[hlid].allocated_blks += total_blocks;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = 0;
 
@@ -250,14 +354,26 @@ static int wl1271_tx_allocate(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	return ret;
 }
 
+<<<<<<< HEAD
 static void wl1271_tx_fill_hdr(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			       struct sk_buff *skb, u32 extra,
 			       struct ieee80211_tx_info *control, u8 hlid)
+=======
+static bool wl12xx_is_dummy_packet(struct wl1271 *wl, struct sk_buff *skb)
+{
+	return wl->dummy_packet == skb;
+}
+
+static void wl1271_tx_fill_hdr(struct wl1271 *wl, struct sk_buff *skb,
+			      u32 extra, struct ieee80211_tx_info *control,
+			      u8 hlid)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct timespec ts;
 	struct wl1271_tx_hw_descr *desc;
 	int aligned_len, ac, rate_idx;
 	s64 hosttime;
+<<<<<<< HEAD
 	u16 tx_attr = 0;
 	__le16 frame_control;
 	struct ieee80211_hdr *hdr;
@@ -273,6 +389,18 @@ static void wl1271_tx_fill_hdr(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	if (extra) {
 		int hdrlen = ieee80211_hdrlen(frame_control);
 		memmove(frame_start, hdr, hdrlen);
+=======
+	u16 tx_attr;
+
+	desc = (struct wl1271_tx_hw_descr *) skb->data;
+
+	/* relocate space for security header */
+	if (extra) {
+		void *framestart = skb->data + sizeof(*desc);
+		u16 fc = *(u16 *)(framestart + extra);
+		int hdrlen = ieee80211_hdrlen(cpu_to_le16(fc));
+		memmove(framestart, framestart + extra, hdrlen);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/* configure packet life time */
@@ -280,8 +408,12 @@ static void wl1271_tx_fill_hdr(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	hosttime = (timespec_to_ns(&ts) >> 10);
 	desc->start_time = cpu_to_le32(hosttime - wl->time_offset);
 
+<<<<<<< HEAD
 	is_dummy = wl12xx_is_dummy_packet(wl, skb);
 	if (is_dummy || !wlvif || wlvif->bss_type != BSS_TYPE_AP_BSS)
+=======
+	if (wl->bss_type != BSS_TYPE_AP_BSS)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		desc->life_time = cpu_to_le16(TX_HW_MGMT_PKT_LIFETIME_TU);
 	else
 		desc->life_time = cpu_to_le16(TX_HW_AP_MODE_PKT_LIFETIME_TU);
@@ -290,16 +422,25 @@ static void wl1271_tx_fill_hdr(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	ac = wl1271_tx_get_queue(skb_get_queue_mapping(skb));
 	desc->tid = skb->priority;
 
+<<<<<<< HEAD
 	if (is_dummy) {
+=======
+	if (wl12xx_is_dummy_packet(wl, skb)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/*
 		 * FW expects the dummy packet to have an invalid session id -
 		 * any session id that is different than the one set in the join
 		 */
+<<<<<<< HEAD
 		tx_attr = (SESSION_COUNTER_INVALID <<
+=======
+		tx_attr = ((~wl->session_counter) <<
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			   TX_HW_ATTR_OFST_SESSION_COUNTER) &
 			   TX_HW_ATTR_SESSION_COUNTER;
 
 		tx_attr |= TX_HW_ATTR_TX_DUMMY_REQ;
+<<<<<<< HEAD
 	} else if (wlvif) {
 		/* configure the tx attributes */
 		tx_attr = wlvif->session_counter <<
@@ -326,6 +467,37 @@ static void wl1271_tx_fill_hdr(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			rate_idx = wlvif->ap.bcast_rate_idx;
 		else
 			rate_idx = wlvif->ap.ucast_rate_idx[ac];
+=======
+	} else {
+		/* configure the tx attributes */
+		tx_attr =
+			wl->session_counter << TX_HW_ATTR_OFST_SESSION_COUNTER;
+	}
+
+	if (wl->bss_type != BSS_TYPE_AP_BSS) {
+		desc->aid = hlid;
+
+		/* if the packets are destined for AP (have a STA entry)
+		   send them with AP rate policies, otherwise use default
+		   basic rates */
+		if (control->control.sta)
+			rate_idx = ACX_TX_AP_FULL_RATE;
+		else
+			rate_idx = ACX_TX_BASIC_RATE;
+	} else {
+		desc->hlid = hlid;
+		switch (hlid) {
+		case WL1271_AP_GLOBAL_HLID:
+			rate_idx = ACX_TX_AP_MODE_MGMT_RATE;
+			break;
+		case WL1271_AP_BROADCAST_HLID:
+			rate_idx = ACX_TX_AP_MODE_BCST_RATE;
+			break;
+		default:
+			rate_idx = ac;
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	tx_attr |= rate_idx << TX_HW_ATTR_OFST_RATE_POLICY;
@@ -361,36 +533,53 @@ static void wl1271_tx_fill_hdr(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 			     desc->wl127x_mem.total_mem_blocks);
 	}
 
+<<<<<<< HEAD
 	/* for WEP shared auth - no fw encryption is needed */
 	if (ieee80211_is_auth(frame_control) &&
 	    ieee80211_has_protected(frame_control))
 		tx_attr |= TX_HW_ATTR_HOST_ENCRYPT;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	desc->tx_attr = cpu_to_le16(tx_attr);
 }
 
 /* caller must hold wl->mutex */
+<<<<<<< HEAD
 static int wl1271_prepare_tx_frame(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				   struct sk_buff *skb, u32 buf_offset)
+=======
+static int wl1271_prepare_tx_frame(struct wl1271 *wl, struct sk_buff *skb,
+							u32 buf_offset)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_tx_info *info;
 	u32 extra = 0;
 	int ret = 0;
 	u32 total_len;
 	u8 hlid;
+<<<<<<< HEAD
 	bool is_dummy;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!skb)
 		return -EINVAL;
 
 	info = IEEE80211_SKB_CB(skb);
 
+<<<<<<< HEAD
 	/* TODO: handle dummy packets on multi-vifs */
 	is_dummy = wl12xx_is_dummy_packet(wl, skb);
 
 	if (info->control.hw_key &&
 	    info->control.hw_key->cipher == WLAN_CIPHER_SUITE_TKIP)
 		extra = WL1271_EXTRA_SPACE_TKIP;
+=======
+	if (info->control.hw_key &&
+	    info->control.hw_key->cipher == WLAN_CIPHER_SUITE_TKIP)
+		extra = WL1271_TKIP_IV_SPACE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (info->control.hw_key) {
 		bool is_wep;
@@ -400,6 +589,7 @@ static int wl1271_prepare_tx_frame(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		is_wep = (cipher == WLAN_CIPHER_SUITE_WEP40) ||
 			 (cipher == WLAN_CIPHER_SUITE_WEP104);
 
+<<<<<<< HEAD
 		if (unlikely(is_wep && wlvif->default_key != idx)) {
 			ret = wl1271_set_default_wep_key(wl, wlvif, idx);
 			if (ret < 0)
@@ -424,6 +614,34 @@ static int wl1271_prepare_tx_frame(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 		wl1271_tx_regulate_link(wl, wlvif, hlid);
 	}
 
+=======
+		if (unlikely(is_wep && wl->default_key != idx)) {
+			ret = wl1271_set_default_wep_key(wl, idx);
+			if (ret < 0)
+				return ret;
+			wl->default_key = idx;
+		}
+	}
+
+	if (wl->bss_type == BSS_TYPE_AP_BSS)
+		hlid = wl1271_tx_get_hlid(skb);
+	else
+		hlid = TX_HW_DEFAULT_AID;
+
+	ret = wl1271_tx_allocate(wl, skb, extra, buf_offset, hlid);
+	if (ret < 0)
+		return ret;
+
+	if (wl->bss_type == BSS_TYPE_AP_BSS) {
+		wl1271_tx_ap_update_inconnection_sta(wl, skb);
+		wl1271_tx_regulate_link(wl, hlid);
+	} else {
+		wl1271_tx_update_filters(wl, skb);
+	}
+
+	wl1271_tx_fill_hdr(wl, skb, extra, info, hlid);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * The length of each packet is stored in terms of
 	 * words. Thus, we must pad the skb data to make sure its
@@ -438,26 +656,42 @@ static int wl1271_prepare_tx_frame(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 	memset(wl->aggr_buf + buf_offset + skb->len, 0, total_len - skb->len);
 
 	/* Revert side effects in the dummy packet skb, so it can be reused */
+<<<<<<< HEAD
 	if (is_dummy)
+=======
+	if (wl12xx_is_dummy_packet(wl, skb))
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		skb_pull(skb, sizeof(struct wl1271_tx_hw_descr));
 
 	return total_len;
 }
 
+<<<<<<< HEAD
 u32 wl1271_tx_enabled_rates_get(struct wl1271 *wl, u32 rate_set,
 				enum ieee80211_band rate_band)
+=======
+u32 wl1271_tx_enabled_rates_get(struct wl1271 *wl, u32 rate_set)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct ieee80211_supported_band *band;
 	u32 enabled_rates = 0;
 	int bit;
 
+<<<<<<< HEAD
 	band = wl->hw->wiphy->bands[rate_band];
+=======
+	band = wl->hw->wiphy->bands[wl->band];
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (bit = 0; bit < band->n_bitrates; bit++) {
 		if (rate_set & 0x1)
 			enabled_rates |= band->bitrates[bit].hw_value;
 		rate_set >>= 1;
 	}
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_WL12XX_HT
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* MCS rates indication are on bits 16 - 23 */
 	rate_set >>= HW_HT_RATES_OFFSET - band->n_bitrates;
 
@@ -466,6 +700,10 @@ u32 wl1271_tx_enabled_rates_get(struct wl1271 *wl, u32 rate_set,
 			enabled_rates |= (CONF_HW_BIT_RATE_MCS_0 << bit);
 		rate_set >>= 1;
 	}
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return enabled_rates;
 }
@@ -473,6 +711,7 @@ u32 wl1271_tx_enabled_rates_get(struct wl1271 *wl, u32 rate_set,
 void wl1271_handle_tx_low_watermark(struct wl1271 *wl)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	int i;
 
 	for (i = 0; i < NUM_TX_QUEUES; i++) {
@@ -533,12 +772,46 @@ static struct sk_buff *wl12xx_lnk_skb_dequeue(struct wl1271 *wl,
 		spin_lock_irqsave(&wl->wl_lock, flags);
 		WARN_ON_ONCE(wl->tx_queue_count[q] <= 0);
 		wl->tx_queue_count[q]--;
+=======
+
+	if (test_bit(WL1271_FLAG_TX_QUEUE_STOPPED, &wl->flags) &&
+	    wl->tx_queue_count <= WL1271_TX_QUEUE_LOW_WATERMARK) {
+		/* firmware buffer has space, restart queues */
+		spin_lock_irqsave(&wl->wl_lock, flags);
+		ieee80211_wake_queues(wl->hw);
+		clear_bit(WL1271_FLAG_TX_QUEUE_STOPPED, &wl->flags);
+		spin_unlock_irqrestore(&wl->wl_lock, flags);
+	}
+}
+
+static struct sk_buff *wl1271_sta_skb_dequeue(struct wl1271 *wl)
+{
+	struct sk_buff *skb = NULL;
+	unsigned long flags;
+
+	skb = skb_dequeue(&wl->tx_queue[CONF_TX_AC_VO]);
+	if (skb)
+		goto out;
+	skb = skb_dequeue(&wl->tx_queue[CONF_TX_AC_VI]);
+	if (skb)
+		goto out;
+	skb = skb_dequeue(&wl->tx_queue[CONF_TX_AC_BE]);
+	if (skb)
+		goto out;
+	skb = skb_dequeue(&wl->tx_queue[CONF_TX_AC_BK]);
+
+out:
+	if (skb) {
+		spin_lock_irqsave(&wl->wl_lock, flags);
+		wl->tx_queue_count--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&wl->wl_lock, flags);
 	}
 
 	return skb;
 }
 
+<<<<<<< HEAD
 static struct sk_buff *wl12xx_vif_skb_dequeue(struct wl1271 *wl,
 					      struct wl12xx_vif *wlvif)
 {
@@ -566,6 +839,44 @@ static struct sk_buff *wl12xx_vif_skb_dequeue(struct wl1271 *wl,
 
 	if (!skb)
 		wlvif->last_tx_hlid = 0;
+=======
+static struct sk_buff *wl1271_ap_skb_dequeue(struct wl1271 *wl)
+{
+	struct sk_buff *skb = NULL;
+	unsigned long flags;
+	int i, h, start_hlid;
+
+	/* start from the link after the last one */
+	start_hlid = (wl->last_tx_hlid + 1) % AP_MAX_LINKS;
+
+	/* dequeue according to AC, round robin on each link */
+	for (i = 0; i < AP_MAX_LINKS; i++) {
+		h = (start_hlid + i) % AP_MAX_LINKS;
+
+		skb = skb_dequeue(&wl->links[h].tx_queue[CONF_TX_AC_VO]);
+		if (skb)
+			goto out;
+		skb = skb_dequeue(&wl->links[h].tx_queue[CONF_TX_AC_VI]);
+		if (skb)
+			goto out;
+		skb = skb_dequeue(&wl->links[h].tx_queue[CONF_TX_AC_BE]);
+		if (skb)
+			goto out;
+		skb = skb_dequeue(&wl->links[h].tx_queue[CONF_TX_AC_BK]);
+		if (skb)
+			goto out;
+	}
+
+out:
+	if (skb) {
+		wl->last_tx_hlid = h;
+		spin_lock_irqsave(&wl->wl_lock, flags);
+		wl->tx_queue_count--;
+		spin_unlock_irqrestore(&wl->wl_lock, flags);
+	} else {
+		wl->last_tx_hlid = 0;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return skb;
 }
@@ -573,6 +884,7 @@ static struct sk_buff *wl12xx_vif_skb_dequeue(struct wl1271 *wl,
 static struct sk_buff *wl1271_skb_dequeue(struct wl1271 *wl)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	struct wl12xx_vif *wlvif = wl->last_wlvif;
 	struct sk_buff *skb = NULL;
 
@@ -618,20 +930,39 @@ static struct sk_buff *wl1271_skb_dequeue(struct wl1271 *wl)
 		spin_lock_irqsave(&wl->wl_lock, flags);
 		WARN_ON_ONCE(wl->tx_queue_count[q] <= 0);
 		wl->tx_queue_count[q]--;
+=======
+	struct sk_buff *skb = NULL;
+
+	if (wl->bss_type == BSS_TYPE_AP_BSS)
+		skb = wl1271_ap_skb_dequeue(wl);
+	else
+		skb = wl1271_sta_skb_dequeue(wl);
+
+	if (!skb &&
+	    test_and_clear_bit(WL1271_FLAG_DUMMY_PACKET_PENDING, &wl->flags)) {
+		skb = wl->dummy_packet;
+		spin_lock_irqsave(&wl->wl_lock, flags);
+		wl->tx_queue_count--;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		spin_unlock_irqrestore(&wl->wl_lock, flags);
 	}
 
 	return skb;
 }
 
+<<<<<<< HEAD
 static void wl1271_skb_queue_head(struct wl1271 *wl, struct wl12xx_vif *wlvif,
 				  struct sk_buff *skb)
+=======
+static void wl1271_skb_queue_head(struct wl1271 *wl, struct sk_buff *skb)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	unsigned long flags;
 	int q = wl1271_tx_get_queue(skb_get_queue_mapping(skb));
 
 	if (wl12xx_is_dummy_packet(wl, skb)) {
 		set_bit(WL1271_FLAG_DUMMY_PACKET_PENDING, &wl->flags);
+<<<<<<< HEAD
 	} else {
 		u8 hlid = wl12xx_tx_get_hlid(wl, wlvif, skb);
 		skb_queue_head(&wl->links[hlid].tx_queue[q], skb);
@@ -697,12 +1028,35 @@ void wl1271_tx_work_locked(struct wl1271 *wl)
 	u32 buf_offset = 0;
 	bool sent_packets = false;
 	unsigned long active_hlids[BITS_TO_LONGS(WL12XX_MAX_LINKS)] = {0};
+=======
+	} else if (wl->bss_type == BSS_TYPE_AP_BSS) {
+		u8 hlid = wl1271_tx_get_hlid(skb);
+		skb_queue_head(&wl->links[hlid].tx_queue[q], skb);
+
+		/* make sure we dequeue the same packet next time */
+		wl->last_tx_hlid = (hlid + AP_MAX_LINKS - 1) % AP_MAX_LINKS;
+	} else {
+		skb_queue_head(&wl->tx_queue[q], skb);
+	}
+
+	spin_lock_irqsave(&wl->wl_lock, flags);
+	wl->tx_queue_count++;
+	spin_unlock_irqrestore(&wl->wl_lock, flags);
+}
+
+void wl1271_tx_work_locked(struct wl1271 *wl)
+{
+	struct sk_buff *skb;
+	u32 buf_offset = 0;
+	bool sent_packets = false;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ret;
 
 	if (unlikely(wl->state == WL1271_STATE_OFF))
 		return;
 
 	while ((skb = wl1271_skb_dequeue(wl))) {
+<<<<<<< HEAD
 		struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
 		bool has_data = false;
 
@@ -712,12 +1066,19 @@ void wl1271_tx_work_locked(struct wl1271 *wl)
 
 		has_data = wlvif && wl1271_tx_is_data_present(skb);
 		ret = wl1271_prepare_tx_frame(wl, wlvif, skb, buf_offset);
+=======
+		ret = wl1271_prepare_tx_frame(wl, skb, buf_offset);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret == -EAGAIN) {
 			/*
 			 * Aggregation buffer is full.
 			 * Flush buffer and try again.
 			 */
+<<<<<<< HEAD
 			wl1271_skb_queue_head(wl, wlvif, skb);
+=======
+			wl1271_skb_queue_head(wl, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			wl1271_write(wl, WL1271_SLV_MEM_DATA, wl->aggr_buf,
 				     buf_offset, true);
 			sent_packets = true;
@@ -728,11 +1089,16 @@ void wl1271_tx_work_locked(struct wl1271 *wl)
 			 * Firmware buffer is full.
 			 * Queue back last skb, and stop aggregating.
 			 */
+<<<<<<< HEAD
 			wl1271_skb_queue_head(wl, wlvif, skb);
+=======
+			wl1271_skb_queue_head(wl, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/* No work left, avoid scheduling redundant tx work */
 			set_bit(WL1271_FLAG_FW_TX_BUSY, &wl->flags);
 			goto out_ack;
 		} else if (ret < 0) {
+<<<<<<< HEAD
 			if (wl12xx_is_dummy_packet(wl, skb))
 				/*
 				 * fw still expects dummy packet,
@@ -741,14 +1107,20 @@ void wl1271_tx_work_locked(struct wl1271 *wl)
 				wl1271_skb_queue_head(wl, wlvif, skb);
 			else
 				ieee80211_free_txskb(wl->hw, skb);
+=======
+			dev_kfree_skb(skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			goto out_ack;
 		}
 		buf_offset += ret;
 		wl->tx_packets_count++;
+<<<<<<< HEAD
 		if (has_data) {
 			desc = (struct wl1271_tx_hw_descr *) skb->data;
 			__set_bit(desc->hlid, active_hlids);
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 out_ack:
@@ -768,7 +1140,10 @@ out_ack:
 
 		wl1271_handle_tx_low_watermark(wl);
 	}
+<<<<<<< HEAD
 	wl12xx_rearm_rx_streaming(wl, active_hlids);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 void wl1271_tx_work(struct work_struct *work)
@@ -788,6 +1163,7 @@ out:
 	mutex_unlock(&wl->mutex);
 }
 
+<<<<<<< HEAD
 static u8 wl1271_tx_get_rate_flags(u8 rate_class_index)
 {
 	u8 flags = 0;
@@ -800,16 +1176,24 @@ static u8 wl1271_tx_get_rate_flags(u8 rate_class_index)
 	return flags;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wl1271_tx_complete_packet(struct wl1271 *wl,
 				      struct wl1271_tx_hw_res_descr *result)
 {
 	struct ieee80211_tx_info *info;
+<<<<<<< HEAD
 	struct ieee80211_vif *vif;
 	struct wl12xx_vif *wlvif;
 	struct sk_buff *skb;
 	int id = result->id;
 	int rate = -1;
 	u8 rate_flags = 0;
+=======
+	struct sk_buff *skb;
+	int id = result->id;
+	int rate = -1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u8 retries = 0;
 
 	/* check for id legality */
@@ -826,17 +1210,24 @@ static void wl1271_tx_complete_packet(struct wl1271 *wl,
 		return;
 	}
 
+<<<<<<< HEAD
 	/* info->control is valid as long as we don't update info->status */
 	vif = info->control.vif;
 	wlvif = wl12xx_vif_to_data(vif);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* update the TX status info */
 	if (result->status == TX_SUCCESS) {
 		if (!(info->flags & IEEE80211_TX_CTL_NO_ACK))
 			info->flags |= IEEE80211_TX_STAT_ACK;
+<<<<<<< HEAD
 		rate = wl1271_rate_to_idx(result->rate_class_index,
 					  wlvif->band);
 		rate_flags = wl1271_tx_get_rate_flags(result->rate_class_index);
+=======
+		rate = wl1271_rate_to_idx(result->rate_class_index, wl->band);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		retries = result->ack_failures;
 	} else if (result->status == TX_RETRY_EXCEEDED) {
 		wl->stats.excessive_retries++;
@@ -845,11 +1236,16 @@ static void wl1271_tx_complete_packet(struct wl1271 *wl,
 
 	info->status.rates[0].idx = rate;
 	info->status.rates[0].count = retries;
+<<<<<<< HEAD
 	info->status.rates[0].flags = rate_flags;
+=======
+	info->status.rates[0].flags = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	info->status.ack_signal = -1;
 
 	wl->stats.retry_count += result->ack_failures;
 
+<<<<<<< HEAD
 	/*
 	 * update sequence number only when relevant, i.e. only in
 	 * sessions of TKIP, AES and GEM (not in open or WEP sessions)
@@ -868,6 +1264,12 @@ static void wl1271_tx_complete_packet(struct wl1271 *wl,
 		wlvif->tx_security_seq += (fw_lsb - cur_lsb) & 0xff;
 		wlvif->tx_security_last_seq_lsb = fw_lsb;
 	}
+=======
+	/* update security sequence number */
+	wl->tx_security_seq += (result->lsb_security_sequence_number -
+				wl->tx_security_last_seq);
+	wl->tx_security_last_seq = result->lsb_security_sequence_number;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* remove private header from packet */
 	skb_pull(skb, sizeof(struct wl1271_tx_hw_descr));
@@ -876,9 +1278,14 @@ static void wl1271_tx_complete_packet(struct wl1271 *wl,
 	if (info->control.hw_key &&
 	    info->control.hw_key->cipher == WLAN_CIPHER_SUITE_TKIP) {
 		int hdrlen = ieee80211_get_hdrlen_from_skb(skb);
+<<<<<<< HEAD
 		memmove(skb->data + WL1271_EXTRA_SPACE_TKIP, skb->data,
 			hdrlen);
 		skb_pull(skb, WL1271_EXTRA_SPACE_TKIP);
+=======
+		memmove(skb->data + WL1271_TKIP_IV_SPACE, skb->data, hdrlen);
+		skb_pull(skb, WL1271_TKIP_IV_SPACE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	wl1271_debug(DEBUG_TX, "tx status id %u skb 0x%p failures %u rate 0x%x"
@@ -888,7 +1295,11 @@ static void wl1271_tx_complete_packet(struct wl1271 *wl,
 
 	/* return the packet to the stack */
 	skb_queue_tail(&wl->deferred_tx_queue, skb);
+<<<<<<< HEAD
 	queue_work(wl->freezable_wq, &wl->netstack_work);
+=======
+	ieee80211_queue_work(wl->hw, &wl->netstack_work);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wl1271_free_tx_id(wl, result->id);
 }
 
@@ -933,6 +1344,7 @@ void wl1271_tx_complete(struct wl1271 *wl)
 void wl1271_tx_reset_link_queues(struct wl1271 *wl, u8 hlid)
 {
 	struct sk_buff *skb;
+<<<<<<< HEAD
 	int i;
 	unsigned long flags;
 	struct ieee80211_tx_info *info;
@@ -951,18 +1363,37 @@ void wl1271_tx_reset_link_queues(struct wl1271 *wl, u8 hlid)
 			}
 
 			total[i]++;
+=======
+	int i, total = 0;
+	unsigned long flags;
+	struct ieee80211_tx_info *info;
+
+	for (i = 0; i < NUM_TX_QUEUES; i++) {
+		while ((skb = skb_dequeue(&wl->links[hlid].tx_queue[i]))) {
+			wl1271_debug(DEBUG_TX, "link freeing skb 0x%p", skb);
+			info = IEEE80211_SKB_CB(skb);
+			info->status.rates[0].idx = -1;
+			info->status.rates[0].count = 0;
+			ieee80211_tx_status(wl->hw, skb);
+			total++;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 
 	spin_lock_irqsave(&wl->wl_lock, flags);
+<<<<<<< HEAD
 	for (i = 0; i < NUM_TX_QUEUES; i++)
 		wl->tx_queue_count[i] -= total[i];
+=======
+	wl->tx_queue_count -= total;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	spin_unlock_irqrestore(&wl->wl_lock, flags);
 
 	wl1271_handle_tx_low_watermark(wl);
 }
 
 /* caller must hold wl->mutex and TX must be stopped */
+<<<<<<< HEAD
 void wl12xx_tx_reset_wlvif(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 {
 	int i;
@@ -982,11 +1413,15 @@ void wl12xx_tx_reset_wlvif(struct wl1271 *wl, struct wl12xx_vif *wlvif)
 }
 /* caller must hold wl->mutex and TX must be stopped */
 void wl12xx_tx_reset(struct wl1271 *wl, bool reset_tx_queues)
+=======
+void wl1271_tx_reset(struct wl1271 *wl, bool reset_tx_queues)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	int i;
 	struct sk_buff *skb;
 	struct ieee80211_tx_info *info;
 
+<<<<<<< HEAD
 	/* only reset the queues if something bad happened */
 	if (WARN_ON_ONCE(wl1271_tx_total_queue_count(wl) != 0)) {
 		for (i = 0; i < WL12XX_MAX_LINKS; i++)
@@ -997,6 +1432,34 @@ void wl12xx_tx_reset(struct wl1271 *wl, bool reset_tx_queues)
 	}
 
 	wl->stopped_queues_map = 0;
+=======
+	/* TX failure */
+	if (wl->bss_type == BSS_TYPE_AP_BSS) {
+		for (i = 0; i < AP_MAX_LINKS; i++) {
+			wl1271_tx_reset_link_queues(wl, i);
+			wl->links[i].allocated_blks = 0;
+			wl->links[i].prev_freed_blks = 0;
+		}
+
+		wl->last_tx_hlid = 0;
+	} else {
+		for (i = 0; i < NUM_TX_QUEUES; i++) {
+			while ((skb = skb_dequeue(&wl->tx_queue[i]))) {
+				wl1271_debug(DEBUG_TX, "freeing skb 0x%p",
+					     skb);
+
+				if (!wl12xx_is_dummy_packet(wl, skb)) {
+					info = IEEE80211_SKB_CB(skb);
+					info->status.rates[0].idx = -1;
+					info->status.rates[0].count = 0;
+					ieee80211_tx_status(wl->hw, skb);
+				}
+			}
+		}
+	}
+
+	wl->tx_queue_count = 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Make sure the driver is at a consistent state, in case this
@@ -1025,15 +1488,25 @@ void wl12xx_tx_reset(struct wl1271 *wl, bool reset_tx_queues)
 			    info->control.hw_key->cipher ==
 			    WLAN_CIPHER_SUITE_TKIP) {
 				int hdrlen = ieee80211_get_hdrlen_from_skb(skb);
+<<<<<<< HEAD
 				memmove(skb->data + WL1271_EXTRA_SPACE_TKIP,
 					skb->data, hdrlen);
 				skb_pull(skb, WL1271_EXTRA_SPACE_TKIP);
+=======
+				memmove(skb->data + WL1271_TKIP_IV_SPACE,
+					skb->data, hdrlen);
+				skb_pull(skb, WL1271_TKIP_IV_SPACE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			info->status.rates[0].idx = -1;
 			info->status.rates[0].count = 0;
 
+<<<<<<< HEAD
 			ieee80211_tx_status_ni(wl->hw, skb);
+=======
+			ieee80211_tx_status(wl->hw, skb);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }
@@ -1044,16 +1517,24 @@ void wl12xx_tx_reset(struct wl1271 *wl, bool reset_tx_queues)
 void wl1271_tx_flush(struct wl1271 *wl)
 {
 	unsigned long timeout;
+<<<<<<< HEAD
 	int i;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	timeout = jiffies + usecs_to_jiffies(WL1271_TX_FLUSH_TIMEOUT);
 
 	while (!time_after(jiffies, timeout)) {
 		mutex_lock(&wl->mutex);
 		wl1271_debug(DEBUG_TX, "flushing tx buffer: %d %d",
+<<<<<<< HEAD
 			     wl->tx_frames_cnt,
 			     wl1271_tx_total_queue_count(wl));
 		if ((wl->tx_frames_cnt == 0) &&
 		    (wl1271_tx_total_queue_count(wl) == 0)) {
+=======
+			     wl->tx_frames_cnt, wl->tx_queue_count);
+		if ((wl->tx_frames_cnt == 0) && (wl->tx_queue_count == 0)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			mutex_unlock(&wl->mutex);
 			return;
 		}
@@ -1062,6 +1543,7 @@ void wl1271_tx_flush(struct wl1271 *wl)
 	}
 
 	wl1271_warning("Unable to flush all TX buffers, timed out.");
+<<<<<<< HEAD
 
 	/* forcibly flush all Tx buffers on our queues */
 	mutex_lock(&wl->mutex);
@@ -1076,4 +1558,24 @@ u32 wl1271_tx_min_rate_get(struct wl1271 *wl, u32 rate_set)
 		return 0;
 
 	return BIT(__ffs(rate_set));
+=======
+}
+
+u32 wl1271_tx_min_rate_get(struct wl1271 *wl)
+{
+	int i;
+	u32 rate = 0;
+
+	if (!wl->basic_rate_set) {
+		WARN_ON(1);
+		wl->basic_rate_set = wl->conf.tx.basic_rate;
+	}
+
+	for (i = 0; !rate; i++) {
+		if ((wl->basic_rate_set >> i) & 0x1)
+			rate = 1 << i;
+	}
+
+	return rate;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }

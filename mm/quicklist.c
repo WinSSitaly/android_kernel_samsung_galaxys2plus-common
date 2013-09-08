@@ -17,6 +17,10 @@
 #include <linux/gfp.h>
 #include <linux/mm.h>
 #include <linux/mmzone.h>
+<<<<<<< HEAD
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/quicklist.h>
 
 DEFINE_PER_CPU(struct quicklist [CONFIG_NR_QUICK], quicklist);

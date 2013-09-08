@@ -102,7 +102,11 @@
  *	You can find the original tools for this direct from Multitech
  *		ftp://ftp.multitech.com/ISI-Cards/
  *
+<<<<<<< HEAD
  *	Having installed the cards the module options (/etc/modprobe.d/)
+=======
+ *	Having installed the cards the module options (/etc/modprobe.conf)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *	options isicom   io=card1,card2,card3,card4 irq=card1,card2,card3,card4
  *
@@ -133,6 +137,10 @@
 
 #include <linux/uaccess.h>
 #include <linux/io.h>
+<<<<<<< HEAD
+=======
+#include <asm/system.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <linux/pci.h>
 
@@ -848,6 +856,11 @@ static struct tty_port *isicom_find_port(struct tty_struct *tty)
 	unsigned int board;
 	int line = tty->index;
 
+<<<<<<< HEAD
+=======
+	if (line < 0 || line > PORT_COUNT-1)
+		return NULL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	board = BOARD(line);
 	card = &isi_card[board];
 
@@ -1595,7 +1608,11 @@ static int __devinit isicom_probe(struct pci_dev *pdev,
 	}
 
 	retval = request_irq(board->irq, isicom_interrupt,
+<<<<<<< HEAD
 			IRQF_SHARED, ISICOM_NAME, board);
+=======
+			IRQF_SHARED | IRQF_DISABLED, ISICOM_NAME, board);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (retval < 0) {
 		dev_err(&pdev->dev, "Could not install handler at Irq %d. "
 			"Card%d will be disabled.\n", board->irq, index + 1);
@@ -1675,6 +1692,10 @@ static int __init isicom_init(void)
 		goto error;
 	}
 
+<<<<<<< HEAD
+=======
+	isicom_normal->owner			= THIS_MODULE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	isicom_normal->name 			= "ttyM";
 	isicom_normal->major			= ISICOM_NMAJOR;
 	isicom_normal->minor_start		= 0;

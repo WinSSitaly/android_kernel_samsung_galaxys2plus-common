@@ -47,7 +47,10 @@ struct ceph_auth_client *ceph_auth_init(const char *name, const struct ceph_cryp
 	if (!ac)
 		goto out;
 
+<<<<<<< HEAD
 	mutex_init(&ac->mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ac->negotiating = true;
 	if (name)
 		ac->name = name;
@@ -74,12 +77,18 @@ void ceph_auth_destroy(struct ceph_auth_client *ac)
  */
 void ceph_auth_reset(struct ceph_auth_client *ac)
 {
+<<<<<<< HEAD
 	mutex_lock(&ac->mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("auth_reset %p\n", ac);
 	if (ac->ops && !ac->negotiating)
 		ac->ops->reset(ac);
 	ac->negotiating = true;
+<<<<<<< HEAD
 	mutex_unlock(&ac->mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int ceph_entity_name_encode(const char *name, void **p, void *end)
@@ -105,7 +114,10 @@ int ceph_auth_build_hello(struct ceph_auth_client *ac, void *buf, size_t len)
 	int i, num;
 	int ret;
 
+<<<<<<< HEAD
 	mutex_lock(&ac->mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("auth_build_hello\n");
 	monhdr->have_version = 0;
 	monhdr->session_mon = cpu_to_le16(-1);
@@ -126,11 +138,16 @@ int ceph_auth_build_hello(struct ceph_auth_client *ac, void *buf, size_t len)
 
 	ret = ceph_entity_name_encode(ac->name, &p, end);
 	if (ret < 0)
+<<<<<<< HEAD
 		goto out;
+=======
+		return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ceph_decode_need(&p, end, sizeof(u64), bad);
 	ceph_encode_64(&p, ac->global_id);
 
 	ceph_encode_32(&lenp, p - lenp - sizeof(u32));
+<<<<<<< HEAD
 	ret = p - buf;
 out:
 	mutex_unlock(&ac->mutex);
@@ -139,6 +156,12 @@ out:
 bad:
 	ret = -ERANGE;
 	goto out;
+=======
+	return p - buf;
+
+bad:
+	return -ERANGE;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int ceph_build_auth_request(struct ceph_auth_client *ac,
@@ -159,6 +182,7 @@ static int ceph_build_auth_request(struct ceph_auth_client *ac,
 	if (ret < 0) {
 		pr_err("error %d building auth method %s request\n", ret,
 		       ac->ops->name);
+<<<<<<< HEAD
 		goto out;
 	}
 	dout(" built request %d bytes\n", ret);
@@ -166,6 +190,13 @@ static int ceph_build_auth_request(struct ceph_auth_client *ac,
 	ret = p + ret - msg_buf;
 out:
 	return ret;
+=======
+		return ret;
+	}
+	dout(" built request %d bytes\n", ret);
+	ceph_encode_32(&p, ret);
+	return p + ret - msg_buf;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -186,7 +217,10 @@ int ceph_handle_auth_reply(struct ceph_auth_client *ac,
 	int result_msg_len;
 	int ret = -EINVAL;
 
+<<<<<<< HEAD
 	mutex_lock(&ac->mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dout("handle_auth_reply %p %p\n", p, end);
 	ceph_decode_need(&p, end, sizeof(u32) * 3 + sizeof(u64), bad);
 	protocol = ceph_decode_32(&p);
@@ -238,6 +272,7 @@ int ceph_handle_auth_reply(struct ceph_auth_client *ac,
 
 	ret = ac->ops->handle_reply(ac, result, payload, payload_end);
 	if (ret == -EAGAIN) {
+<<<<<<< HEAD
 		ret = ceph_build_auth_request(ac, reply_buf, reply_len);
 	} else if (ret) {
 		pr_err("auth method '%s' error %d\n", ac->ops->name, ret);
@@ -251,11 +286,25 @@ bad:
 	pr_err("failed to decode auth msg\n");
 	ret = -EINVAL;
 	goto out;
+=======
+		return ceph_build_auth_request(ac, reply_buf, reply_len);
+	} else if (ret) {
+		pr_err("auth method '%s' error %d\n", ac->ops->name, ret);
+		return ret;
+	}
+	return 0;
+
+bad:
+	pr_err("failed to decode auth msg\n");
+out:
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int ceph_build_auth(struct ceph_auth_client *ac,
 		    void *msg_buf, size_t msg_len)
 {
+<<<<<<< HEAD
 	int ret = 0;
 
 	mutex_lock(&ac->mutex);
@@ -265,10 +314,19 @@ int ceph_build_auth(struct ceph_auth_client *ac,
 		ret = ceph_build_auth_request(ac, msg_buf, msg_len);
 	mutex_unlock(&ac->mutex);
 	return ret;
+=======
+	if (!ac->protocol)
+		return ceph_auth_build_hello(ac, msg_buf, msg_len);
+	BUG_ON(!ac->ops);
+	if (ac->ops->should_authenticate(ac))
+		return ceph_build_auth_request(ac, msg_buf, msg_len);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int ceph_auth_is_authenticated(struct ceph_auth_client *ac)
 {
+<<<<<<< HEAD
 	int ret = 0;
 
 	mutex_lock(&ac->mutex);
@@ -338,3 +396,9 @@ void ceph_auth_invalidate_authorizer(struct ceph_auth_client *ac, int peer_type)
 	mutex_unlock(&ac->mutex);
 }
 EXPORT_SYMBOL(ceph_auth_invalidate_authorizer);
+=======
+	if (!ac->ops)
+		return 0;
+	return ac->ops->is_authenticated(ac);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

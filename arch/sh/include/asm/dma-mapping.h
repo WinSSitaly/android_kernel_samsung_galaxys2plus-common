@@ -52,31 +52,48 @@ static inline int dma_mapping_error(struct device *dev, dma_addr_t dma_addr)
 	return dma_addr == 0;
 }
 
+<<<<<<< HEAD
 #define dma_alloc_coherent(d,s,h,f)	dma_alloc_attrs(d,s,h,f,NULL)
 
 static inline void *dma_alloc_attrs(struct device *dev, size_t size,
 				    dma_addr_t *dma_handle, gfp_t gfp,
 				    struct dma_attrs *attrs)
+=======
+static inline void *dma_alloc_coherent(struct device *dev, size_t size,
+				       dma_addr_t *dma_handle, gfp_t gfp)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dma_map_ops *ops = get_dma_ops(dev);
 	void *memory;
 
 	if (dma_alloc_from_coherent(dev, size, dma_handle, &memory))
 		return memory;
+<<<<<<< HEAD
 	if (!ops->alloc)
 		return NULL;
 
 	memory = ops->alloc(dev, size, dma_handle, gfp, attrs);
+=======
+	if (!ops->alloc_coherent)
+		return NULL;
+
+	memory = ops->alloc_coherent(dev, size, dma_handle, gfp);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	debug_dma_alloc_coherent(dev, size, *dma_handle, memory);
 
 	return memory;
 }
 
+<<<<<<< HEAD
 #define dma_free_coherent(d,s,c,h) dma_free_attrs(d,s,c,h,NULL)
 
 static inline void dma_free_attrs(struct device *dev, size_t size,
 				  void *vaddr, dma_addr_t dma_handle,
 				  struct dma_attrs *attrs)
+=======
+static inline void dma_free_coherent(struct device *dev, size_t size,
+				     void *vaddr, dma_addr_t dma_handle)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct dma_map_ops *ops = get_dma_ops(dev);
 
@@ -84,16 +101,27 @@ static inline void dma_free_attrs(struct device *dev, size_t size,
 		return;
 
 	debug_dma_free_coherent(dev, size, vaddr, dma_handle);
+<<<<<<< HEAD
 	if (ops->free)
 		ops->free(dev, size, vaddr, dma_handle, attrs);
+=======
+	if (ops->free_coherent)
+		ops->free_coherent(dev, size, vaddr, dma_handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /* arch/sh/mm/consistent.c */
 extern void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+<<<<<<< HEAD
 					dma_addr_t *dma_addr, gfp_t flag,
 					struct dma_attrs *attrs);
 extern void dma_generic_free_coherent(struct device *dev, size_t size,
 				      void *vaddr, dma_addr_t dma_handle,
 				      struct dma_attrs *attrs);
+=======
+					dma_addr_t *dma_addr, gfp_t flag);
+extern void dma_generic_free_coherent(struct device *dev, size_t size,
+				      void *vaddr, dma_addr_t dma_handle);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif /* __ASM_SH_DMA_MAPPING_H */

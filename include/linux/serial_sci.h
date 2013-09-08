@@ -8,8 +8,11 @@
  * Generic header for SuperH SCI(F) (used by sh/sh64/h8300 and related parts)
  */
 
+<<<<<<< HEAD
 #define SCIx_NOT_SUPPORTED	(-1)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 enum {
 	SCBRR_ALGO_1,		/* ((clk + 16 * bps) / (16 * bps) - 1) */
 	SCBRR_ALGO_2,		/* ((clk + 16 * bps) / (32 * bps) - 1) */
@@ -27,6 +30,7 @@ enum {
 #define SCSCR_CKE1	(1 << 1)
 #define SCSCR_CKE0	(1 << 0)
 
+<<<<<<< HEAD
 /* SCxSR SCI */
 #define SCI_TDRE  0x80
 #define SCI_RDRF  0x40
@@ -53,6 +57,8 @@ enum {
 #define SCSPTR_RTSIO	(1 << 7)
 #define SCSPTR_CTSIO	(1 << 5)
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Offsets into the sci_port->irqs array */
 enum {
 	SCIx_ERI_IRQ,
@@ -60,6 +66,7 @@ enum {
 	SCIx_TXI_IRQ,
 	SCIx_BRI_IRQ,
 	SCIx_NR_IRQS,
+<<<<<<< HEAD
 
 	SCIx_MUX_IRQ = SCIx_NR_IRQS,	/* special case */
 };
@@ -90,6 +97,8 @@ enum {
 	SCIx_SH7705_SCIF_REGTYPE,
 
 	SCIx_NR_REGTYPES,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #define SCIx_IRQ_MUXED(irq)		\
@@ -100,6 +109,7 @@ enum {
 	[SCIx_BRI_IRQ]	= (irq),	\
 }
 
+<<<<<<< HEAD
 #define SCIx_IRQ_IS_MUXED(port)			\
 	((port)->cfg->irqs[SCIx_ERI_IRQ] ==	\
 	 (port)->cfg->irqs[SCIx_RXI_IRQ]) ||	\
@@ -128,20 +138,30 @@ struct plat_sci_port_ops {
  */
 #define SCIx_HAVE_RTSCTS	(1 << 0)
 
+=======
+struct device;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /*
  * Platform device specific platform_data struct
  */
 struct plat_sci_port {
 	unsigned long	mapbase;		/* resource base */
 	unsigned int	irqs[SCIx_NR_IRQS];	/* ERI, RXI, TXI, BRI */
+<<<<<<< HEAD
 	unsigned int	gpios[SCIx_NR_FNS];	/* SCK, RXD, TXD, CTS, RTS */
 	unsigned int	type;			/* SCI / SCIF / IRDA */
 	upf_t		flags;			/* UPF_* flags */
 	unsigned long	capabilities;		/* Port features/capabilities */
+=======
+	unsigned int	type;			/* SCI / SCIF / IRDA */
+	upf_t		flags;			/* UPF_* flags */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned int	scbrr_algo_id;		/* SCBRR calculation algo */
 	unsigned int	scscr;			/* SCSCR initialization */
 
+<<<<<<< HEAD
 	/*
 	 * Platform overrides if necessary, defaults otherwise.
 	 */
@@ -153,6 +173,9 @@ struct plat_sci_port {
 	unsigned char	regtype;
 
 	struct plat_sci_port_ops	*ops;
+=======
+	struct device	*dma_dev;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	unsigned int	dma_slave_tx;
 	unsigned int	dma_slave_rx;

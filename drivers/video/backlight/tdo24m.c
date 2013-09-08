@@ -459,7 +459,21 @@ static struct spi_driver tdo24m_driver = {
 	.resume		= tdo24m_resume,
 };
 
+<<<<<<< HEAD
 module_spi_driver(tdo24m_driver);
+=======
+static int __init tdo24m_init(void)
+{
+	return spi_register_driver(&tdo24m_driver);
+}
+module_init(tdo24m_init);
+
+static void __exit tdo24m_exit(void)
+{
+	spi_unregister_driver(&tdo24m_driver);
+}
+module_exit(tdo24m_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_AUTHOR("Eric Miao <eric.miao@marvell.com>");
 MODULE_DESCRIPTION("Driver for Toppoly TDO24M LCD Panel");

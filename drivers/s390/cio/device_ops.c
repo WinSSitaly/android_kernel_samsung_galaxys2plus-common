@@ -198,7 +198,11 @@ int ccw_device_start_key(struct ccw_device *cdev, struct ccw1 *cpa,
 	if (cdev->private->state == DEV_STATE_VERIFY) {
 		/* Remember to fake irb when finished. */
 		if (!cdev->private->flags.fake_irb) {
+<<<<<<< HEAD
 			cdev->private->flags.fake_irb = FAKE_CMD_IRB;
+=======
+			cdev->private->flags.fake_irb = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			cdev->private->intparm = intparm;
 			return 0;
 		} else
@@ -213,9 +217,15 @@ int ccw_device_start_key(struct ccw_device *cdev, struct ccw1 *cpa,
 	ret = cio_set_options (sch, flags);
 	if (ret)
 		return ret;
+<<<<<<< HEAD
 	/* Adjust requested path mask to exclude unusable paths. */
 	if (lpm) {
 		lpm &= sch->lpm;
+=======
+	/* Adjust requested path mask to excluded varied off paths. */
+	if (lpm) {
+		lpm &= sch->opm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (lpm == 0)
 			return -EACCES;
 	}
@@ -605,6 +615,7 @@ int ccw_device_tm_start_key(struct ccw_device *cdev, struct tcw *tcw,
 	sch = to_subchannel(cdev->dev.parent);
 	if (!sch->schib.pmcw.ena)
 		return -EINVAL;
+<<<<<<< HEAD
 	if (cdev->private->state == DEV_STATE_VERIFY) {
 		/* Remember to fake irb when finished. */
 		if (!cdev->private->flags.fake_irb) {
@@ -620,6 +631,13 @@ int ccw_device_tm_start_key(struct ccw_device *cdev, struct tcw *tcw,
 	/* Adjust requested path mask to exclude unusable paths. */
 	if (lpm) {
 		lpm &= sch->lpm;
+=======
+	if (cdev->private->state != DEV_STATE_ONLINE)
+		return -EIO;
+	/* Adjust requested path mask to excluded varied off paths. */
+	if (lpm) {
+		lpm &= sch->opm;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (lpm == 0)
 			return -EACCES;
 	}

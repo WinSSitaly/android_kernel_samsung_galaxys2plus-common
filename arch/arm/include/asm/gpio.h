@@ -1,6 +1,7 @@
 #ifndef _ARCH_ARM_GPIO_H
 #define _ARCH_ARM_GPIO_H
 
+<<<<<<< HEAD
 #if CONFIG_ARCH_NR_GPIO > 0
 #define ARCH_NR_GPIOS CONFIG_ARCH_NR_GPIO
 #endif
@@ -27,4 +28,9 @@
 #define gpio_to_irq	__gpio_to_irq
 #endif
 
+=======
+/* not all ARM platforms necessarily support this API ... */
+#include <mach/gpio.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif /* _ARCH_ARM_GPIO_H */

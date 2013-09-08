@@ -23,22 +23,61 @@
 #include <linux/i2c.h>
 #include <linux/pm.h>
 #include <linux/slab.h>
+<<<<<<< HEAD
 #include <linux/regmap.h>
 #include <linux/err.h>
 
 #include <linux/mfd/pcf50633/core.h>
 
+=======
+
+#include <linux/mfd/pcf50633/core.h>
+
+static int __pcf50633_read(struct pcf50633 *pcf, u8 reg, int num, u8 *data)
+{
+	int ret;
+
+	ret = i2c_smbus_read_i2c_block_data(pcf->i2c_client, reg,
+				num, data);
+	if (ret < 0)
+		dev_err(pcf->dev, "Error reading %d regs at %d\n", num, reg);
+
+	return ret;
+}
+
+static int __pcf50633_write(struct pcf50633 *pcf, u8 reg, int num, u8 *data)
+{
+	int ret;
+
+	ret = i2c_smbus_write_i2c_block_data(pcf->i2c_client, reg,
+				num, data);
+	if (ret < 0)
+		dev_err(pcf->dev, "Error writing %d regs at %d\n", num, reg);
+
+	return ret;
+
+}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Read a block of up to 32 regs  */
 int pcf50633_read_block(struct pcf50633 *pcf, u8 reg,
 					int nr_regs, u8 *data)
 {
 	int ret;
 
+<<<<<<< HEAD
 	ret = regmap_raw_read(pcf->regmap, reg, data, nr_regs);
 	if (ret != 0)
 		return ret;
 
 	return nr_regs;
+=======
+	mutex_lock(&pcf->lock);
+	ret = __pcf50633_read(pcf, reg, nr_regs, data);
+	mutex_unlock(&pcf->lock);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(pcf50633_read_block);
 
@@ -46,18 +85,36 @@ EXPORT_SYMBOL_GPL(pcf50633_read_block);
 int pcf50633_write_block(struct pcf50633 *pcf , u8 reg,
 					int nr_regs, u8 *data)
 {
+<<<<<<< HEAD
 	return regmap_raw_write(pcf->regmap, reg, data, nr_regs);
+=======
+	int ret;
+
+	mutex_lock(&pcf->lock);
+	ret = __pcf50633_write(pcf, reg, nr_regs, data);
+	mutex_unlock(&pcf->lock);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(pcf50633_write_block);
 
 u8 pcf50633_reg_read(struct pcf50633 *pcf, u8 reg)
 {
+<<<<<<< HEAD
 	unsigned int val;
 	int ret;
 
 	ret = regmap_read(pcf->regmap, reg, &val);
 	if (ret < 0)
 		return -1;
+=======
+	u8 val;
+
+	mutex_lock(&pcf->lock);
+	__pcf50633_read(pcf, reg, 1, &val);
+	mutex_unlock(&pcf->lock);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return val;
 }
@@ -65,19 +122,68 @@ EXPORT_SYMBOL_GPL(pcf50633_reg_read);
 
 int pcf50633_reg_write(struct pcf50633 *pcf, u8 reg, u8 val)
 {
+<<<<<<< HEAD
 	return regmap_write(pcf->regmap, reg, val);
+=======
+	int ret;
+
+	mutex_lock(&pcf->lock);
+	ret = __pcf50633_write(pcf, reg, 1, &val);
+	mutex_unlock(&pcf->lock);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(pcf50633_reg_write);
 
 int pcf50633_reg_set_bit_mask(struct pcf50633 *pcf, u8 reg, u8 mask, u8 val)
 {
+<<<<<<< HEAD
 	return regmap_update_bits(pcf->regmap, reg, mask, val);
+=======
+	int ret;
+	u8 tmp;
+
+	val &= mask;
+
+	mutex_lock(&pcf->lock);
+	ret = __pcf50633_read(pcf, reg, 1, &tmp);
+	if (ret < 0)
+		goto out;
+
+	tmp &= ~mask;
+	tmp |= val;
+	ret = __pcf50633_write(pcf, reg, 1, &tmp);
+
+out:
+	mutex_unlock(&pcf->lock);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(pcf50633_reg_set_bit_mask);
 
 int pcf50633_reg_clear_bits(struct pcf50633 *pcf, u8 reg, u8 val)
 {
+<<<<<<< HEAD
 	return regmap_update_bits(pcf->regmap, reg, val, 0);
+=======
+	int ret;
+	u8 tmp;
+
+	mutex_lock(&pcf->lock);
+	ret = __pcf50633_read(pcf, reg, 1, &tmp);
+	if (ret < 0)
+		goto out;
+
+	tmp &= ~val;
+	ret = __pcf50633_write(pcf, reg, 1, &tmp);
+
+out:
+	mutex_unlock(&pcf->lock);
+
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 EXPORT_SYMBOL_GPL(pcf50633_reg_clear_bits);
 
@@ -186,11 +292,14 @@ static int pcf50633_resume(struct device *dev)
 
 static SIMPLE_DEV_PM_OPS(pcf50633_pm, pcf50633_suspend, pcf50633_resume);
 
+<<<<<<< HEAD
 static struct regmap_config pcf50633_regmap_config = {
 	.reg_bits = 8,
 	.val_bits = 8,
 };
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int __devinit pcf50633_probe(struct i2c_client *client,
 				const struct i2c_device_id *ids)
 {
@@ -212,6 +321,7 @@ static int __devinit pcf50633_probe(struct i2c_client *client,
 
 	mutex_init(&pcf->lock);
 
+<<<<<<< HEAD
 	pcf->regmap = regmap_init_i2c(client, &pcf50633_regmap_config);
 	if (IS_ERR(pcf->regmap)) {
 		ret = PTR_ERR(pcf->regmap);
@@ -222,13 +332,22 @@ static int __devinit pcf50633_probe(struct i2c_client *client,
 
 	i2c_set_clientdata(client, pcf);
 	pcf->dev = &client->dev;
+=======
+	i2c_set_clientdata(client, pcf);
+	pcf->dev = &client->dev;
+	pcf->i2c_client = client;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	version = pcf50633_reg_read(pcf, 0);
 	variant = pcf50633_reg_read(pcf, 1);
 	if (version < 0 || variant < 0) {
 		dev_err(pcf->dev, "Unable to probe pcf50633\n");
 		ret = -ENODEV;
+<<<<<<< HEAD
 		goto err_regmap;
+=======
+		goto err_free;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	dev_info(pcf->dev, "Probed device version %d variant %d\n",
@@ -275,8 +394,11 @@ static int __devinit pcf50633_probe(struct i2c_client *client,
 
 	return 0;
 
+<<<<<<< HEAD
 err_regmap:
 	regmap_exit(pcf->regmap);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 err_free:
 	kfree(pcf);
 
@@ -300,7 +422,10 @@ static int __devexit pcf50633_remove(struct i2c_client *client)
 	for (i = 0; i < PCF50633_NUM_REGULATORS; i++)
 		platform_device_unregister(pcf->regulator_pdev[i]);
 
+<<<<<<< HEAD
 	regmap_exit(pcf->regmap);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	kfree(pcf);
 
 	return 0;

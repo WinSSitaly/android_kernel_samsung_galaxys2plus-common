@@ -493,9 +493,15 @@ static int nilfs_recovery_copy_block(struct the_nilfs *nilfs,
 	if (unlikely(!bh_org))
 		return -EIO;
 
+<<<<<<< HEAD
 	kaddr = kmap_atomic(page);
 	memcpy(kaddr + bh_offset(bh_org), bh_org->b_data, bh_org->b_size);
 	kunmap_atomic(kaddr);
+=======
+	kaddr = kmap_atomic(page, KM_USER0);
+	memcpy(kaddr + bh_offset(bh_org), bh_org->b_data, bh_org->b_size);
+	kunmap_atomic(kaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	brelse(bh_org);
 	return 0;
 }

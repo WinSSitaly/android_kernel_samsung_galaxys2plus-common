@@ -7,7 +7,10 @@
 #include <asm/sigcontext.h>
 #include <asm/fpumacro.h>
 #include <asm/ptrace.h>
+<<<<<<< HEAD
 #include <asm/switch_to.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include "sigutil.h"
 

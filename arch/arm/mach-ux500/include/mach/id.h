@@ -47,6 +47,7 @@ static inline bool __attribute_const__ cpu_is_u5500(void)
 }
 
 /*
+<<<<<<< HEAD
  * 5500 revisions
  */
 
@@ -71,6 +72,8 @@ static inline bool __attribute_const__ cpu_is_u5500v21(void)
 }
 
 /*
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * 8500 revisions
  */
 

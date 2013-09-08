@@ -1,5 +1,9 @@
 menu "Kernel hacking"
 
+<<<<<<< HEAD
+=======
+#bool 'Debug kmalloc/kfree' CONFIG_DEBUG_MALLOC
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 config PROFILING
 	bool "Kernel profiling support"
 

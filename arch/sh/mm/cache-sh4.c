@@ -18,7 +18,10 @@
 #include <linux/highmem.h>
 #include <asm/pgtable.h>
 #include <asm/mmu_context.h>
+<<<<<<< HEAD
 #include <asm/cache_insns.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/cacheflush.h>
 
 /*
@@ -245,7 +248,11 @@ static void sh4_flush_cache_page(void *args)
 		if (map_coherent)
 			vaddr = kmap_coherent(page, address);
 		else
+<<<<<<< HEAD
 			vaddr = kmap_atomic(page);
+=======
+			vaddr = kmap_atomic(page, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		address = (unsigned long)vaddr;
 	}
@@ -260,7 +267,11 @@ static void sh4_flush_cache_page(void *args)
 		if (map_coherent)
 			kunmap_coherent(vaddr);
 		else
+<<<<<<< HEAD
 			kunmap_atomic(vaddr);
+=======
+			kunmap_atomic(vaddr, KM_USER0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 }
 

@@ -20,8 +20,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+<<<<<<< HEAD
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define MODULE_NAME "spca561"
 
 #include <linux/input.h>
@@ -317,7 +320,11 @@ static void reg_w_val(struct usb_device *dev, __u16 index, __u8 value)
 			      value, index, NULL, 0, 500);
 	PDEBUG(D_USBO, "reg write: 0x%02x:0x%02x", index, value);
 	if (ret < 0)
+<<<<<<< HEAD
 		pr_err("reg write: error %d\n", ret);
+=======
+		err("reg write: error %d", ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void write_vector(struct gspca_dev *gspca_dev,
@@ -451,7 +458,11 @@ static int sd_config(struct gspca_dev *gspca_dev,
 	}
 
 	cam = &gspca_dev->cam;
+<<<<<<< HEAD
 	cam->needs_full_bandwidth = 1;
+=======
+	gspca_dev->nbalt = 7 + 1;	/* choose alternate 7 first */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sd->chip_revision = id->driver_info;
 	if (sd->chip_revision == Rev012A) {
@@ -1106,4 +1117,19 @@ static struct usb_driver sd_driver = {
 #endif
 };
 
+<<<<<<< HEAD
 module_usb_driver(sd_driver);
+=======
+/* -- module insert / remove -- */
+static int __init sd_mod_init(void)
+{
+	return usb_register(&sd_driver);
+}
+static void __exit sd_mod_exit(void)
+{
+	usb_deregister(&sd_driver);
+}
+
+module_init(sd_mod_init);
+module_exit(sd_mod_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip

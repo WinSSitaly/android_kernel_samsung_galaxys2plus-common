@@ -307,6 +307,7 @@ static struct tosa_bat tosa_bat_bu = {
 	.adc_temp_divider = -1,
 };
 
+<<<<<<< HEAD
 static struct gpio tosa_bat_gpios[] = {
 	{ TOSA_GPIO_CHARGE_OFF,	   GPIOF_OUT_INIT_HIGH, "main charge off" },
 	{ TOSA_GPIO_CHARGE_OFF_JC, GPIOF_OUT_INIT_HIGH, "jacket charge off" },
@@ -321,6 +322,27 @@ static struct gpio tosa_bat_gpios[] = {
 	{ TOSA_GPIO_BAT0_LOW,	   GPIOF_IN,		"main battery low" },
 	{ TOSA_GPIO_BAT1_LOW,	   GPIOF_IN,		"jacket battery low" },
 	{ TOSA_GPIO_JACKET_DETECT, GPIOF_IN,		"jacket detect" },
+=======
+static struct {
+	int gpio;
+	char *name;
+	bool output;
+	int value;
+} gpios[] = {
+	{ TOSA_GPIO_CHARGE_OFF,		"main charge off",	1, 1 },
+	{ TOSA_GPIO_CHARGE_OFF_JC,	"jacket charge off",	1, 1 },
+	{ TOSA_GPIO_BAT_SW_ON,		"battery switch",	1, 0 },
+	{ TOSA_GPIO_BAT0_V_ON,		"main battery",		1, 0 },
+	{ TOSA_GPIO_BAT1_V_ON,		"jacket battery",	1, 0 },
+	{ TOSA_GPIO_BAT1_TH_ON,		"main battery temp",	1, 0 },
+	{ TOSA_GPIO_BAT0_TH_ON,		"jacket battery temp",	1, 0 },
+	{ TOSA_GPIO_BU_CHRG_ON,		"backup battery",	1, 0 },
+	{ TOSA_GPIO_BAT0_CRG,		"main battery full",	0, 0 },
+	{ TOSA_GPIO_BAT1_CRG,		"jacket battery full",	0, 0 },
+	{ TOSA_GPIO_BAT0_LOW,		"main battery low",	0, 0 },
+	{ TOSA_GPIO_BAT1_LOW,		"jacket battery low",	0, 0 },
+	{ TOSA_GPIO_JACKET_DETECT,	"jacket detect",	0, 0 },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 #ifdef CONFIG_PM
@@ -345,13 +367,36 @@ static int tosa_bat_resume(struct platform_device *dev)
 static int __devinit tosa_bat_probe(struct platform_device *dev)
 {
 	int ret;
+<<<<<<< HEAD
+=======
+	int i;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!machine_is_tosa())
 		return -ENODEV;
 
+<<<<<<< HEAD
 	ret = gpio_request_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
 	if (ret)
 		return ret;
+=======
+	for (i = 0; i < ARRAY_SIZE(gpios); i++) {
+		ret = gpio_request(gpios[i].gpio, gpios[i].name);
+		if (ret) {
+			i--;
+			goto err_gpio;
+		}
+
+		if (gpios[i].output)
+			ret = gpio_direction_output(gpios[i].gpio,
+					gpios[i].value);
+		else
+			ret = gpio_direction_input(gpios[i].gpio);
+
+		if (ret)
+			goto err_gpio;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	mutex_init(&tosa_bat_main.work_lock);
 	mutex_init(&tosa_bat_jacket.work_lock);
@@ -405,12 +450,25 @@ err_psy_reg_main:
 	/* see comment in tosa_bat_remove */
 	cancel_work_sync(&bat_work);
 
+<<<<<<< HEAD
 	gpio_free_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
+=======
+	i--;
+err_gpio:
+	for (; i >= 0; i--)
+		gpio_free(gpios[i].gpio);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int __devexit tosa_bat_remove(struct platform_device *dev)
 {
+<<<<<<< HEAD
+=======
+	int i;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_irq(gpio_to_irq(TOSA_GPIO_JACKET_DETECT), &tosa_bat_jacket);
 	free_irq(gpio_to_irq(TOSA_GPIO_BAT1_CRG), &tosa_bat_jacket);
 	free_irq(gpio_to_irq(TOSA_GPIO_BAT0_CRG), &tosa_bat_main);
@@ -425,7 +483,14 @@ static int __devexit tosa_bat_remove(struct platform_device *dev)
 	 * unregistered now.
 	 */
 	cancel_work_sync(&bat_work);
+<<<<<<< HEAD
 	gpio_free_array(tosa_bat_gpios, ARRAY_SIZE(tosa_bat_gpios));
+=======
+
+	for (i = ARRAY_SIZE(gpios) - 1; i >= 0; i--)
+		gpio_free(gpios[i].gpio);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -438,7 +503,22 @@ static struct platform_driver tosa_bat_driver = {
 	.resume		= tosa_bat_resume,
 };
 
+<<<<<<< HEAD
 module_platform_driver(tosa_bat_driver);
+=======
+static int __init tosa_bat_init(void)
+{
+	return platform_driver_register(&tosa_bat_driver);
+}
+
+static void __exit tosa_bat_exit(void)
+{
+	platform_driver_unregister(&tosa_bat_driver);
+}
+
+module_init(tosa_bat_init);
+module_exit(tosa_bat_exit);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Dmitry Baryshkov");

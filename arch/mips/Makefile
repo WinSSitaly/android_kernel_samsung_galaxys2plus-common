@@ -157,7 +157,10 @@ ifeq (,$(findstring march=octeon, $(cflags-$(CONFIG_CPU_CAVIUM_OCTEON))))
 cflags-$(CONFIG_CPU_CAVIUM_OCTEON) += -Wa,-march=octeon
 endif
 cflags-$(CONFIG_CAVIUM_CN63XXP1) += -Wa,-mfix-cn63xxp1
+<<<<<<< HEAD
 cflags-$(CONFIG_CPU_BMIPS)	+= -march=mips32 -Wa,-mips32 -Wa,--trap
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 cflags-$(CONFIG_CPU_R4000_WORKAROUNDS)	+= $(call cc-option,-mfix-r4000,)
 cflags-$(CONFIG_CPU_R4400_WORKAROUNDS)	+= $(call cc-option,-mfix-r4400,)
@@ -192,6 +195,21 @@ endif
 #
 include $(srctree)/arch/mips/Kbuild.platforms
 
+<<<<<<< HEAD
+=======
+#
+# NETLOGIC SOC Common (common)
+#
+cflags-$(CONFIG_NLM_COMMON)		+= -I$(srctree)/arch/mips/include/asm/mach-netlogic
+cflags-$(CONFIG_NLM_COMMON)		+= -I$(srctree)/arch/mips/include/asm/netlogic
+
+#
+# NETLOGIC XLR/XLS SoC, Simulator and boards
+#
+core-$(CONFIG_NLM_XLR)      		+= arch/mips/netlogic/xlr/
+load-$(CONFIG_NLM_XLR_BOARD)		+= 0xffffffff84000000
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 cflags-y			+= -I$(srctree)/arch/mips/include/asm/mach-generic
 drivers-$(CONFIG_PCI)		+= arch/mips/pci/
 
@@ -225,9 +243,15 @@ KBUILD_CPPFLAGS += -D"DATAOFFSET=$(if $(dataoffset-y),$(dataoffset-y),0)"
 LDFLAGS			+= -m $(ld-emul)
 
 ifdef CONFIG_MIPS
+<<<<<<< HEAD
 CHECKFLAGS += $(shell $(CC) $(KBUILD_CFLAGS) -dM -E -x c /dev/null | \
 	egrep -vw '__GNUC_(|MINOR_|PATCHLEVEL_)_' | \
 	sed -e "s/^\#define /-D'/" -e "s/ /'='/" -e "s/$$/'/")
+=======
+CHECKFLAGS += $(shell $(CC) $(KBUILD_CFLAGS) -dM -E -xc /dev/null | \
+	egrep -vw '__GNUC_(|MINOR_|PATCHLEVEL_)_' | \
+	sed -e 's/^\#define /-D/' -e "s/ /='/" -e "s/$$/'/")
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 ifdef CONFIG_64BIT
 CHECKFLAGS		+= -m64
 endif
@@ -287,18 +311,30 @@ CLEAN_FILES += vmlinux.32 vmlinux.64
 archprepare:
 ifdef CONFIG_MIPS32_N32
 	@echo '  Checking missing-syscalls for N32'
+<<<<<<< HEAD
 	$(Q)$(MAKE) $(build)=. missing-syscalls missing_syscalls_flags="-mabi=n32"
 endif
 ifdef CONFIG_MIPS32_O32
 	@echo '  Checking missing-syscalls for O32'
 	$(Q)$(MAKE) $(build)=. missing-syscalls missing_syscalls_flags="-mabi=32"
+=======
+	$(Q)$(MAKE) $(build)=. missing-syscalls ccflags-y="-mabi=n32"
+endif
+ifdef CONFIG_MIPS32_O32
+	@echo '  Checking missing-syscalls for O32'
+	$(Q)$(MAKE) $(build)=. missing-syscalls ccflags-y="-mabi=32"
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 endif
 
 install:
 	$(Q)install -D -m 755 vmlinux $(INSTALL_PATH)/vmlinux-$(KERNELRELEASE)
+<<<<<<< HEAD
 ifdef CONFIG_SYS_SUPPORTS_ZBOOT
 	$(Q)install -D -m 755 vmlinuz $(INSTALL_PATH)/vmlinuz-$(KERNELRELEASE)
 endif
+=======
+	$(Q)install -D -m 755 vmlinuz $(INSTALL_PATH)/vmlinuz-$(KERNELRELEASE)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	$(Q)install -D -m 644 .config $(INSTALL_PATH)/config-$(KERNELRELEASE)
 	$(Q)install -D -m 644 System.map $(INSTALL_PATH)/System.map-$(KERNELRELEASE)
 

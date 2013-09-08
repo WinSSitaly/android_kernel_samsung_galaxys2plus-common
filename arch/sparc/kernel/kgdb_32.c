@@ -9,7 +9,10 @@
 #include <asm/kdebug.h>
 #include <asm/ptrace.h>
 #include <asm/irq.h>
+<<<<<<< HEAD
 #include <asm/cacheflush.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern unsigned long trapbase;
 

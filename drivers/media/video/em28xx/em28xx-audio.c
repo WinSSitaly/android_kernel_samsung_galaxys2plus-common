@@ -3,9 +3,15 @@
  *
  *  Copyright (C) 2006 Markus Rechberger <mrechberger@gmail.com>
  *
+<<<<<<< HEAD
  *  Copyright (C) 2007-2011 Mauro Carvalho Chehab <mchehab@redhat.com>
  *	- Port to work with the in-kernel driver
  *	- Cleanups, fixes, alsa-controls, etc.
+=======
+ *  Copyright (C) 2007 Mauro Carvalho Chehab <mchehab@infradead.org>
+ *	- Port to work with the in-kernel driver
+ *	- Several cleanups
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  *  This driver is based on my previous au600 usb pstn audio driver
  *  and inherits all the copyrights
@@ -41,7 +47,10 @@
 #include <sound/info.h>
 #include <sound/initval.h>
 #include <sound/control.h>
+<<<<<<< HEAD
 #include <sound/tlv.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <media/v4l2-common.h>
 #include "em28xx.h"
 
@@ -193,7 +202,11 @@ static int em28xx_init_audio_isoc(struct em28xx *dev)
 
 		urb->dev = dev->udev;
 		urb->context = dev;
+<<<<<<< HEAD
 		urb->pipe = usb_rcvisocpipe(dev->udev, EM28XX_EP_AUDIO);
+=======
+		urb->pipe = usb_rcvisocpipe(dev->udev, 0x83);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		urb->transfer_flags = URB_ISO_ASAP;
 		urb->transfer_buffer = dev->adev.transfer_buffer[i];
 		urb->interval = 1;
@@ -213,12 +226,18 @@ static int em28xx_init_audio_isoc(struct em28xx *dev)
 	for (i = 0; i < EM28XX_AUDIO_BUFS; i++) {
 		errCode = usb_submit_urb(dev->adev.urb[i], GFP_ATOMIC);
 		if (errCode) {
+<<<<<<< HEAD
 			em28xx_errdev("submit of audio urb failed\n");
 			em28xx_deinit_isoc_audio(dev);
 			atomic_set(&dev->stream_started, 0);
 			return errCode;
 		}
 
+=======
+			em28xx_deinit_isoc_audio(dev);
+			return errCode;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -249,7 +268,10 @@ static struct snd_pcm_hardware snd_em28xx_hw_capture = {
 	.info = SNDRV_PCM_INFO_BLOCK_TRANSFER |
 		SNDRV_PCM_INFO_MMAP           |
 		SNDRV_PCM_INFO_INTERLEAVED    |
+<<<<<<< HEAD
 		SNDRV_PCM_INFO_BATCH	      |
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		SNDRV_PCM_INFO_MMAP_VALID,
 
 	.formats = SNDRV_PCM_FMTBIT_S16_LE,
@@ -281,6 +303,7 @@ static int snd_em28xx_capture_open(struct snd_pcm_substream *substream)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
 	runtime->hw = snd_em28xx_hw_capture;
 	if ((dev->alt == 0 || dev->audio_ifnum) && dev->adev.users == 0) {
 		if (dev->audio_ifnum)
@@ -303,6 +326,27 @@ static int snd_em28xx_capture_open(struct snd_pcm_substream *substream)
 		mutex_unlock(&dev->lock);
 	}
 
+=======
+	/* Sets volume, mute, etc */
+
+	dev->mute = 0;
+	mutex_lock(&dev->lock);
+	ret = em28xx_audio_analog_set(dev);
+	if (ret < 0)
+		goto err;
+
+	runtime->hw = snd_em28xx_hw_capture;
+	if (dev->alt == 0 && dev->adev.users == 0) {
+		int errCode;
+		dev->alt = 7;
+		dprintk("changing alternate number to 7\n");
+		errCode = usb_set_interface(dev->udev, 0, 7);
+	}
+
+	dev->adev.users++;
+	mutex_unlock(&dev->lock);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	snd_pcm_hw_constraint_integer(runtime, SNDRV_PCM_HW_PARAM_PERIODS);
 	dev->adev.capture_pcm_substream = substream;
 	runtime->private_data = dev;
@@ -350,8 +394,11 @@ static int snd_em28xx_hw_capture_params(struct snd_pcm_substream *substream,
 
 	ret = snd_pcm_alloc_vmalloc_buffer(substream,
 				params_buffer_bytes(hw_params));
+<<<<<<< HEAD
 	if (ret < 0)
 		return ret;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	format = params_format(hw_params);
 	rate = params_rate(hw_params);
 	channels = params_channels(hw_params);
@@ -403,6 +450,7 @@ static int snd_em28xx_capture_trigger(struct snd_pcm_substream *substream,
 				      int cmd)
 {
 	struct em28xx *dev = snd_pcm_substream_chip(substream);
+<<<<<<< HEAD
 	int retval = 0;
 
 	switch (cmd) {
@@ -415,12 +463,26 @@ static int snd_em28xx_capture_trigger(struct snd_pcm_substream *substream,
 	case SNDRV_PCM_TRIGGER_SUSPEND: /* fall through */
 	case SNDRV_PCM_TRIGGER_STOP:
 		atomic_set(&dev->stream_started, 0);
+=======
+	int retval;
+
+	switch (cmd) {
+	case SNDRV_PCM_TRIGGER_START:
+		atomic_set(&dev->stream_started, 1);
+		break;
+	case SNDRV_PCM_TRIGGER_STOP:
+		atomic_set(&dev->stream_started, 1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	default:
 		retval = -EINVAL;
 	}
 	schedule_work(&dev->wq_trigger);
+<<<<<<< HEAD
 	return retval;
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static snd_pcm_uframes_t snd_em28xx_capture_pointer(struct snd_pcm_substream
@@ -446,6 +508,7 @@ static struct page *snd_pcm_get_vmalloc_page(struct snd_pcm_substream *subs,
 	return vmalloc_to_page(pageptr);
 }
 
+<<<<<<< HEAD
 /*
  * AC97 volume control support
  */
@@ -619,6 +682,8 @@ static int em28xx_cvol_new(struct snd_card *card, struct em28xx *dev,
 /*
  * register/unregister code and data
  */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static struct snd_pcm_ops snd_em28xx_pcm_capture = {
 	.open      = snd_em28xx_capture_open,
 	.close     = snd_em28xx_pcm_close,
@@ -639,17 +704,28 @@ static int em28xx_audio_init(struct em28xx *dev)
 	static int          devnr;
 	int                 err;
 
+<<<<<<< HEAD
 	if (!dev->has_alsa_audio || dev->audio_ifnum < 0) {
+=======
+	if (dev->has_alsa_audio != 1) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* This device does not support the extension (in this case
 		   the device is expecting the snd-usb-audio module or
 		   doesn't have analog audio support at all) */
 		return 0;
 	}
 
+<<<<<<< HEAD
 	printk(KERN_INFO "em28xx-audio.c: probing for em28xx Audio Vendor Class\n");
 	printk(KERN_INFO "em28xx-audio.c: Copyright (C) 2006 Markus "
 			 "Rechberger\n");
 	printk(KERN_INFO "em28xx-audio.c: Copyright (C) 2007-2011 Mauro Carvalho Chehab\n");
+=======
+	printk(KERN_INFO "em28xx-audio.c: probing for em28x1 "
+			 "non standard usbaudio\n");
+	printk(KERN_INFO "em28xx-audio.c: Copyright (C) 2006 Markus "
+			 "Rechberger\n");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	err = snd_card_create(index[devnr], "Em28xx Audio", THIS_MODULE, 0,
 			      &card);
@@ -675,6 +751,7 @@ static int em28xx_audio_init(struct em28xx *dev)
 
 	INIT_WORK(&dev->wq_trigger, audio_trigger);
 
+<<<<<<< HEAD
 	if (dev->audio_mode.ac97 != EM28XX_NO_AC97) {
 		em28xx_cvol_new(card, dev, "Video", AC97_VIDEO_VOL);
 		em28xx_cvol_new(card, dev, "Line In", AC97_LINEIN_VOL);
@@ -691,6 +768,8 @@ static int em28xx_audio_init(struct em28xx *dev)
 		em28xx_cvol_new(card, dev, "Surround", AC97_SURR_MASTER_VOL);
 	}
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	err = snd_card_register(card);
 	if (err < 0) {
 		snd_card_free(card);
@@ -741,7 +820,11 @@ static void __exit em28xx_alsa_unregister(void)
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Markus Rechberger <mrechberger@gmail.com>");
+<<<<<<< HEAD
 MODULE_AUTHOR("Mauro Carvalho Chehab <mchehab@redhat.com>");
+=======
+MODULE_AUTHOR("Mauro Carvalho Chehab <mchehab@infradead.org>");
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MODULE_DESCRIPTION("Em28xx Audio driver");
 
 module_init(em28xx_alsa_register);

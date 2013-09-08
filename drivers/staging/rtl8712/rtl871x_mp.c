@@ -1,4 +1,5 @@
 /******************************************************************************
+<<<<<<< HEAD
  *
  * Copyright(c) 2007 - 2010 Realtek Corporation. All rights reserved.
  *
@@ -23,6 +24,22 @@
  * Larry Finger <Larry.Finger@lwfinger.net>
  *
  ******************************************************************************/
+=======
+ * rtl871x_mp.c
+ *
+ * Description :
+ *
+ * Author :
+ *
+ * History :
+ *
+ * Copyright 2007, Realtek Corp.
+ *
+ * The contents of this file is the sole property of Realtek Corp. It can not be
+ * be used, copied or modified without written permission from Realtek Corp.
+ *
+*******************************************************************************/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define _RTL871X_MP_C_
 
 #include "osdep_service.h"

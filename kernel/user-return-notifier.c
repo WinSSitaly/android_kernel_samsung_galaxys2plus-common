@@ -2,7 +2,11 @@
 #include <linux/user-return-notifier.h>
 #include <linux/percpu.h>
 #include <linux/sched.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+#include <linux/module.h>
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static DEFINE_PER_CPU(struct hlist_head, return_notifier_list);
 

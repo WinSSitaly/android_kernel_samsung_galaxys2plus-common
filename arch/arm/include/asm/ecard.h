@@ -161,6 +161,10 @@ struct expansion_card {
 
 	/* Private internal data */
 	const char		*card_desc;	/* Card description		*/
+<<<<<<< HEAD
+=======
+	CONST unsigned int	podaddr;	/* Base Linux address for card	*/
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	CONST loader_t		loader;		/* loader program */
 	u64			dma_mask;
 };

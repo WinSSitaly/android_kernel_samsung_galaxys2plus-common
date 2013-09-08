@@ -23,7 +23,10 @@
 #include <linux/random.h>
 #include <linux/iocontext.h>
 #include <linux/capability.h>
+<<<<<<< HEAD
 #include <linux/kthread.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <asm/div64.h>
 #include "compat.h"
 #include "ctree.h"
@@ -33,7 +36,10 @@
 #include "print-tree.h"
 #include "volumes.h"
 #include "async-thread.h"
+<<<<<<< HEAD
 #include "check-integrity.h"
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int init_first_rw_device(struct btrfs_trans_handle *trans,
 				struct btrfs_root *root,
@@ -67,7 +73,11 @@ static void free_fs_devices(struct btrfs_fs_devices *fs_devices)
 	kfree(fs_devices);
 }
 
+<<<<<<< HEAD
 void btrfs_cleanup_fs_uuids(void)
+=======
+int btrfs_cleanup_fs_uuids(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_fs_devices *fs_devices;
 
@@ -77,6 +87,10 @@ void btrfs_cleanup_fs_uuids(void)
 		list_del(&fs_devices->list);
 		free_fs_devices(fs_devices);
 	}
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static noinline struct btrfs_device *__find_device(struct list_head *head,
@@ -129,7 +143,11 @@ static void requeue_list(struct btrfs_pending_bios *pending_bios,
  * the list if the block device is congested.  This way, multiple devices
  * can make progress from a single worker thread.
  */
+<<<<<<< HEAD
 static noinline void run_scheduled_bios(struct btrfs_device *device)
+=======
+static noinline int run_scheduled_bios(struct btrfs_device *device)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct bio *pending;
 	struct backing_dev_info *bdi;
@@ -143,7 +161,10 @@ static noinline void run_scheduled_bios(struct btrfs_device *device)
 	unsigned long limit;
 	unsigned long last_waited = 0;
 	int force_reg = 0;
+<<<<<<< HEAD
 	int sync_pending = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct blk_plug plug;
 
 	/*
@@ -231,6 +252,7 @@ loop_lock:
 
 		BUG_ON(atomic_read(&cur->bi_cnt) == 0);
 
+<<<<<<< HEAD
 		/*
 		 * if we're doing the sync list, record that our
 		 * plug has some sync requests on it
@@ -248,6 +270,9 @@ loop_lock:
 		}
 
 		btrfsic_submit_bio(cur->bi_rw, cur);
+=======
+		submit_bio(cur->bi_rw, cur);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		num_run++;
 		batch_run++;
 		if (need_resched())
@@ -296,12 +321,15 @@ loop_lock:
 			btrfs_requeue_work(&device->work);
 			goto done;
 		}
+<<<<<<< HEAD
 		/* unplug every 64 requests just for good measure */
 		if (batch_run % 64 == 0) {
 			blk_finish_plug(&plug);
 			blk_start_plug(&plug);
 			sync_pending = 0;
 		}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	cond_resched();
@@ -315,6 +343,10 @@ loop_lock:
 
 done:
 	blk_finish_plug(&plug);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void pending_bios_fn(struct btrfs_work *work)
@@ -372,6 +404,7 @@ static noinline int device_list_add(const char *path,
 		}
 		INIT_LIST_HEAD(&device->dev_alloc_list);
 
+<<<<<<< HEAD
 		/* init readahead state */
 		spin_lock_init(&device->reada_lock);
 		device->reada_curr_zone = NULL;
@@ -380,6 +413,8 @@ static noinline int device_list_add(const char *path,
 		INIT_RADIX_TREE(&device->reada_zones, GFP_NOFS & ~__GFP_WAIT);
 		INIT_RADIX_TREE(&device->reada_extents, GFP_NOFS & ~__GFP_WAIT);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		mutex_lock(&fs_devices->device_list_mutex);
 		list_add_rcu(&device->dev_list, &fs_devices->devices);
 		mutex_unlock(&fs_devices->device_list_mutex);
@@ -453,6 +488,7 @@ error:
 	return ERR_PTR(-ENOMEM);
 }
 
+<<<<<<< HEAD
 void btrfs_close_extra_devices(struct btrfs_fs_devices *fs_devices)
 {
 	struct btrfs_device *device, *next;
@@ -461,10 +497,17 @@ void btrfs_close_extra_devices(struct btrfs_fs_devices *fs_devices)
 	u64 latest_devid = 0;
 	u64 latest_transid = 0;
 
+=======
+int btrfs_close_extra_devices(struct btrfs_fs_devices *fs_devices)
+{
+	struct btrfs_device *device, *next;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_lock(&uuid_mutex);
 again:
 	/* This is the initialized path, it is safe to release the devices. */
 	list_for_each_entry_safe(device, next, &fs_devices->devices, dev_list) {
+<<<<<<< HEAD
 		if (device->in_fs_metadata) {
 			if (!latest_transid ||
 			    device->generation > latest_transid) {
@@ -474,6 +517,10 @@ again:
 			}
 			continue;
 		}
+=======
+		if (device->in_fs_metadata)
+			continue;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (device->bdev) {
 			blkdev_put(device->bdev, device->mode);
@@ -496,11 +543,16 @@ again:
 		goto again;
 	}
 
+<<<<<<< HEAD
 	fs_devices->latest_bdev = latest_bdev;
 	fs_devices->latest_devid = latest_devid;
 	fs_devices->latest_trans = latest_transid;
 
 	mutex_unlock(&uuid_mutex);
+=======
+	mutex_unlock(&uuid_mutex);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static void __free_device(struct work_struct *work)
@@ -549,15 +601,25 @@ static int __btrfs_close_devices(struct btrfs_fs_devices *fs_devices)
 			fs_devices->num_can_discard--;
 
 		new_device = kmalloc(sizeof(*new_device), GFP_NOFS);
+<<<<<<< HEAD
 		BUG_ON(!new_device); /* -ENOMEM */
 		memcpy(new_device, device, sizeof(*new_device));
 		new_device->name = kstrdup(device->name, GFP_NOFS);
 		BUG_ON(device->name && !new_device->name); /* -ENOMEM */
+=======
+		BUG_ON(!new_device);
+		memcpy(new_device, device, sizeof(*new_device));
+		new_device->name = kstrdup(device->name, GFP_NOFS);
+		BUG_ON(device->name && !new_device->name);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		new_device->bdev = NULL;
 		new_device->writeable = 0;
 		new_device->in_fs_metadata = 0;
 		new_device->can_discard = 0;
+<<<<<<< HEAD
 		spin_lock_init(&new_device->io_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		list_replace_rcu(&device->dev_list, &new_device->dev_list);
 
 		call_rcu(&device->rcu, free_device);
@@ -591,12 +653,15 @@ int btrfs_close_devices(struct btrfs_fs_devices *fs_devices)
 		__btrfs_close_devices(fs_devices);
 		free_fs_devices(fs_devices);
 	}
+<<<<<<< HEAD
 	/*
 	 * Wait for rcu kworkers under __btrfs_close_devices
 	 * to finish all blkdev_puts so device is really
 	 * free when umount is done.
 	 */
 	rcu_barrier();
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -629,6 +694,7 @@ static int __btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
 			printk(KERN_INFO "open %s failed\n", device->name);
 			goto error;
 		}
+<<<<<<< HEAD
 		filemap_write_and_wait(bdev->bd_inode->i_mapping);
 		invalidate_bdev(bdev);
 		set_blocksize(bdev, 4096);
@@ -636,6 +702,15 @@ static int __btrfs_open_devices(struct btrfs_fs_devices *fs_devices,
 		bh = btrfs_read_dev_super(bdev);
 		if (!bh)
 			goto error_close;
+=======
+		set_blocksize(bdev, 4096);
+
+		bh = btrfs_read_dev_super(bdev);
+		if (!bh) {
+			ret = -EINVAL;
+			goto error_close;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		disk_super = (struct btrfs_super_block *)bh->b_data;
 		devid = btrfs_stack_device_id(&disk_super->dev_item);
@@ -690,7 +765,11 @@ error:
 		continue;
 	}
 	if (fs_devices->open_devices == 0) {
+<<<<<<< HEAD
 		ret = -EINVAL;
+=======
+		ret = -EIO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 	}
 	fs_devices->seeding = seeding;
@@ -729,6 +808,11 @@ int btrfs_scan_one_device(const char *path, fmode_t flags, void *holder,
 	u64 devid;
 	u64 transid;
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&uuid_mutex);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	flags |= FMODE_EXCL;
 	bdev = blkdev_get_by_path(path, flags, holder);
 
@@ -737,7 +821,10 @@ int btrfs_scan_one_device(const char *path, fmode_t flags, void *holder,
 		goto error;
 	}
 
+<<<<<<< HEAD
 	mutex_lock(&uuid_mutex);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = set_blocksize(bdev, 4096);
 	if (ret)
 		goto error_close;
@@ -759,9 +846,15 @@ int btrfs_scan_one_device(const char *path, fmode_t flags, void *holder,
 
 	brelse(bh);
 error_close:
+<<<<<<< HEAD
 	mutex_unlock(&uuid_mutex);
 	blkdev_put(bdev, flags);
 error:
+=======
+	blkdev_put(bdev, flags);
+error:
+	mutex_unlock(&uuid_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -851,6 +944,10 @@ out:
 
 /*
  * find_free_dev_extent - find free space in the specified device
+<<<<<<< HEAD
+=======
+ * @trans:	transaction handler
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  * @device:	the device which we search the free space in
  * @num_bytes:	the size of the free space that we need
  * @start:	store the start of the free space.
@@ -869,7 +966,12 @@ out:
  * But if we don't find suitable free space, it is used to store the size of
  * the max free space.
  */
+<<<<<<< HEAD
 int find_free_dev_extent(struct btrfs_device *device, u64 num_bytes,
+=======
+int find_free_dev_extent(struct btrfs_trans_handle *trans,
+			 struct btrfs_device *device, u64 num_bytes,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			 u64 *start, u64 *len)
 {
 	struct btrfs_key key;
@@ -895,7 +997,10 @@ int find_free_dev_extent(struct btrfs_device *device, u64 num_bytes,
 
 	max_hole_start = search_start;
 	max_hole_size = 0;
+<<<<<<< HEAD
 	hole_size = 0;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (search_start >= search_end) {
 		ret = -ENOSPC;
@@ -913,7 +1018,11 @@ int find_free_dev_extent(struct btrfs_device *device, u64 num_bytes,
 	key.offset = search_start;
 	key.type = BTRFS_DEV_EXTENT_KEY;
 
+<<<<<<< HEAD
 	ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
+=======
+	ret = btrfs_search_slot(trans, root, &key, path, 0, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		goto out;
 	if (ret > 0) {
@@ -978,6 +1087,7 @@ next:
 		cond_resched();
 	}
 
+<<<<<<< HEAD
 	/*
 	 * At this point, search_start should be the end of
 	 * allocated dev extents, and when shrinking the device,
@@ -986,6 +1096,9 @@ next:
 	if (search_end > search_start)
 		hole_size = search_end - search_start;
 
+=======
+	hole_size = search_end- search_start;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (hole_size > max_hole_size) {
 		max_hole_start = search_start;
 		max_hole_size = hole_size;
@@ -1025,7 +1138,11 @@ static int btrfs_free_dev_extent(struct btrfs_trans_handle *trans,
 	key.objectid = device->devid;
 	key.offset = start;
 	key.type = BTRFS_DEV_EXTENT_KEY;
+<<<<<<< HEAD
 again:
+=======
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = btrfs_search_slot(trans, root, &key, path, -1, 1);
 	if (ret > 0) {
 		ret = btrfs_previous_item(root, path, key.objectid,
@@ -1038,13 +1155,17 @@ again:
 					struct btrfs_dev_extent);
 		BUG_ON(found_key.offset > start || found_key.offset +
 		       btrfs_dev_extent_length(leaf, extent) < start);
+<<<<<<< HEAD
 		key = found_key;
 		btrfs_release_path(path);
 		goto again;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	} else if (ret == 0) {
 		leaf = path->nodes[0];
 		extent = btrfs_item_ptr(leaf, path->slots[0],
 					struct btrfs_dev_extent);
+<<<<<<< HEAD
 	} else {
 		btrfs_error(root->fs_info, ret, "Slot search failed");
 		goto out;
@@ -1062,6 +1183,15 @@ again:
 		btrfs_error(root->fs_info, ret,
 			    "Failed to remove dev extent item");
 	}
+=======
+	}
+	BUG_ON(ret);
+
+	if (device->bytes_used > 0)
+		device->bytes_used -= btrfs_dev_extent_length(leaf, extent);
+	ret = btrfs_del_item(trans, root, path);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 out:
 	btrfs_free_path(path);
 	return ret;
@@ -1089,8 +1219,12 @@ int btrfs_alloc_dev_extent(struct btrfs_trans_handle *trans,
 	key.type = BTRFS_DEV_EXTENT_KEY;
 	ret = btrfs_insert_empty_item(trans, root, path, &key,
 				      sizeof(*extent));
+<<<<<<< HEAD
 	if (ret)
 		goto out;
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	leaf = path->nodes[0];
 	extent = btrfs_item_ptr(leaf, path->slots[0],
@@ -1105,7 +1239,10 @@ int btrfs_alloc_dev_extent(struct btrfs_trans_handle *trans,
 
 	btrfs_set_dev_extent_length(leaf, extent, num_bytes);
 	btrfs_mark_buffer_dirty(leaf);
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_free_path(path);
 	return ret;
 }
@@ -1120,8 +1257,12 @@ static noinline int find_next_chunk(struct btrfs_root *root,
 	struct btrfs_key found_key;
 
 	path = btrfs_alloc_path();
+<<<<<<< HEAD
 	if (!path)
 		return -ENOMEM;
+=======
+	BUG_ON(!path);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	key.objectid = objectid;
 	key.offset = (u64)-1;
@@ -1131,7 +1272,11 @@ static noinline int find_next_chunk(struct btrfs_root *root,
 	if (ret < 0)
 		goto error;
 
+<<<<<<< HEAD
 	BUG_ON(ret == 0); /* Corruption */
+=======
+	BUG_ON(ret == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_previous_item(root, path, 0, BTRFS_CHUNK_ITEM_KEY);
 	if (ret) {
@@ -1175,7 +1320,11 @@ static noinline int find_next_devid(struct btrfs_root *root, u64 *objectid)
 	if (ret < 0)
 		goto error;
 
+<<<<<<< HEAD
 	BUG_ON(ret == 0); /* Corruption */
+=======
+	BUG_ON(ret == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_previous_item(root, path, BTRFS_DEV_ITEMS_OBJECTID,
 				  BTRFS_DEV_ITEM_KEY);
@@ -1309,6 +1458,10 @@ int btrfs_rm_device(struct btrfs_root *root, char *device_path)
 	bool clear_super = false;
 
 	mutex_lock(&uuid_mutex);
+<<<<<<< HEAD
+=======
+	mutex_lock(&root->fs_info->volume_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	all_avail = root->fs_info->avail_data_alloc_bits |
 		root->fs_info->avail_system_alloc_bits |
@@ -1363,7 +1516,10 @@ int btrfs_rm_device(struct btrfs_root *root, char *device_path)
 		}
 
 		set_blocksize(bdev, 4096);
+<<<<<<< HEAD
 		invalidate_bdev(bdev);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		bh = btrfs_read_dev_super(bdev);
 		if (!bh) {
 			ret = -EINVAL;
@@ -1403,11 +1559,14 @@ int btrfs_rm_device(struct btrfs_root *root, char *device_path)
 	if (ret)
 		goto error_undo;
 
+<<<<<<< HEAD
 	spin_lock(&root->fs_info->free_chunk_lock);
 	root->fs_info->free_chunk_space = device->total_bytes -
 		device->bytes_used;
 	spin_unlock(&root->fs_info->free_chunk_lock);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	device->in_fs_metadata = 0;
 	btrfs_scrub_cancel_dev(root, device);
 
@@ -1439,8 +1598,13 @@ int btrfs_rm_device(struct btrfs_root *root, char *device_path)
 	call_rcu(&device->rcu, free_device);
 	mutex_unlock(&root->fs_info->fs_devices->device_list_mutex);
 
+<<<<<<< HEAD
 	num_devices = btrfs_super_num_devices(root->fs_info->super_copy) - 1;
 	btrfs_set_super_num_devices(root->fs_info->super_copy, num_devices);
+=======
+	num_devices = btrfs_super_num_devices(&root->fs_info->super_copy) - 1;
+	btrfs_set_super_num_devices(&root->fs_info->super_copy, num_devices);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (cur_devices->open_devices == 0) {
 		struct btrfs_fs_devices *fs_devices;
@@ -1479,6 +1643,10 @@ error_close:
 	if (bdev)
 		blkdev_put(bdev, FMODE_READ | FMODE_EXCL);
 out:
+<<<<<<< HEAD
+=======
+	mutex_unlock(&root->fs_info->volume_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	mutex_unlock(&uuid_mutex);
 	return ret;
 error_undo:
@@ -1495,12 +1663,21 @@ error_undo:
 /*
  * does all the dirty work required for changing file system's UUID.
  */
+<<<<<<< HEAD
 static int btrfs_prepare_sprout(struct btrfs_root *root)
+=======
+static int btrfs_prepare_sprout(struct btrfs_trans_handle *trans,
+				struct btrfs_root *root)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct btrfs_fs_devices *fs_devices = root->fs_info->fs_devices;
 	struct btrfs_fs_devices *old_devices;
 	struct btrfs_fs_devices *seed_devices;
+<<<<<<< HEAD
 	struct btrfs_super_block *disk_super = root->fs_info->super_copy;
+=======
+	struct btrfs_super_block *disk_super = &root->fs_info->super_copy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct btrfs_device *device;
 	u64 super_flags;
 
@@ -1610,7 +1787,11 @@ next_slot:
 				   (unsigned long)btrfs_device_fsid(dev_item),
 				   BTRFS_UUID_SIZE);
 		device = btrfs_find_device(root, devid, dev_uuid, fs_uuid);
+<<<<<<< HEAD
 		BUG_ON(!device); /* Logic error */
+=======
+		BUG_ON(!device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		if (device->fs_devices->seeding) {
 			btrfs_set_device_generation(leaf, dev_item,
@@ -1642,7 +1823,11 @@ int btrfs_init_new_device(struct btrfs_root *root, char *device_path)
 	if ((sb->s_flags & MS_RDONLY) && !root->fs_info->fs_devices->seeding)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	bdev = blkdev_get_by_path(device_path, FMODE_WRITE | FMODE_EXCL,
+=======
+	bdev = blkdev_get_by_path(device_path, FMODE_EXCL,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				  root->fs_info->bdev_holder);
 	if (IS_ERR(bdev))
 		return PTR_ERR(bdev);
@@ -1654,6 +1839,10 @@ int btrfs_init_new_device(struct btrfs_root *root, char *device_path)
 	}
 
 	filemap_write_and_wait(bdev->bd_inode->i_mapping);
+<<<<<<< HEAD
+=======
+	mutex_lock(&root->fs_info->volume_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	devices = &root->fs_info->fs_devices->devices;
 	/*
@@ -1719,8 +1908,13 @@ int btrfs_init_new_device(struct btrfs_root *root, char *device_path)
 
 	if (seeding_dev) {
 		sb->s_flags &= ~MS_RDONLY;
+<<<<<<< HEAD
 		ret = btrfs_prepare_sprout(root);
 		BUG_ON(ret); /* -ENOMEM */
+=======
+		ret = btrfs_prepare_sprout(trans, root);
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	device->fs_devices = root->fs_info->fs_devices;
@@ -1740,6 +1934,7 @@ int btrfs_init_new_device(struct btrfs_root *root, char *device_path)
 		root->fs_info->fs_devices->num_can_discard++;
 	root->fs_info->fs_devices->total_rw_bytes += device->total_bytes;
 
+<<<<<<< HEAD
 	spin_lock(&root->fs_info->free_chunk_lock);
 	root->fs_info->free_chunk_space += device->total_bytes;
 	spin_unlock(&root->fs_info->free_chunk_lock);
@@ -1753,11 +1948,23 @@ int btrfs_init_new_device(struct btrfs_root *root, char *device_path)
 
 	total_bytes = btrfs_super_num_devices(root->fs_info->super_copy);
 	btrfs_set_super_num_devices(root->fs_info->super_copy,
+=======
+	if (!blk_queue_nonrot(bdev_get_queue(bdev)))
+		root->fs_info->fs_devices->rotating = 1;
+
+	total_bytes = btrfs_super_total_bytes(&root->fs_info->super_copy);
+	btrfs_set_super_total_bytes(&root->fs_info->super_copy,
+				    total_bytes + device->total_bytes);
+
+	total_bytes = btrfs_super_num_devices(&root->fs_info->super_copy);
+	btrfs_set_super_num_devices(&root->fs_info->super_copy,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				    total_bytes + 1);
 	mutex_unlock(&root->fs_info->fs_devices->device_list_mutex);
 
 	if (seeding_dev) {
 		ret = init_first_rw_device(trans, root, device);
+<<<<<<< HEAD
 		if (ret)
 			goto error_trans;
 		ret = btrfs_finish_sprout(trans, root);
@@ -1767,6 +1974,13 @@ int btrfs_init_new_device(struct btrfs_root *root, char *device_path)
 		ret = btrfs_add_device(trans, root, device);
 		if (ret)
 			goto error_trans;
+=======
+		BUG_ON(ret);
+		ret = btrfs_finish_sprout(trans, root);
+		BUG_ON(ret);
+	} else {
+		ret = btrfs_add_device(trans, root, device);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -1776,12 +1990,17 @@ int btrfs_init_new_device(struct btrfs_root *root, char *device_path)
 	btrfs_clear_space_info_full(root->fs_info);
 
 	unlock_chunks(root);
+<<<<<<< HEAD
 	ret = btrfs_commit_transaction(trans, root);
+=======
+	btrfs_commit_transaction(trans, root);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (seeding_dev) {
 		mutex_unlock(&uuid_mutex);
 		up_write(&sb->s_umount);
 
+<<<<<<< HEAD
 		if (ret) /* transaction commit */
 			return ret;
 
@@ -1801,13 +2020,25 @@ error_trans:
 	btrfs_end_transaction(trans, root);
 	kfree(device->name);
 	kfree(device);
+=======
+		ret = btrfs_relocate_sys_chunks(root);
+		BUG_ON(ret);
+	}
+out:
+	mutex_unlock(&root->fs_info->volume_mutex);
+	return ret;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 error:
 	blkdev_put(bdev, FMODE_EXCL);
 	if (seeding_dev) {
 		mutex_unlock(&uuid_mutex);
 		up_write(&sb->s_umount);
 	}
+<<<<<<< HEAD
 	return ret;
+=======
+	goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static noinline int btrfs_update_device(struct btrfs_trans_handle *trans,
@@ -1860,7 +2091,11 @@ static int __btrfs_grow_device(struct btrfs_trans_handle *trans,
 		      struct btrfs_device *device, u64 new_size)
 {
 	struct btrfs_super_block *super_copy =
+<<<<<<< HEAD
 		device->dev_root->fs_info->super_copy;
+=======
+		&device->dev_root->fs_info->super_copy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	u64 old_total = btrfs_super_total_bytes(super_copy);
 	u64 diff = new_size - device->total_bytes;
 
@@ -1908,6 +2143,7 @@ static int btrfs_free_chunk(struct btrfs_trans_handle *trans,
 	key.type = BTRFS_CHUNK_ITEM_KEY;
 
 	ret = btrfs_search_slot(trans, root, &key, path, -1, 1);
+<<<<<<< HEAD
 	if (ret < 0)
 		goto out;
 	else if (ret > 0) { /* Logic error or corruption */
@@ -1922,6 +2158,12 @@ static int btrfs_free_chunk(struct btrfs_trans_handle *trans,
 		btrfs_error(root->fs_info, ret,
 			    "Failed to delete chunk item.");
 out:
+=======
+	BUG_ON(ret);
+
+	ret = btrfs_del_item(trans, root, path);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_free_path(path);
 	return ret;
 }
@@ -1929,7 +2171,11 @@ out:
 static int btrfs_del_sys_chunk(struct btrfs_root *root, u64 chunk_objectid, u64
 			chunk_offset)
 {
+<<<<<<< HEAD
 	struct btrfs_super_block *super_copy = root->fs_info->super_copy;
+=======
+	struct btrfs_super_block *super_copy = &root->fs_info->super_copy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct btrfs_disk_key *disk_key;
 	struct btrfs_chunk *chunk;
 	u8 *ptr;
@@ -2010,7 +2256,11 @@ static int btrfs_relocate_chunk(struct btrfs_root *root,
 	em = lookup_extent_mapping(em_tree, chunk_offset, 1);
 	read_unlock(&em_tree->lock);
 
+<<<<<<< HEAD
 	BUG_ON(!em || em->start > chunk_offset ||
+=======
+	BUG_ON(em->start > chunk_offset ||
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	       em->start + em->len < chunk_offset);
 	map = (struct map_lookup *)em->bdev;
 
@@ -2083,7 +2333,11 @@ again:
 		ret = btrfs_search_slot(NULL, chunk_root, &key, path, 0, 0);
 		if (ret < 0)
 			goto error;
+<<<<<<< HEAD
 		BUG_ON(ret == 0); /* Corruption */
+=======
+		BUG_ON(ret == 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		ret = btrfs_previous_item(chunk_root, path, key.objectid,
 					  key.type);
@@ -2128,6 +2382,7 @@ error:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int insert_balance_item(struct btrfs_root *root,
 			       struct btrfs_balance_control *bctl)
 {
@@ -2216,10 +2471,114 @@ out:
 	err = btrfs_commit_transaction(trans, root);
 	if (err && !ret)
 		ret = err;
+=======
+static u64 div_factor(u64 num, int factor)
+{
+	if (factor == 10)
+		return num;
+	num *= factor;
+	do_div(num, 10);
+	return num;
+}
+
+int btrfs_balance(struct btrfs_root *dev_root)
+{
+	int ret;
+	struct list_head *devices = &dev_root->fs_info->fs_devices->devices;
+	struct btrfs_device *device;
+	u64 old_size;
+	u64 size_to_free;
+	struct btrfs_path *path;
+	struct btrfs_key key;
+	struct btrfs_root *chunk_root = dev_root->fs_info->chunk_root;
+	struct btrfs_trans_handle *trans;
+	struct btrfs_key found_key;
+
+	if (dev_root->fs_info->sb->s_flags & MS_RDONLY)
+		return -EROFS;
+
+	if (!capable(CAP_SYS_ADMIN))
+		return -EPERM;
+
+	mutex_lock(&dev_root->fs_info->volume_mutex);
+	dev_root = dev_root->fs_info->dev_root;
+
+	/* step one make some room on all the devices */
+	list_for_each_entry(device, devices, dev_list) {
+		old_size = device->total_bytes;
+		size_to_free = div_factor(old_size, 1);
+		size_to_free = min(size_to_free, (u64)1 * 1024 * 1024);
+		if (!device->writeable ||
+		    device->total_bytes - device->bytes_used > size_to_free)
+			continue;
+
+		ret = btrfs_shrink_device(device, old_size - size_to_free);
+		if (ret == -ENOSPC)
+			break;
+		BUG_ON(ret);
+
+		trans = btrfs_start_transaction(dev_root, 0);
+		BUG_ON(IS_ERR(trans));
+
+		ret = btrfs_grow_device(trans, device, old_size);
+		BUG_ON(ret);
+
+		btrfs_end_transaction(trans, dev_root);
+	}
+
+	/* step two, relocate all the chunks */
+	path = btrfs_alloc_path();
+	BUG_ON(!path);
+
+	key.objectid = BTRFS_FIRST_CHUNK_TREE_OBJECTID;
+	key.offset = (u64)-1;
+	key.type = BTRFS_CHUNK_ITEM_KEY;
+
+	while (1) {
+		ret = btrfs_search_slot(NULL, chunk_root, &key, path, 0, 0);
+		if (ret < 0)
+			goto error;
+
+		/*
+		 * this shouldn't happen, it means the last relocate
+		 * failed
+		 */
+		if (ret == 0)
+			break;
+
+		ret = btrfs_previous_item(chunk_root, path, 0,
+					  BTRFS_CHUNK_ITEM_KEY);
+		if (ret)
+			break;
+
+		btrfs_item_key_to_cpu(path->nodes[0], &found_key,
+				      path->slots[0]);
+		if (found_key.objectid != key.objectid)
+			break;
+
+		/* chunk zero is special */
+		if (found_key.offset == 0)
+			break;
+
+		btrfs_release_path(path);
+		ret = btrfs_relocate_chunk(chunk_root,
+					   chunk_root->root_key.objectid,
+					   found_key.objectid,
+					   found_key.offset);
+		if (ret && ret != -ENOSPC)
+			goto error;
+		key.offset = found_key.offset - 1;
+	}
+	ret = 0;
+error:
+	btrfs_free_path(path);
+	mutex_unlock(&dev_root->fs_info->volume_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 /*
+<<<<<<< HEAD
  * This is a heuristic used to reduce the number of chunks balanced on
  * resume after balance was interrupted.
  */
@@ -3042,6 +3401,67 @@ again:
 			btrfs_release_path(path);
 			break;
 		}
+=======
+ * shrinking a device means finding all of the device extents past
+ * the new size, and then following the back refs to the chunks.
+ * The chunk relocation code actually frees the device extent
+ */
+int btrfs_shrink_device(struct btrfs_device *device, u64 new_size)
+{
+	struct btrfs_trans_handle *trans;
+	struct btrfs_root *root = device->dev_root;
+	struct btrfs_dev_extent *dev_extent = NULL;
+	struct btrfs_path *path;
+	u64 length;
+	u64 chunk_tree;
+	u64 chunk_objectid;
+	u64 chunk_offset;
+	int ret;
+	int slot;
+	int failed = 0;
+	bool retried = false;
+	struct extent_buffer *l;
+	struct btrfs_key key;
+	struct btrfs_super_block *super_copy = &root->fs_info->super_copy;
+	u64 old_total = btrfs_super_total_bytes(super_copy);
+	u64 old_size = device->total_bytes;
+	u64 diff = device->total_bytes - new_size;
+
+	if (new_size >= device->total_bytes)
+		return -EINVAL;
+
+	path = btrfs_alloc_path();
+	if (!path)
+		return -ENOMEM;
+
+	path->reada = 2;
+
+	lock_chunks(root);
+
+	device->total_bytes = new_size;
+	if (device->writeable)
+		device->fs_devices->total_rw_bytes -= diff;
+	unlock_chunks(root);
+
+again:
+	key.objectid = device->devid;
+	key.offset = (u64)-1;
+	key.type = BTRFS_DEV_EXTENT_KEY;
+
+	while (1) {
+		ret = btrfs_search_slot(NULL, root, &key, path, 0, 0);
+		if (ret < 0)
+			goto done;
+
+		ret = btrfs_previous_item(root, path, 0, key.type);
+		if (ret < 0)
+			goto done;
+		if (ret) {
+			ret = 0;
+			btrfs_release_path(path);
+			break;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		l = path->nodes[0];
 		slot = path->slots[0];
@@ -3071,7 +3491,12 @@ again:
 			goto done;
 		if (ret == -ENOSPC)
 			failed++;
+<<<<<<< HEAD
 	} while (key.offset-- > 0);
+=======
+		key.offset -= 1;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (failed && !retried) {
 		failed = 0;
@@ -3084,9 +3509,12 @@ again:
 		device->total_bytes = old_size;
 		if (device->writeable)
 			device->fs_devices->total_rw_bytes += diff;
+<<<<<<< HEAD
 		spin_lock(&root->fs_info->free_chunk_lock);
 		root->fs_info->free_chunk_space += diff;
 		spin_unlock(&root->fs_info->free_chunk_lock);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		unlock_chunks(root);
 		goto done;
 	}
@@ -3117,11 +3545,20 @@ done:
 	return ret;
 }
 
+<<<<<<< HEAD
 static int btrfs_add_system_chunk(struct btrfs_root *root,
 			   struct btrfs_key *key,
 			   struct btrfs_chunk *chunk, int item_size)
 {
 	struct btrfs_super_block *super_copy = root->fs_info->super_copy;
+=======
+static int btrfs_add_system_chunk(struct btrfs_trans_handle *trans,
+			   struct btrfs_root *root,
+			   struct btrfs_key *key,
+			   struct btrfs_chunk *chunk, int item_size)
+{
+	struct btrfs_super_block *super_copy = &root->fs_info->super_copy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct btrfs_disk_key disk_key;
 	u32 array_size;
 	u8 *ptr;
@@ -3189,7 +3626,15 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 	int i;
 	int j;
 
+<<<<<<< HEAD
 	BUG_ON(!alloc_profile_is_valid(type, 0));
+=======
+	if ((type & BTRFS_BLOCK_GROUP_RAID1) &&
+	    (type & BTRFS_BLOCK_GROUP_DUP)) {
+		WARN_ON(1);
+		type &= ~BTRFS_BLOCK_GROUP_DUP;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (list_empty(&fs_devices->alloc_list))
 		return -ENOSPC;
@@ -3230,6 +3675,7 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 		max_stripe_size = 1024 * 1024 * 1024;
 		max_chunk_size = 10 * max_stripe_size;
 	} else if (type & BTRFS_BLOCK_GROUP_METADATA) {
+<<<<<<< HEAD
 		/* for larger filesystems, use larger metadata chunks */
 		if (fs_devices->total_rw_bytes > 50ULL * 1024 * 1024 * 1024)
 			max_stripe_size = 1024 * 1024 * 1024;
@@ -3238,6 +3684,12 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 		max_chunk_size = max_stripe_size;
 	} else if (type & BTRFS_BLOCK_GROUP_SYSTEM) {
 		max_stripe_size = 32 * 1024 * 1024;
+=======
+		max_stripe_size = 256 * 1024 * 1024;
+		max_chunk_size = max_stripe_size;
+	} else if (type & BTRFS_BLOCK_GROUP_SYSTEM) {
+		max_stripe_size = 8 * 1024 * 1024;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		max_chunk_size = 2 * max_stripe_size;
 	} else {
 		printk(KERN_ERR "btrfs: invalid chunk type 0x%llx requested\n",
@@ -3284,12 +3736,20 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 			total_avail = device->total_bytes - device->bytes_used;
 		else
 			total_avail = 0;
+<<<<<<< HEAD
 
 		/* If there is no space on this device, skip it. */
 		if (total_avail == 0)
 			continue;
 
 		ret = find_free_dev_extent(device,
+=======
+		/* avail is off by max(alloc_start, 1MB), but that is the same
+		 * for all devices, so it doesn't hurt the sorting later on
+		 */
+
+		ret = find_free_dev_extent(trans, device,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   max_stripe_size * dev_stripes,
 					   &dev_offset, &max_avail);
 		if (ret && ret != -ENOSPC)
@@ -3331,6 +3791,7 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 	stripe_size = devices_info[ndevs-1].max_avail;
 	num_stripes = ndevs * dev_stripes;
 
+<<<<<<< HEAD
 	if (stripe_size * ndevs > max_chunk_size * ncopies) {
 		stripe_size = max_chunk_size * ncopies;
 		do_div(stripe_size, ndevs);
@@ -3339,6 +3800,14 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 	do_div(stripe_size, dev_stripes);
 
 	/* align to BTRFS_STRIPE_LEN */
+=======
+	if (stripe_size * num_stripes > max_chunk_size * ncopies) {
+		stripe_size = max_chunk_size * ncopies;
+		do_div(stripe_size, num_stripes);
+	}
+
+	do_div(stripe_size, dev_stripes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	do_div(stripe_size, BTRFS_STRIPE_LEN);
 	stripe_size *= BTRFS_STRIPE_LEN;
 
@@ -3387,15 +3856,24 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 	write_lock(&em_tree->lock);
 	ret = add_extent_mapping(em_tree, em);
 	write_unlock(&em_tree->lock);
+<<<<<<< HEAD
 	free_extent_map(em);
 	if (ret)
 		goto error;
+=======
+	BUG_ON(ret);
+	free_extent_map(em);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = btrfs_make_block_group(trans, extent_root, 0, type,
 				     BTRFS_FIRST_CHUNK_TREE_OBJECTID,
 				     start, num_bytes);
+<<<<<<< HEAD
 	if (ret)
 		goto error;
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < map->num_stripes; ++i) {
 		struct btrfs_device *device;
@@ -3408,10 +3886,14 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 				info->chunk_root->root_key.objectid,
 				BTRFS_FIRST_CHUNK_TREE_OBJECTID,
 				start, dev_offset, stripe_size);
+<<<<<<< HEAD
 		if (ret) {
 			btrfs_abort_transaction(trans, extent_root, ret);
 			goto error;
 		}
+=======
+		BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	kfree(devices_info);
@@ -3447,6 +3929,7 @@ static int __finish_chunk_alloc(struct btrfs_trans_handle *trans,
 		device = map->stripes[index].dev;
 		device->bytes_used += stripe_size;
 		ret = btrfs_update_device(trans, device);
+<<<<<<< HEAD
 		if (ret)
 			goto out_free;
 		index++;
@@ -3457,6 +3940,12 @@ static int __finish_chunk_alloc(struct btrfs_trans_handle *trans,
 						   map->num_stripes);
 	spin_unlock(&extent_root->fs_info->free_chunk_lock);
 
+=======
+		BUG_ON(ret);
+		index++;
+	}
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	index = 0;
 	stripe = &chunk->stripe;
 	while (index < map->num_stripes) {
@@ -3485,6 +3974,7 @@ static int __finish_chunk_alloc(struct btrfs_trans_handle *trans,
 	key.offset = chunk_offset;
 
 	ret = btrfs_insert_item(trans, chunk_root, &key, chunk, item_size);
+<<<<<<< HEAD
 
 	if (ret == 0 && map->type & BTRFS_BLOCK_GROUP_SYSTEM) {
 		/*
@@ -3498,6 +3988,18 @@ static int __finish_chunk_alloc(struct btrfs_trans_handle *trans,
 out_free:
 	kfree(chunk);
 	return ret;
+=======
+	BUG_ON(ret);
+
+	if (map->type & BTRFS_BLOCK_GROUP_SYSTEM) {
+		ret = btrfs_add_system_chunk(trans, chunk_root, &key, chunk,
+					     item_size);
+		BUG_ON(ret);
+	}
+
+	kfree(chunk);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /*
@@ -3529,8 +4031,12 @@ int btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
 
 	ret = __finish_chunk_alloc(trans, extent_root, map, chunk_offset,
 				   chunk_size, stripe_size);
+<<<<<<< HEAD
 	if (ret)
 		return ret;
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -3553,33 +4059,57 @@ static noinline int init_first_rw_device(struct btrfs_trans_handle *trans,
 
 	ret = find_next_chunk(fs_info->chunk_root,
 			      BTRFS_FIRST_CHUNK_TREE_OBJECTID, &chunk_offset);
+<<<<<<< HEAD
 	if (ret)
 		return ret;
 
 	alloc_profile = BTRFS_BLOCK_GROUP_METADATA |
 				fs_info->avail_metadata_alloc_bits;
+=======
+	BUG_ON(ret);
+
+	alloc_profile = BTRFS_BLOCK_GROUP_METADATA |
+			(fs_info->metadata_alloc_profile &
+			 fs_info->avail_metadata_alloc_bits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	alloc_profile = btrfs_reduce_alloc_profile(root, alloc_profile);
 
 	ret = __btrfs_alloc_chunk(trans, extent_root, &map, &chunk_size,
 				  &stripe_size, chunk_offset, alloc_profile);
+<<<<<<< HEAD
 	if (ret)
 		return ret;
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	sys_chunk_offset = chunk_offset + chunk_size;
 
 	alloc_profile = BTRFS_BLOCK_GROUP_SYSTEM |
+<<<<<<< HEAD
 				fs_info->avail_system_alloc_bits;
+=======
+			(fs_info->system_alloc_profile &
+			 fs_info->avail_system_alloc_bits);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	alloc_profile = btrfs_reduce_alloc_profile(root, alloc_profile);
 
 	ret = __btrfs_alloc_chunk(trans, extent_root, &sys_map,
 				  &sys_chunk_size, &sys_stripe_size,
 				  sys_chunk_offset, alloc_profile);
+<<<<<<< HEAD
 	if (ret)
 		goto abort;
 
 	ret = btrfs_add_device(trans, fs_info->chunk_root, device);
 	if (ret)
 		goto abort;
+=======
+	BUG_ON(ret);
+
+	ret = btrfs_add_device(trans, fs_info->chunk_root, device);
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/*
 	 * Modifying chunk tree needs allocating new blocks from both
@@ -3589,12 +4119,17 @@ static noinline int init_first_rw_device(struct btrfs_trans_handle *trans,
 	 */
 	ret = __finish_chunk_alloc(trans, extent_root, map, chunk_offset,
 				   chunk_size, stripe_size);
+<<<<<<< HEAD
 	if (ret)
 		goto abort;
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = __finish_chunk_alloc(trans, extent_root, sys_map,
 				   sys_chunk_offset, sys_chunk_size,
 				   sys_stripe_size);
+<<<<<<< HEAD
 	if (ret)
 		goto abort;
 
@@ -3603,6 +4138,10 @@ static noinline int init_first_rw_device(struct btrfs_trans_handle *trans,
 abort:
 	btrfs_abort_transaction(trans, root, ret);
 	return ret;
+=======
+	BUG_ON(ret);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int btrfs_chunk_readonly(struct btrfs_root *root, u64 chunk_offset)
@@ -3702,7 +4241,11 @@ static int find_live_mirror(struct map_lookup *map, int first, int num,
 
 static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 			     u64 logical, u64 *length,
+<<<<<<< HEAD
 			     struct btrfs_bio **bbio_ret,
+=======
+			     struct btrfs_multi_bio **multi_ret,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     int mirror_num)
 {
 	struct extent_map *em;
@@ -3714,12 +4257,34 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 	u64 stripe_nr;
 	u64 stripe_nr_orig;
 	u64 stripe_nr_end;
+<<<<<<< HEAD
 	int stripe_index;
 	int i;
 	int ret = 0;
 	int num_stripes;
 	int max_errors = 0;
 	struct btrfs_bio *bbio = NULL;
+=======
+	int stripes_allocated = 8;
+	int stripes_required = 1;
+	int stripe_index;
+	int i;
+	int num_stripes;
+	int max_errors = 0;
+	struct btrfs_multi_bio *multi = NULL;
+
+	if (multi_ret && !(rw & (REQ_WRITE | REQ_DISCARD)))
+		stripes_allocated = 1;
+again:
+	if (multi_ret) {
+		multi = kzalloc(btrfs_multi_bio_size(stripes_allocated),
+				GFP_NOFS);
+		if (!multi)
+			return -ENOMEM;
+
+		atomic_set(&multi->error, 0);
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	read_lock(&em_tree->lock);
 	em = lookup_extent_mapping(em_tree, logical, *length);
@@ -3739,6 +4304,35 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 	if (mirror_num > map->num_stripes)
 		mirror_num = 0;
 
+<<<<<<< HEAD
+=======
+	/* if our multi bio struct is too small, back off and try again */
+	if (rw & REQ_WRITE) {
+		if (map->type & (BTRFS_BLOCK_GROUP_RAID1 |
+				 BTRFS_BLOCK_GROUP_DUP)) {
+			stripes_required = map->num_stripes;
+			max_errors = 1;
+		} else if (map->type & BTRFS_BLOCK_GROUP_RAID10) {
+			stripes_required = map->sub_stripes;
+			max_errors = 1;
+		}
+	}
+	if (rw & REQ_DISCARD) {
+		if (map->type & (BTRFS_BLOCK_GROUP_RAID0 |
+				 BTRFS_BLOCK_GROUP_RAID1 |
+				 BTRFS_BLOCK_GROUP_DUP |
+				 BTRFS_BLOCK_GROUP_RAID10)) {
+			stripes_required = map->num_stripes;
+		}
+	}
+	if (multi_ret && (rw & (REQ_WRITE | REQ_DISCARD)) &&
+	    stripes_allocated < stripes_required) {
+		stripes_allocated = map->num_stripes;
+		free_extent_map(em);
+		kfree(multi);
+		goto again;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	stripe_nr = offset;
 	/*
 	 * stripe_nr counts the total number of stripes we have to stride
@@ -3754,7 +4348,14 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 
 	if (rw & REQ_DISCARD)
 		*length = min_t(u64, em->len - offset, *length);
+<<<<<<< HEAD
 	else if (map->type & BTRFS_BLOCK_GROUP_PROFILE_MASK) {
+=======
+	else if (map->type & (BTRFS_BLOCK_GROUP_RAID0 |
+			      BTRFS_BLOCK_GROUP_RAID1 |
+			      BTRFS_BLOCK_GROUP_RAID10 |
+			      BTRFS_BLOCK_GROUP_DUP)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		/* we limit the length of each bio to what fits in a stripe */
 		*length = min_t(u64, em->len - offset,
 				map->stripe_len - stripe_offset);
@@ -3762,7 +4363,11 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 		*length = em->len - offset;
 	}
 
+<<<<<<< HEAD
 	if (!bbio_ret)
+=======
+	if (!multi_ret)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		goto out;
 
 	num_stripes = 1;
@@ -3787,6 +4392,7 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 			stripe_index = find_live_mirror(map, 0,
 					    map->num_stripes,
 					    current->pid % map->num_stripes);
+<<<<<<< HEAD
 			mirror_num = stripe_index + 1;
 		}
 
@@ -3798,6 +4404,15 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 		} else {
 			mirror_num = 1;
 		}
+=======
+		}
+
+	} else if (map->type & BTRFS_BLOCK_GROUP_DUP) {
+		if (rw & (REQ_WRITE | REQ_DISCARD))
+			num_stripes = map->num_stripes;
+		else if (mirror_num)
+			stripe_index = mirror_num - 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	} else if (map->type & BTRFS_BLOCK_GROUP_RAID10) {
 		int factor = map->num_stripes / map->sub_stripes;
@@ -3814,11 +4429,17 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 		else if (mirror_num)
 			stripe_index += mirror_num - 1;
 		else {
+<<<<<<< HEAD
 			int old_stripe_index = stripe_index;
 			stripe_index = find_live_mirror(map, stripe_index,
 					      map->sub_stripes, stripe_index +
 					      current->pid % map->sub_stripes);
 			mirror_num = stripe_index - old_stripe_index + 1;
+=======
+			stripe_index = find_live_mirror(map, stripe_index,
+					      map->sub_stripes, stripe_index +
+					      current->pid % map->sub_stripes);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	} else {
 		/*
@@ -3827,6 +4448,7 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 		 * stripe_index is the number of our device in the stripe array
 		 */
 		stripe_index = do_div(stripe_nr, map->num_stripes);
+<<<<<<< HEAD
 		mirror_num = stripe_index + 1;
 	}
 	BUG_ON(stripe_index >= map->num_stripes);
@@ -3898,6 +4520,88 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 					stripe_offset = 0;
 			} else
 				bbio->stripes[i].length = *length;
+=======
+	}
+	BUG_ON(stripe_index >= map->num_stripes);
+
+	if (rw & REQ_DISCARD) {
+		for (i = 0; i < num_stripes; i++) {
+			multi->stripes[i].physical =
+				map->stripes[stripe_index].physical +
+				stripe_offset + stripe_nr * map->stripe_len;
+			multi->stripes[i].dev = map->stripes[stripe_index].dev;
+
+			if (map->type & BTRFS_BLOCK_GROUP_RAID0) {
+				u64 stripes;
+				u32 last_stripe = 0;
+				int j;
+
+				div_u64_rem(stripe_nr_end - 1,
+					    map->num_stripes,
+					    &last_stripe);
+
+				for (j = 0; j < map->num_stripes; j++) {
+					u32 test;
+
+					div_u64_rem(stripe_nr_end - 1 - j,
+						    map->num_stripes, &test);
+					if (test == stripe_index)
+						break;
+				}
+				stripes = stripe_nr_end - 1 - j;
+				do_div(stripes, map->num_stripes);
+				multi->stripes[i].length = map->stripe_len *
+					(stripes - stripe_nr + 1);
+
+				if (i == 0) {
+					multi->stripes[i].length -=
+						stripe_offset;
+					stripe_offset = 0;
+				}
+				if (stripe_index == last_stripe)
+					multi->stripes[i].length -=
+						stripe_end_offset;
+			} else if (map->type & BTRFS_BLOCK_GROUP_RAID10) {
+				u64 stripes;
+				int j;
+				int factor = map->num_stripes /
+					     map->sub_stripes;
+				u32 last_stripe = 0;
+
+				div_u64_rem(stripe_nr_end - 1,
+					    factor, &last_stripe);
+				last_stripe *= map->sub_stripes;
+
+				for (j = 0; j < factor; j++) {
+					u32 test;
+
+					div_u64_rem(stripe_nr_end - 1 - j,
+						    factor, &test);
+
+					if (test ==
+					    stripe_index / map->sub_stripes)
+						break;
+				}
+				stripes = stripe_nr_end - 1 - j;
+				do_div(stripes, factor);
+				multi->stripes[i].length = map->stripe_len *
+					(stripes - stripe_nr + 1);
+
+				if (i < map->sub_stripes) {
+					multi->stripes[i].length -=
+						stripe_offset;
+					if (i == map->sub_stripes - 1)
+						stripe_offset = 0;
+				}
+				if (stripe_index >= last_stripe &&
+				    stripe_index <= (last_stripe +
+						     map->sub_stripes - 1)) {
+					multi->stripes[i].length -=
+						stripe_end_offset;
+				}
+			} else
+				multi->stripes[i].length = *length;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 			stripe_index++;
 			if (stripe_index == map->num_stripes) {
@@ -3908,15 +4612,24 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 		}
 	} else {
 		for (i = 0; i < num_stripes; i++) {
+<<<<<<< HEAD
 			bbio->stripes[i].physical =
 				map->stripes[stripe_index].physical +
 				stripe_offset +
 				stripe_nr * map->stripe_len;
 			bbio->stripes[i].dev =
+=======
+			multi->stripes[i].physical =
+				map->stripes[stripe_index].physical +
+				stripe_offset +
+				stripe_nr * map->stripe_len;
+			multi->stripes[i].dev =
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				map->stripes[stripe_index].dev;
 			stripe_index++;
 		}
 	}
+<<<<<<< HEAD
 
 	if (rw & REQ_WRITE) {
 		if (map->type & (BTRFS_BLOCK_GROUP_RAID1 |
@@ -3933,13 +4646,29 @@ static int __btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 out:
 	free_extent_map(em);
 	return ret;
+=======
+	if (multi_ret) {
+		*multi_ret = multi;
+		multi->num_stripes = num_stripes;
+		multi->max_errors = max_errors;
+	}
+out:
+	free_extent_map(em);
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int btrfs_map_block(struct btrfs_mapping_tree *map_tree, int rw,
 		      u64 logical, u64 *length,
+<<<<<<< HEAD
 		      struct btrfs_bio **bbio_ret, int mirror_num)
 {
 	return __btrfs_map_block(map_tree, rw, logical, length, bbio_ret,
+=======
+		      struct btrfs_multi_bio **multi_ret, int mirror_num)
+{
+	return __btrfs_map_block(map_tree, rw, logical, length, multi_ret,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 mirror_num);
 }
 
@@ -3970,7 +4699,11 @@ int btrfs_rmap_block(struct btrfs_mapping_tree *map_tree,
 		do_div(length, map->num_stripes);
 
 	buf = kzalloc(sizeof(u64) * map->num_stripes, GFP_NOFS);
+<<<<<<< HEAD
 	BUG_ON(!buf); /* -ENOMEM */
+=======
+	BUG_ON(!buf);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	for (i = 0; i < map->num_stripes; i++) {
 		if (devid && map->stripes[i].dev->devid != devid)
@@ -4008,6 +4741,7 @@ int btrfs_rmap_block(struct btrfs_mapping_tree *map_tree,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void btrfs_end_bio(struct bio *bio, int err)
 {
 	struct btrfs_bio *bbio = bio->bi_private;
@@ -4034,6 +4768,32 @@ static void btrfs_end_bio(struct bio *bio, int err)
 		if (atomic_read(&bbio->error) > bbio->max_errors) {
 			err = -EIO;
 		} else {
+=======
+static void end_bio_multi_stripe(struct bio *bio, int err)
+{
+	struct btrfs_multi_bio *multi = bio->bi_private;
+	int is_orig_bio = 0;
+
+	if (err)
+		atomic_inc(&multi->error);
+
+	if (bio == multi->orig_bio)
+		is_orig_bio = 1;
+
+	if (atomic_dec_and_test(&multi->stripes_pending)) {
+		if (!is_orig_bio) {
+			bio_put(bio);
+			bio = multi->orig_bio;
+		}
+		bio->bi_private = multi->private;
+		bio->bi_end_io = multi->end_io;
+		/* only send an error to the higher layers if it is
+		 * beyond the tolerance of the multi-bio
+		 */
+		if (atomic_read(&multi->error) > multi->max_errors) {
+			err = -EIO;
+		} else if (err) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * this bio is actually up to date, we didn't
 			 * go over the max number of errors
@@ -4041,7 +4801,11 @@ static void btrfs_end_bio(struct bio *bio, int err)
 			set_bit(BIO_UPTODATE, &bio->bi_flags);
 			err = 0;
 		}
+<<<<<<< HEAD
 		kfree(bbio);
+=======
+		kfree(multi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		bio_endio(bio, err);
 	} else if (!is_orig_bio) {
@@ -4063,7 +4827,11 @@ struct async_sched {
  * This will add one bio to the pending list for a device and make sure
  * the work struct is scheduled.
  */
+<<<<<<< HEAD
 static noinline void schedule_bio(struct btrfs_root *root,
+=======
+static noinline int schedule_bio(struct btrfs_root *root,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct btrfs_device *device,
 				 int rw, struct bio *bio)
 {
@@ -4073,9 +4841,15 @@ static noinline void schedule_bio(struct btrfs_root *root,
 	/* don't bother with additional async steps for reads, right now */
 	if (!(rw & REQ_WRITE)) {
 		bio_get(bio);
+<<<<<<< HEAD
 		btrfsic_submit_bio(rw, bio);
 		bio_put(bio);
 		return;
+=======
+		submit_bio(rw, bio);
+		bio_put(bio);
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	/*
@@ -4109,6 +4883,10 @@ static noinline void schedule_bio(struct btrfs_root *root,
 	if (should_queue)
 		btrfs_queue_worker(&root->fs_info->submit_workers,
 				   &device->work);
+<<<<<<< HEAD
+=======
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 int btrfs_map_bio(struct btrfs_root *root, int rw, struct bio *bio,
@@ -4120,21 +4898,36 @@ int btrfs_map_bio(struct btrfs_root *root, int rw, struct bio *bio,
 	u64 logical = (u64)bio->bi_sector << 9;
 	u64 length = 0;
 	u64 map_length;
+<<<<<<< HEAD
 	int ret;
 	int dev_nr = 0;
 	int total_devs = 1;
 	struct btrfs_bio *bbio = NULL;
+=======
+	struct btrfs_multi_bio *multi = NULL;
+	int ret;
+	int dev_nr = 0;
+	int total_devs = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	length = bio->bi_size;
 	map_tree = &root->fs_info->mapping_tree;
 	map_length = length;
 
+<<<<<<< HEAD
 	ret = btrfs_map_block(map_tree, rw, logical, &map_length, &bbio,
 			      mirror_num);
 	if (ret) /* -ENOMEM */
 		return ret;
 
 	total_devs = bbio->num_stripes;
+=======
+	ret = btrfs_map_block(map_tree, rw, logical, &map_length, &multi,
+			      mirror_num);
+	BUG_ON(ret);
+
+	total_devs = multi->num_stripes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (map_length < length) {
 		printk(KERN_CRIT "mapping failed logical %llu bio len %llu "
 		       "len %llu\n", (unsigned long long)logical,
@@ -4142,6 +4935,7 @@ int btrfs_map_bio(struct btrfs_root *root, int rw, struct bio *bio,
 		       (unsigned long long)map_length);
 		BUG();
 	}
+<<<<<<< HEAD
 
 	bbio->orig_bio = first_bio;
 	bbio->private = first_bio->bi_private;
@@ -4164,11 +4958,36 @@ int btrfs_map_bio(struct btrfs_root *root, int rw, struct bio *bio,
 				 "(%s id %llu), size=%u\n", rw,
 				 (u64)bio->bi_sector, (u_long)dev->bdev->bd_dev,
 				 dev->name, dev->devid, bio->bi_size);
+=======
+	multi->end_io = first_bio->bi_end_io;
+	multi->private = first_bio->bi_private;
+	multi->orig_bio = first_bio;
+	atomic_set(&multi->stripes_pending, multi->num_stripes);
+
+	while (dev_nr < total_devs) {
+		if (total_devs > 1) {
+			if (dev_nr < total_devs - 1) {
+				bio = bio_clone(first_bio, GFP_NOFS);
+				BUG_ON(!bio);
+			} else {
+				bio = first_bio;
+			}
+			bio->bi_private = multi;
+			bio->bi_end_io = end_bio_multi_stripe;
+		}
+		bio->bi_sector = multi->stripes[dev_nr].physical >> 9;
+		dev = multi->stripes[dev_nr].dev;
+		if (dev && dev->bdev && (rw != WRITE || dev->writeable)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			bio->bi_bdev = dev->bdev;
 			if (async_submit)
 				schedule_bio(root, dev, rw, bio);
 			else
+<<<<<<< HEAD
 				btrfsic_submit_bio(rw, bio);
+=======
+				submit_bio(rw, bio);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		} else {
 			bio->bi_bdev = root->fs_info->fs_devices->latest_bdev;
 			bio->bi_sector = logical >> 9;
@@ -4176,6 +4995,11 @@ int btrfs_map_bio(struct btrfs_root *root, int rw, struct bio *bio,
 		}
 		dev_nr++;
 	}
+<<<<<<< HEAD
+=======
+	if (total_devs == 1)
+		kfree(multi);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
@@ -4305,13 +5129,21 @@ static int read_one_chunk(struct btrfs_root *root, struct btrfs_key *key,
 	write_lock(&map_tree->map_tree.lock);
 	ret = add_extent_mapping(&map_tree->map_tree, em);
 	write_unlock(&map_tree->map_tree.lock);
+<<<<<<< HEAD
 	BUG_ON(ret); /* Tree corruption */
+=======
+	BUG_ON(ret);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	free_extent_map(em);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static void fill_device_from_item(struct extent_buffer *leaf,
+=======
+static int fill_device_from_item(struct extent_buffer *leaf,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				 struct btrfs_dev_item *dev_item,
 				 struct btrfs_device *device)
 {
@@ -4328,6 +5160,11 @@ static void fill_device_from_item(struct extent_buffer *leaf,
 
 	ptr = (unsigned long)btrfs_device_uuid(dev_item);
 	read_extent_buffer(leaf, device->uuid, ptr, BTRFS_UUID_SIZE);
+<<<<<<< HEAD
+=======
+
+	return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int open_seed_devices(struct btrfs_root *root, u8 *fsid)
@@ -4335,7 +5172,11 @@ static int open_seed_devices(struct btrfs_root *root, u8 *fsid)
 	struct btrfs_fs_devices *fs_devices;
 	int ret;
 
+<<<<<<< HEAD
 	BUG_ON(!mutex_is_locked(&uuid_mutex));
+=======
+	mutex_lock(&uuid_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	fs_devices = root->fs_info->fs_devices->seed;
 	while (fs_devices) {
@@ -4360,10 +5201,15 @@ static int open_seed_devices(struct btrfs_root *root, u8 *fsid)
 
 	ret = __btrfs_open_devices(fs_devices, FMODE_READ,
 				   root->fs_info->bdev_holder);
+<<<<<<< HEAD
 	if (ret) {
 		free_fs_devices(fs_devices);
 		goto out;
 	}
+=======
+	if (ret)
+		goto out;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (!fs_devices->seeding) {
 		__btrfs_close_devices(fs_devices);
@@ -4375,6 +5221,10 @@ static int open_seed_devices(struct btrfs_root *root, u8 *fsid)
 	fs_devices->seed = root->fs_info->fs_devices->seed;
 	root->fs_info->fs_devices->seed = fs_devices;
 out:
+<<<<<<< HEAD
+=======
+	mutex_unlock(&uuid_mutex);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
@@ -4435,6 +5285,7 @@ static int read_one_dev(struct btrfs_root *root,
 	fill_device_from_item(leaf, dev_item, device);
 	device->dev_root = root->fs_info->dev_root;
 	device->in_fs_metadata = 1;
+<<<<<<< HEAD
 	if (device->writeable) {
 		device->fs_devices->total_rw_bytes += device->total_bytes;
 		spin_lock(&root->fs_info->free_chunk_lock);
@@ -4442,13 +5293,21 @@ static int read_one_dev(struct btrfs_root *root,
 			device->bytes_used;
 		spin_unlock(&root->fs_info->free_chunk_lock);
 	}
+=======
+	if (device->writeable)
+		device->fs_devices->total_rw_bytes += device->total_bytes;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	ret = 0;
 	return ret;
 }
 
 int btrfs_read_sys_array(struct btrfs_root *root)
 {
+<<<<<<< HEAD
 	struct btrfs_super_block *super_copy = root->fs_info->super_copy;
+=======
+	struct btrfs_super_block *super_copy = &root->fs_info->super_copy;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct extent_buffer *sb;
 	struct btrfs_disk_key *disk_key;
 	struct btrfs_chunk *chunk;
@@ -4466,6 +5325,7 @@ int btrfs_read_sys_array(struct btrfs_root *root)
 	if (!sb)
 		return -ENOMEM;
 	btrfs_set_buffer_uptodate(sb);
+<<<<<<< HEAD
 	btrfs_set_buffer_lockdep_class(root->root_key.objectid, sb, 0);
 	/*
 	 * The sb extent buffer is artifical and just used to read the system array.
@@ -4481,6 +5341,9 @@ int btrfs_read_sys_array(struct btrfs_root *root)
 	 */
 	if (PAGE_CACHE_SIZE > BTRFS_SUPER_INFO_SIZE)
 		SetPageUptodate(sb->pages[0]);
+=======
+	btrfs_set_buffer_lockdep_class(sb, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	write_extent_buffer(sb, super_copy, 0, BTRFS_SUPER_INFO_SIZE);
 	array_size = btrfs_super_sys_array_size(super_copy);
@@ -4531,9 +5394,12 @@ int btrfs_read_chunk_tree(struct btrfs_root *root)
 	if (!path)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	mutex_lock(&uuid_mutex);
 	lock_chunks(root);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* first we search for all of the device items, and then we
 	 * read in all of the chunk items.  This way we can create chunk
 	 * mappings that reference all of the devices that are afound
@@ -4584,9 +5450,12 @@ again:
 	}
 	ret = 0;
 error:
+<<<<<<< HEAD
 	unlock_chunks(root);
 	mutex_unlock(&uuid_mutex);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	btrfs_free_path(path);
 	return ret;
 }

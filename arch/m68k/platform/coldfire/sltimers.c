@@ -81,14 +81,21 @@ void mcfslt_profile_init(void)
 static u32 mcfslt_cycles_per_jiffy;
 static u32 mcfslt_cnt;
 
+<<<<<<< HEAD
 static irq_handler_t timer_interrupt;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static irqreturn_t mcfslt_tick(int irq, void *dummy)
 {
 	/* Reset Slice Timer 0 */
 	__raw_writel(MCFSLT_SSR_BE | MCFSLT_SSR_TE, TA(MCFSLT_SSR));
 	mcfslt_cnt += mcfslt_cycles_per_jiffy;
+<<<<<<< HEAD
 	return timer_interrupt(irq, dummy);
+=======
+	return arch_timer_interrupt(irq, dummy);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct irqaction mcfslt_timer_irq = {
@@ -100,11 +107,17 @@ static struct irqaction mcfslt_timer_irq = {
 static cycle_t mcfslt_read_clk(struct clocksource *cs)
 {
 	unsigned long flags;
+<<<<<<< HEAD
 	u32 cycles, scnt;
+=======
+	u32 cycles;
+	u16 scnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	local_irq_save(flags);
 	scnt = __raw_readl(TA(MCFSLT_SCNT));
 	cycles = mcfslt_cnt;
+<<<<<<< HEAD
 	if (__raw_readl(TA(MCFSLT_SSR)) & MCFSLT_SSR_TE) {
 		cycles += mcfslt_cycles_per_jiffy;
 		scnt = __raw_readl(TA(MCFSLT_SCNT));
@@ -113,17 +126,31 @@ static cycle_t mcfslt_read_clk(struct clocksource *cs)
 
 	/* subtract because slice timers count down */
 	return cycles + ((mcfslt_cycles_per_jiffy - 1) - scnt);
+=======
+	local_irq_restore(flags);
+
+	/* subtract because slice timers count down */
+	return cycles - scnt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static struct clocksource mcfslt_clk = {
 	.name	= "slt",
 	.rating	= 250,
 	.read	= mcfslt_read_clk,
+<<<<<<< HEAD
+=======
+	.shift	= 20,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.mask	= CLOCKSOURCE_MASK(32),
 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
 };
 
+<<<<<<< HEAD
 void hw_timer_init(irq_handler_t handler)
+=======
+void hw_timer_init(void)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	mcfslt_cycles_per_jiffy = MCF_BUSCLK / HZ;
 	/*
@@ -138,10 +165,17 @@ void hw_timer_init(irq_handler_t handler)
 	/* initialize mcfslt_cnt knowing that slice timers count down */
 	mcfslt_cnt = mcfslt_cycles_per_jiffy;
 
+<<<<<<< HEAD
 	timer_interrupt = handler;
 	setup_irq(MCF_IRQ_TIMER, &mcfslt_timer_irq);
 
 	clocksource_register_hz(&mcfslt_clk, MCF_BUSCLK);
+=======
+	setup_irq(MCF_IRQ_TIMER, &mcfslt_timer_irq);
+
+	mcfslt_clk.mult = clocksource_hz2mult(MCF_BUSCLK, mcfslt_clk.shift);
+	clocksource_register(&mcfslt_clk);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifdef CONFIG_HIGHPROFILE
 	mcfslt_profile_init();

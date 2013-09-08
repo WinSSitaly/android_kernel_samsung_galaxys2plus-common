@@ -492,10 +492,17 @@ static inline void fscache_end_io(struct fscache_retrieval *op,
 /*
  * out-of-line cache backend functions
  */
+<<<<<<< HEAD
 extern __printf(3, 4)
 void fscache_init_cache(struct fscache_cache *cache,
 			const struct fscache_cache_ops *ops,
 			const char *idfmt, ...);
+=======
+extern void fscache_init_cache(struct fscache_cache *cache,
+			       const struct fscache_cache_ops *ops,
+			       const char *idfmt,
+			       ...) __attribute__ ((format (printf, 3, 4)));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 extern int fscache_add_cache(struct fscache_cache *cache,
 			     struct fscache_object *fsdef,

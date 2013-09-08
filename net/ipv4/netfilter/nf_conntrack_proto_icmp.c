@@ -75,31 +75,46 @@ static int icmp_print_tuple(struct seq_file *s,
 			  ntohs(tuple->src.u.icmp.id));
 }
 
+<<<<<<< HEAD
 static unsigned int *icmp_get_timeouts(struct net *net)
 {
 	return &nf_ct_icmp_timeout;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 /* Returns verdict for packet, or -1 for invalid. */
 static int icmp_packet(struct nf_conn *ct,
 		       const struct sk_buff *skb,
 		       unsigned int dataoff,
 		       enum ip_conntrack_info ctinfo,
 		       u_int8_t pf,
+<<<<<<< HEAD
 		       unsigned int hooknum,
 		       unsigned int *timeout)
+=======
+		       unsigned int hooknum)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	/* Do not immediately delete the connection after the first
 	   successful reply to avoid excessive conntrackd traffic
 	   and also to handle correctly ICMP echo reply duplicates. */
+<<<<<<< HEAD
 	nf_ct_refresh_acct(ct, ctinfo, skb, *timeout);
+=======
+	nf_ct_refresh_acct(ct, ctinfo, skb, nf_ct_icmp_timeout);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return NF_ACCEPT;
 }
 
 /* Called when a new connection for this protocol found. */
 static bool icmp_new(struct nf_conn *ct, const struct sk_buff *skb,
+<<<<<<< HEAD
 		     unsigned int dataoff, unsigned int *timeouts)
+=======
+		     unsigned int dataoff)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	static const u_int8_t valid_new[] = {
 		[ICMP_ECHO] = 1,
@@ -269,6 +284,7 @@ static int icmp_nlattr_tuple_size(void)
 }
 #endif
 
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 
 #include <linux/netfilter/nfnetlink.h>
@@ -307,6 +323,8 @@ icmp_timeout_nla_policy[CTA_TIMEOUT_ICMP_MAX+1] = {
 };
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 static struct ctl_table_header *icmp_sysctl_header;
 static struct ctl_table icmp_sysctl_table[] = {
@@ -342,7 +360,10 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_icmp __read_mostly =
 	.invert_tuple		= icmp_invert_tuple,
 	.print_tuple		= icmp_print_tuple,
 	.packet			= icmp_packet,
+<<<<<<< HEAD
 	.get_timeouts		= icmp_get_timeouts,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.new			= icmp_new,
 	.error			= icmp_error,
 	.destroy		= NULL,
@@ -353,6 +374,7 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_icmp __read_mostly =
 	.nlattr_to_tuple	= icmp_nlattr_to_tuple,
 	.nla_policy		= icmp_nla_policy,
 #endif
+<<<<<<< HEAD
 #if IS_ENABLED(CONFIG_NF_CT_NETLINK_TIMEOUT)
 	.ctnl_timeout		= {
 		.nlattr_to_obj	= icmp_timeout_nlattr_to_obj,
@@ -362,6 +384,8 @@ struct nf_conntrack_l4proto nf_conntrack_l4proto_icmp __read_mostly =
 		.nla_policy	= icmp_timeout_nla_policy,
 	},
 #endif /* CONFIG_NF_CT_NETLINK_TIMEOUT */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #ifdef CONFIG_SYSCTL
 	.ctl_table_header	= &icmp_sysctl_header,
 	.ctl_table		= icmp_sysctl_table,

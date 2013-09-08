@@ -38,6 +38,7 @@
 #include "wm8994.h"
 #include "wm_hubs.h"
 
+<<<<<<< HEAD
 #define WM1811_JACKDET_MODE_NONE  0x0000
 #define WM1811_JACKDET_MODE_JACK  0x0100
 #define WM1811_JACKDET_MODE_MIC   0x0080
@@ -79,6 +80,11 @@ static struct {
 	{ WM8994_DAC2_RIGHT_VOLUME, WM8994_DAC2_VU },
 };
 
+=======
+#define WM8994_NUM_DRC 3
+#define WM8994_NUM_EQ  3
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wm8994_drc_base[] = {
 	WM8994_AIF1_DRC1_1,
 	WM8994_AIF1_DRC2_1,
@@ -91,6 +97,7 @@ static int wm8994_retune_mobile_base[] = {
 	WM8994_AIF2_EQ_GAINS_1,
 };
 
+<<<<<<< HEAD
 static void wm8958_default_micdet(u16 status, void *data);
 
 static const struct wm8958_micd_rate micdet_rates[] = {
@@ -154,6 +161,104 @@ static void wm8958_micd_set_rate(struct snd_soc_codec *codec)
 	snd_soc_update_bits(codec, WM8958_MIC_DETECT_1,
 			    WM8958_MICD_BIAS_STARTTIME_MASK |
 			    WM8958_MICD_RATE_MASK, val);
+=======
+static int wm8994_readable(struct snd_soc_codec *codec, unsigned int reg)
+{
+	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+	struct wm8994 *control = codec->control_data;
+
+	switch (reg) {
+	case WM8994_GPIO_1:
+	case WM8994_GPIO_2:
+	case WM8994_GPIO_3:
+	case WM8994_GPIO_4:
+	case WM8994_GPIO_5:
+	case WM8994_GPIO_6:
+	case WM8994_GPIO_7:
+	case WM8994_GPIO_8:
+	case WM8994_GPIO_9:
+	case WM8994_GPIO_10:
+	case WM8994_GPIO_11:
+	case WM8994_INTERRUPT_STATUS_1:
+	case WM8994_INTERRUPT_STATUS_2:
+	case WM8994_INTERRUPT_RAW_STATUS_2:
+		return 1;
+
+	case WM8958_DSP2_PROGRAM:
+	case WM8958_DSP2_CONFIG:
+	case WM8958_DSP2_EXECCONTROL:
+		if (control->type == WM8958)
+			return 1;
+		else
+			return 0;
+
+	default:
+		break;
+	}
+
+	if (reg >= WM8994_CACHE_SIZE)
+		return 0;
+	return wm8994_access_masks[reg].readable != 0;
+}
+
+static int wm8994_volatile(struct snd_soc_codec *codec, unsigned int reg)
+{
+	if (reg >= WM8994_CACHE_SIZE)
+		return 1;
+
+	switch (reg) {
+	case WM8994_SOFTWARE_RESET:
+	case WM8994_CHIP_REVISION:
+	case WM8994_DC_SERVO_1:
+	case WM8994_DC_SERVO_READBACK:
+	case WM8994_RATE_STATUS:
+	case WM8994_LDO_1:
+	case WM8994_LDO_2:
+	case WM8958_DSP2_EXECCONTROL:
+	case WM8958_MIC_DETECT_3:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+static int wm8994_write(struct snd_soc_codec *codec, unsigned int reg,
+	unsigned int value)
+{
+	int ret;
+
+	BUG_ON(reg > WM8994_MAX_REGISTER);
+
+	if (!wm8994_volatile(codec, reg)) {
+		ret = snd_soc_cache_write(codec, reg, value);
+		if (ret != 0)
+			dev_err(codec->dev, "Cache write to %x failed: %d\n",
+				reg, ret);
+	}
+
+	return wm8994_reg_write(codec->control_data, reg, value);
+}
+
+static unsigned int wm8994_read(struct snd_soc_codec *codec,
+				unsigned int reg)
+{
+	unsigned int val;
+	int ret;
+
+	BUG_ON(reg > WM8994_MAX_REGISTER);
+
+	if (!wm8994_volatile(codec, reg) && wm8994_readable(codec, reg) &&
+	    reg < codec->driver->reg_cache_size) {
+		ret = snd_soc_cache_read(codec, reg, &val);
+		if (ret >= 0)
+			return val;
+		else
+			dev_err(codec->dev, "Cache read from %x failed: %d\n",
+				reg, ret);
+	}
+
+	return wm8994_reg_read(codec->control_data, reg);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 static int configure_aif_clock(struct snd_soc_codec *codec, int aif)
@@ -200,6 +305,13 @@ static int configure_aif_clock(struct snd_soc_codec *codec, int aif)
 			aif + 1, rate);
 	}
 
+<<<<<<< HEAD
+=======
+	if (rate && rate < 3000000)
+		dev_warn(codec->dev, "AIF%dCLK is %dHz, should be >=3MHz for optimal performance\n",
+			 aif + 1, rate);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	wm8994->aifclk[aif] = rate;
 
 	snd_soc_update_bits(codec, WM8994_AIF1_CLOCKING_1 + offset,
@@ -212,7 +324,11 @@ static int configure_aif_clock(struct snd_soc_codec *codec, int aif)
 static int configure_clock(struct snd_soc_codec *codec)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	int change, new;
+=======
+	int old, new;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Bring up the AIF clocks first */
 	configure_aif_clock(codec, 0);
@@ -225,22 +341,39 @@ static int configure_clock(struct snd_soc_codec *codec)
 	 */
 
 	/* If they're equal it doesn't matter which is used */
+<<<<<<< HEAD
 	if (wm8994->aifclk[0] == wm8994->aifclk[1]) {
 		wm8958_micd_set_rate(codec);
 		return 0;
 	}
+=======
+	if (wm8994->aifclk[0] == wm8994->aifclk[1])
+		return 0;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (wm8994->aifclk[0] < wm8994->aifclk[1])
 		new = WM8994_SYSCLK_SRC;
 	else
 		new = 0;
 
+<<<<<<< HEAD
 	change = snd_soc_update_bits(codec, WM8994_CLOCKING_1,
 				     WM8994_SYSCLK_SRC, new);
 	if (change)
 		snd_soc_dapm_sync(&codec->dapm);
 
 	wm8958_micd_set_rate(codec);
+=======
+	old = snd_soc_read(codec, WM8994_CLOCKING_1) & WM8994_SYSCLK_SRC;
+
+	/* If there's no change then we're done. */
+	if (old == new)
+		return 0;
+
+	snd_soc_update_bits(codec, WM8994_CLOCKING_1, WM8994_SYSCLK_SRC, new);
+
+	snd_soc_dapm_sync(&codec->dapm);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -285,8 +418,11 @@ static const DECLARE_TLV_DB_SCALE(digital_tlv, -7200, 75, 1);
 static const DECLARE_TLV_DB_SCALE(st_tlv, -3600, 300, 0);
 static const DECLARE_TLV_DB_SCALE(wm8994_3d_tlv, -1600, 183, 0);
 static const DECLARE_TLV_DB_SCALE(eq_tlv, -1200, 100, 0);
+<<<<<<< HEAD
 static const DECLARE_TLV_DB_SCALE(ng_tlv, -10200, 600, 0);
 static const DECLARE_TLV_DB_SCALE(mixin_boost_tlv, 0, 900, 0);
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #define WM8994_DRC_SWITCH(xname, reg, shift) \
 {	.iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, \
@@ -666,6 +802,7 @@ SOC_SINGLE_TLV("AIF2 EQ5 Volume", WM8994_AIF2_EQ_GAINS_2, 6, 31, 0,
 	       eq_tlv),
 };
 
+<<<<<<< HEAD
 static const char *wm8958_ng_text[] = {
 	"30ms", "125ms", "250ms", "500ms",
 };
@@ -780,6 +917,12 @@ static void active_dereference(struct snd_soc_codec *codec)
 	mutex_unlock(&wm8994->accdet_lock);
 }
 
+=======
+static const struct snd_kcontrol_new wm8958_snd_controls[] = {
+SOC_SINGLE_TLV("AIF3 Boost Volume", WM8958_AIF3_CONTROL_2, 10, 3, 0, aif_tlv),
+};
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int clk_sys_event(struct snd_soc_dapm_widget *w,
 			 struct snd_kcontrol *kcontrol, int event)
 {
@@ -797,6 +940,7 @@ static int clk_sys_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void vmid_reference(struct snd_soc_codec *codec)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
@@ -970,6 +1114,8 @@ static int vmid_event(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static void wm8994_update_class_w(struct snd_soc_codec *codec)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
@@ -1033,6 +1179,7 @@ static void wm8994_update_class_w(struct snd_soc_codec *codec)
 	}
 }
 
+<<<<<<< HEAD
 static int aif1clk_ev(struct snd_soc_dapm_widget *w,
 		      struct snd_kcontrol *kcontrol, int event)
 {
@@ -1205,14 +1352,68 @@ static int aif2clk_ev(struct snd_soc_dapm_widget *w,
 		snd_soc_update_bits(codec, WM8994_CLOCKING_1,
 				    WM8994_SYSDSPCLK_ENA |
 				    WM8994_AIF2DSPCLK_ENA, val);
+=======
+static int late_enable_ev(struct snd_soc_dapm_widget *w,
+			  struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+
+	switch (event) {
+	case SND_SOC_DAPM_PRE_PMU:
+		if (wm8994->aif1clk_enable) {
+			snd_soc_update_bits(codec, WM8994_AIF1_CLOCKING_1,
+					    WM8994_AIF1CLK_ENA_MASK,
+					    WM8994_AIF1CLK_ENA);
+			wm8994->aif1clk_enable = 0;
+		}
+		if (wm8994->aif2clk_enable) {
+			snd_soc_update_bits(codec, WM8994_AIF2_CLOCKING_1,
+					    WM8994_AIF2CLK_ENA_MASK,
+					    WM8994_AIF2CLK_ENA);
+			wm8994->aif2clk_enable = 0;
+		}
+		break;
+	}
+
+	/* We may also have postponed startup of DSP, handle that. */
+	wm8958_aif_ev(w, kcontrol, event);
+
+	return 0;
+}
+
+static int late_disable_ev(struct snd_soc_dapm_widget *w,
+			   struct snd_kcontrol *kcontrol, int event)
+{
+	struct snd_soc_codec *codec = w->codec;
+	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+
+	switch (event) {
+	case SND_SOC_DAPM_POST_PMD:
+		if (wm8994->aif1clk_disable) {
+			snd_soc_update_bits(codec, WM8994_AIF1_CLOCKING_1,
+					    WM8994_AIF1CLK_ENA_MASK, 0);
+			wm8994->aif1clk_disable = 0;
+		}
+		if (wm8994->aif2clk_disable) {
+			snd_soc_update_bits(codec, WM8994_AIF2_CLOCKING_1,
+					    WM8994_AIF2CLK_ENA_MASK, 0);
+			wm8994->aif2clk_disable = 0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 	}
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int aif1clk_late_ev(struct snd_soc_dapm_widget *w,
 			   struct snd_kcontrol *kcontrol, int event)
+=======
+static int aif1clk_ev(struct snd_soc_dapm_widget *w,
+		      struct snd_kcontrol *kcontrol, int event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct snd_soc_codec *codec = w->codec;
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
@@ -1229,8 +1430,13 @@ static int aif1clk_late_ev(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int aif2clk_late_ev(struct snd_soc_dapm_widget *w,
 			   struct snd_kcontrol *kcontrol, int event)
+=======
+static int aif2clk_ev(struct snd_soc_dapm_widget *w,
+		      struct snd_kcontrol *kcontrol, int event)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct snd_soc_codec *codec = w->codec;
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
@@ -1247,6 +1453,7 @@ static int aif2clk_late_ev(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+<<<<<<< HEAD
 static int late_enable_ev(struct snd_soc_dapm_widget *w,
 			  struct snd_kcontrol *kcontrol, int event)
 {
@@ -1308,6 +1515,8 @@ static int late_disable_ev(struct snd_soc_dapm_widget *w,
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int adc_mux_ev(struct snd_soc_dapm_widget *w,
 		      struct snd_kcontrol *kcontrol, int event)
 {
@@ -1604,9 +1813,15 @@ static const struct snd_kcontrol_new aif2dacr_src_mux =
 	SOC_DAPM_ENUM("AIF2DACR Mux", aif2dacr_src_enum);
 
 static const struct snd_soc_dapm_widget wm8994_lateclk_revd_widgets[] = {
+<<<<<<< HEAD
 SND_SOC_DAPM_SUPPLY("AIF1CLK", SND_SOC_NOPM, 0, 0, aif1clk_late_ev,
 	SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
 SND_SOC_DAPM_SUPPLY("AIF2CLK", SND_SOC_NOPM, 0, 0, aif2clk_late_ev,
+=======
+SND_SOC_DAPM_SUPPLY("AIF1CLK", SND_SOC_NOPM, 0, 0, aif1clk_ev,
+	SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
+SND_SOC_DAPM_SUPPLY("AIF2CLK", SND_SOC_NOPM, 0, 0, aif2clk_ev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
 
 SND_SOC_DAPM_PGA_E("Late DAC1L Enable PGA", SND_SOC_NOPM, 0, 0, NULL, 0,
@@ -1617,6 +1832,7 @@ SND_SOC_DAPM_PGA_E("Late DAC2L Enable PGA", SND_SOC_NOPM, 0, 0, NULL, 0,
 	late_enable_ev, SND_SOC_DAPM_PRE_PMU),
 SND_SOC_DAPM_PGA_E("Late DAC2R Enable PGA", SND_SOC_NOPM, 0, 0, NULL, 0,
 	late_enable_ev, SND_SOC_DAPM_PRE_PMU),
+<<<<<<< HEAD
 SND_SOC_DAPM_PGA_E("Direct Voice", SND_SOC_NOPM, 0, 0, NULL, 0,
 	late_enable_ev, SND_SOC_DAPM_PRE_PMU),
 
@@ -1630,11 +1846,14 @@ SND_SOC_DAPM_MUX_E("Left Headphone Mux", SND_SOC_NOPM, 0, 0, &hpl_mux,
 		   late_enable_ev, SND_SOC_DAPM_PRE_PMU),
 SND_SOC_DAPM_MUX_E("Right Headphone Mux", SND_SOC_NOPM, 0, 0, &hpr_mux,
 		   late_enable_ev, SND_SOC_DAPM_PRE_PMU),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 SND_SOC_DAPM_POST("Late Disable PGA", late_disable_ev)
 };
 
 static const struct snd_soc_dapm_widget wm8994_lateclk_widgets[] = {
+<<<<<<< HEAD
 SND_SOC_DAPM_SUPPLY("AIF1CLK", WM8994_AIF1_CLOCKING_1, 0, 0, aif1clk_ev,
 		    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
 		    SND_SOC_DAPM_PRE_PMD),
@@ -1648,6 +1867,10 @@ SND_SOC_DAPM_MIXER("SPKR", WM8994_POWER_MANAGEMENT_3, 9, 0,
 		   right_speaker_mixer, ARRAY_SIZE(right_speaker_mixer)),
 SND_SOC_DAPM_MUX("Left Headphone Mux", SND_SOC_NOPM, 0, 0, &hpl_mux),
 SND_SOC_DAPM_MUX("Right Headphone Mux", SND_SOC_NOPM, 0, 0, &hpr_mux),
+=======
+SND_SOC_DAPM_SUPPLY("AIF1CLK", WM8994_AIF1_CLOCKING_1, 0, 0, NULL, 0),
+SND_SOC_DAPM_SUPPLY("AIF2CLK", WM8994_AIF2_CLOCKING_1, 0, 0, NULL, 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct snd_soc_dapm_widget wm8994_dac_revd_widgets[] = {
@@ -1669,6 +1892,7 @@ SND_SOC_DAPM_DAC("DAC1R", NULL, WM8994_POWER_MANAGEMENT_5, 0, 0),
 };
 
 static const struct snd_soc_dapm_widget wm8994_adc_revd_widgets[] = {
+<<<<<<< HEAD
 SND_SOC_DAPM_VIRT_MUX_E("ADCL Mux", WM8994_POWER_MANAGEMENT_4, 1, 0, &adcl_mux,
 			adc_mux_ev, SND_SOC_DAPM_PRE_PMU),
 SND_SOC_DAPM_VIRT_MUX_E("ADCR Mux", WM8994_POWER_MANAGEMENT_4, 0, 0, &adcr_mux,
@@ -1678,6 +1902,17 @@ SND_SOC_DAPM_VIRT_MUX_E("ADCR Mux", WM8994_POWER_MANAGEMENT_4, 0, 0, &adcr_mux,
 static const struct snd_soc_dapm_widget wm8994_adc_widgets[] = {
 SND_SOC_DAPM_VIRT_MUX("ADCL Mux", WM8994_POWER_MANAGEMENT_4, 1, 0, &adcl_mux),
 SND_SOC_DAPM_VIRT_MUX("ADCR Mux", WM8994_POWER_MANAGEMENT_4, 0, 0, &adcr_mux),
+=======
+SND_SOC_DAPM_MUX_E("ADCL Mux", WM8994_POWER_MANAGEMENT_4, 1, 0, &adcl_mux,
+		   adc_mux_ev, SND_SOC_DAPM_PRE_PMU),
+SND_SOC_DAPM_MUX_E("ADCR Mux", WM8994_POWER_MANAGEMENT_4, 0, 0, &adcr_mux,
+		   adc_mux_ev, SND_SOC_DAPM_PRE_PMU),
+};
+
+static const struct snd_soc_dapm_widget wm8994_adc_widgets[] = {
+SND_SOC_DAPM_MUX("ADCL Mux", WM8994_POWER_MANAGEMENT_4, 1, 0, &adcl_mux),
+SND_SOC_DAPM_MUX("ADCR Mux", WM8994_POWER_MANAGEMENT_4, 0, 0, &adcr_mux),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct snd_soc_dapm_widget wm8994_dapm_widgets[] = {
@@ -1687,12 +1922,16 @@ SND_SOC_DAPM_INPUT("Clock"),
 
 SND_SOC_DAPM_SUPPLY_S("MICBIAS Supply", 1, SND_SOC_NOPM, 0, 0, micbias_ev,
 		      SND_SOC_DAPM_PRE_PMU),
+<<<<<<< HEAD
 SND_SOC_DAPM_SUPPLY("VMID", SND_SOC_NOPM, 0, 0, vmid_event,
 		    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMD),
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 SND_SOC_DAPM_SUPPLY("CLK_SYS", SND_SOC_NOPM, 0, 0, clk_sys_event,
 		    SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
 
+<<<<<<< HEAD
 SND_SOC_DAPM_SUPPLY("DSP1CLK", SND_SOC_NOPM, 3, 0, NULL, 0),
 SND_SOC_DAPM_SUPPLY("DSP2CLK", SND_SOC_NOPM, 2, 0, NULL, 0),
 SND_SOC_DAPM_SUPPLY("DSPINTCLK", SND_SOC_NOPM, 1, 0, NULL, 0),
@@ -1717,6 +1956,32 @@ SND_SOC_DAPM_AIF_IN_E("AIF1DAC2L", NULL, 0,
 		      SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
 SND_SOC_DAPM_AIF_IN_E("AIF1DAC2R", NULL, 0,
 		      SND_SOC_NOPM, 10, 0, wm8958_aif_ev,
+=======
+SND_SOC_DAPM_SUPPLY("DSP1CLK", WM8994_CLOCKING_1, 3, 0, NULL, 0),
+SND_SOC_DAPM_SUPPLY("DSP2CLK", WM8994_CLOCKING_1, 2, 0, NULL, 0),
+SND_SOC_DAPM_SUPPLY("DSPINTCLK", WM8994_CLOCKING_1, 1, 0, NULL, 0),
+
+SND_SOC_DAPM_AIF_OUT("AIF1ADC1L", NULL,
+		     0, WM8994_POWER_MANAGEMENT_4, 9, 0),
+SND_SOC_DAPM_AIF_OUT("AIF1ADC1R", NULL,
+		     0, WM8994_POWER_MANAGEMENT_4, 8, 0),
+SND_SOC_DAPM_AIF_IN_E("AIF1DAC1L", NULL, 0,
+		      WM8994_POWER_MANAGEMENT_5, 9, 0, wm8958_aif_ev,
+		      SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
+SND_SOC_DAPM_AIF_IN_E("AIF1DAC1R", NULL, 0,
+		      WM8994_POWER_MANAGEMENT_5, 8, 0, wm8958_aif_ev,
+		      SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
+
+SND_SOC_DAPM_AIF_OUT("AIF1ADC2L", NULL,
+		     0, WM8994_POWER_MANAGEMENT_4, 11, 0),
+SND_SOC_DAPM_AIF_OUT("AIF1ADC2R", NULL,
+		     0, WM8994_POWER_MANAGEMENT_4, 10, 0),
+SND_SOC_DAPM_AIF_IN_E("AIF1DAC2L", NULL, 0,
+		      WM8994_POWER_MANAGEMENT_5, 11, 0, wm8958_aif_ev,
+		      SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
+SND_SOC_DAPM_AIF_IN_E("AIF1DAC2R", NULL, 0,
+		      WM8994_POWER_MANAGEMENT_5, 10, 0, wm8958_aif_ev,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		      SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_POST_PMD),
 
 SND_SOC_DAPM_MIXER("AIF1ADC1L Mixer", SND_SOC_NOPM, 0, 0,
@@ -1743,6 +2008,7 @@ SND_SOC_DAPM_MIXER("DAC1R Mixer", SND_SOC_NOPM, 0, 0,
 		   dac1r_mix, ARRAY_SIZE(dac1r_mix)),
 
 SND_SOC_DAPM_AIF_OUT("AIF2ADCL", NULL, 0,
+<<<<<<< HEAD
 		     SND_SOC_NOPM, 13, 0),
 SND_SOC_DAPM_AIF_OUT("AIF2ADCR", NULL, 0,
 		     SND_SOC_NOPM, 12, 0),
@@ -1757,13 +2023,34 @@ SND_SOC_DAPM_AIF_IN("AIF1DACDAT", NULL, 0, SND_SOC_NOPM, 0, 0),
 SND_SOC_DAPM_AIF_IN("AIF2DACDAT", NULL, 0, SND_SOC_NOPM, 0, 0),
 SND_SOC_DAPM_AIF_OUT("AIF1ADCDAT", NULL, 0, SND_SOC_NOPM, 0, 0),
 SND_SOC_DAPM_AIF_OUT("AIF2ADCDAT",  NULL, 0, SND_SOC_NOPM, 0, 0),
+=======
+		     WM8994_POWER_MANAGEMENT_4, 13, 0),
+SND_SOC_DAPM_AIF_OUT("AIF2ADCR", NULL, 0,
+		     WM8994_POWER_MANAGEMENT_4, 12, 0),
+SND_SOC_DAPM_AIF_IN_E("AIF2DACL", NULL, 0,
+		      WM8994_POWER_MANAGEMENT_5, 13, 0, wm8958_aif_ev,
+		      SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
+SND_SOC_DAPM_AIF_IN_E("AIF2DACR", NULL, 0,
+		      WM8994_POWER_MANAGEMENT_5, 12, 0, wm8958_aif_ev,
+		      SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD),
+
+SND_SOC_DAPM_AIF_IN("AIF1DACDAT", "AIF1 Playback", 0, SND_SOC_NOPM, 0, 0),
+SND_SOC_DAPM_AIF_IN("AIF2DACDAT", "AIF2 Playback", 0, SND_SOC_NOPM, 0, 0),
+SND_SOC_DAPM_AIF_OUT("AIF1ADCDAT", "AIF1 Capture", 0, SND_SOC_NOPM, 0, 0),
+SND_SOC_DAPM_AIF_OUT("AIF2ADCDAT", "AIF2 Capture", 0, SND_SOC_NOPM, 0, 0),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 SND_SOC_DAPM_MUX("AIF1DAC Mux", SND_SOC_NOPM, 0, 0, &aif1dac_mux),
 SND_SOC_DAPM_MUX("AIF2DAC Mux", SND_SOC_NOPM, 0, 0, &aif2dac_mux),
 SND_SOC_DAPM_MUX("AIF2ADC Mux", SND_SOC_NOPM, 0, 0, &aif2adc_mux),
 
+<<<<<<< HEAD
 SND_SOC_DAPM_AIF_IN("AIF3DACDAT", NULL, 0, SND_SOC_NOPM, 0, 0),
 SND_SOC_DAPM_AIF_OUT("AIF3ADCDAT", NULL, 0, SND_SOC_NOPM, 0, 0),
+=======
+SND_SOC_DAPM_AIF_IN("AIF3DACDAT", "AIF3 Playback", 0, SND_SOC_NOPM, 0, 0),
+SND_SOC_DAPM_AIF_OUT("AIF3ADCDAT", "AIF3 Capture", 0, SND_SOC_NOPM, 0, 0),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 SND_SOC_DAPM_SUPPLY("TOCLK", WM8994_CLOCKING_1, 4, 0, NULL, 0),
 
@@ -1779,6 +2066,17 @@ SND_SOC_DAPM_ADC("DMIC1R", NULL, WM8994_POWER_MANAGEMENT_4, 2, 0),
 SND_SOC_DAPM_ADC("ADCL", NULL, SND_SOC_NOPM, 1, 0),
 SND_SOC_DAPM_ADC("ADCR", NULL, SND_SOC_NOPM, 0, 0),
 
+<<<<<<< HEAD
+=======
+SND_SOC_DAPM_MUX("Left Headphone Mux", SND_SOC_NOPM, 0, 0, &hpl_mux),
+SND_SOC_DAPM_MUX("Right Headphone Mux", SND_SOC_NOPM, 0, 0, &hpr_mux),
+
+SND_SOC_DAPM_MIXER("SPKL", WM8994_POWER_MANAGEMENT_3, 8, 0,
+		   left_speaker_mixer, ARRAY_SIZE(left_speaker_mixer)),
+SND_SOC_DAPM_MIXER("SPKR", WM8994_POWER_MANAGEMENT_3, 9, 0,
+		   right_speaker_mixer, ARRAY_SIZE(right_speaker_mixer)),
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 SND_SOC_DAPM_POST("Debug log", post_ev),
 };
 
@@ -1878,6 +2176,7 @@ static const struct snd_soc_dapm_route intercon[] = {
 
 	{ "TOCLK", NULL, "CLK_SYS" },
 
+<<<<<<< HEAD
 	{ "AIF1DACDAT", NULL, "AIF1 Playback" },
 	{ "AIF2DACDAT", NULL, "AIF2 Playback" },
 	{ "AIF3DACDAT", NULL, "AIF3 Playback" },
@@ -1886,6 +2185,8 @@ static const struct snd_soc_dapm_route intercon[] = {
 	{ "AIF2 Capture", NULL, "AIF2ADCDAT" },
 	{ "AIF3 Capture", NULL, "AIF3ADCDAT" },
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* AIF1 outputs */
 	{ "AIF1ADC1L", NULL, "AIF1ADC1L Mixer" },
 	{ "AIF1ADC1L Mixer", "ADC/DMIC Switch", "ADCL Mux" },
@@ -2014,8 +2315,11 @@ static const struct snd_soc_dapm_route wm8994_revd_intercon[] = {
 static const struct snd_soc_dapm_route wm8994_intercon[] = {
 	{ "AIF2DACL", NULL, "AIF2DAC Mux" },
 	{ "AIF2DACR", NULL, "AIF2DAC Mux" },
+<<<<<<< HEAD
 	{ "MICBIAS1", NULL, "VMID" },
 	{ "MICBIAS2", NULL, "VMID" },
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static const struct snd_soc_dapm_route wm8958_intercon[] = {
@@ -2120,12 +2424,18 @@ static int _wm8994_set_fll(struct snd_soc_codec *codec, int id, int src,
 			  unsigned int freq_in, unsigned int freq_out)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	struct wm8994 *control = wm8994->wm8994;
 	int reg_offset, ret;
 	struct fll_div fll;
 	u16 reg, aif1, aif2;
 	unsigned long timeout;
 	bool was_enabled;
+=======
+	int reg_offset, ret;
+	struct fll_div fll;
+	u16 reg, aif1, aif2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	aif1 = snd_soc_read(codec, WM8994_AIF1_CLOCKING_1)
 		& WM8994_AIF1CLK_ENA;
@@ -2146,9 +2456,12 @@ static int _wm8994_set_fll(struct snd_soc_codec *codec, int id, int src,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	reg = snd_soc_read(codec, WM8994_FLL1_CONTROL_1 + reg_offset);
 	was_enabled = reg & WM8994_FLL1_ENA;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (src) {
 	case 0:
 		/* Allow no source specification when stopping */
@@ -2198,8 +2511,12 @@ static int _wm8994_set_fll(struct snd_soc_codec *codec, int id, int src,
 			    WM8994_FLL1_OUTDIV_MASK |
 			    WM8994_FLL1_FRATIO_MASK, reg);
 
+<<<<<<< HEAD
 	snd_soc_update_bits(codec, WM8994_FLL1_CONTROL_3 + reg_offset,
 			    WM8994_FLL1_K_MASK, fll.k);
+=======
+	snd_soc_write(codec, WM8994_FLL1_CONTROL_3 + reg_offset, fll.k);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_update_bits(codec, WM8994_FLL1_CONTROL_4 + reg_offset,
 			    WM8994_FLL1_N_MASK,
@@ -2211,6 +2528,7 @@ static int _wm8994_set_fll(struct snd_soc_codec *codec, int id, int src,
 			    (fll.clk_ref_div << WM8994_FLL1_REFCLK_DIV_SHIFT) |
 			    (src - 1));
 
+<<<<<<< HEAD
 	/* Clear any pending completion from a previous failure */
 	try_wait_for_completion(&wm8994->fll_locked[id]);
 
@@ -2233,6 +2551,10 @@ static int _wm8994_set_fll(struct snd_soc_codec *codec, int id, int src,
 			}
 		}
 
+=======
+	/* Enable (with fractional mode if required) */
+	if (freq_out) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (fll.k)
 			reg = WM8994_FLL1_ENA | WM8994_FLL1_FRAC;
 		else
@@ -2241,6 +2563,7 @@ static int _wm8994_set_fll(struct snd_soc_codec *codec, int id, int src,
 				    WM8994_FLL1_ENA | WM8994_FLL1_FRAC,
 				    reg);
 
+<<<<<<< HEAD
 		if (wm8994->fll_locked_irq) {
 			timeout = wait_for_completion_timeout(&wm8994->fll_locked[id],
 							      msecs_to_jiffies(10));
@@ -2266,6 +2589,9 @@ static int _wm8994_set_fll(struct snd_soc_codec *codec, int id, int src,
 
 			active_dereference(codec);
 		}
+=======
+		msleep(5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	wm8994->fll[id].in = freq_in;
@@ -2283,6 +2609,7 @@ static int _wm8994_set_fll(struct snd_soc_codec *codec, int id, int src,
 	return 0;
 }
 
+<<<<<<< HEAD
 static irqreturn_t wm8994_fll_locked_irq(int irq, void *data)
 {
 	struct completion *completion = data;
@@ -2291,6 +2618,8 @@ static irqreturn_t wm8994_fll_locked_irq(int irq, void *data)
 
 	return IRQ_HANDLED;
 }
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 static int opclk_divs[] = { 10, 20, 30, 40, 55, 60, 80, 120, 160 };
 
@@ -2374,16 +2703,22 @@ static int wm8994_set_dai_sysclk(struct snd_soc_dai *dai,
 static int wm8994_set_bias_level(struct snd_soc_codec *codec,
 				 enum snd_soc_bias_level level)
 {
+<<<<<<< HEAD
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
 	struct wm8994 *control = wm8994->wm8994;
 
 	wm_hubs_set_bias_level(codec, level);
+=======
+	struct wm8994 *control = codec->control_data;
+	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (level) {
 	case SND_SOC_BIAS_ON:
 		break;
 
 	case SND_SOC_BIAS_PREPARE:
+<<<<<<< HEAD
 		/* MICBIAS into regulating mode */
 		switch (control->type) {
 		case WM8958:
@@ -2399,23 +2734,57 @@ static int wm8994_set_bias_level(struct snd_soc_codec *codec,
 
 		if (codec->dapm.bias_level == SND_SOC_BIAS_STANDBY)
 			active_reference(codec);
+=======
+		/* VMID=2x40k */
+		snd_soc_update_bits(codec, WM8994_POWER_MANAGEMENT_1,
+				    WM8994_VMID_SEL_MASK, 0x2);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	case SND_SOC_BIAS_STANDBY:
 		if (codec->dapm.bias_level == SND_SOC_BIAS_OFF) {
+<<<<<<< HEAD
 			switch (control->type) {
 			case WM8958:
 				if (wm8994->revision == 0) {
 					/* Optimise performance for rev A */
+=======
+			pm_runtime_get_sync(codec->dev);
+
+			switch (control->type) {
+			case WM8994:
+				if (wm8994->revision < 4) {
+					/* Tweak DC servo and DSP
+					 * configuration for improved
+					 * performance. */
+					snd_soc_write(codec, 0x102, 0x3);
+					snd_soc_write(codec, 0x56, 0x3);
+					snd_soc_write(codec, 0x817, 0);
+					snd_soc_write(codec, 0x102, 0);
+				}
+				break;
+
+			case WM8958:
+				if (wm8994->revision == 0) {
+					/* Optimise performance for rev A */
+					snd_soc_write(codec, 0x102, 0x3);
+					snd_soc_write(codec, 0xcb, 0x81);
+					snd_soc_write(codec, 0x817, 0);
+					snd_soc_write(codec, 0x102, 0);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					snd_soc_update_bits(codec,
 							    WM8958_CHARGE_PUMP_2,
 							    WM8958_CP_DISCH,
 							    WM8958_CP_DISCH);
 				}
 				break;
+<<<<<<< HEAD
 
 			default:
 				break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			}
 
 			/* Discharge LINEOUT1 & 2 */
@@ -2424,6 +2793,7 @@ static int wm8994_set_bias_level(struct snd_soc_codec *codec,
 					    WM8994_LINEOUT2_DISCH,
 					    WM8994_LINEOUT1_DISCH |
 					    WM8994_LINEOUT2_DISCH);
+<<<<<<< HEAD
 		}
 
 		if (codec->dapm.bias_level == SND_SOC_BIAS_PREPARE)
@@ -2502,14 +2872,86 @@ int wm8994_vmid_mode(struct snd_soc_codec *codec, enum wm8994_vmid_mode mode)
 		return -EINVAL;
 	}
 
+=======
+
+			/* Startup bias, VMID ramp & buffer */
+			snd_soc_update_bits(codec, WM8994_ANTIPOP_2,
+					    WM8994_STARTUP_BIAS_ENA |
+					    WM8994_VMID_BUF_ENA |
+					    WM8994_VMID_RAMP_MASK,
+					    WM8994_STARTUP_BIAS_ENA |
+					    WM8994_VMID_BUF_ENA |
+					    (0x11 << WM8994_VMID_RAMP_SHIFT));
+
+			/* Main bias enable, VMID=2x40k */
+			snd_soc_update_bits(codec, WM8994_POWER_MANAGEMENT_1,
+					    WM8994_BIAS_ENA |
+					    WM8994_VMID_SEL_MASK,
+					    WM8994_BIAS_ENA | 0x2);
+
+			msleep(20);
+		}
+
+		/* VMID=2x500k */
+		snd_soc_update_bits(codec, WM8994_POWER_MANAGEMENT_1,
+				    WM8994_VMID_SEL_MASK, 0x4);
+
+		break;
+
+	case SND_SOC_BIAS_OFF:
+		if (codec->dapm.bias_level == SND_SOC_BIAS_STANDBY) {
+			/* Switch over to startup biases */
+			snd_soc_update_bits(codec, WM8994_ANTIPOP_2,
+					    WM8994_BIAS_SRC |
+					    WM8994_STARTUP_BIAS_ENA |
+					    WM8994_VMID_BUF_ENA |
+					    WM8994_VMID_RAMP_MASK,
+					    WM8994_BIAS_SRC |
+					    WM8994_STARTUP_BIAS_ENA |
+					    WM8994_VMID_BUF_ENA |
+					    (1 << WM8994_VMID_RAMP_SHIFT));
+
+			/* Disable main biases */
+			snd_soc_update_bits(codec, WM8994_POWER_MANAGEMENT_1,
+					    WM8994_BIAS_ENA |
+					    WM8994_VMID_SEL_MASK, 0);
+
+			/* Discharge line */
+			snd_soc_update_bits(codec, WM8994_ANTIPOP_1,
+					    WM8994_LINEOUT1_DISCH |
+					    WM8994_LINEOUT2_DISCH,
+					    WM8994_LINEOUT1_DISCH |
+					    WM8994_LINEOUT2_DISCH);
+
+			msleep(5);
+
+			/* Switch off startup biases */
+			snd_soc_update_bits(codec, WM8994_ANTIPOP_2,
+					    WM8994_BIAS_SRC |
+					    WM8994_STARTUP_BIAS_ENA |
+					    WM8994_VMID_BUF_ENA |
+					    WM8994_VMID_RAMP_MASK, 0);
+
+			wm8994->cur_fw = NULL;
+
+			pm_runtime_put(codec->dev);
+		}
+		break;
+	}
+	codec->dapm.bias_level = level;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 
 static int wm8994_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 {
 	struct snd_soc_codec *codec = dai->codec;
+<<<<<<< HEAD
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
 	struct wm8994 *control = wm8994->wm8994;
+=======
+	struct wm8994 *control = codec->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int ms_reg;
 	int aif1_reg;
 	int ms = 0;
@@ -2596,6 +3038,7 @@ static int wm8994_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 
 	/* The AIF2 format configuration needs to be mirrored to AIF3
 	 * on WM8958 if it's in use so just do it all the time. */
+<<<<<<< HEAD
 	switch (control->type) {
 	case WM1811:
 	case WM8958:
@@ -2608,6 +3051,12 @@ static int wm8994_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 	default:
 		break;
 	}
+=======
+	if (control->type == WM8958 && dai->id == 2)
+		snd_soc_update_bits(codec, WM8958_AIF3_CONTROL_1,
+				    WM8994_AIF1_LRCLK_INV |
+				    WM8958_AIF3_FMT_MASK, aif1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	snd_soc_update_bits(codec, aif1_reg,
 			    WM8994_AIF1_BCLK_INV | WM8994_AIF1_LRCLK_INV |
@@ -2649,6 +3098,10 @@ static int wm8994_hw_params(struct snd_pcm_substream *substream,
 			    struct snd_soc_dai *dai)
 {
 	struct snd_soc_codec *codec = dai->codec;
+<<<<<<< HEAD
+=======
+	struct wm8994 *control = codec->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
 	int aif1_reg;
 	int aif2_reg;
@@ -2691,11 +3144,26 @@ static int wm8994_hw_params(struct snd_pcm_substream *substream,
 			dev_dbg(codec->dev, "AIF2 using split LRCLK\n");
 		}
 		break;
+<<<<<<< HEAD
+=======
+	case 3:
+		switch (control->type) {
+		case WM8958:
+			aif1_reg = WM8958_AIF3_CONTROL_1;
+			break;
+		default:
+			return 0;
+		}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	bclk_rate = params_rate(params) * 4;
+=======
+	bclk_rate = params_rate(params) * 2;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (params_format(params)) {
 	case SNDRV_PCM_FORMAT_S16_LE:
 		bclk_rate *= 16;
@@ -2771,11 +3239,14 @@ static int wm8994_hw_params(struct snd_pcm_substream *substream,
 	bclk |= best << WM8994_AIF1_BCLK_DIV_SHIFT;
 
 	lrclk = bclk_rate / params_rate(params);
+<<<<<<< HEAD
 	if (!lrclk) {
 		dev_err(dai->dev, "Unable to generate LRCLK from %dHz BCLK\n",
 			bclk_rate);
 		return -EINVAL;
 	}
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	dev_dbg(dai->dev, "Using LRCLK rate %d for actual LRCLK %dHz\n",
 		lrclk, bclk_rate / lrclk);
 
@@ -2809,22 +3280,32 @@ static int wm8994_aif3_hw_params(struct snd_pcm_substream *substream,
 				 struct snd_soc_dai *dai)
 {
 	struct snd_soc_codec *codec = dai->codec;
+<<<<<<< HEAD
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
 	struct wm8994 *control = wm8994->wm8994;
+=======
+	struct wm8994 *control = codec->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int aif1_reg;
 	int aif1 = 0;
 
 	switch (dai->id) {
 	case 3:
 		switch (control->type) {
+<<<<<<< HEAD
 		case WM1811:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		case WM8958:
 			aif1_reg = WM8958_AIF3_CONTROL_1;
 			break;
 		default:
 			return 0;
 		}
+<<<<<<< HEAD
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	default:
 		return 0;
 	}
@@ -2848,6 +3329,7 @@ static int wm8994_aif3_hw_params(struct snd_pcm_substream *substream,
 	return snd_soc_update_bits(codec, aif1_reg, WM8994_AIF1_WL_MASK, aif1);
 }
 
+<<<<<<< HEAD
 static void wm8994_aif_shutdown(struct snd_pcm_substream *substream,
 				struct snd_soc_dai *dai)
 {
@@ -2875,6 +3357,8 @@ static void wm8994_aif_shutdown(struct snd_pcm_substream *substream,
 				    WM8994_AIF1CLK_RATE_MASK, 0x9);
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 static int wm8994_aif_mute(struct snd_soc_dai *codec_dai, int mute)
 {
 	struct snd_soc_codec *codec = codec_dai->codec;
@@ -2932,6 +3416,7 @@ static int wm8994_set_tristate(struct snd_soc_dai *codec_dai, int tristate)
 	return snd_soc_update_bits(codec, reg, mask, val);
 }
 
+<<<<<<< HEAD
 static int wm8994_aif2_probe(struct snd_soc_dai *dai)
 {
 	struct snd_soc_codec *codec = dai->codec;
@@ -2947,32 +3432,52 @@ static int wm8994_aif2_probe(struct snd_soc_dai *dai)
 	return 0;
 }
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define WM8994_RATES SNDRV_PCM_RATE_8000_96000
 
 #define WM8994_FORMATS (SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S20_3LE |\
 			SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_S32_LE)
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8994_aif1_dai_ops = {
 	.set_sysclk	= wm8994_set_dai_sysclk,
 	.set_fmt	= wm8994_set_dai_fmt,
 	.hw_params	= wm8994_hw_params,
 	.shutdown	= wm8994_aif_shutdown,
+=======
+static struct snd_soc_dai_ops wm8994_aif1_dai_ops = {
+	.set_sysclk	= wm8994_set_dai_sysclk,
+	.set_fmt	= wm8994_set_dai_fmt,
+	.hw_params	= wm8994_hw_params,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.digital_mute	= wm8994_aif_mute,
 	.set_pll	= wm8994_set_fll,
 	.set_tristate	= wm8994_set_tristate,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8994_aif2_dai_ops = {
 	.set_sysclk	= wm8994_set_dai_sysclk,
 	.set_fmt	= wm8994_set_dai_fmt,
 	.hw_params	= wm8994_hw_params,
 	.shutdown	= wm8994_aif_shutdown,
+=======
+static struct snd_soc_dai_ops wm8994_aif2_dai_ops = {
+	.set_sysclk	= wm8994_set_dai_sysclk,
+	.set_fmt	= wm8994_set_dai_fmt,
+	.hw_params	= wm8994_hw_params,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.digital_mute   = wm8994_aif_mute,
 	.set_pll	= wm8994_set_fll,
 	.set_tristate	= wm8994_set_tristate,
 };
 
+<<<<<<< HEAD
 static const struct snd_soc_dai_ops wm8994_aif3_dai_ops = {
+=======
+static struct snd_soc_dai_ops wm8994_aif3_dai_ops = {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.hw_params	= wm8994_aif3_hw_params,
 	.set_tristate	= wm8994_set_tristate,
 };
@@ -2987,7 +3492,10 @@ static struct snd_soc_dai_driver wm8994_dai[] = {
 			.channels_max = 2,
 			.rates = WM8994_RATES,
 			.formats = WM8994_FORMATS,
+<<<<<<< HEAD
 			.sig_bits = 24,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.capture = {
 			.stream_name = "AIF1 Capture",
@@ -2995,7 +3503,10 @@ static struct snd_soc_dai_driver wm8994_dai[] = {
 			.channels_max = 2,
 			.rates = WM8994_RATES,
 			.formats = WM8994_FORMATS,
+<<<<<<< HEAD
 			.sig_bits = 24,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		 },
 		.ops = &wm8994_aif1_dai_ops,
 	},
@@ -3008,7 +3519,10 @@ static struct snd_soc_dai_driver wm8994_dai[] = {
 			.channels_max = 2,
 			.rates = WM8994_RATES,
 			.formats = WM8994_FORMATS,
+<<<<<<< HEAD
 			.sig_bits = 24,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.capture = {
 			.stream_name = "AIF2 Capture",
@@ -3016,9 +3530,13 @@ static struct snd_soc_dai_driver wm8994_dai[] = {
 			.channels_max = 2,
 			.rates = WM8994_RATES,
 			.formats = WM8994_FORMATS,
+<<<<<<< HEAD
 			.sig_bits = 24,
 		},
 		.probe = wm8994_aif2_probe,
+=======
+		},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ops = &wm8994_aif2_dai_ops,
 	},
 	{
@@ -3030,7 +3548,10 @@ static struct snd_soc_dai_driver wm8994_dai[] = {
 			.channels_max = 2,
 			.rates = WM8994_RATES,
 			.formats = WM8994_FORMATS,
+<<<<<<< HEAD
 			.sig_bits = 24,
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		},
 		.capture = {
 			.stream_name = "AIF3 Capture",
@@ -3038,27 +3559,41 @@ static struct snd_soc_dai_driver wm8994_dai[] = {
 			.channels_max = 2,
 			.rates = WM8994_RATES,
 			.formats = WM8994_FORMATS,
+<<<<<<< HEAD
 			.sig_bits = 24,
 		 },
+=======
+		},
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.ops = &wm8994_aif3_dai_ops,
 	}
 };
 
 #ifdef CONFIG_PM
+<<<<<<< HEAD
 static int wm8994_codec_suspend(struct snd_soc_codec *codec)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
 	struct wm8994 *control = wm8994->wm8994;
+=======
+static int wm8994_suspend(struct snd_soc_codec *codec, pm_message_t state)
+{
+	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+	struct wm8994 *control = codec->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, ret;
 
 	switch (control->type) {
 	case WM8994:
 		snd_soc_update_bits(codec, WM8994_MICBIAS, WM8994_MICD_ENA, 0);
 		break;
+<<<<<<< HEAD
 	case WM1811:
 		snd_soc_update_bits(codec, WM8994_ANTIPOP_2,
 				    WM1811_JACKDET_MODE_MASK, 0);
 		/* Fall through */
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case WM8958:
 		snd_soc_update_bits(codec, WM8958_MIC_DETECT_1,
 				    WM8958_MICD_ENA, 0);
@@ -3079,17 +3614,29 @@ static int wm8994_codec_suspend(struct snd_soc_codec *codec)
 	return 0;
 }
 
+<<<<<<< HEAD
 static int wm8994_codec_resume(struct snd_soc_codec *codec)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
 	struct wm8994 *control = wm8994->wm8994;
+=======
+static int wm8994_resume(struct snd_soc_codec *codec)
+{
+	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+	struct wm8994 *control = codec->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	int i, ret;
 	unsigned int val, mask;
 
 	if (wm8994->revision < 4) {
 		/* force a HW read */
+<<<<<<< HEAD
 		ret = regmap_read(control->regmap,
 				  WM8994_POWER_MANAGEMENT_5, &val);
+=======
+		val = wm8994_reg_read(codec->control_data,
+				      WM8994_POWER_MANAGEMENT_5);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 		/* modify the cache only */
 		codec->cache_only = 1;
@@ -3101,6 +3648,16 @@ static int wm8994_codec_resume(struct snd_soc_codec *codec)
 		codec->cache_only = 0;
 	}
 
+<<<<<<< HEAD
+=======
+	/* Restore the registers */
+	ret = snd_soc_cache_sync(codec);
+	if (ret != 0)
+		dev_err(codec->dev, "Failed to sync cache: %d\n", ret);
+
+	wm8994_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	for (i = 0; i < ARRAY_SIZE(wm8994->fll); i++) {
 		if (!wm8994->fll_suspend[i].out)
 			continue;
@@ -3120,6 +3677,7 @@ static int wm8994_codec_resume(struct snd_soc_codec *codec)
 			snd_soc_update_bits(codec, WM8994_MICBIAS,
 					    WM8994_MICD_ENA, WM8994_MICD_ENA);
 		break;
+<<<<<<< HEAD
 	case WM1811:
 		if (wm8994->jackdet && wm8994->jack_cb) {
 			/* Restart from idle */
@@ -3129,6 +3687,8 @@ static int wm8994_codec_resume(struct snd_soc_codec *codec)
 			break;
 		}
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case WM8958:
 		if (wm8994->jack_cb)
 			snd_soc_update_bits(codec, WM8958_MIC_DETECT_1,
@@ -3139,8 +3699,13 @@ static int wm8994_codec_resume(struct snd_soc_codec *codec)
 	return 0;
 }
 #else
+<<<<<<< HEAD
 #define wm8994_codec_suspend NULL
 #define wm8994_codec_resume NULL
+=======
+#define wm8994_suspend NULL
+#define wm8994_resume NULL
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #endif
 
 static void wm8994_handle_retune_mobile_pdata(struct wm8994_priv *wm8994)
@@ -3203,7 +3768,11 @@ static void wm8994_handle_retune_mobile_pdata(struct wm8994_priv *wm8994)
 	wm8994->retune_mobile_enum.max = wm8994->num_retune_mobile_texts;
 	wm8994->retune_mobile_enum.texts = wm8994->retune_mobile_texts;
 
+<<<<<<< HEAD
 	ret = snd_soc_add_codec_controls(wm8994->codec, controls,
+=======
+	ret = snd_soc_add_controls(wm8994->codec, controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				   ARRAY_SIZE(controls));
 	if (ret != 0)
 		dev_err(wm8994->codec->dev,
@@ -3241,8 +3810,13 @@ static void wm8994_handle_pdata(struct wm8994_priv *wm8994)
 		};
 
 		/* We need an array of texts for the enum API */
+<<<<<<< HEAD
 		wm8994->drc_texts = devm_kzalloc(wm8994->codec->dev,
 			    sizeof(char *) * pdata->num_drc_cfgs, GFP_KERNEL);
+=======
+		wm8994->drc_texts = kmalloc(sizeof(char *)
+					    * pdata->num_drc_cfgs, GFP_KERNEL);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!wm8994->drc_texts) {
 			dev_err(wm8994->codec->dev,
 				"Failed to allocate %d DRC config texts\n",
@@ -3256,7 +3830,11 @@ static void wm8994_handle_pdata(struct wm8994_priv *wm8994)
 		wm8994->drc_enum.max = pdata->num_drc_cfgs;
 		wm8994->drc_enum.texts = wm8994->drc_texts;
 
+<<<<<<< HEAD
 		ret = snd_soc_add_codec_controls(wm8994->codec, controls,
+=======
+		ret = snd_soc_add_controls(wm8994->codec, controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					   ARRAY_SIZE(controls));
 		if (ret != 0)
 			dev_err(wm8994->codec->dev,
@@ -3272,7 +3850,11 @@ static void wm8994_handle_pdata(struct wm8994_priv *wm8994)
 	if (pdata->num_retune_mobile_cfgs)
 		wm8994_handle_retune_mobile_pdata(wm8994);
 	else
+<<<<<<< HEAD
 		snd_soc_add_codec_controls(wm8994->codec, wm8994_eq_controls,
+=======
+		snd_soc_add_controls(wm8994->codec, wm8994_eq_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     ARRAY_SIZE(wm8994_eq_controls));
 
 	for (i = 0; i < ARRAY_SIZE(pdata->micbias); i++) {
@@ -3289,6 +3871,11 @@ static void wm8994_handle_pdata(struct wm8994_priv *wm8994)
  * @codec:   WM8994 codec
  * @jack:    jack to report detection events on
  * @micbias: microphone bias to detect on
+<<<<<<< HEAD
+=======
+ * @det:     value to report for presence detection
+ * @shrt:    value to report for short detection
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * Enable microphone detection via IRQ on the WM8994.  If GPIOs are
  * being used to bring out signals to the processor then only platform
@@ -3299,6 +3886,7 @@ static void wm8994_handle_pdata(struct wm8994_priv *wm8994)
  * and micbias2_lvl platform data members.
  */
 int wm8994_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
+<<<<<<< HEAD
 		      int micbias)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
@@ -3310,10 +3898,22 @@ int wm8994_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
 		dev_warn(codec->dev, "Not a WM8994\n");
 		return -EINVAL;
 	}
+=======
+		      int micbias, int det, int shrt)
+{
+	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+	struct wm8994_micdet *micdet;
+	struct wm8994 *control = codec->control_data;
+	int reg;
+
+	if (control->type != WM8994)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	switch (micbias) {
 	case 1:
 		micdet = &wm8994->micdet[0];
+<<<<<<< HEAD
 		if (jack)
 			ret = snd_soc_dapm_force_enable_pin(&codec->dapm,
 							    "MICBIAS1");
@@ -3345,17 +3945,41 @@ int wm8994_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
 	/* Store the configuration */
 	micdet->jack = jack;
 	micdet->detecting = true;
+=======
+		break;
+	case 2:
+		micdet = &wm8994->micdet[1];
+		break;
+	default:
+		return -EINVAL;
+	}	
+
+	dev_dbg(codec->dev, "Configuring microphone detection on %d: %x %x\n",
+		micbias, det, shrt);
+
+	/* Store the configuration */
+	micdet->jack = jack;
+	micdet->det = det;
+	micdet->shrt = shrt;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* If either of the jacks is set up then enable detection */
 	if (wm8994->micdet[0].jack || wm8994->micdet[1].jack)
 		reg = WM8994_MICD_ENA;
+<<<<<<< HEAD
 	else
+=======
+	else 
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		reg = 0;
 
 	snd_soc_update_bits(codec, WM8994_MICBIAS, WM8994_MICD_ENA, reg);
 
+<<<<<<< HEAD
 	snd_soc_dapm_sync(&codec->dapm);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return 0;
 }
 EXPORT_SYMBOL_GPL(wm8994_mic_detect);
@@ -3381,6 +4005,7 @@ static irqreturn_t wm8994_mic_irq(int irq, void *data)
 	dev_dbg(codec->dev, "Microphone status: %x\n", reg);
 
 	report = 0;
+<<<<<<< HEAD
 	if (reg & WM8994_MIC1_DET_STS) {
 		if (priv->micdet[0].detecting)
 			report = SND_JACK_HEADSET;
@@ -3417,6 +4042,22 @@ static irqreturn_t wm8994_mic_irq(int irq, void *data)
 
 	snd_soc_jack_report(priv->micdet[1].jack, report,
 			    SND_JACK_HEADSET | SND_JACK_BTN_0);
+=======
+	if (reg & WM8994_MIC1_DET_STS)
+		report |= priv->micdet[0].det;
+	if (reg & WM8994_MIC1_SHRT_STS)
+		report |= priv->micdet[0].shrt;
+	snd_soc_jack_report(priv->micdet[0].jack, report,
+			    priv->micdet[0].det | priv->micdet[0].shrt);
+
+	report = 0;
+	if (reg & WM8994_MIC2_DET_STS)
+		report |= priv->micdet[1].det;
+	if (reg & WM8994_MIC2_SHRT_STS)
+		report |= priv->micdet[1].shrt;
+	snd_soc_jack_report(priv->micdet[1].jack, report,
+			    priv->micdet[1].det | priv->micdet[1].shrt);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return IRQ_HANDLED;
 }
@@ -3428,6 +4069,7 @@ static void wm8958_default_micdet(u16 status, void *data)
 {
 	struct snd_soc_codec *codec = data;
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	int report;
 
 	dev_dbg(codec->dev, "MICDET %x\n", status);
@@ -3603,6 +4245,23 @@ static irqreturn_t wm1811_jackdet_irq(int irq, void *data)
 				    wm8994->btn_mask);
 
 	return IRQ_HANDLED;
+=======
+	int report = 0;
+
+	/* If nothing present then clear our statuses */
+	if (!(status & WM8958_MICD_STS))
+		goto done;
+
+	report = SND_JACK_MICROPHONE;
+
+	/* Everything else is buttons; just assign slots */
+	if (status & 0x1c)
+		report |= SND_JACK_BTN_0;
+
+done:
+	snd_soc_jack_report(wm8994->micdet[0].jack, report,
+			    SND_JACK_BTN_0 | SND_JACK_MICROPHONE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 }
 
 /**
@@ -3625,6 +4284,7 @@ int wm8958_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
 		      wm8958_micdet_cb cb, void *cb_data)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	struct wm8994 *control = wm8994->wm8994;
 	u16 micd_lvl_sel;
 
@@ -3635,6 +4295,12 @@ int wm8958_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
 	default:
 		return -EINVAL;
 	}
+=======
+	struct wm8994 *control = codec->control_data;
+
+	if (control->type != WM8958)
+		return -EINVAL;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	if (jack) {
 		if (!cb) {
@@ -3643,13 +4309,17 @@ int wm8958_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
 			cb_data = codec;
 		}
 
+<<<<<<< HEAD
 		snd_soc_dapm_force_enable_pin(&codec->dapm, "CLK_SYS");
 		snd_soc_dapm_sync(&codec->dapm);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wm8994->micdet[0].jack = jack;
 		wm8994->jack_cb = cb;
 		wm8994->jack_cb_data = cb_data;
 
+<<<<<<< HEAD
 		wm8994->mic_detecting = true;
 		wm8994->jack_mic = false;
 
@@ -3693,6 +4363,13 @@ int wm8958_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
 		wm1811_jackdet_set_mode(codec, WM1811_JACKDET_MODE_NONE);
 		snd_soc_dapm_disable_pin(&codec->dapm, "CLK_SYS");
 		snd_soc_dapm_sync(&codec->dapm);
+=======
+		snd_soc_update_bits(codec, WM8958_MIC_DETECT_1,
+				    WM8958_MICD_ENA, WM8958_MICD_ENA);
+	} else {
+		snd_soc_update_bits(codec, WM8958_MIC_DETECT_1,
+				    WM8958_MICD_ENA, 0);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
@@ -3703,6 +4380,7 @@ static irqreturn_t wm8958_mic_irq(int irq, void *data)
 {
 	struct wm8994_priv *wm8994 = data;
 	struct snd_soc_codec *codec = wm8994->codec;
+<<<<<<< HEAD
 	int reg, count;
 
 	/*
@@ -3739,6 +4417,21 @@ static irqreturn_t wm8958_mic_irq(int irq, void *data)
 
 	if (count == 0)
 		dev_warn(codec->dev, "No impedence range reported for jack\n");
+=======
+	int reg;
+
+	reg = snd_soc_read(codec, WM8958_MIC_DETECT_3);
+	if (reg < 0) {
+		dev_err(codec->dev, "Failed to read mic detect status: %d\n",
+			reg);
+		return IRQ_NONE;
+	}
+
+	if (!(reg & WM8958_MICD_VALID)) {
+		dev_dbg(codec->dev, "Mic detect data not valid\n");
+		goto out;
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #ifndef CONFIG_SND_SOC_WM8994_MODULE
 	trace_snd_soc_jack_irq(dev_name(codec->dev));
@@ -3753,6 +4446,7 @@ out:
 	return IRQ_HANDLED;
 }
 
+<<<<<<< HEAD
 static irqreturn_t wm8994_fifo_error(int irq, void *data)
 {
 	struct snd_soc_codec *codec = data;
@@ -3800,6 +4494,26 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 	for (i = 0; i < ARRAY_SIZE(wm8994->fll_locked); i++)
 		init_completion(&wm8994->fll_locked[i]);
 
+=======
+static int wm8994_codec_probe(struct snd_soc_codec *codec)
+{
+	struct wm8994 *control;
+	struct wm8994_priv *wm8994;
+	struct snd_soc_dapm_context *dapm = &codec->dapm;
+	int ret, i;
+
+	codec->control_data = dev_get_drvdata(codec->dev->parent);
+	control = codec->control_data;
+
+	wm8994 = kzalloc(sizeof(struct wm8994_priv), GFP_KERNEL);
+	if (wm8994 == NULL)
+		return -ENOMEM;
+	snd_soc_codec_set_drvdata(codec, wm8994);
+
+	wm8994->pdata = dev_get_platdata(codec->dev->parent);
+	wm8994->codec = codec;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (wm8994->pdata && wm8994->pdata->micdet_irq)
 		wm8994->micdet_irq = wm8994->pdata->micdet_irq;
 	else if (wm8994->pdata && wm8994->pdata->irq_base)
@@ -3807,15 +4521,39 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 				     WM8994_IRQ_MIC1_DET;
 
 	pm_runtime_enable(codec->dev);
+<<<<<<< HEAD
 	pm_runtime_idle(codec->dev);
 
 	/* By default use idle_bias_off, will override for WM8994 */
 	codec->dapm.idle_bias_off = 1;
+=======
+	pm_runtime_resume(codec->dev);
+
+	/* Read our current status back from the chip - we don't want to
+	 * reset as this may interfere with the GPIO or LDO operation. */
+	for (i = 0; i < WM8994_CACHE_SIZE; i++) {
+		if (!wm8994_readable(codec, i) || wm8994_volatile(codec, i))
+			continue;
+
+		ret = wm8994_reg_read(codec->control_data, i);
+		if (ret <= 0)
+			continue;
+
+		ret = snd_soc_cache_write(codec, i, ret);
+		if (ret != 0) {
+			dev_err(codec->dev,
+				"Failed to initialise cache for 0x%x: %d\n",
+				i, ret);
+			goto err;
+		}
+	}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set revision-specific configuration */
 	wm8994->revision = snd_soc_read(codec, WM8994_CHIP_REVISION);
 	switch (control->type) {
 	case WM8994:
+<<<<<<< HEAD
 		/* Single ended line outputs should have VMID on. */
 		if (!wm8994->pdata->lineout1_diff ||
 		    !wm8994->pdata->lineout2_diff)
@@ -3861,12 +4599,29 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 
 		snd_soc_update_bits(codec, WM8994_ANALOGUE_HP_1,
 				    WM1811_HPOUT1_ATTN, WM1811_HPOUT1_ATTN);
+=======
+		switch (wm8994->revision) {
+		case 2:
+		case 3:
+			wm8994->hubs.dcs_codes = -5;
+			wm8994->hubs.hp_startup_mode = 1;
+			wm8994->hubs.dcs_readback_mode = 1;
+			break;
+		default:
+			wm8994->hubs.dcs_readback_mode = 1;
+			break;
+		}
+
+	case WM8958:
+		wm8994->hubs.dcs_readback_mode = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		break;
 
 	default:
 		break;
 	}
 
+<<<<<<< HEAD
 	wm8994_request_irq(wm8994->wm8994, WM8994_IRQ_FIFOS_ERR,
 			   wm8994_fifo_error, "FIFO error", codec);
 	wm8994_request_irq(wm8994->wm8994, WM8994_IRQ_TEMP_WARN,
@@ -3880,6 +4635,8 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 	if (ret == 0)
 		wm8994->hubs.dcs_done_irq = true;
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (control->type) {
 	case WM8994:
 		if (wm8994->micdet_irq) {
@@ -3894,7 +4651,11 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 					 ret);
 		}
 
+<<<<<<< HEAD
 		ret = wm8994_request_irq(wm8994->wm8994,
+=======
+		ret = wm8994_request_irq(codec->control_data,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 WM8994_IRQ_MIC1_SHRT,
 					 wm8994_mic_irq, "Mic 1 short",
 					 wm8994);
@@ -3903,7 +4664,11 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 				 "Failed to request Mic1 short IRQ: %d\n",
 				 ret);
 
+<<<<<<< HEAD
 		ret = wm8994_request_irq(wm8994->wm8994,
+=======
+		ret = wm8994_request_irq(codec->control_data,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 WM8994_IRQ_MIC2_DET,
 					 wm8994_mic_irq, "Mic 2 detect",
 					 wm8994);
@@ -3912,7 +4677,11 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 				 "Failed to request Mic2 detect IRQ: %d\n",
 				 ret);
 
+<<<<<<< HEAD
 		ret = wm8994_request_irq(wm8994->wm8994,
+=======
+		ret = wm8994_request_irq(codec->control_data,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 					 WM8994_IRQ_MIC2_SHRT,
 					 wm8994_mic_irq, "Mic 2 short",
 					 wm8994);
@@ -3923,7 +4692,10 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 		break;
 
 	case WM8958:
+<<<<<<< HEAD
 	case WM1811:
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (wm8994->micdet_irq) {
 			ret = request_threaded_irq(wm8994->micdet_irq, NULL,
 						   wm8958_mic_irq,
@@ -3937,6 +4709,7 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 		}
 	}
 
+<<<<<<< HEAD
 	switch (control->type) {
 	case WM1811:
 		if (wm8994->revision > 1) {
@@ -3965,34 +4738,53 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 	/* Make sure we can read from the GPIOs if they're inputs */
 	pm_runtime_get_sync(codec->dev);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/* Remember if AIFnLRCLK is configured as a GPIO.  This should be
 	 * configured on init - if a system wants to do this dynamically
 	 * at runtime we can deal with that then.
 	 */
+<<<<<<< HEAD
 	ret = regmap_read(control->regmap, WM8994_GPIO_1, &reg);
+=======
+	ret = wm8994_reg_read(codec->control_data, WM8994_GPIO_1);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(codec->dev, "Failed to read GPIO1 state: %d\n", ret);
 		goto err_irq;
 	}
+<<<<<<< HEAD
 	if ((reg & WM8994_GPN_FN_MASK) != WM8994_GP_FN_PIN_SPECIFIC) {
+=======
+	if ((ret & WM8994_GPN_FN_MASK) != WM8994_GP_FN_PIN_SPECIFIC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wm8994->lrclk_shared[0] = 1;
 		wm8994_dai[0].symmetric_rates = 1;
 	} else {
 		wm8994->lrclk_shared[0] = 0;
 	}
 
+<<<<<<< HEAD
 	ret = regmap_read(control->regmap, WM8994_GPIO_6, &reg);
+=======
+	ret = wm8994_reg_read(codec->control_data, WM8994_GPIO_6);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0) {
 		dev_err(codec->dev, "Failed to read GPIO6 state: %d\n", ret);
 		goto err_irq;
 	}
+<<<<<<< HEAD
 	if ((reg & WM8994_GPN_FN_MASK) != WM8994_GP_FN_PIN_SPECIFIC) {
+=======
+	if ((ret & WM8994_GPN_FN_MASK) != WM8994_GP_FN_PIN_SPECIFIC) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		wm8994->lrclk_shared[1] = 1;
 		wm8994_dai[1].symmetric_rates = 1;
 	} else {
 		wm8994->lrclk_shared[1] = 0;
 	}
 
+<<<<<<< HEAD
 	pm_runtime_put(codec->dev);
 
 	/* Latch volume update bits */
@@ -4000,6 +4792,43 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 		snd_soc_update_bits(codec, wm8994_vu_bits[i].reg,
 				    wm8994_vu_bits[i].mask,
 				    wm8994_vu_bits[i].mask);
+=======
+	wm8994_set_bias_level(codec, SND_SOC_BIAS_STANDBY);
+
+	/* Latch volume updates (right only; we always do left then right). */
+	snd_soc_update_bits(codec, WM8994_AIF1_DAC1_LEFT_VOLUME,
+			    WM8994_AIF1DAC1_VU, WM8994_AIF1DAC1_VU);
+	snd_soc_update_bits(codec, WM8994_AIF1_DAC1_RIGHT_VOLUME,
+			    WM8994_AIF1DAC1_VU, WM8994_AIF1DAC1_VU);
+	snd_soc_update_bits(codec, WM8994_AIF1_DAC2_LEFT_VOLUME,
+			    WM8994_AIF1DAC2_VU, WM8994_AIF1DAC2_VU);
+	snd_soc_update_bits(codec, WM8994_AIF1_DAC2_RIGHT_VOLUME,
+			    WM8994_AIF1DAC2_VU, WM8994_AIF1DAC2_VU);
+	snd_soc_update_bits(codec, WM8994_AIF2_DAC_LEFT_VOLUME,
+			    WM8994_AIF2DAC_VU, WM8994_AIF2DAC_VU);
+	snd_soc_update_bits(codec, WM8994_AIF2_DAC_RIGHT_VOLUME,
+			    WM8994_AIF2DAC_VU, WM8994_AIF2DAC_VU);
+	snd_soc_update_bits(codec, WM8994_AIF1_ADC1_LEFT_VOLUME,
+			    WM8994_AIF1ADC1_VU, WM8994_AIF1ADC1_VU);
+	snd_soc_update_bits(codec, WM8994_AIF1_ADC1_RIGHT_VOLUME,
+			    WM8994_AIF1ADC1_VU, WM8994_AIF1ADC1_VU);
+	snd_soc_update_bits(codec, WM8994_AIF1_ADC2_LEFT_VOLUME,
+			    WM8994_AIF1ADC2_VU, WM8994_AIF1ADC2_VU);
+	snd_soc_update_bits(codec, WM8994_AIF1_ADC2_RIGHT_VOLUME,
+			    WM8994_AIF1ADC2_VU, WM8994_AIF1ADC2_VU);
+	snd_soc_update_bits(codec, WM8994_AIF2_ADC_LEFT_VOLUME,
+			    WM8994_AIF2ADC_VU, WM8994_AIF1ADC2_VU);
+	snd_soc_update_bits(codec, WM8994_AIF2_ADC_RIGHT_VOLUME,
+			    WM8994_AIF2ADC_VU, WM8994_AIF1ADC2_VU);
+	snd_soc_update_bits(codec, WM8994_DAC1_LEFT_VOLUME,
+			    WM8994_DAC1_VU, WM8994_DAC1_VU);
+	snd_soc_update_bits(codec, WM8994_DAC1_RIGHT_VOLUME,
+			    WM8994_DAC1_VU, WM8994_DAC1_VU);
+	snd_soc_update_bits(codec, WM8994_DAC2_LEFT_VOLUME,
+			    WM8994_DAC2_VU, WM8994_DAC2_VU);
+	snd_soc_update_bits(codec, WM8994_DAC2_RIGHT_VOLUME,
+			    WM8994_DAC2_VU, WM8994_DAC2_VU);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	/* Set the low bit of the 3D stereo depth so TLV matches */
 	snd_soc_update_bits(codec, WM8994_AIF1_DAC1_FILTERS_2,
@@ -4012,6 +4841,7 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 			    1 << WM8994_AIF2DAC_3D_GAIN_SHIFT,
 			    1 << WM8994_AIF2DAC_3D_GAIN_SHIFT);
 
+<<<<<<< HEAD
 	/* Unconditionally enable AIF1 ADC TDM mode on chips which can
 	 * use this; it only affects behaviour on idle TDM clock
 	 * cycles. */
@@ -4037,13 +4867,23 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 	default:
 		break;
 	}
+=======
+	/* Unconditionally enable AIF1 ADC TDM mode; it only affects
+	 * behaviour on idle TDM clock cycles. */
+	snd_soc_update_bits(codec, WM8994_AIF1_CONTROL_1,
+			    WM8994_AIF1ADC_TDM, WM8994_AIF1ADC_TDM);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wm8994_update_class_w(codec);
 
 	wm8994_handle_pdata(wm8994);
 
 	wm_hubs_add_analogue_controls(codec);
+<<<<<<< HEAD
 	snd_soc_add_codec_controls(codec, wm8994_snd_controls,
+=======
+	snd_soc_add_controls(codec, wm8994_snd_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			     ARRAY_SIZE(wm8994_snd_controls));
 	snd_soc_dapm_new_controls(dapm, wm8994_dapm_widgets,
 				  ARRAY_SIZE(wm8994_dapm_widgets));
@@ -4069,7 +4909,11 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 		}
 		break;
 	case WM8958:
+<<<<<<< HEAD
 		snd_soc_add_codec_controls(codec, wm8958_snd_controls,
+=======
+		snd_soc_add_controls(codec, wm8958_snd_controls,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				     ARRAY_SIZE(wm8958_snd_controls));
 		snd_soc_dapm_new_controls(dapm, wm8958_dapm_widgets,
 					  ARRAY_SIZE(wm8958_dapm_widgets));
@@ -4089,6 +4933,7 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 						  ARRAY_SIZE(wm8994_dac_widgets));
 		}
 		break;
+<<<<<<< HEAD
 
 	case WM1811:
 		snd_soc_add_codec_controls(codec, wm8958_snd_controls,
@@ -4102,6 +4947,8 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 		snd_soc_dapm_new_controls(dapm, wm8994_dac_widgets,
 					  ARRAY_SIZE(wm8994_dac_widgets));
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 		
 
@@ -4138,17 +4985,21 @@ static int wm8994_codec_probe(struct snd_soc_codec *codec)
 
 		wm8958_dsp2_init(codec);
 		break;
+<<<<<<< HEAD
 	case WM1811:
 		snd_soc_dapm_add_routes(dapm, wm8994_lateclk_intercon,
 					ARRAY_SIZE(wm8994_lateclk_intercon));
 		snd_soc_dapm_add_routes(dapm, wm8958_intercon,
 					ARRAY_SIZE(wm8958_intercon));
 		break;
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 
 	return 0;
 
 err_irq:
+<<<<<<< HEAD
 	if (wm8994->jackdet)
 		wm8994_free_irq(wm8994->wm8994, WM8994_IRQ_GPIO(6), wm8994);
 	wm8994_free_irq(wm8994->wm8994, WM8994_IRQ_MIC2_SHRT, wm8994);
@@ -4165,19 +5016,33 @@ err_irq:
 	wm8994_free_irq(wm8994->wm8994, WM8994_IRQ_TEMP_SHUT, codec);
 	wm8994_free_irq(wm8994->wm8994, WM8994_IRQ_TEMP_WARN, codec);
 
+=======
+	wm8994_free_irq(codec->control_data, WM8994_IRQ_MIC2_SHRT, wm8994);
+	wm8994_free_irq(codec->control_data, WM8994_IRQ_MIC2_DET, wm8994);
+	wm8994_free_irq(codec->control_data, WM8994_IRQ_MIC1_SHRT, wm8994);
+	if (wm8994->micdet_irq)
+		free_irq(wm8994->micdet_irq, wm8994);
+err:
+	kfree(wm8994);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return ret;
 }
 
 static int  wm8994_codec_remove(struct snd_soc_codec *codec)
 {
 	struct wm8994_priv *wm8994 = snd_soc_codec_get_drvdata(codec);
+<<<<<<< HEAD
 	struct wm8994 *control = wm8994->wm8994;
 	int i;
+=======
+	struct wm8994 *control = codec->control_data;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	wm8994_set_bias_level(codec, SND_SOC_BIAS_OFF);
 
 	pm_runtime_disable(codec->dev);
 
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(wm8994->fll_locked); i++)
 		wm8994_free_irq(wm8994->wm8994, WM8994_IRQ_FLL1_LOCK + i,
 				&wm8994->fll_locked[i]);
@@ -4191,10 +5056,13 @@ static int  wm8994_codec_remove(struct snd_soc_codec *codec)
 	if (wm8994->jackdet)
 		wm8994_free_irq(wm8994->wm8994, WM8994_IRQ_GPIO(6), wm8994);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	switch (control->type) {
 	case WM8994:
 		if (wm8994->micdet_irq)
 			free_irq(wm8994->micdet_irq, wm8994);
+<<<<<<< HEAD
 		wm8994_free_irq(wm8994->wm8994, WM8994_IRQ_MIC2_DET,
 				wm8994);
 		wm8994_free_irq(wm8994->wm8994, WM8994_IRQ_MIC1_SHRT,
@@ -4204,6 +5072,16 @@ static int  wm8994_codec_remove(struct snd_soc_codec *codec)
 		break;
 
 	case WM1811:
+=======
+		wm8994_free_irq(codec->control_data, WM8994_IRQ_MIC2_DET,
+				wm8994);
+		wm8994_free_irq(codec->control_data, WM8994_IRQ_MIC1_SHRT,
+				wm8994);
+		wm8994_free_irq(codec->control_data, WM8994_IRQ_MIC1_DET,
+				wm8994);
+		break;
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	case WM8958:
 		if (wm8994->micdet_irq)
 			free_irq(wm8994->micdet_irq, wm8994);
@@ -4216,6 +5094,11 @@ static int  wm8994_codec_remove(struct snd_soc_codec *codec)
 	if (wm8994->enh_eq)
 		release_firmware(wm8994->enh_eq);
 	kfree(wm8994->retune_mobile_texts);
+<<<<<<< HEAD
+=======
+	kfree(wm8994->drc_texts);
+	kfree(wm8994);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return 0;
 }
@@ -4223,13 +5106,29 @@ static int  wm8994_codec_remove(struct snd_soc_codec *codec)
 static struct snd_soc_codec_driver soc_codec_dev_wm8994 = {
 	.probe =	wm8994_codec_probe,
 	.remove =	wm8994_codec_remove,
+<<<<<<< HEAD
 	.suspend =	wm8994_codec_suspend,
 	.resume =	wm8994_codec_resume,
 	.set_bias_level = wm8994_set_bias_level,
+=======
+	.suspend =	wm8994_suspend,
+	.resume =	wm8994_resume,
+	.read =		wm8994_read,
+	.write =	wm8994_write,
+	.readable_register = wm8994_readable,
+	.volatile_register = wm8994_volatile,
+	.set_bias_level = wm8994_set_bias_level,
+
+	.reg_cache_size = WM8994_CACHE_SIZE,
+	.reg_cache_default = wm8994_reg_defaults,
+	.reg_word_size = 2,
+	.compress_type = SND_SOC_RBTREE_COMPRESSION,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 };
 
 static int __devinit wm8994_probe(struct platform_device *pdev)
 {
+<<<<<<< HEAD
 	struct wm8994_priv *wm8994;
 
 	wm8994 = devm_kzalloc(&pdev->dev, sizeof(struct wm8994_priv),
@@ -4241,6 +5140,8 @@ static int __devinit wm8994_probe(struct platform_device *pdev)
 	wm8994->wm8994 = dev_get_drvdata(pdev->dev.parent);
 	wm8994->pdata = dev_get_platdata(pdev->dev.parent);
 
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	return snd_soc_register_codec(&pdev->dev, &soc_codec_dev_wm8994,
 			wm8994_dai, ARRAY_SIZE(wm8994_dai));
 }
@@ -4251,6 +5152,7 @@ static int __devexit wm8994_remove(struct platform_device *pdev)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_PM_SLEEP
 static int wm8994_suspend(struct device *dev)
 {
@@ -4288,11 +5190,33 @@ static struct platform_driver wm8994_codec_driver = {
 		.owner = THIS_MODULE,
 		.pm = &wm8994_pm_ops,
 	},
+=======
+static struct platform_driver wm8994_codec_driver = {
+	.driver = {
+		   .name = "wm8994-codec",
+		   .owner = THIS_MODULE,
+		   },
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	.probe = wm8994_probe,
 	.remove = __devexit_p(wm8994_remove),
 };
 
+<<<<<<< HEAD
 module_platform_driver(wm8994_codec_driver);
+=======
+static __init int wm8994_init(void)
+{
+	return platform_driver_register(&wm8994_codec_driver);
+}
+module_init(wm8994_init);
+
+static __exit void wm8994_exit(void)
+{
+	platform_driver_unregister(&wm8994_codec_driver);
+}
+module_exit(wm8994_exit);
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 MODULE_DESCRIPTION("ASoC WM8994 driver");
 MODULE_AUTHOR("Mark Brown <broonie@opensource.wolfsonmicro.com>");

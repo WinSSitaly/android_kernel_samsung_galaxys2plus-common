@@ -11,7 +11,11 @@ extern int coda_fake_statfs;
 
 void coda_destroy_inodecache(void);
 int coda_init_inodecache(void);
+<<<<<<< HEAD
 int coda_fsync(struct file *coda_file, loff_t start, loff_t end, int datasync);
+=======
+int coda_fsync(struct file *coda_file, int datasync);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 void coda_sysctl_init(void);
 void coda_sysctl_clean(void);
 

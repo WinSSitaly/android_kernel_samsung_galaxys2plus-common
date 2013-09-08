@@ -12,7 +12,10 @@
  */
 #include <linux/init.h>
 #include <linux/kernel.h>
+<<<<<<< HEAD
 #include <linux/memblock.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/mm.h>
 #include <linux/mmzone.h>
 #include <linux/module.h>
@@ -382,8 +385,13 @@ static void __init szmem(void)
 				continue;
 			}
 			num_physpages += slot_psize;
+<<<<<<< HEAD
 			memblock_add_node(PFN_PHYS(slot_getbasepfn(node, slot)),
 					  PFN_PHYS(slot_psize), node);
+=======
+			add_active_range(node, slot_getbasepfn(node, slot),
+					 slot_getbasepfn(node, slot) + slot_psize);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		}
 	}
 }

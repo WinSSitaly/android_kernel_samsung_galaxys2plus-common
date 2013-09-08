@@ -6,6 +6,11 @@
 #ifndef __ASM_ARM_ARCH_IO_H
 #define __ASM_ARM_ARCH_IO_H
 
+<<<<<<< HEAD
+=======
+#include <mach/hardware.h>
+
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #define IO_SPACE_LIMIT 0xffffffff
 
 /*
@@ -13,5 +18,9 @@
  * drivers out there that might just work if we fake them...
  */
 #define __io(a)		__typesafe_io(a)
+<<<<<<< HEAD
+=======
+#define __mem_pci(a)	(a)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #endif

@@ -42,7 +42,10 @@
 #include <linux/sched.h>
 #include <linux/ksm.h>
 #include <linux/rmap.h>
+<<<<<<< HEAD
 #include <linux/export.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include <linux/pagemap.h>
 #include <linux/swap.h>
 #include <linux/backing-dev.h>
@@ -54,7 +57,10 @@
 #include <linux/hugetlb.h>
 #include <linux/memory_hotplug.h>
 #include <linux/mm_inline.h>
+<<<<<<< HEAD
 #include <linux/kfifo.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 #include "internal.h"
 
 int sysctl_memory_failure_early_kill __read_mostly = 0;
@@ -187,26 +193,43 @@ int hwpoison_filter(struct page *p)
 EXPORT_SYMBOL_GPL(hwpoison_filter);
 
 /*
+<<<<<<< HEAD
  * Send all the processes who have the page mapped a signal.
  * ``action optional'' if they are not immediately affected by the error
  * ``action required'' if error happened in current execution context
  */
 static int kill_proc(struct task_struct *t, unsigned long addr, int trapno,
 			unsigned long pfn, struct page *page, int flags)
+=======
+ * Send all the processes who have the page mapped an ``action optional''
+ * signal.
+ */
+static int kill_proc_ao(struct task_struct *t, unsigned long addr, int trapno,
+			unsigned long pfn, struct page *page)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct siginfo si;
 	int ret;
 
 	printk(KERN_ERR
+<<<<<<< HEAD
 		"MCE %#lx: Killing %s:%d due to hardware memory corruption\n",
 		pfn, t->comm, t->pid);
 	si.si_signo = SIGBUS;
 	si.si_errno = 0;
+=======
+		"MCE %#lx: Killing %s:%d early due to hardware memory corruption\n",
+		pfn, t->comm, t->pid);
+	si.si_signo = SIGBUS;
+	si.si_errno = 0;
+	si.si_code = BUS_MCEERR_AO;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	si.si_addr = (void *)addr;
 #ifdef __ARCH_SI_TRAPNO
 	si.si_trapno = trapno;
 #endif
 	si.si_addr_lsb = compound_trans_order(compound_head(page)) + PAGE_SHIFT;
+<<<<<<< HEAD
 
 	if ((flags & MF_ACTION_REQUIRED) && t == current) {
 		si.si_code = BUS_MCEERR_AR;
@@ -221,6 +244,15 @@ static int kill_proc(struct task_struct *t, unsigned long addr, int trapno,
 		si.si_code = BUS_MCEERR_AO;
 		ret = send_sig_info(SIGBUS, &si, t);  /* synchronous? */
 	}
+=======
+	/*
+	 * Don't use force here, it's convenient if the signal
+	 * can be temporarily blocked.
+	 * This could cause a loop when the user sets SIGBUS
+	 * to SIG_IGN, but hopefully no one will do that?
+	 */
+	ret = send_sig_info(SIGBUS, &si, t);  /* synchronous? */
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret < 0)
 		printk(KERN_INFO "MCE: Error sending signal to %s:%d: %d\n",
 		       t->comm, t->pid, ret);
@@ -345,14 +377,23 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
  * Also when FAIL is set do a force kill because something went
  * wrong earlier.
  */
+<<<<<<< HEAD
 static void kill_procs(struct list_head *to_kill, int forcekill, int trapno,
 			  int fail, struct page *page, unsigned long pfn,
 			  int flags)
+=======
+static void kill_procs_ao(struct list_head *to_kill, int doit, int trapno,
+			  int fail, struct page *page, unsigned long pfn)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct to_kill *tk, *next;
 
 	list_for_each_entry_safe (tk, next, to_kill, nd) {
+<<<<<<< HEAD
 		if (forcekill) {
+=======
+		if (doit) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			/*
 			 * In case something went wrong with munmapping
 			 * make sure the process doesn't catch the
@@ -371,8 +412,13 @@ static void kill_procs(struct list_head *to_kill, int forcekill, int trapno,
 			 * check for that, but we need to tell the
 			 * process anyways.
 			 */
+<<<<<<< HEAD
 			else if (kill_proc(tk->tsk, tk->addr, trapno,
 					      pfn, page, flags) < 0)
+=======
+			else if (kill_proc_ao(tk->tsk, tk->addr, trapno,
+					      pfn, page) < 0)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 				printk(KERN_ERR
 		"MCE %#lx: Cannot send advisory machine check signal to %s:%d\n",
 					pfn, tk->tsk->comm, tk->tsk->pid);
@@ -852,13 +898,21 @@ static int page_action(struct page_state *ps, struct page *p,
  * the pages and send SIGBUS to the processes if the data was dirty.
  */
 static int hwpoison_user_mappings(struct page *p, unsigned long pfn,
+<<<<<<< HEAD
 				  int trapno, int flags)
+=======
+				  int trapno)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	enum ttu_flags ttu = TTU_UNMAP | TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS;
 	struct address_space *mapping;
 	LIST_HEAD(tokill);
 	int ret;
+<<<<<<< HEAD
 	int kill = 1, forcekill;
+=======
+	int kill = 1;
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	struct page *hpage = compound_head(p);
 	struct page *ppage;
 
@@ -888,7 +942,11 @@ static int hwpoison_user_mappings(struct page *p, unsigned long pfn,
 	 * be called inside page lock (it's recommended but not enforced).
 	 */
 	mapping = page_mapping(hpage);
+<<<<<<< HEAD
 	if (!(flags & MF_MUST_KILL) && !PageDirty(hpage) && mapping &&
+=======
+	if (!PageDirty(hpage) && mapping &&
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	    mapping_cap_writeback_dirty(mapping)) {
 		if (page_mkclean(hpage)) {
 			SetPageDirty(hpage);
@@ -965,15 +1023,24 @@ static int hwpoison_user_mappings(struct page *p, unsigned long pfn,
 	 * Now that the dirty bit has been propagated to the
 	 * struct page and all unmaps done we can decide if
 	 * killing is needed or not.  Only kill when the page
+<<<<<<< HEAD
 	 * was dirty or the process is not restartable,
 	 * otherwise the tokill list is merely
+=======
+	 * was dirty, otherwise the tokill list is merely
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	 * freed.  When there was a problem unmapping earlier
 	 * use a more force-full uncatchable kill to prevent
 	 * any accesses to the poisoned memory.
 	 */
+<<<<<<< HEAD
 	forcekill = PageDirty(ppage) || (flags & MF_MUST_KILL);
 	kill_procs(&tokill, forcekill, trapno,
 		      ret != SWAP_SUCCESS, p, pfn, flags);
+=======
+	kill_procs_ao(&tokill, !!PageDirty(ppage), trapno,
+		      ret != SWAP_SUCCESS, p, pfn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	return ret;
 }
@@ -994,6 +1061,7 @@ static void clear_page_hwpoison_huge_page(struct page *hpage)
 		ClearPageHWPoison(hpage + i);
 }
 
+<<<<<<< HEAD
 /**
  * memory_failure - Handle memory failure of a page.
  * @pfn: Page Number of the corrupted page
@@ -1013,6 +1081,9 @@ static void clear_page_hwpoison_huge_page(struct page *hpage)
  * enabled and no spinlocks hold.
  */
 int memory_failure(unsigned long pfn, int trapno, int flags)
+=======
+int __memory_failure(unsigned long pfn, int trapno, int flags)
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 {
 	struct page_state *ps;
 	struct page *p;
@@ -1091,7 +1162,11 @@ int memory_failure(unsigned long pfn, int trapno, int flags)
 	 * The check (unnecessarily) ignores LRU pages being isolated and
 	 * walked by the page reclaim code, however that's not a big loss.
 	 */
+<<<<<<< HEAD
 	if (!PageHuge(p) && !PageTransTail(p)) {
+=======
+	if (!PageHuge(p) && !PageTransCompound(p)) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (!PageLRU(p))
 			shake_page(p, 0);
 		if (!PageLRU(p)) {
@@ -1158,7 +1233,11 @@ int memory_failure(unsigned long pfn, int trapno, int flags)
 	 * Now take care of user space mappings.
 	 * Abort on fail: __delete_from_page_cache() assumes unmapped page.
 	 */
+<<<<<<< HEAD
 	if (hwpoison_user_mappings(p, pfn, trapno, flags) != SWAP_SUCCESS) {
+=======
+	if (hwpoison_user_mappings(p, pfn, trapno) != SWAP_SUCCESS) {
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		printk(KERN_ERR "MCE %#lx: cannot unmap page, give up\n", pfn);
 		res = -EBUSY;
 		goto out;
@@ -1184,6 +1263,7 @@ out:
 	unlock_page(hpage);
 	return res;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(memory_failure);
 
 #define MEMORY_FAILURE_FIFO_ORDER	4
@@ -1214,11 +1294,25 @@ static DEFINE_PER_CPU(struct memory_failure_cpu, memory_failure_cpu);
  * when it detects hardware memory corruption of a page. It schedules
  * the recovering of error page, including dropping pages, killing
  * processes etc.
+=======
+EXPORT_SYMBOL_GPL(__memory_failure);
+
+/**
+ * memory_failure - Handle memory failure of a page.
+ * @pfn: Page Number of the corrupted page
+ * @trapno: Trap number reported in the signal to user space.
+ *
+ * This function is called by the low level machine check code
+ * of an architecture when it detects hardware memory corruption
+ * of a page. It tries its best to recover, which includes
+ * dropping pages, killing processes etc.
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
  *
  * The function is primarily of use for corruptions that
  * happen outside the current execution context (e.g. when
  * detected by a background scrubber)
  *
+<<<<<<< HEAD
  * Can run in IRQ context.
  */
 void memory_failure_queue(unsigned long pfn, int trapno, int flags)
@@ -1276,6 +1370,15 @@ static int __init memory_failure_init(void)
 	return 0;
 }
 core_initcall(memory_failure_init);
+=======
+ * Must run in process context (e.g. a work queue) with interrupts
+ * enabled and no spinlocks hold.
+ */
+void memory_failure(unsigned long pfn, int trapno)
+{
+	__memory_failure(pfn, trapno, 0);
+}
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 /**
  * unpoison_memory - Unpoison a previously poisoned page
@@ -1317,7 +1420,11 @@ int unpoison_memory(unsigned long pfn)
 		 * to the end.
 		 */
 		if (PageHuge(page)) {
+<<<<<<< HEAD
 			pr_info("MCE: Memory failure is now running on free hugepage %#lx\n", pfn);
+=======
+			pr_debug("MCE: Memory failure is now running on free hugepage %#lx\n", pfn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 			return 0;
 		}
 		if (TestClearPageHWPoison(p))
@@ -1383,7 +1490,11 @@ static int get_any_page(struct page *p, unsigned long pfn, int flags)
 	 * Isolate the page, so that it doesn't get reallocated if it
 	 * was free.
 	 */
+<<<<<<< HEAD
 	set_migratetype_isolate(p);
+=======
+	set_migratetype_isolate(p, get_pageblock_migratetype(p));
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	/*
 	 * When the target page is a free hugepage, just remove it
 	 * from free hugepage list.
@@ -1406,7 +1517,11 @@ static int get_any_page(struct page *p, unsigned long pfn, int flags)
 		/* Not a free page */
 		ret = 1;
 	}
+<<<<<<< HEAD
 	unset_migratetype_isolate(p);
+=======
+	unset_migratetype_isolate(p, MIGRATE_MOVABLE);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	unlock_memory_hotplug();
 	return ret;
 }
@@ -1426,22 +1541,36 @@ static int soft_offline_huge_page(struct page *page, int flags)
 
 	if (PageHWPoison(hpage)) {
 		put_page(hpage);
+<<<<<<< HEAD
 		pr_info("soft offline: %#lx hugepage already poisoned\n", pfn);
+=======
+		pr_debug("soft offline: %#lx hugepage already poisoned\n", pfn);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EBUSY;
 	}
 
 	/* Keep page count to indicate a given hugepage is isolated. */
 
 	list_add(&hpage->lru, &pagelist);
+<<<<<<< HEAD
 	ret = migrate_huge_pages(&pagelist, new_page, MPOL_MF_MOVE_ALL, false,
 				MIGRATE_SYNC);
+=======
+	ret = migrate_huge_pages(&pagelist, new_page, MPOL_MF_MOVE_ALL, 0,
+				true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	if (ret) {
 		struct page *page1, *page2;
 		list_for_each_entry_safe(page1, page2, &pagelist, lru)
 			put_page(page1);
 
+<<<<<<< HEAD
 		pr_info("soft offline: %#lx: migration failed %d, type %lx\n",
 			pfn, ret, page->flags);
+=======
+		pr_debug("soft offline: %#lx: migration failed %d, type %lx\n",
+			 pfn, ret, page->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret > 0)
 			ret = -EIO;
 		return ret;
@@ -1481,6 +1610,7 @@ int soft_offline_page(struct page *page, int flags)
 {
 	int ret;
 	unsigned long pfn = page_to_pfn(page);
+<<<<<<< HEAD
 	struct page *hpage = compound_trans_head(page);
 
 	if (PageHuge(page))
@@ -1492,6 +1622,11 @@ int soft_offline_page(struct page *page, int flags)
 			return -EBUSY;
 		}
 	}
+=======
+
+	if (PageHuge(page))
+		return soft_offline_huge_page(page, flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 	ret = get_any_page(page, pfn, flags);
 	if (ret < 0)
@@ -1520,7 +1655,11 @@ int soft_offline_page(struct page *page, int flags)
 	}
 	if (!PageLRU(page)) {
 		pr_info("soft_offline: %#lx: unknown non LRU page type %lx\n",
+<<<<<<< HEAD
 			pfn, page->flags);
+=======
+				pfn, page->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		return -EIO;
 	}
 
@@ -1571,7 +1710,11 @@ int soft_offline_page(struct page *page, int flags)
 					    page_is_file_cache(page));
 		list_add(&page->lru, &pagelist);
 		ret = migrate_pages(&pagelist, new_page, MPOL_MF_MOVE_ALL,
+<<<<<<< HEAD
 							false, MIGRATE_SYNC);
+=======
+								0, true);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		if (ret) {
 			putback_lru_pages(&pagelist);
 			pr_info("soft offline: %#lx: migration failed %d, type %lx\n",
@@ -1581,7 +1724,11 @@ int soft_offline_page(struct page *page, int flags)
 		}
 	} else {
 		pr_info("soft offline: %#lx: isolation failed: %d, page count %d, type %lx\n",
+<<<<<<< HEAD
 			pfn, ret, page_count(page), page->flags);
+=======
+				pfn, ret, page_count(page), page->flags);
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 	}
 	if (ret)
 		return ret;

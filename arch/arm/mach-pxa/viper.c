@@ -57,7 +57,10 @@
 #include <asm/mach-types.h>
 #include <asm/irq.h>
 #include <asm/sizes.h>
+<<<<<<< HEAD
 #include <asm/system_info.h>
+=======
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -423,8 +426,13 @@ static struct resource smc91x_resources[] = {
 		.flags  = IORESOURCE_MEM,
 	},
 	[1] = {
+<<<<<<< HEAD
 		.start  = PXA_GPIO_TO_IRQ(VIPER_ETH_GPIO),
 		.end    = PXA_GPIO_TO_IRQ(VIPER_ETH_GPIO),
+=======
+		.start  = gpio_to_irq(VIPER_ETH_GPIO),
+		.end    = gpio_to_irq(VIPER_ETH_GPIO),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags  = IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE,
 	},
 	[2] = {
@@ -547,7 +555,11 @@ static struct plat_serial8250_port serial_platform_data[] = {
 	/* External UARTs */
 	{
 		.mapbase	= VIPER_UARTA_PHYS,
+<<<<<<< HEAD
 		.irq		= PXA_GPIO_TO_IRQ(VIPER_UARTA_GPIO),
+=======
+		.irq		= gpio_to_irq(VIPER_UARTA_GPIO),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.irqflags	= IRQF_TRIGGER_RISING,
 		.uartclk	= 1843200,
 		.regshift	= 1,
@@ -557,7 +569,11 @@ static struct plat_serial8250_port serial_platform_data[] = {
 	},
 	{
 		.mapbase	= VIPER_UARTB_PHYS,
+<<<<<<< HEAD
 		.irq		= PXA_GPIO_TO_IRQ(VIPER_UARTB_GPIO),
+=======
+		.irq		= gpio_to_irq(VIPER_UARTB_GPIO),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.irqflags	= IRQF_TRIGGER_RISING,
 		.uartclk	= 1843200,
 		.regshift	= 1,
@@ -597,8 +613,13 @@ static struct resource isp116x_resources[] = {
 		.flags  = IORESOURCE_MEM,
 	},
 	[2] = {
+<<<<<<< HEAD
 		.start  = PXA_GPIO_TO_IRQ(VIPER_USB_GPIO),
 		.end    = PXA_GPIO_TO_IRQ(VIPER_USB_GPIO),
+=======
+		.start  = gpio_to_irq(VIPER_USB_GPIO),
+		.end    = gpio_to_irq(VIPER_USB_GPIO),
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 		.flags  = IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHEDGE,
 	},
 };
@@ -993,6 +1014,7 @@ static void __init viper_map_io(void)
 
 MACHINE_START(VIPER, "Arcom/Eurotech VIPER SBC")
 	/* Maintainer: Marc Zyngier <maz@misterjones.org> */
+<<<<<<< HEAD
 	.atag_offset	= 0x100,
 	.map_io		= viper_map_io,
 	.nr_irqs	= PXA_NR_IRQS,
@@ -1001,4 +1023,11 @@ MACHINE_START(VIPER, "Arcom/Eurotech VIPER SBC")
 	.timer          = &pxa_timer,
 	.init_machine	= viper_init,
 	.restart	= pxa_restart,
+=======
+	.boot_params	= 0xa0000100,
+	.map_io		= viper_map_io,
+	.init_irq	= viper_init_irq,
+	.timer          = &pxa_timer,
+	.init_machine	= viper_init,
+>>>>>>> f37bb4a... Initial commit from GT-I9105P_JB_Opensource.zip
 MACHINE_END
