@@ -689,7 +689,7 @@ __SC_COMP(__NR_sendmmsg, sys_sendmmsg, compat_sys_sendmmsg)
 __SYSCALL(__NR_finit_module, sys_finit_module)
 
 #undef __NR_syscalls
-#define __NR_syscalls 274
+#define __NR_syscalls 278
 
 /*
  * All syscalls below here should go away really,
