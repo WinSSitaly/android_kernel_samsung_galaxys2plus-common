@@ -44,13 +44,6 @@
 #include <linux/rcupdate.h>
 #include <linux/notifier.h>
 
-#define ENHANCED_LMK_ROUTINE
-#define LMK_COUNT_READ
-
-#ifdef ENHANCED_LMK_ROUTINE
-#define LOWMEM_DEATHPENDING_DEPTH 3
-#endif
-
 #ifdef CONFIG_CMA
 
 #if defined(CONFIG_MACH_CAPRI_SS_BAFFIN)
@@ -64,9 +57,6 @@
 
 #endif
 
-#ifdef LMK_COUNT_READ
-static uint32_t lmk_count = 0;
-#endif
 static uint32_t lowmem_debug_level = 1;
 static int lowmem_adj[6] = {
 	0,
@@ -82,14 +72,7 @@ static int lowmem_minfree[6] = {
 	16 * 1024,	/* 64MB */
 };
 static int lowmem_minfree_size = 4;
-
-#ifdef ENHANCED_LMK_ROUTINE
-static struct task_struct *lowmem_deathpending[LOWMEM_DEATHPENDING_DEPTH] = {
-	NULL,
-};
-#else
 static struct task_struct *lowmem_deathpending;
-#endif
 static unsigned long lowmem_deathpending_timeout;
 
 #define lowmem_print(level, x...)			\
@@ -109,22 +92,9 @@ static int
 task_notify_func(struct notifier_block *self, unsigned long val, void *data)
 {
 	struct task_struct *task = data;
-#ifdef ENHANCED_LMK_ROUTINE
-	int i = 0;
 
-	for (i = 0; i < LOWMEM_DEATHPENDING_DEPTH; i++) {
-		if (task == lowmem_deathpending[i]) {
-			lowmem_deathpending[i] = NULL;
-			break;
-		}
-	}
-#else
 	if (task == lowmem_deathpending)
-		lowmem_print(2, "lowmem_shrink %s/%d is dead!\n",
-				task->comm, task->pid);
 		lowmem_deathpending = NULL;
-#endif
-
 	return NOTIFY_OK;
 }
 
@@ -137,25 +107,14 @@ static struct task_struct *pick_last_task(void);
 static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 {
 	struct task_struct *tsk;
-#ifdef ENHANCED_LMK_ROUTINE
-	struct task_struct *selected[LOWMEM_DEATHPENDING_DEPTH] = {NULL,};
-#else
 	struct task_struct *selected = NULL;
-#endif
 	int rem = 0;
 	int tasksize;
 	int i;
 	int min_score_adj = OOM_SCORE_ADJ_MAX + 1;
 	int minfree = 0;
-#ifdef ENHANCED_LMK_ROUTINE
-	int selected_tasksize[LOWMEM_DEATHPENDING_DEPTH] = {0,};
-	int selected_oom_adj[LOWMEM_DEATHPENDING_DEPTH] = {OOM_ADJUST_MAX,};
-	int all_selected_oom = 0;
-	int max_selected_oom_idx = 0;
-#else
 	int selected_tasksize = 0;
 	int selected_oom_score_adj;
-#endif
 	int array_size = ARRAY_SIZE(lowmem_adj);
 	int other_free = global_page_state(NR_FREE_PAGES) - totalreserve_pages;
 	int other_file = global_page_state(NR_FILE_PAGES) -
@@ -192,17 +151,9 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	 * this pass.
 	 *
 	 */
-#ifdef ENHANCED_LMK_ROUTINE
-	for (i = 0; i < LOWMEM_DEATHPENDING_DEPTH; i++) {
-		if (lowmem_deathpending[i] &&
-			time_before_eq(jiffies, lowmem_deathpending_timeout))
-			return 0;
-	}
-#else
 	if (lowmem_deathpending &&
 	    time_before_eq(jiffies, lowmem_deathpending_timeout))
 		return 0;
-#endif
 
 	if (lowmem_adj_size < array_size)
 		array_size = lowmem_adj_size;
@@ -239,13 +190,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		return rem;
 	}
 
-#ifdef ENHANCED_LMK_ROUTINE
-	for (i = 0; i < LOWMEM_DEATHPENDING_DEPTH; i++)
-		selected_oom_adj[i] = min_score_adj;
-#else
 	selected_oom_score_adj = min_score_adj;
-#endif
-
 	rcu_read_lock();
 
 #ifdef CONFIG_ANDROID_LMK_ADJ_RBTREE
@@ -257,9 +202,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 #endif
 		struct task_struct *p;
 		int oom_score_adj;
-#ifdef ENHANCED_LMK_ROUTINE
-		int is_exist_oom_task = 0;
-#endif
 		if (tsk->flags & PF_KTHREAD)
 			continue;
 
@@ -286,43 +228,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		if (tasksize <= 0)
 			continue;
 
-#ifdef ENHANCED_LMK_ROUTINE
-		if (all_selected_oom < LOWMEM_DEATHPENDING_DEPTH) {
-			for (i = 0; i < LOWMEM_DEATHPENDING_DEPTH; i++) {
-				if (!selected[i]) {
-					is_exist_oom_task = 1;
-					max_selected_oom_idx = i;
-					break;
-				}
-			}
-		} else if (selected_oom_adj[max_selected_oom_idx] < oom_score_adj ||
-			(selected_oom_adj[max_selected_oom_idx] == oom_score_adj &&
-			selected_tasksize[max_selected_oom_idx] < tasksize)) {
-			is_exist_oom_task = 1;
-		}
-
-		if (is_exist_oom_task) {
-			selected[max_selected_oom_idx] = p;
-			selected_tasksize[max_selected_oom_idx] = tasksize;
-			selected_oom_adj[max_selected_oom_idx] = oom_score_adj;
-
-			if (all_selected_oom < LOWMEM_DEATHPENDING_DEPTH)
-				all_selected_oom++;
-
-			if (all_selected_oom == LOWMEM_DEATHPENDING_DEPTH) {
-				for (i = 0; i < LOWMEM_DEATHPENDING_DEPTH; i++) {
-					if (selected_oom_adj[i] < selected_oom_adj[max_selected_oom_idx])
-						max_selected_oom_idx = i;
-					else if (selected_oom_adj[i] == selected_oom_adj[max_selected_oom_idx] &&
-						selected_tasksize[i] < selected_tasksize[max_selected_oom_idx])
-						max_selected_oom_idx = i;
-				}
-			}
-
-			lowmem_print(2, "select %d (%s), adj %d, size %d, to kill\n",
-				p->pid, p->comm, oom_score_adj, tasksize);
-		}
-#else
 		if (selected) {
 			if (oom_score_adj < selected_oom_score_adj)
 #ifdef CONFIG_ANDROID_LMK_ADJ_RBTREE
@@ -339,26 +244,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		selected_oom_score_adj = oom_score_adj;
 		lowmem_print(2, "select '%s' (%d), adj %d, size %d, to kill\n",
 			     p->comm, p->pid, oom_score_adj, tasksize);
-#endif
 	}
-#ifdef ENHANCED_LMK_ROUTINE
-	for (i = 0; i < LOWMEM_DEATHPENDING_DEPTH; i++) {
-		if (selected[i]) {
-			lowmem_print(1, "send sigkill to %d (%s), adj %d,\
-				     size %d\n",
-				     selected[i]->pid, selected[i]->comm,
-				     selected_oom_adj[i],
-				     selected_tasksize[i]);
-			lowmem_deathpending[i] = selected[i];
-			lowmem_deathpending_timeout = jiffies + HZ;
-			send_sig(SIGKILL, selected[i], 0);
-			rem -= selected_tasksize[i];
-#ifdef LMK_COUNT_READ
-			lmk_count++;
-#endif
-		}
-	}
-#else
 	if (selected) {
 		lowmem_print(1, "Killing '%s' (%d), adj %d,\n" \
 				"   to free %ldkB on behalf of '%s' (%d) because\n" \
@@ -376,11 +262,7 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 		lowmem_deathpending_timeout = jiffies + HZ;
 		send_sig(SIGKILL, selected, 0);
 		rem -= selected_tasksize;
-#ifdef LMK_COUNT_READ
-		lmk_count++;
-#endif
 	}
-#endif
 	lowmem_print(4, "lowmem_shrink %lu, %x, return %d\n",
 		     sc->nr_to_scan, sc->gfp_mask, rem);
 	rcu_read_unlock();
@@ -593,11 +475,8 @@ module_param_array_named(minfree, lowmem_minfree, uint, &lowmem_minfree_size,
 			 S_IRUGO | S_IWUSR);
 module_param_named(debug_level, lowmem_debug_level, uint, S_IRUGO | S_IWUSR);
 
-#ifdef LMK_COUNT_READ
-module_param_named(lmkcount, lmk_count, uint, S_IRUGO);
-#endif
-
 module_init(lowmem_init);
 module_exit(lowmem_exit);
 
 MODULE_LICENSE("GPL");
+
