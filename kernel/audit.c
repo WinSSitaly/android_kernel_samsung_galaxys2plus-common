@@ -43,9 +43,9 @@
 
 #include <linux/init.h>
 #include <asm/types.h>
-#include <asm/atomic.h>
+#include <linux/atomic.h>
 #include <linux/mm.h>
-#include <linux/module.h>
+#include <linux/export.h>
 #include <linux/slab.h>
 #include <linux/err.h>
 #include <linux/kthread.h>
@@ -1418,7 +1418,7 @@ void audit_log_untrustedstring(struct audit_buffer *ab, const char *string)
 
 /* This is a helper-function to print the escaped d_path */
 void audit_log_d_path(struct audit_buffer *ab, const char *prefix,
-		      struct path *path)
+		      const struct path *path)
 {
 	char *p, *pathname;
 

@@ -30,10 +30,6 @@
 #include <linux/time.h>
 #include <linux/fcntl.h>
 #include <linux/stat.h>
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-#include <linux/namei.h>
-#include <linux/dcache.h>
-#endif
 #include <linux/string.h>
 #include <linux/quotaops.h>
 #include <linux/buffer_head.h>
@@ -293,7 +289,7 @@ static struct stats dx_show_leaf(struct dx_hash_info *hinfo, struct ext4_dir_ent
 				while (len--) printk("%c", *name++);
 				ext4fs_dirhash(de->name, de->name_len, &h);
 				printk(":%x.%u ", h.hash,
-				       ((char *) de - base));
+				       (unsigned) ((char *) de - base));
 			}
 			space += EXT4_DIR_REC_LEN(de->name_len);
 			names++;
@@ -472,7 +468,7 @@ fail2:
 fail:
 	if (*err == ERR_BAD_DX_DIR)
 		ext4_warning(dir->i_sb,
-			     "Corrupt dir inode %ld, running e2fsck is "
+			     "Corrupt dir inode %lu, running e2fsck is "
 			     "recommended.", dir->i_ino);
 	return NULL;
 }
@@ -798,18 +794,6 @@ static inline int ext4_match (int len, const char * const name,
 	return !memcmp(name, de->name, len);
 }
 
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-static inline int ext4_ci_match (int len, const char * const name,
-			      struct ext4_dir_entry_2 * de)
-{
-	if (len != de->name_len)
-		return 0;
-	if (!de->inode)
-		return 0;
-	return !strncasecmp(name, de->name, len);
-}
-#endif
-
 /*
  * Returns 0 if not found, -1 on failure, and 1 on success
  */
@@ -817,12 +801,7 @@ static inline int search_dirblock(struct buffer_head *bh,
 				  struct inode *dir,
 				  const struct qstr *d_name,
 				  unsigned int offset,
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-				  struct ext4_dir_entry_2 ** res_dir,
-				  char *ci_name_buf)
-#else
 				  struct ext4_dir_entry_2 ** res_dir)
-#endif
 {
 	struct ext4_dir_entry_2 * de;
 	char * dlimit;
@@ -836,29 +815,6 @@ static inline int search_dirblock(struct buffer_head *bh,
 		/* this code is executed quadratically often */
 		/* do minimal checking `by hand' */
 
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-		if ((char *) de + namelen <= dlimit) {
-			if (ci_name_buf) {
-				if (ext4_ci_match (namelen, name, de)) {
-					/* found a match - just to be sure, do a full check */
-					if (ext4_check_dir_entry(dir, NULL, de, bh, offset))
-						return -1;
-					*res_dir = de;
-					memcpy(ci_name_buf, de->name, namelen);
-					ci_name_buf[namelen] = '\0';
-					return 1;
-				}
-			} else {
-				if (ext4_match (namelen, name, de)) {
-					/* found a match - just to be sure, do a full check */
-					if (ext4_check_dir_entry(dir, NULL, de, bh, offset))
-						return -1;
-					*res_dir = de;
-					return 1;
-				}
-			}
-		}
-#else
 		if ((char *) de + namelen <= dlimit &&
 		    ext4_match (namelen, name, de)) {
 			/* found a match - just to be sure, do a full check */
@@ -867,7 +823,6 @@ static inline int search_dirblock(struct buffer_head *bh,
 			*res_dir = de;
 			return 1;
 		}
-#endif
 		/* prevent looping on a bad block */
 		de_len = ext4_rec_len_from_disk(de->rec_len,
 						dir->i_sb->s_blocksize);
@@ -893,12 +848,7 @@ static inline int search_dirblock(struct buffer_head *bh,
  */
 static struct buffer_head * ext4_find_entry (struct inode *dir,
 					const struct qstr *d_name,
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-					struct ext4_dir_entry_2 ** res_dir,
-					char *ci_name_buf)
-#else
 					struct ext4_dir_entry_2 ** res_dir)
-#endif
 {
 	struct super_block *sb;
 	struct buffer_head *bh_use[NAMEI_RA_SIZE];
@@ -983,14 +933,8 @@ restart:
 			brelse(bh);
 			goto next;
 		}
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-		i = search_dirblock(bh, dir, d_name,
-			    block << EXT4_BLOCK_SIZE_BITS(sb), res_dir,
-			    ci_name_buf);
-#else
 		i = search_dirblock(bh, dir, d_name,
 			    block << EXT4_BLOCK_SIZE_BITS(sb), res_dir);
-#endif
 		if (i == 1) {
 			EXT4_I(dir)->i_dir_start_lookup = block;
 			ret = bh;
@@ -1040,15 +984,9 @@ static struct buffer_head * ext4_dx_find_entry(struct inode *dir, const struct q
 		if (!(bh = ext4_bread(NULL, dir, block, 0, err)))
 			goto errout;
 
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-		retval = search_dirblock(bh, dir, d_name,
-					 block << EXT4_BLOCK_SIZE_BITS(sb),
-					 res_dir, NULL);
-#else
 		retval = search_dirblock(bh, dir, d_name,
 					 block << EXT4_BLOCK_SIZE_BITS(sb),
 					 res_dir);
-#endif
 		if (retval == 1) { 	/* Success! */
 			dx_release(frames);
 			return bh;
@@ -1073,7 +1011,7 @@ static struct buffer_head * ext4_dx_find_entry(struct inode *dir, const struct q
 
 	*err = -ENOENT;
 errout:
-	dxtrace(printk(KERN_DEBUG "%s not found\n", name));
+	dxtrace(printk(KERN_DEBUG "%s not found\n", d_name->name));
 	dx_release (frames);
 	return NULL;
 }
@@ -1083,62 +1021,34 @@ static struct dentry *ext4_lookup(struct inode *dir, struct dentry *dentry, stru
 	struct inode *inode;
 	struct ext4_dir_entry_2 *de;
 	struct buffer_head *bh;
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-	struct qstr ci_name;
-	char ci_name_buf[EXT4_NAME_LEN+1];
-#endif
 
 	if (dentry->d_name.len > EXT4_NAME_LEN)
 		return ERR_PTR(-ENAMETOOLONG);
 
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-	ci_name_buf[0] = '\0';
-	if (nd && (nd->flags & LOOKUP_CASE_INSENSITIVE))
-		bh = ext4_find_entry(dir, &dentry->d_name, &de, ci_name_buf);
-	else
-		bh = ext4_find_entry(dir, &dentry->d_name, &de, NULL);
-#else
 	bh = ext4_find_entry(dir, &dentry->d_name, &de);
-#endif
 	inode = NULL;
 	if (bh) {
 		__u32 ino = le32_to_cpu(de->inode);
-		if (!ext4_valid_inum(dir->i_sb, ino)) {
-                        /* for debugging, sangwoo2.lee */
-                        printk(KERN_ERR "Name of directory entry has bad inode# : %s\n", de->name);
-                        printk(KERN_ERR "inode# : %s\n", de->name);
-                        print_bh(dir->i_sb, bh, 0, EXT4_BLOCK_SIZE(dir->i_sb));
-                        /* for debugging */
 		brelse(bh);
-
+		if (!ext4_valid_inum(dir->i_sb, ino)) {
 			EXT4_ERROR_INODE(dir, "bad inode number: %u", ino);
 			return ERR_PTR(-EIO);
 		}
-		brelse(bh);
-
+		if (unlikely(ino == dir->i_ino)) {
+			EXT4_ERROR_INODE(dir, "'%.*s' linked to parent dir",
+					 dentry->d_name.len,
+					 dentry->d_name.name);
+			return ERR_PTR(-EIO);
+		}
 		inode = ext4_iget(dir->i_sb, ino);
-		if (IS_ERR(inode)) {
-			if (PTR_ERR(inode) == -ESTALE) {
-	                        /* In case of -ESTALE, printing debugging data is already done in ext4_iget */
-				EXT4_ERROR_INODE(dir,
-					         "deleted inode referenced: %u at parent inode : %lu",
-						 ino, dir->i_ino);
-				return ERR_PTR(-EIO);
-			} else {
-				return ERR_CAST(inode);
-			}
+		if (inode == ERR_PTR(-ESTALE)) {
+			EXT4_ERROR_INODE(dir,
+					 "deleted inode referenced: %u",
+					 ino);
+			return ERR_PTR(-EIO);
 		}
 	}
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-	if (ci_name_buf[0] != '\0') {
-		ci_name.name = ci_name_buf;
-		ci_name.len = dentry->d_name.len;
-		return d_add_ci(dentry, inode, &ci_name);
-	} else
 	return d_splice_alias(inode, dentry);
-#else
-	return d_splice_alias(inode, dentry);
-#endif
 }
 
 
@@ -1152,11 +1062,7 @@ struct dentry *ext4_get_parent(struct dentry *child)
 	struct ext4_dir_entry_2 * de;
 	struct buffer_head *bh;
 
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-	bh = ext4_find_entry(child->d_inode, &dotdot, &de, NULL);
-#else
 	bh = ext4_find_entry(child->d_inode, &dotdot, &de);
-#endif
 	if (!bh)
 		return ERR_PTR(-ENOENT);
 	ino = le32_to_cpu(de->inode);
@@ -1791,7 +1697,7 @@ static void ext4_inc_count(handle_t *handle, struct inode *inode)
 	if (is_dx(inode) && inode->i_nlink > 1) {
 		/* limit is 16-bit i_links_count */
 		if (inode->i_nlink >= EXT4_LINK_MAX || inode->i_nlink == 2) {
-			inode->i_nlink = 1;
+			set_nlink(inode, 1);
 			EXT4_SET_RO_COMPAT_FEATURE(inode->i_sb,
 					      EXT4_FEATURE_RO_COMPAT_DIR_NLINK);
 		}
@@ -1804,9 +1710,8 @@ static void ext4_inc_count(handle_t *handle, struct inode *inode)
  */
 static void ext4_dec_count(handle_t *handle, struct inode *inode)
 {
-	drop_nlink(inode);
-	if (S_ISDIR(inode->i_mode) && inode->i_nlink == 0)
-		inc_nlink(inode);
+	if (!S_ISDIR(inode->i_mode) || inode->i_nlink > 2)
+		drop_nlink(inode);
 }
 
 
@@ -1834,7 +1739,7 @@ static int ext4_add_nondir(handle_t *handle,
  * If the create succeeds, we fill in the inode information
  * with d_instantiate().
  */
-static int ext4_create(struct inode *dir, struct dentry *dentry, int mode,
+static int ext4_create(struct inode *dir, struct dentry *dentry, umode_t mode,
 		       struct nameidata *nd)
 {
 	handle_t *handle;
@@ -1853,7 +1758,7 @@ retry:
 	if (IS_DIRSYNC(dir))
 		ext4_handle_sync(handle);
 
-	inode = ext4_new_inode(handle, dir, mode, &dentry->d_name, 0);
+	inode = ext4_new_inode(handle, dir, mode, &dentry->d_name, 0, NULL);
 	err = PTR_ERR(inode);
 	if (!IS_ERR(inode)) {
 		inode->i_op = &ext4_file_inode_operations;
@@ -1868,7 +1773,7 @@ retry:
 }
 
 static int ext4_mknod(struct inode *dir, struct dentry *dentry,
-		      int mode, dev_t rdev)
+		      umode_t mode, dev_t rdev)
 {
 	handle_t *handle;
 	struct inode *inode;
@@ -1889,7 +1794,7 @@ retry:
 	if (IS_DIRSYNC(dir))
 		ext4_handle_sync(handle);
 
-	inode = ext4_new_inode(handle, dir, mode, &dentry->d_name, 0);
+	inode = ext4_new_inode(handle, dir, mode, &dentry->d_name, 0, NULL);
 	err = PTR_ERR(inode);
 	if (!IS_ERR(inode)) {
 		init_special_inode(inode, inode->i_mode, rdev);
@@ -1902,7 +1807,7 @@ retry:
 	return err;
 }
 
-static int ext4_mkdir(struct inode *dir, struct dentry *dentry, int mode)
+static int ext4_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
 {
 	handle_t *handle;
 	struct inode *inode;
@@ -1927,7 +1832,7 @@ retry:
 		ext4_handle_sync(handle);
 
 	inode = ext4_new_inode(handle, dir, S_IFDIR | mode,
-			       &dentry->d_name, 0);
+			       &dentry->d_name, 0, NULL);
 	err = PTR_ERR(inode);
 	if (IS_ERR(inode))
 		goto out_stop;
@@ -1956,7 +1861,7 @@ retry:
 	de->name_len = 2;
 	strcpy(de->name, "..");
 	ext4_set_de_type(dir->i_sb, de, S_IFDIR);
-	inode->i_nlink = 2;
+	set_nlink(inode, 2);
 	BUFFER_TRACE(dir_block, "call ext4_handle_dirty_metadata");
 	err = ext4_handle_dirty_metadata(handle, inode, dir_block);
 	if (err)
@@ -2074,25 +1979,18 @@ int ext4_orphan_add(handle_t *handle, struct inode *inode)
 	struct ext4_iloc iloc;
 	int err = 0, rc;
 
-	if (!EXT4_SB(sb)->s_journal)
+	if (!ext4_handle_valid(handle))
 		return 0;
 
 	mutex_lock(&EXT4_SB(sb)->s_orphan_lock);
 	if (!list_empty(&EXT4_I(inode)->i_orphan))
 		goto out_unlock;
 
-	/* Orphan handling is only valid for files with data blocks
-	 * being truncated, or files being unlinked. */
-
-	/* @@@ FIXME: Observation from aviro:
-	 * I think I can trigger J_ASSERT in ext4_orphan_add().  We block
-	 * here (on s_orphan_lock), so race with ext4_link() which might bump
-	 * ->i_nlink. For, say it, character device. Not a regular file,
-	 * not a directory, not a symlink and ->i_nlink > 0.
-	 *
-	 * tytso, 4/25/2009: I'm not sure how that could happen;
-	 * shouldn't the fs core protect us from these sort of
-	 * unlink()/link() races?
+	/*
+	 * Orphan handling is only valid for files with data blocks
+	 * being truncated, or files being unlinked. Note that we either
+	 * hold i_mutex, or the inode can not be referenced from outside,
+	 * so i_nlink should not be bumped due to race
 	 */
 	J_ASSERT((S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
 		  S_ISLNK(inode->i_mode)) || inode->i_nlink == 0);
@@ -2155,8 +2053,8 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
 	struct ext4_iloc iloc;
 	int err = 0;
 
-	if (!EXT4_SB(inode->i_sb)->s_journal &&
-	    !(EXT4_SB(inode->i_sb)->s_mount_state & EXT4_ORPHAN_FS))
+	/* ext4_handle_valid() assumes a valid handle_t pointer */
+	if (handle && !ext4_handle_valid(handle))
 		return 0;
 
 	mutex_lock(&EXT4_SB(inode->i_sb)->s_orphan_lock);
@@ -2175,7 +2073,7 @@ int ext4_orphan_del(handle_t *handle, struct inode *inode)
 	 * transaction handle with which to update the orphan list on
 	 * disk, but we still need to remove the inode from the linked
 	 * list in memory. */
-	if (!handle)
+	if (sbi->s_journal && !handle)
 		goto out;
 
 	err = ext4_reserve_inode_write(handle, inode, &iloc);
@@ -2237,11 +2135,7 @@ static int ext4_rmdir(struct inode *dir, struct dentry *dentry)
 		return PTR_ERR(handle);
 
 	retval = -ENOENT;
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-	bh = ext4_find_entry(dir, &dentry->d_name, &de, NULL);
-#else
 	bh = ext4_find_entry(dir, &dentry->d_name, &de);
-#endif
 	if (!bh)
 		goto end_rmdir;
 
@@ -2306,11 +2200,7 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
 		ext4_handle_sync(handle);
 
 	retval = -ENOENT;
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-	bh = ext4_find_entry(dir, &dentry->d_name, &de, NULL);
-#else
 	bh = ext4_find_entry(dir, &dentry->d_name, &de);
-#endif
 	if (!bh)
 		goto end_unlink;
 
@@ -2324,7 +2214,7 @@ static int ext4_unlink(struct inode *dir, struct dentry *dentry)
 		ext4_warning(inode->i_sb,
 			     "Deleting nonexistent file (%lu), %d",
 			     inode->i_ino, inode->i_nlink);
-		inode->i_nlink = 1;
+		set_nlink(inode, 1);
 	}
 	retval = ext4_delete_entry(handle, dir, de, bh);
 	if (retval)
@@ -2389,7 +2279,7 @@ retry:
 		ext4_handle_sync(handle);
 
 	inode = ext4_new_inode(handle, dir, S_IFLNK|S_IRWXUGO,
-			       &dentry->d_name, 0);
+			       &dentry->d_name, 0, NULL);
 	err = PTR_ERR(inode);
 	if (IS_ERR(inode))
 		goto out_stop;
@@ -2426,7 +2316,7 @@ retry:
 			err = PTR_ERR(handle);
 			goto err_drop_inode;
 		}
-		inc_nlink(inode);
+		set_nlink(inode, 1);
 		err = ext4_orphan_del(handle, inode);
 		if (err) {
 			ext4_journal_stop(handle);
@@ -2526,11 +2416,7 @@ static int ext4_rename(struct inode *old_dir, struct dentry *old_dentry,
 	if (IS_DIRSYNC(old_dir) || IS_DIRSYNC(new_dir))
 		ext4_handle_sync(handle);
 
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-	old_bh = ext4_find_entry(old_dir, &old_dentry->d_name, &old_de, NULL);
-#else
 	old_bh = ext4_find_entry(old_dir, &old_dentry->d_name, &old_de);
-#endif
 	/*
 	 *  Check for inode number is _not_ due to possible IO errors.
 	 *  We might rmdir the source, keep it as pwd of some process
@@ -2543,11 +2429,7 @@ static int ext4_rename(struct inode *old_dir, struct dentry *old_dentry,
 		goto end_rename;
 
 	new_inode = new_dentry->d_inode;
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-	new_bh = ext4_find_entry(new_dir, &new_dentry->d_name, &new_de, NULL);
-#else
 	new_bh = ext4_find_entry(new_dir, &new_dentry->d_name, &new_de);
-#endif
 	if (new_bh) {
 		if (!new_inode) {
 			brelse(new_bh);
@@ -2625,11 +2507,7 @@ static int ext4_rename(struct inode *old_dir, struct dentry *old_dentry,
 		struct buffer_head *old_bh2;
 		struct ext4_dir_entry_2 *old_de2;
 
-#ifdef CONFIG_SDCARD_FS_CI_SEARCH
-		old_bh2 = ext4_find_entry(old_dir, &old_dentry->d_name, &old_de2, NULL);
-#else
 		old_bh2 = ext4_find_entry(old_dir, &old_dentry->d_name, &old_de2);
-#endif
 		if (old_bh2) {
 			retval = ext4_delete_entry(handle, old_dir,
 						   old_de2, old_bh2);
@@ -2661,7 +2539,7 @@ static int ext4_rename(struct inode *old_dir, struct dentry *old_dentry,
 		if (new_inode) {
 			/* checked empty_dir above, can't have another parent,
 			 * ext4_dec_count() won't work for many-linked dirs */
-			new_inode->i_nlink = 0;
+			clear_nlink(new_inode);
 		} else {
 			ext4_inc_count(handle, new_dir);
 			ext4_update_dx_flag(new_dir);
@@ -2708,7 +2586,7 @@ const struct inode_operations ext4_dir_inode_operations = {
 	.listxattr	= ext4_listxattr,
 	.removexattr	= generic_removexattr,
 #endif
-	.check_acl	= ext4_check_acl,
+	.get_acl	= ext4_get_acl,
 	.fiemap         = ext4_fiemap,
 };
 
@@ -2720,5 +2598,5 @@ const struct inode_operations ext4_special_inode_operations = {
 	.listxattr	= ext4_listxattr,
 	.removexattr	= generic_removexattr,
 #endif
-	.check_acl	= ext4_check_acl,
+	.get_acl	= ext4_get_acl,
 };

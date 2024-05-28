@@ -435,7 +435,7 @@ int usb_sg_init(struct usb_sg_request *io, struct usb_device *dev,
 
 			len = sg->length;
 			if (length) {
-				len = min_t(unsigned, len, length);
+				len = min_t(size_t, len, length);
 				length -= len;
 				if (length == 0)
 					io->entries = i + 1;
@@ -1685,8 +1685,6 @@ int usb_set_configuration(struct usb_device *dev, int configuration)
 	struct usb_interface **new_interfaces = NULL;
 	struct usb_hcd *hcd = bus_to_hcd(dev->bus);
 	int n, nintf;
-	char *unknown_pid[2] = {"USB_HOST_UNKNOWN_PID=TRUE", NULL};
-	char **uevent_envp = NULL;
 
 	if (dev->authorized == 0 || configuration == -1)
 		configuration = 0;
@@ -1849,113 +1847,6 @@ free_interfaces:
 	if (cp->string == NULL &&
 			!(dev->quirks & USB_QUIRK_CONFIG_INTF_STRINGS))
 		cp->string = usb_cache_string(dev, cp->desc.iConfiguration);
-/* Uncomment this define to enable the HS Electrical Test support */
-#define DWC_HS_ELECT_TST 1
-#ifdef DWC_HS_ELECT_TST
-		/* Here we implement the HS Electrical Test support. The
-		 * tester uses a vendor ID of 0x1A0A to indicate we should
-		 * run a special test sequence. The product ID tells us
-		 * which sequence to run. We invoke the test sequence by
-		 * sending a non-standard SetFeature command to our root
-		 * hub port. Our dwc_otg_hcd_hub_control() routine will
-		 * recognize the command and perform the desired test
-		 * sequence.
-		 */
-		if (dev->descriptor.idVendor == 0x1A0A) {
-			/* HSOTG Electrical Test */
-			dev_warn(&dev->dev, "VID from HSOTG Electrical Test Fixture\n");
-
-			if (dev->bus && dev->bus->root_hub) {
-				struct usb_device *hdev = dev->bus->root_hub;
-				dev_warn(&dev->dev, "Got PID 0x%x\n", dev->descriptor.idProduct);
-
-				switch (dev->descriptor.idProduct) {
-				case 0x0101:	/* TEST_SE0_NAK */
-					dev_warn(&dev->dev, "TEST_SE0_NAK\n");
-					usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT,
-							USB_PORT_FEAT_TEST, 0x300, NULL, 0, HZ);
-					break;
-
-				case 0x0102:	/* TEST_J */
-					dev_warn(&dev->dev, "TEST_J\n");
-					usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT,
-							USB_PORT_FEAT_TEST, 0x100, NULL, 0, HZ);
-					break;
-
-				case 0x0103:	/* TEST_K */
-					dev_warn(&dev->dev, "TEST_K\n");
-					usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT,
-							USB_PORT_FEAT_TEST, 0x200, NULL, 0, HZ);
-					break;
-
-				case 0x0104:	/* TEST_PACKET */
-					dev_warn(&dev->dev, "TEST_PACKET\n");
-					usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT,
-							USB_PORT_FEAT_TEST, 0x400, NULL, 0, HZ);
-					break;
-
-				case 0x0105:	/* TEST_FORCE_ENABLE */
-					dev_warn(&dev->dev, "TEST_FORCE_ENABLE\n");
-					usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT,
-							USB_PORT_FEAT_TEST, 0x500, NULL, 0, HZ);
-					break;
-
-				case 0x0106:	/* HS_HOST_PORT_SUSPEND_RESUME */
-					dev_warn(&dev->dev, "HS_HOST_PORT_SUSPEND_RESUME\n");
-					usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT,
-							USB_PORT_FEAT_TEST, 0x600, NULL, 0, 40 * HZ);
-					break;
-
-				case 0x0107:	/* SINGLE_STEP_GET_DEVICE_DESCRIPTOR setup */
-					dev_warn(&dev->dev, "SINGLE_STEP_GET_DEVICE_DESCRIPTOR setup\n");
-					usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT,
-							USB_PORT_FEAT_TEST, 0x700, NULL, 0, 40 * HZ);
-					break;
-
-				case 0x0108:	/* SINGLE_STEP_GET_DEVICE_DESCRIPTOR execute */
-					dev_warn(&dev->dev, "SINGLE_STEP_GET_DEVICE_DESCRIPTOR execute\n");
-					usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT,
-							USB_PORT_FEAT_TEST, 0x800, NULL, 0, 40 * HZ);
-					break;
-
-#ifdef CONFIG_USB_OTG
-				case 0x0200: /* TEST DEVICE REQUIRED BY COMPLIANCE TEST */
-					dev_warn(&dev->dev, "TEST DEVICE REQUIRED BY COMPLIANCE TEST\n");
-					hcd->self.otg_vbus_off = dev->descriptor.bcdDevice & 0x01;
-					if (hcd->self.otg_vbus_off)
-						usb_control_msg(hdev, usb_sndctrlpipe(hdev, 0),
-							USB_REQ_SET_FEATURE, USB_RT_PORT, USB_PORT_FEAT_TEST, 0x1000,
-							NULL, 0, 1000);
-					else if (hcd->self.is_b_host) {
-						/* Suspend within TTST_SUSP after HNP */
-						usb_host_suspend_test_device(dev);
-					} else
-						schedule_delayed_work(&dev->bus->maint_conf_session_for_td,
-							msecs_to_jiffies(HOST_VBOFF));
-					break;
-#endif
-				default:
-
-					uevent_envp = unknown_pid;
-					if (kobject_uevent_env(&dev->dev.kobj,
-						    KOBJ_CHANGE, uevent_envp)) {
-						dev_warn(&dev->dev, "Failed to send uevent for UNKNOWN PID from test fixture\n");
-					}
-
-					dev_warn(&dev->dev, "UNKNOWN PID from test fixture\n");
-					break;
-				}
-			}
-		}
-#endif /* DWC_HS_ELECT_TST */
 
 	/* Now that all the interfaces are set up, register them
 	 * to trigger binding of drivers to interfaces.  probe()

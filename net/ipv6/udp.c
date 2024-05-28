@@ -238,7 +238,7 @@ exact_match:
 	return result;
 }
 
-static struct sock *__udp6_lib_lookup(struct net *net,
+struct sock *__udp6_lib_lookup(struct net *net,
 				      const struct in6_addr *saddr, __be16 sport,
 				      const struct in6_addr *daddr, __be16 dport,
 				      int dif, struct udp_table *udptable)
@@ -305,6 +305,7 @@ begin:
 	rcu_read_unlock();
 	return result;
 }
+EXPORT_SYMBOL_GPL(__udp6_lib_lookup);
 
 static struct sock *__udp6_lib_lookup_skb(struct sk_buff *skb,
 					  __be16 sport, __be16 dport,
@@ -341,7 +342,7 @@ int udpv6_recvmsg(struct kiocb *iocb, struct sock *sk,
 	struct inet_sock *inet = inet_sk(sk);
 	struct sk_buff *skb;
 	unsigned int ulen, copied;
-	int peeked;
+	int peeked, off = 0;
 	int err;
 	int is_udplite = IS_UDPLITE(sk);
 	int is_udp4;
@@ -358,7 +359,7 @@ int udpv6_recvmsg(struct kiocb *iocb, struct sock *sk,
 
 try_again:
 	skb = __skb_recv_datagram(sk, flags | (noblock ? MSG_DONTWAIT : 0),
-				  &peeked, &err);
+				  &peeked, &off, &err);
 	if (!skb)
 		goto out;
 
@@ -386,8 +387,7 @@ try_again:
 		err = skb_copy_datagram_iovec(skb, sizeof(struct udphdr),
 					      msg->msg_iov, copied       );
 	else {
-		err = skb_copy_and_csum_datagram_iovec(skb, sizeof(struct udphdr),
-						       msg->msg_iov, copied);
+		err = skb_copy_and_csum_datagram_iovec(skb, sizeof(struct udphdr), msg->msg_iov);
 		if (err == -EINVAL)
 			goto csum_copy_err;
 	}
@@ -419,8 +419,7 @@ try_again:
 			ipv6_addr_set_v4mapped(ip_hdr(skb)->saddr,
 					       &sin6->sin6_addr);
 		else {
-			ipv6_addr_copy(&sin6->sin6_addr,
-				       &ipv6_hdr(skb)->saddr);
+			sin6->sin6_addr = ipv6_hdr(skb)->saddr;
 			if (ipv6_addr_type(&sin6->sin6_addr) & IPV6_ADDR_LINKLOCAL)
 				sin6->sin6_scope_id = IP6CB(skb)->iif;
 		}
@@ -455,8 +454,10 @@ csum_copy_err:
 	}
 	unlock_sock_fast(sk, slow);
 
-	/* starting over for a new packet, but check if we need to yield */
-	cond_resched();
+	if (noblock)
+		return -EAGAIN;
+
+	/* starting over for a new packet */
 	msg->msg_flags &= ~MSG_TRUNC;
 	goto try_again;
 }
@@ -509,7 +510,7 @@ int udpv6_queue_rcv_skb(struct sock * sk, struct sk_buff *skb)
 	int is_udplite = IS_UDPLITE(sk);
 
 	if (!ipv6_addr_any(&inet6_sk(sk)->daddr))
-		sock_rps_save_rxhash(sk, skb->rxhash);
+		sock_rps_save_rxhash(sk, skb);
 
 	if (!xfrm6_policy_check(sk, XFRM_POLICY_IN, skb))
 		goto drop;
@@ -533,12 +534,14 @@ int udpv6_queue_rcv_skb(struct sock * sk, struct sk_buff *skb)
 		}
 	}
 
-	if (rcu_dereference_raw(sk->sk_filter)) {
+	if (rcu_access_pointer(sk->sk_filter)) {
 		if (udp_lib_checksum_complete(skb))
 			goto drop;
 	}
 
-	if ((rc = ip_queue_rcv_skb(sk, skb)) < 0) {
+	skb_dst_drop(skb);
+	rc = sock_queue_rcv_skb(sk, skb);
+	if (rc < 0) {
 		/* Note that an ENOMEM error is charged twice */
 		if (rc == -ENOMEM)
 			UDP6_INC_STATS_BH(sock_net(sk),
@@ -1089,15 +1092,14 @@ do_udp_sendmsg:
 		fl6.flowi6_oif = np->sticky_pktinfo.ipi6_ifindex;
 
 	fl6.flowi6_mark = sk->sk_mark;
-	fl6.flowi6_uid = sock_i_uid(sk);
 
 	if (msg->msg_controllen) {
 		opt = &opt_space;
 		memset(opt, 0, sizeof(struct ipv6_txoptions));
 		opt->tot_len = sizeof(*opt);
 
-		err = datagram_send_ctl(sock_net(sk), msg, &fl6, opt, &hlimit,
-					&tclass, &dontfrag);
+		err = datagram_send_ctl(sock_net(sk), sk, msg, &fl6, opt,
+					&hlimit, &tclass, &dontfrag);
 		if (err < 0) {
 			fl6_sock_release(flowlabel);
 			return err;
@@ -1119,11 +1121,11 @@ do_udp_sendmsg:
 
 	fl6.flowi6_proto = sk->sk_protocol;
 	if (!ipv6_addr_any(daddr))
-		ipv6_addr_copy(&fl6.daddr, daddr);
+		fl6.daddr = *daddr;
 	else
 		fl6.daddr.s6_addr[15] = 0x1; /* :: means loopback (BSD'ism) */
 	if (ipv6_addr_any(&fl6.saddr) && !ipv6_addr_any(&np->saddr))
-		ipv6_addr_copy(&fl6.saddr, &np->saddr);
+		fl6.saddr = np->saddr;
 	fl6.fl6_sport = inet->inet_sport;
 
 	final_p = fl6_update_dst(&fl6, opt, &final);
@@ -1133,7 +1135,8 @@ do_udp_sendmsg:
 	if (!fl6.flowi6_oif && ipv6_addr_is_multicast(&fl6.daddr)) {
 		fl6.flowi6_oif = np->mcast_oif;
 		connected = 0;
-	}
+	} else if (!fl6.flowi6_oif)
+		fl6.flowi6_oif = np->ucast_oif;
 
 	security_sk_classify_flow(sk, flowi6_to_flowi(&fl6));
 
@@ -1304,7 +1307,8 @@ static int udp6_ufo_send_check(struct sk_buff *skb)
 	return 0;
 }
 
-static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb, u32 features)
+static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb,
+	netdev_features_t features)
 {
 	struct sk_buff *segs = ERR_PTR(-EINVAL);
 	unsigned int mss;
@@ -1315,7 +1319,6 @@ static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb, u32 features)
 	u8 frag_hdr_sz = sizeof(struct frag_hdr);
 	int offset;
 	__wsum csum;
-	struct rt6_info *rt = (struct rt6_info *)skb_dst(skb);
 
 	mss = skb_shinfo(skb)->gso_size;
 	if (unlikely(skb->len <= mss))
@@ -1366,8 +1369,7 @@ static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb, u32 features)
 	fptr = (struct frag_hdr *)(skb_network_header(skb) + unfrag_ip6hlen);
 	fptr->nexthdr = nexthdr;
 	fptr->reserved = 0;
-	ipv6_select_ident(fptr,
-			  rt ? &rt->rt6i_dst.addr : &ipv6_hdr(skb)->daddr);
+	ipv6_select_ident(fptr, (struct rt6_info *)skb_dst(skb));
 
 	/* Fragment the skb. ipv6 header and the remaining fields of the
 	 * fragment header are updated in ipv6_gso_segment()
@@ -1432,13 +1434,19 @@ int udp6_seq_show(struct seq_file *seq, void *v)
 	return 0;
 }
 
+static const struct file_operations udp6_afinfo_seq_fops = {
+	.owner    = THIS_MODULE,
+	.open     = udp_seq_open,
+	.read     = seq_read,
+	.llseek   = seq_lseek,
+	.release  = seq_release_net
+};
+
 static struct udp_seq_afinfo udp6_seq_afinfo = {
 	.name		= "udp6",
 	.family		= AF_INET6,
 	.udp_table	= &udp_table,
-	.seq_fops	= {
-		.owner	=	THIS_MODULE,
-	},
+	.seq_fops	= &udp6_afinfo_seq_fops,
 	.seq_ops	= {
 		.show		= udp6_seq_show,
 	},

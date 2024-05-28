@@ -11,16 +11,18 @@ fhci-y += fhci-mem.o fhci-tds.o fhci-sched.o
 
 fhci-$(CONFIG_FHCI_DEBUG) += fhci-dbg.o
 
-xhci-hcd-y := xhci.o xhci-mem.o xhci-pci.o
+xhci-hcd-y := xhci.o xhci-mem.o
 xhci-hcd-y += xhci-ring.o xhci-hub.o xhci-dbg.o
+xhci-hcd-$(CONFIG_PCI)	+= xhci-pci.o
+
+ifneq ($(CONFIG_USB_XHCI_PLATFORM), )
+	xhci-hcd-y		+= xhci-plat.o
+endif
 
 obj-$(CONFIG_USB_WHCI_HCD)	+= whci/
 
 obj-$(CONFIG_PCI)		+= pci-quirks.o
 
-obj-$(CONFIG_USB_BCM_ISLAND)	+= bcm-island.o
-obj-$(CONFIG_USB_BCM_CAPRI)     += bcm-capri.o
-obj-$(CONFIG_USB_BCM_CAPRI_HSIC) +=  bcm-capri-hsic.o
 obj-$(CONFIG_USB_EHCI_HCD)	+= ehci-hcd.o
 obj-$(CONFIG_USB_OXU210HP_HCD)	+= oxu210hp-hcd.o
 obj-$(CONFIG_USB_ISP116X_HCD)	+= isp116x-hcd.o
@@ -38,8 +40,4 @@ obj-$(CONFIG_USB_HWA_HCD)	+= hwa-hc.o
 obj-$(CONFIG_USB_IMX21_HCD)	+= imx21-hcd.o
 obj-$(CONFIG_USB_FSL_MPH_DR_OF)	+= fsl-mph-dr-of.o
 obj-$(CONFIG_USB_OCTEON2_COMMON) += octeon2-common.o
-
-ifneq ($(CONFIG_DWCOTG_ROOT),)
-obj-y        += $(CONFIG_DWCOTG_ROOT)/sw/linux/2.90a/driver/
-obj-y        += $(CONFIG_DWCOTG_ROOT)/sw/linux/2.90a/dwc_common_port/
-endif
+obj-$(CONFIG_MIPS_ALCHEMY)	+= alchemy-common.o

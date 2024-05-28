@@ -185,13 +185,7 @@ struct lock_chain {
 	u64				chain_key;
 };
 
-#ifdef CONFIG_ARCH_CAPRI
-/* lockdep can't be used in Android capri due to big size of kernel */
-#define MAX_LOCKDEP_KEYS_BITS		12
-#else
 #define MAX_LOCKDEP_KEYS_BITS		13
-#endif
-
 /*
  * Subtract one because we offset hlock->class_idx by 1 in order
  * to make 0 mean no class. This avoids overflowing the class_idx
@@ -349,6 +343,8 @@ extern void lockdep_trace_alloc(gfp_t mask);
 
 #define lockdep_assert_held(l)	WARN_ON(debug_locks && !lockdep_is_held(l))
 
+#define lockdep_recursing(tsk)	((tsk)->lockdep_recursion)
+
 #else /* !LOCKDEP */
 
 static inline void lockdep_off(void)
@@ -396,7 +392,9 @@ struct lock_class_key { };
 
 #define lockdep_depth(tsk)	(0)
 
-#define lockdep_assert_held(l)			do { (void)(l); } while (0)
+#define lockdep_assert_held(l)			do { } while (0)
+
+#define lockdep_recursing(tsk)			(0)
 
 #endif /* !LOCKDEP */
 
@@ -554,7 +552,7 @@ do {									\
 #endif
 
 #ifdef CONFIG_PROVE_RCU
-extern void lockdep_rcu_dereference(const char *file, const int line);
+void lockdep_rcu_suspicious(const char *file, const int line, const char *s);
 #endif
 
 #endif /* __LINUX_LOCKDEP_H */

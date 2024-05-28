@@ -6,6 +6,7 @@
 #define PAGE_FLAGS_H
 
 #include <linux/types.h>
+#include <linux/bug.h>
 #ifndef __GENERATING_BOUNDS_H
 #include <linux/mm_types.h>
 #include <generated/bounds.h>
@@ -51,9 +52,6 @@
  * PG_hwpoison indicates that a page got corrupted in hardware and contains
  * data with incorrect ECC bits that triggered a machine check. Accessing is
  * not safe since it may cause another machine check. Don't touch!
- *
- * PG_wasactive reflects that a page previously was promoted to active status.
- * Such pages should be considered higher priority for cleancache backends.
  */
 
 /*
@@ -110,12 +108,6 @@ enum pageflags {
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
 	PG_compound_lock,
 #endif
-#ifdef CONFIG_CMA
-	PG_cma,			/* Sticky flag to track CMA pages */
-#endif
-#ifdef CONFIG_CLEANCACHE
-	PG_was_active,
-#endif
 	__NR_PAGEFLAGS,
 
 	/* Filesystems */
@@ -133,9 +125,6 @@ enum pageflags {
 
 	/* SLOB */
 	PG_slob_free = PG_private,
-
-	/* SLUB */
-	PG_slub_frozen = PG_active,
 };
 
 #ifndef __GENERATING_BOUNDS_H
@@ -144,7 +133,7 @@ enum pageflags {
  * Macros to create function definitions for page flags
  */
 #define TESTPAGEFLAG(uname, lname)					\
-static inline int Page##uname(struct page *page) 			\
+static inline int Page##uname(const struct page *page)			\
 			{ return test_bit(PG_##lname, &page->flags); }
 
 #define SETPAGEFLAG(uname, lname)					\
@@ -182,7 +171,7 @@ static inline int __TestClearPage##uname(struct page *page)		\
 	__SETPAGEFLAG(uname, lname)  __CLEARPAGEFLAG(uname, lname)
 
 #define PAGEFLAG_FALSE(uname) 						\
-static inline int Page##uname(struct page *page) 			\
+static inline int Page##uname(const struct page *page)			\
 			{ return 0; }
 
 #define TESTSCFLAG(uname, lname)					\
@@ -220,12 +209,6 @@ PAGEFLAG(Reserved, reserved) __CLEARPAGEFLAG(Reserved, reserved)
 PAGEFLAG(SwapBacked, swapbacked) __CLEARPAGEFLAG(SwapBacked, swapbacked)
 
 __PAGEFLAG(SlobFree, slob_free)
-
-__PAGEFLAG(SlubFrozen, slub_frozen)
-
-#ifdef CONFIG_CLEANCACHE
-PAGEFLAG(WasActive, was_active)
-#endif
 
 /*
  * Private page markings that may be used by the filesystem that owns the page
@@ -289,14 +272,6 @@ TESTSCFLAG(HWPoison, hwpoison)
 #else
 PAGEFLAG_FALSE(HWPoison)
 #define __PG_HWPOISON 0
-#endif
-
-#ifdef CONFIG_CMA
-PAGEFLAG(Cma, cma)
-#else
-PAGEFLAG_FALSE(Cma)
-SETPAGEFLAG_NOOP(Cma)
-CLEARPAGEFLAG_NOOP(Cma)
 #endif
 
 u64 stable_page_flags(struct page *page);
@@ -446,9 +421,24 @@ static inline int PageTransHuge(struct page *page)
 	return PageHead(page);
 }
 
+/*
+ * PageTransCompound returns true for both transparent huge pages
+ * and hugetlbfs pages, so it should only be called when it's known
+ * that hugetlbfs pages aren't involved.
+ */
 static inline int PageTransCompound(struct page *page)
 {
 	return PageCompound(page);
+}
+
+/*
+ * PageTransTail returns true for both transparent huge pages
+ * and hugetlbfs pages, so it should only be called when it's known
+ * that hugetlbfs pages aren't involved.
+ */
+static inline int PageTransTail(struct page *page)
+{
+	return PageTail(page);
 }
 
 #else
@@ -459,6 +449,11 @@ static inline int PageTransHuge(struct page *page)
 }
 
 static inline int PageTransCompound(struct page *page)
+{
+	return 0;
+}
+
+static inline int PageTransTail(struct page *page)
 {
 	return 0;
 }
@@ -493,12 +488,7 @@ static inline int PageTransCompound(struct page *page)
  * Pages being prepped should not have any flags set.  It they are set,
  * there has been a kernel bug or struct page corruption.
  */
-#ifdef CONFIG_CMA
-#define PAGE_FLAGS_CHECK_AT_PREP	(((1 << NR_PAGEFLAGS) - 1) & \
-						~(1 << PG_cma))
-#else
 #define PAGE_FLAGS_CHECK_AT_PREP	((1 << NR_PAGEFLAGS) - 1)
-#endif
 
 #define PAGE_FLAGS_PRIVATE				\
 	(1 << PG_private | 1 << PG_private_2)

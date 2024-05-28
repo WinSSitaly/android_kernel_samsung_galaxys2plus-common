@@ -14,7 +14,6 @@
 #include <linux/moduleparam.h>
 #include <linux/blkpg.h>
 #include <linux/bio.h>
-#include <linux/buffer_head.h>
 #include <linux/mempool.h>
 #include <linux/slab.h>
 #include <linux/idr.h>
@@ -24,6 +23,16 @@
 #include <trace/events/block.h>
 
 #define DM_MSG_PREFIX "core"
+
+#ifdef CONFIG_PRINTK
+/*
+ * ratelimit state to be used in DMXXX_LIMIT().
+ */
+DEFINE_RATELIMIT_STATE(dm_ratelimit_state,
+		       DEFAULT_RATELIMIT_INTERVAL,
+		       DEFAULT_RATELIMIT_BURST);
+EXPORT_SYMBOL(dm_ratelimit_state);
+#endif
 
 /*
  * Cookies are numeric values sent with CHANGE and REMOVE
@@ -130,6 +139,8 @@ struct mapped_device {
 	/* Protect queue and type against concurrent access. */
 	struct mutex type_lock;
 
+	struct target_type *immutable_target_type;
+
 	struct gendisk *disk;
 	char name[16];
 
@@ -179,9 +190,6 @@ struct mapped_device {
 
 	/* forced geometry settings */
 	struct hd_geometry geometry;
-
-	/* For saving the address of __make_request for request based dm */
-	make_request_fn *saved_make_request_fn;
 
 	/* sysfs handle */
 	struct kobject kobj;
@@ -1018,6 +1026,7 @@ static void __map_bio(struct dm_target *ti, struct bio *clone,
 		/*
 		 * Store bio_set for cleanup.
 		 */
+		clone->bi_end_io = NULL;
 		clone->bi_private = md->bs;
 		bio_put(clone);
 		free_tio(md, tio);
@@ -1401,7 +1410,7 @@ out:
  * The request function that just remaps the bio built up by
  * dm_merge_bvec.
  */
-static int _dm_request(struct request_queue *q, struct bio *bio)
+static void _dm_request(struct request_queue *q, struct bio *bio)
 {
 	int rw = bio_data_dir(bio);
 	struct mapped_device *md = q->queuedata;
@@ -1422,19 +1431,12 @@ static int _dm_request(struct request_queue *q, struct bio *bio)
 			queue_io(md, bio);
 		else
 			bio_io_error(bio);
-		return 0;
+		return;
 	}
 
 	__split_and_process_bio(md, bio);
 	up_read(&md->io_lock);
-	return 0;
-}
-
-static int dm_make_request(struct request_queue *q, struct bio *bio)
-{
-	struct mapped_device *md = q->queuedata;
-
-	return md->saved_make_request_fn(q, bio); /* call __make_request() */
+	return;
 }
 
 static int dm_request_based(struct mapped_device *md)
@@ -1442,14 +1444,14 @@ static int dm_request_based(struct mapped_device *md)
 	return blk_queue_stackable(md->queue);
 }
 
-static int dm_request(struct request_queue *q, struct bio *bio)
+static void dm_request(struct request_queue *q, struct bio *bio)
 {
 	struct mapped_device *md = q->queuedata;
 
 	if (dm_request_based(md))
-		return dm_make_request(q, bio);
-
-	return _dm_request(q, bio);
+		blk_queue_bio(q, bio);
+	else
+		_dm_request(q, bio);
 }
 
 void dm_dispatch_request(struct request *rq)
@@ -2112,6 +2114,8 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
 	write_lock_irqsave(&md->map_lock, flags);
 	old_map = md->map;
 	md->map = t;
+	md->immutable_target_type = dm_table_get_immutable_target_type(t);
+
 	dm_table_set_restrictions(t, q, limits);
 	if (merge_is_optional)
 		set_bit(DMF_MERGE_IS_OPTIONAL, &md->flags);
@@ -2182,6 +2186,11 @@ unsigned dm_get_md_type(struct mapped_device *md)
 	return md->type;
 }
 
+struct target_type *dm_get_immutable_target_type(struct mapped_device *md)
+{
+	return md->immutable_target_type;
+}
+
 /*
  * Fully initialize a request-based queue (->elevator, ->request_fn, etc).
  */
@@ -2198,7 +2207,6 @@ static int dm_init_request_based_queue(struct mapped_device *md)
 		return 0;
 
 	md->queue = q;
-	md->saved_make_request_fn = md->queue->make_request_fn;
 	dm_init_md_queue(md);
 	blk_queue_softirq_done(md->queue, dm_softirq_done);
 	blk_queue_prep_rq(md->queue, dm_prep_fn);
@@ -2257,6 +2265,7 @@ struct mapped_device *dm_get_md(dev_t dev)
 
 	return md;
 }
+EXPORT_SYMBOL_GPL(dm_get_md);
 
 void *dm_get_mdptr(struct mapped_device *md)
 {
@@ -2342,7 +2351,6 @@ static int dm_wait_for_completion(struct mapped_device *md, int interruptible)
 	while (1) {
 		set_current_state(interruptible);
 
-		smp_mb();
 		if (!md_in_flight(md))
 			break;
 

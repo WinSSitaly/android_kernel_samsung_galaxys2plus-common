@@ -257,20 +257,20 @@ struct log_c {
  */
 static inline int log_test_bit(uint32_t *bs, unsigned bit)
 {
-	return test_bit_le(bit, (unsigned long *) bs) ? 1 : 0;
+	return test_bit_le(bit, bs) ? 1 : 0;
 }
 
 static inline void log_set_bit(struct log_c *l,
 			       uint32_t *bs, unsigned bit)
 {
-	__test_and_set_bit_le(bit, (unsigned long *) bs);
+	__set_bit_le(bit, bs);
 	l->touched_cleaned = 1;
 }
 
 static inline void log_clear_bit(struct log_c *l,
 				 uint32_t *bs, unsigned bit)
 {
-	__test_and_clear_bit_le(bit, (unsigned long *) bs);
+	__clear_bit_le(bit, bs);
 	l->touched_dirtied = 1;
 }
 
@@ -369,6 +369,7 @@ static int create_log_context(struct dm_dirty_log *log, struct dm_target *ti,
 	unsigned int region_count;
 	size_t bitset_size, buf_size;
 	int r;
+	char dummy;
 
 	if (argc < 1 || argc > 2) {
 		DMWARN("wrong number of arguments to dirty region log");
@@ -387,7 +388,7 @@ static int create_log_context(struct dm_dirty_log *log, struct dm_target *ti,
 		}
 	}
 
-	if (sscanf(argv[0], "%u", &region_size) != 1 ||
+	if (sscanf(argv[0], "%u%c", &region_size, &dummy) != 1 ||
 	    !_check_region_size(ti, region_size)) {
 		DMWARN("invalid region size %s", argv[0]);
 		return -EINVAL;
@@ -744,8 +745,7 @@ static int core_get_resync_work(struct dm_dirty_log *log, region_t *region)
 		return 0;
 
 	do {
-		*region = find_next_zero_bit_le(
-					     (unsigned long *) lc->sync_bits,
+		*region = find_next_zero_bit_le(lc->sync_bits,
 					     lc->region_count,
 					     lc->sync_search);
 		lc->sync_search = *region + 1;

@@ -26,26 +26,16 @@
 #include <linux/init.h>
 #include <linux/sched.h>
 
-#include <asm/atomic.h>
+#include <linux/atomic.h>
 #include <asm/cacheflush.h>
-#include <asm/system.h>
+#include <asm/exception.h>
 #include <asm/unistd.h>
 #include <asm/traps.h>
 #include <asm/unwind.h>
 #include <asm/tls.h>
+#include <asm/system_misc.h>
 
 #include "signal.h"
-
-#ifdef CONFIG_BCM_KNLLOG_SUPPORT
-#include <linux/broadcom/knllog.h>
-
-static int __init logstart(void)
-{
-	knllog_init();
-	return 0;
-}
-subsys_initcall(logstart);
-#endif
 
 static const char *handler[]= { "prefetch abort", "data abort", "address exception", "interrupt" };
 
@@ -237,6 +227,11 @@ void show_stack(struct task_struct *tsk, unsigned long *sp)
 #else
 #define S_SMP ""
 #endif
+#ifdef CONFIG_THUMB2_KERNEL
+#define S_ISA " THUMB2"
+#else
+#define S_ISA " ARM"
+#endif
 
 static int __die(const char *str, int err, struct thread_info *thread, struct pt_regs *regs)
 {
@@ -244,8 +239,8 @@ static int __die(const char *str, int err, struct thread_info *thread, struct pt
 	static int die_counter;
 	int ret;
 
-	printk(KERN_EMERG "Internal error: %s: %x [#%d]" S_PREEMPT S_SMP "\n",
-	       str, err, ++die_counter);
+	printk(KERN_EMERG "Internal error: %s: %x [#%d]" S_PREEMPT S_SMP
+	       S_ISA "\n", str, err, ++die_counter);
 
 	/* trap and error numbers are mostly meaningless on ARM */
 	ret = notify_die(DIE_OOPS, str, regs, err, tsk->thread.trap_no, SIGSEGV);
@@ -267,7 +262,7 @@ static int __die(const char *str, int err, struct thread_info *thread, struct pt
 	return ret;
 }
 
-static DEFINE_SPINLOCK(die_lock);
+static DEFINE_RAW_SPINLOCK(die_lock);
 
 /*
  * This function is protected against re-entrancy.
@@ -280,13 +275,9 @@ void die(const char *str, struct pt_regs *regs, int err)
 
 	oops_enter();
 
-	spin_lock_irq(&die_lock);
+	raw_spin_lock_irq(&die_lock);
 	console_verbose();
 	bust_spinlocks(1);
-#ifdef CONFIG_BCM_KNLLOG_SUPPORT
-	local_irq_disable();
-	knllog_dump();
-#endif
 	if (!user_mode(regs))
 		bug_type = report_bug(regs->ARM_pc, regs);
 	if (bug_type != BUG_TRAP_TYPE_NONE)
@@ -298,12 +289,11 @@ void die(const char *str, struct pt_regs *regs, int err)
 
 	bust_spinlocks(0);
 	add_taint(TAINT_DIE);
-	spin_unlock_irq(&die_lock);
+	raw_spin_unlock_irq(&die_lock);
 	oops_exit();
 
-	if (in_interrupt()) {
+	if (in_interrupt())
 		panic("Fatal exception in interrupt");
-	}
 	if (panic_on_oops)
 		panic("Fatal exception");
 	if (ret != NOTIFY_STOP)
@@ -342,24 +332,24 @@ int is_valid_bugaddr(unsigned long pc)
 #endif
 
 static LIST_HEAD(undef_hook);
-static DEFINE_SPINLOCK(undef_lock);
+static DEFINE_RAW_SPINLOCK(undef_lock);
 
 void register_undef_hook(struct undef_hook *hook)
 {
 	unsigned long flags;
 
-	spin_lock_irqsave(&undef_lock, flags);
+	raw_spin_lock_irqsave(&undef_lock, flags);
 	list_add(&hook->node, &undef_hook);
-	spin_unlock_irqrestore(&undef_lock, flags);
+	raw_spin_unlock_irqrestore(&undef_lock, flags);
 }
 
 void unregister_undef_hook(struct undef_hook *hook)
 {
 	unsigned long flags;
 
-	spin_lock_irqsave(&undef_lock, flags);
+	raw_spin_lock_irqsave(&undef_lock, flags);
 	list_del(&hook->node);
-	spin_unlock_irqrestore(&undef_lock, flags);
+	raw_spin_unlock_irqrestore(&undef_lock, flags);
 }
 
 static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
@@ -368,56 +358,53 @@ static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
 	unsigned long flags;
 	int (*fn)(struct pt_regs *regs, unsigned int instr) = NULL;
 
-	spin_lock_irqsave(&undef_lock, flags);
+	raw_spin_lock_irqsave(&undef_lock, flags);
 	list_for_each_entry(hook, &undef_hook, node)
 		if ((instr & hook->instr_mask) == hook->instr_val &&
 		    (regs->ARM_cpsr & hook->cpsr_mask) == hook->cpsr_val)
 			fn = hook->fn;
-	spin_unlock_irqrestore(&undef_lock, flags);
+	raw_spin_unlock_irqrestore(&undef_lock, flags);
 
 	return fn ? fn(regs, instr) : 1;
 }
 
 asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
 {
-	unsigned int correction = thumb_mode(regs) ? 2 : 4;
 	unsigned int instr;
 	siginfo_t info;
 	void __user *pc;
 
-	/*
-	 * According to the ARM ARM, PC is 2 or 4 bytes ahead,
-	 * depending whether we're in Thumb mode or not.
-	 * Correct this offset.
-	 */
-	regs->ARM_pc -= correction;
-
 	pc = (void __user *)instruction_pointer(regs);
 
 	if (processor_mode(regs) == SVC_MODE) {
-		instr = *(u32 *) pc;
+#ifdef CONFIG_THUMB2_KERNEL
+		if (thumb_mode(regs)) {
+			instr = ((u16 *)pc)[0];
+			if (is_wide_instruction(instr)) {
+				instr <<= 16;
+				instr |= ((u16 *)pc)[1];
+			}
+		} else
+#endif
+			instr = *(u32 *) pc;
 	} else if (thumb_mode(regs)) {
-		get_user(instr, (u16 __user *)pc);
-	} else {
-		get_user(instr, (u32 __user *)pc);
+		if (get_user(instr, (u16 __user *)pc))
+			goto die_sig;
+		if (is_wide_instruction(instr)) {
+			unsigned int instr2;
+			if (get_user(instr2, (u16 __user *)pc+1))
+				goto die_sig;
+			instr <<= 16;
+			instr |= instr2;
+		}
+	} else if (get_user(instr, (u32 __user *)pc)) {
+		goto die_sig;
 	}
 
 	if (call_undef_hook(regs, instr) == 0)
 		return;
 
-	/* STARGO: hack for DIV emulation */
-	if ((processor_mode(regs) != SVC_MODE) && thumb_mode(regs)) {
-		if ((instr & 0x0310) == 0x0310) { /* Retry for division */
-			unsigned int instr2;
-			get_user(instr2, (u16 __user *)pc + 1);
-			instr <<= 16;
-			instr |= instr2;
-			if (call_undef_hook(regs, instr) == 0)
-				return;
-		}
-	}
-	/* END: STARGO: hack for DIV emulation */
-
+die_sig:
 #ifdef CONFIG_DEBUG_USER
 	if (user_debug & UDBG_UNDEFINED) {
 		printk(KERN_INFO "%s (%d): undefined instruction: pc=%p\n",
@@ -784,13 +771,6 @@ void abort(void)
 }
 EXPORT_SYMBOL(abort);
 
-#if defined(CONFIG_SEC_DEBUG)
-void cp_abort(void)
-{
-	panic("CP Crash");
-}
-#endif
-
 void __init trap_init(void)
 {
 	return;
@@ -806,17 +786,15 @@ static void __init kuser_get_tls_init(unsigned long vectors)
 		memcpy((void *)vectors + 0xfe0, (void *)vectors + 0xfe8, 4);
 }
 
-void __init early_trap_init(void)
+void __init early_trap_init(void *vectors_base)
 {
-#if defined(CONFIG_CPU_USE_DOMAINS)
-	unsigned long vectors = CONFIG_VECTORS_BASE;
-#else
-	unsigned long vectors = (unsigned long)vectors_page;
-#endif
+	unsigned long vectors = (unsigned long)vectors_base;
 	extern char __stubs_start[], __stubs_end[];
 	extern char __vectors_start[], __vectors_end[];
 	extern char __kuser_helper_start[], __kuser_helper_end[];
 	int kuser_sz = __kuser_helper_end - __kuser_helper_start;
+
+	vectors_page = vectors_base;
 
 	/*
 	 * Copy the vectors, stubs and kuser helpers (in entry-armv.S)

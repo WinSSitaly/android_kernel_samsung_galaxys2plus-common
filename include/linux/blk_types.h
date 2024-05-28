@@ -59,8 +59,6 @@ struct bio {
 
 	unsigned int		bi_max_vecs;	/* max bvl_vecs we can hold */
 
-	unsigned int		bi_comp_cpu;	/* completion CPU */
-
 	atomic_t		bi_cnt;		/* pin count */
 
 	struct bio_vec		*bi_io_vec;	/* the actual vec list */
@@ -93,11 +91,10 @@ struct bio {
 #define BIO_BOUNCED	5	/* bio is a bounce bio */
 #define BIO_USER_MAPPED 6	/* contains user pages */
 #define BIO_EOPNOTSUPP	7	/* not supported */
-#define BIO_CPU_AFFINE	8	/* complete bio on same CPU as submitted */
-#define BIO_NULL_MAPPED 9	/* contains invalid user pages */
-#define BIO_FS_INTEGRITY 10	/* fs owns integrity data, not block layer */
-#define BIO_QUIET	11	/* Make BIO Quiet */
-#define BIO_MAPPED_INTEGRITY 12/* integrity metadata has been remapped */
+#define BIO_NULL_MAPPED 8	/* contains invalid user pages */
+#define BIO_FS_INTEGRITY 9	/* fs owns integrity data, not block layer */
+#define BIO_QUIET	10	/* Make BIO Quiet */
+#define BIO_MAPPED_INTEGRITY 11/* integrity metadata has been remapped */
 #define bio_flagged(bio, flag)	((bio)->bi_flags & (1 << (flag)))
 
 /*
@@ -126,7 +123,11 @@ enum rq_flag_bits {
 	__REQ_META,		/* metadata io request */
 	__REQ_PRIO,		/* boost priority in cfq */
 	__REQ_DISCARD,		/* request to discard sectors */
+	__REQ_SECURE,		/* secure discard (used with __REQ_DISCARD) */
+
 	__REQ_NOIDLE,		/* don't anticipate more IO after this one */
+	__REQ_FUA,		/* forced unit access */
+	__REQ_FLUSH,		/* request for cache flush */
 
 	/* bio only flags */
 	__REQ_RAHEAD,		/* read ahead, can fail anytime */
@@ -136,7 +137,6 @@ enum rq_flag_bits {
 	/* request only flags */
 	__REQ_SORTED,		/* elevator knows about this request */
 	__REQ_SOFTBARRIER,	/* may not be passed by ioscheduler */
-	__REQ_FUA,		/* forced unit access */
 	__REQ_NOMERGE,		/* don't touch this for merging */
 	__REQ_STARTED,		/* drive already may have started this one */
 	__REQ_DONTPREP,		/* don't call prep for this one */
@@ -147,11 +147,9 @@ enum rq_flag_bits {
 	__REQ_PREEMPT,		/* set for "ide_preempt" requests */
 	__REQ_ALLOCED,		/* request came from our alloc pool */
 	__REQ_COPY_USER,	/* contains copies of user pages */
-	__REQ_FLUSH,		/* request for cache flush */
 	__REQ_FLUSH_SEQ,	/* request for flush sequence */
 	__REQ_IO_STAT,		/* account I/O stat */
 	__REQ_MIXED_MERGE,	/* merge of different types, fail separately */
-	__REQ_SECURE,		/* secure discard (used with __REQ_DISCARD) */
 	__REQ_NR_BITS,		/* stops here */
 };
 

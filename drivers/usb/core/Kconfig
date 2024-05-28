@@ -148,13 +148,3 @@ config USB_OTG_BLACKLIST_HUB
 	  and software costs by not supporting external hubs.  So
 	  are "Embedded Hosts" that don't offer OTG support.
 
-config USB_OTG_AUDIODOCK
-	bool "Disable USB audiodock"
-	depends on USB_OTG || EXPERT
-	default n
-	help
-	  If you say Y here, then Linux will allow Audiodock set
-	  to enumerate with USB Audio class driver. OTG hosts are allowed 
-	  to transfer digital sound via USB to the audiodock, which will
-	  also supply power back to the host, so called "charging".
-

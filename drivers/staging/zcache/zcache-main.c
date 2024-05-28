@@ -33,7 +33,7 @@
 #include <linux/string.h>
 #include "tmem.h"
 
-#include <linux/zsmalloc.h>
+#include "../zsmalloc/zsmalloc.h"
 
 #if (!defined(CONFIG_CLEANCACHE) && !defined(CONFIG_FRONTSWAP))
 #error "zcache is useless without CONFIG_CLEANCACHE or CONFIG_FRONTSWAP"
@@ -455,14 +455,14 @@ static int zbud_decompress(struct page *page, struct zbud_hdr *zh)
 	}
 	ASSERT_SENTINEL(zh, ZBH);
 	BUG_ON(zh->size == 0 || zh->size > zbud_max_buddy_size());
-	to_va = kmap_atomic(page, KM_USER0);
+	to_va = kmap_atomic(page);
 	size = zh->size;
 	from_va = zbud_data(zh, size);
 	ret = zcache_comp_op(ZCACHE_COMPOP_DECOMPRESS, from_va, size,
 				to_va, &out_len);
 	BUG_ON(ret);
 	BUG_ON(out_len != PAGE_SIZE);
-	kunmap_atomic(to_va, KM_USER0);
+	kunmap_atomic(to_va);
 out:
 	spin_unlock(&zbpg->lock);
 	return ret;
@@ -693,14 +693,14 @@ static unsigned int zv_max_mean_zsize = (PAGE_SIZE / 8) * 5;
 static atomic_t zv_curr_dist_counts[NCHUNKS];
 static atomic_t zv_cumul_dist_counts[NCHUNKS];
 
-static unsigned long zv_create(struct zs_pool *pool, uint32_t pool_id,
+static struct zv_hdr *zv_create(struct zs_pool *pool, uint32_t pool_id,
 				struct tmem_oid *oid, uint32_t index,
 				void *cdata, unsigned clen)
 {
 	struct zv_hdr *zv;
 	u32 size = clen + sizeof(struct zv_hdr);
 	int chunks = (size + (CHUNK_SIZE - 1)) >> CHUNK_SHIFT;
-	unsigned long handle = 0;
+	void *handle = NULL;
 
 	BUG_ON(!irqs_disabled());
 	BUG_ON(chunks >= NCHUNKS);
@@ -709,7 +709,7 @@ static unsigned long zv_create(struct zs_pool *pool, uint32_t pool_id,
 		goto out;
 	atomic_inc(&zv_curr_dist_counts[chunks]);
 	atomic_inc(&zv_cumul_dist_counts[chunks]);
-	zv = zs_map_object(pool, handle, ZS_MM_WO);
+	zv = zs_map_object(pool, handle);
 	zv->index = index;
 	zv->oid = *oid;
 	zv->pool_id = pool_id;
@@ -721,14 +721,14 @@ out:
 	return handle;
 }
 
-static void zv_free(struct zs_pool *pool, unsigned long handle)
+static void zv_free(struct zs_pool *pool, void *handle)
 {
 	unsigned long flags;
 	struct zv_hdr *zv;
 	uint16_t size;
 	int chunks;
 
-	zv = zs_map_object(pool, handle, ZS_MM_RW);
+	zv = zs_map_object(pool, handle);
 	ASSERT_SENTINEL(zv, ZVH);
 	size = zv->size + sizeof(struct zv_hdr);
 	INVERT_SENTINEL(zv, ZVH);
@@ -743,20 +743,20 @@ static void zv_free(struct zs_pool *pool, unsigned long handle)
 	local_irq_restore(flags);
 }
 
-static void zv_decompress(struct page *page, unsigned long handle)
+static void zv_decompress(struct page *page, void *handle)
 {
 	unsigned int clen = PAGE_SIZE;
 	char *to_va;
 	int ret;
 	struct zv_hdr *zv;
 
-	zv = zs_map_object(zcache_host.zspool, handle, ZS_MM_RO);
+	zv = zs_map_object(zcache_host.zspool, handle);
 	BUG_ON(zv->size == 0);
 	ASSERT_SENTINEL(zv, ZVH);
-	to_va = kmap_atomic(page, KM_USER0);
+	to_va = kmap_atomic(page);
 	ret = zcache_comp_op(ZCACHE_COMPOP_DECOMPRESS, (char *)zv + sizeof(*zv),
 				zv->size, to_va, &clen);
-	kunmap_atomic(to_va, KM_USER0);
+	kunmap_atomic(to_va);
 	zs_unmap_object(zcache_host.zspool, handle);
 	BUG_ON(ret);
 	BUG_ON(clen != PAGE_SIZE);
@@ -1216,7 +1216,7 @@ static void *zcache_pampd_create(char *data, size_t size, bool raw, int eph,
 		}
 		/* reject if mean compression is too poor */
 		if ((clen > zv_max_mean_zsize) && (curr_pers_pampd_count > 0)) {
-			total_zsize = zs_get_total_pages(cli->zspool) << PAGE_SHIFT;
+			total_zsize = zs_get_total_size_bytes(cli->zspool);
 			zv_mean_zsize = div_u64(total_zsize,
 						curr_pers_pampd_count);
 			if (zv_mean_zsize > zv_max_mean_zsize) {
@@ -1247,7 +1247,7 @@ static int zcache_pampd_get_data(char *data, size_t *bufsize, bool raw,
 	int ret = 0;
 
 	BUG_ON(is_ephemeral(pool));
-	zv_decompress((struct page *)(data), (unsigned long)pampd);
+	zv_decompress((struct page *)(data), pampd);
 	return ret;
 }
 
@@ -1281,7 +1281,7 @@ static void zcache_pampd_free(void *pampd, struct tmem_pool *pool,
 		atomic_dec(&zcache_curr_eph_pampd_count);
 		BUG_ON(atomic_read(&zcache_curr_eph_pampd_count) < 0);
 	} else {
-		zv_free(cli->zspool, (unsigned long)pampd);
+		zv_free(cli->zspool, pampd);
 		atomic_dec(&zcache_curr_pers_pampd_count);
 		BUG_ON(atomic_read(&zcache_curr_pers_pampd_count) < 0);
 	}
@@ -1333,13 +1333,13 @@ static int zcache_compress(struct page *from, void **out_va, unsigned *out_len)
 	if (unlikely(dmem == NULL))
 		goto out;  /* no buffer or no compressor so can't compress */
 	*out_len = PAGE_SIZE << ZCACHE_DSTMEM_ORDER;
-	from_va = kmap_atomic(from, KM_USER0);
+	from_va = kmap_atomic(from);
 	mb();
 	ret = zcache_comp_op(ZCACHE_COMPOP_COMPRESS, from_va, PAGE_SIZE, dmem,
 				out_len);
 	BUG_ON(ret);
 	*out_va = dmem;
-	kunmap_atomic(from_va, KM_USER0);
+	kunmap_atomic(from_va);
 	ret = 1;
 out:
 	return ret;
@@ -1748,8 +1748,6 @@ static void zcache_cleancache_put_page(int pool_id,
 	u32 ind = (u32) index;
 	struct tmem_oid oid = *(struct tmem_oid *)&key;
 
-	if (!PageWasActive(page))
-		return;
 	if (likely(ind == index))
 		(void)zcache_put_page(LOCAL_CLIENT, pool_id, &oid, index, page);
 }
@@ -1764,8 +1762,6 @@ static int zcache_cleancache_get_page(int pool_id,
 
 	if (likely(ind == index))
 		ret = zcache_get_page(LOCAL_CLIENT, pool_id, &oid, index, page);
-	if (ret == 0)
-		SetPageWasActive(page);
 	return ret;
 }
 

@@ -30,6 +30,10 @@ config OPROFILE_EVENT_MULTIPLEX
 config HAVE_OPROFILE
 	bool
 
+config OPROFILE_NMI_TIMER
+	def_bool y
+	depends on PERF_EVENTS && HAVE_PERF_EVENTS_NMI
+
 config KPROBES
 	bool "Kprobes"
 	depends on MODULES
@@ -43,18 +47,29 @@ config KPROBES
 	  If in doubt, say "N".
 
 config JUMP_LABEL
-       bool "Optimize trace point call sites"
+       bool "Optimize very unlikely/likely branches"
        depends on HAVE_ARCH_JUMP_LABEL
        help
-         If it is detected that the compiler has support for "asm goto",
-	 the kernel will compile trace point locations with just a
-	 nop instruction. When trace points are enabled, the nop will
-	 be converted to a jump to the trace function. This technique
-	 lowers overhead and stress on the branch prediction of the
-	 processor.
+         This option enables a transparent branch optimization that
+	 makes certain almost-always-true or almost-always-false branch
+	 conditions even cheaper to execute within the kernel.
 
-	 On i386, options added to the compiler flags may increase
-	 the size of the kernel slightly.
+	 Certain performance-sensitive kernel code, such as trace points,
+	 scheduler functionality, networking code and KVM have such
+	 branches and include support for this optimization technique.
+
+         If it is detected that the compiler has support for "asm goto",
+	 the kernel will compile such branches with just a nop
+	 instruction. When the condition flag is toggled to true, the
+	 nop will be converted to a jump instruction to execute the
+	 conditional block of instructions.
+
+	 This technique lowers overhead and stress on the branch prediction
+	 of the processor and generally makes the kernel faster. The update
+	 of the condition is slower, but those are always very rare.
+
+	 ( On 32-bit x86, the necessary options added to the compiler
+	   flags may increase the size of the kernel slightly. )
 
 config OPTPROBES
 	def_bool y
@@ -105,6 +120,9 @@ config HAVE_KRETPROBES
 
 config HAVE_OPTPROBES
 	bool
+
+config HAVE_NMI_WATCHDOG
+	bool
 #
 # An arch should select this if it provides all these things:
 #
@@ -122,9 +140,6 @@ config HAVE_ARCH_TRACEHOOK
 	bool
 
 config HAVE_DMA_ATTRS
-	bool
-
-config HAVE_DMA_CONTIGUOUS
 	bool
 
 config USE_GENERIC_SMP_HELPERS
@@ -181,72 +196,24 @@ config HAVE_ARCH_MUTEX_CPU_RELAX
 config HAVE_RCU_TABLE_FREE
 	bool
 
-config HAVE_ARCH_MMAP_RND_BITS
+config ARCH_HAVE_NMI_SAFE_CMPXCHG
+	bool
+
+config HAVE_ALIGNED_STRUCT_PAGE
 	bool
 	help
-	  An arch should select this symbol if it supports setting a variable
-	  number of bits for use in establishing the base address for mmap
-	  allocations, has MMU enabled and provides values for both:
-	  - ARCH_MMAP_RND_BITS_MIN
-	  - ARCH_MMAP_RND_BITS_MAX
+	  This makes sure that struct pages are double word aligned and that
+	  e.g. the SLUB allocator can perform double word atomic operations
+	  on a struct page for better performance. However selecting this
+	  might increase the size of a struct page by a word.
 
-config ARCH_MMAP_RND_BITS_MIN
-	int
-
-config ARCH_MMAP_RND_BITS_MAX
-	int
-
-config ARCH_MMAP_RND_BITS_DEFAULT
-	int
-
-config ARCH_MMAP_RND_BITS
-	int "Number of bits to use for ASLR of mmap base address" if EXPERT
-	range ARCH_MMAP_RND_BITS_MIN ARCH_MMAP_RND_BITS_MAX
-	default ARCH_MMAP_RND_BITS_DEFAULT if ARCH_MMAP_RND_BITS_DEFAULT
-	default ARCH_MMAP_RND_BITS_MIN
-	depends on HAVE_ARCH_MMAP_RND_BITS
-	help
-	  This value can be used to select the number of bits to use to
-	  determine the random offset to the base address of vma regions
-	  resulting from mmap allocations. This value will be bounded
-	  by the architecture's minimum and maximum supported values.
-
-	  This value can be changed after boot using the
-	  /proc/sys/vm/mmap_rnd_bits tunable
-
-config HAVE_ARCH_MMAP_RND_COMPAT_BITS
+config HAVE_CMPXCHG_LOCAL
 	bool
-	help
-	  An arch should select this symbol if it supports running applications
-	  in compatibility mode, supports setting a variable number of bits for
-	  use in establishing the base address for mmap allocations, has MMU
-	  enabled and provides values for both:
-	  - ARCH_MMAP_RND_COMPAT_BITS_MIN
-	  - ARCH_MMAP_RND_COMPAT_BITS_MAX
 
-config ARCH_MMAP_RND_COMPAT_BITS_MIN
-	int
+config HAVE_CMPXCHG_DOUBLE
+	bool
 
-config ARCH_MMAP_RND_COMPAT_BITS_MAX
-	int
-
-config ARCH_MMAP_RND_COMPAT_BITS_DEFAULT
-	int
-
-config ARCH_MMAP_RND_COMPAT_BITS
-	int "Number of bits to use for ASLR of mmap base address for compatible applications" if EXPERT
-	range ARCH_MMAP_RND_COMPAT_BITS_MIN ARCH_MMAP_RND_COMPAT_BITS_MAX
-	default ARCH_MMAP_RND_COMPAT_BITS_DEFAULT if ARCH_MMAP_RND_COMPAT_BITS_DEFAULT
-	default ARCH_MMAP_RND_COMPAT_BITS_MIN
-	depends on HAVE_ARCH_MMAP_RND_COMPAT_BITS
-	help
-	  This value can be used to select the number of bits to use to
-	  determine the random offset to the base address of vma regions
-	  resulting from mmap allocations for compatible applications This
-	  value will be bounded by the architecture's minimum and maximum
-	  supported values.
-
-	  This value can be changed after boot using the
-	  /proc/sys/vm/mmap_rnd_compat_bits tunable
+config ARCH_WANT_OLD_COMPAT_IPC
+	bool
 
 source "kernel/gcov/Kconfig"

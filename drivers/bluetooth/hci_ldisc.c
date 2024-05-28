@@ -46,16 +46,7 @@
 
 #include "hci_uart.h"
 
-#if 0
-#ifndef CONFIG_BT_HCIUART_DEBUG
-#undef  BT_DBG
-#define BT_DBG(A...)
-#endif
-#endif
-
 #define VERSION "2.2"
-
-static int reset = 0;
 
 static struct hci_uart_proto *hup[HCI_UART_MAX_PROTO];
 
@@ -108,7 +99,7 @@ static inline void hci_uart_tx_complete(struct hci_uart *hu, int pkt_type)
 		break;
 
 	case HCI_SCODATA_PKT:
-		hdev->stat.cmd_tx++;
+		hdev->stat.sco_tx++;
 		break;
 	}
 }
@@ -181,14 +172,13 @@ static int hci_uart_open(struct hci_dev *hdev)
 /* Reset device */
 static int hci_uart_flush(struct hci_dev *hdev)
 {
-	struct hci_uart *hu = (struct hci_uart *)hdev->driver_data;
+	struct hci_uart *hu  = hci_get_drvdata(hdev);
 	struct tty_struct *tty = hu->tty;
 
 	BT_DBG("hdev %p tty %p", hdev, tty);
 
 	if (hu->tx_skb) {
-		kfree_skb(hu->tx_skb);
-		hu->tx_skb = NULL;
+		kfree_skb(hu->tx_skb); hu->tx_skb = NULL;
 	}
 
 	/* Flush any pending characters in the driver and discipline. */
@@ -217,8 +207,7 @@ static int hci_uart_close(struct hci_dev *hdev)
 /* Send frames from HCI layer */
 static int hci_uart_send_frame(struct sk_buff *skb)
 {
-	struct hci_dev *hdev = (struct hci_dev *)skb->dev;
-	struct tty_struct *tty;
+	struct hci_dev* hdev = (struct hci_dev *) skb->dev;
 	struct hci_uart *hu;
 
 	if (!hdev) {
@@ -229,11 +218,9 @@ static int hci_uart_send_frame(struct sk_buff *skb)
 	if (!test_bit(HCI_RUNNING, &hdev->flags))
 		return -EBUSY;
 
-	hu = (struct hci_uart *)hdev->driver_data;
-	tty = hu->tty;
+	hu = hci_get_drvdata(hdev);
 
-	BT_DBG("%s: type %d len %d", hdev->name, bt_cb(skb)->pkt_type,
-	       skb->len);
+	BT_DBG("%s: type %d len %d", hdev->name, bt_cb(skb)->pkt_type, skb->len);
 
 	hu->proto->enqueue(hu, skb);
 
@@ -242,32 +229,31 @@ static int hci_uart_send_frame(struct sk_buff *skb)
 	return 0;
 }
 
-static void hci_uart_destruct(struct hci_dev *hdev)
-{
-	if (!hdev)
-		return;
-
-	BT_DBG("%s", hdev->name);
-}
-
 /* ------ LDISC part ------ */
 /* hci_uart_tty_open
- *
+ * 
  *     Called when line discipline changed to HCI_UART.
  *
  * Arguments:
  *     tty    pointer to tty info structure
- * Return Value:
+ * Return Value:    
  *     0 if success, otherwise error code
  */
 static int hci_uart_tty_open(struct tty_struct *tty)
 {
-	struct hci_uart *hu = (void *)tty->disc_data;
+	struct hci_uart *hu = (void *) tty->disc_data;
 
 	BT_DBG("tty %p", tty);
 
+	/* FIXME: This btw is bogus, nothing requires the old ldisc to clear
+	   the pointer */
 	if (hu)
 		return -EEXIST;
+
+	/* Error if the tty has no write op instead of leaving an exploitable
+	   hole */
+	if (tty->ops->write == NULL)
+		return -EOPNOTSUPP;
 
 	if (!(hu = kzalloc(sizeof(struct hci_uart), GFP_KERNEL))) {
 		BT_ERR("Can't allocate control structure");
@@ -319,6 +305,7 @@ static void hci_uart_tty_close(struct tty_struct *tty)
 			}
 			hu->proto->close(hu);
 		}
+
 		kfree(hu);
 	}
 }
@@ -350,19 +337,18 @@ static void hci_uart_tty_wakeup(struct tty_struct *tty)
 }
 
 /* hci_uart_tty_receive()
- *
+ * 
  *     Called by tty low level driver when receive data is
  *     available.
- *
+ *     
  * Arguments:  tty          pointer to tty isntance data
  *             data         pointer to received data
  *             flags        pointer to flags for data
  *             count        count of received data in bytes
- *
+ *     
  * Return Value:    None
  */
-static void hci_uart_tty_receive(struct tty_struct *tty, const u8 * data,
-				 char *flags, int count)
+static void hci_uart_tty_receive(struct tty_struct *tty, const u8 *data, char *flags, int count)
 {
 	struct hci_uart *hu = (void *)tty->disc_data;
 
@@ -373,7 +359,7 @@ static void hci_uart_tty_receive(struct tty_struct *tty, const u8 * data,
 		return;
 
 	spin_lock(&hu->rx_lock);
-	hu->proto->recv(hu, (void *)data, count);
+	hu->proto->recv(hu, (void *) data, count);
 	hu->hdev->stat.byte_rx += count;
 	spin_unlock(&hu->rx_lock);
 
@@ -396,22 +382,24 @@ static int hci_uart_register_dev(struct hci_uart *hu)
 	hu->hdev = hdev;
 
 	hdev->bus = HCI_UART;
-	hdev->driver_data = hu;
+	hci_set_drvdata(hdev, hu);
 
-	hdev->open = hci_uart_open;
+	hdev->open  = hci_uart_open;
 	hdev->close = hci_uart_close;
 	hdev->flush = hci_uart_flush;
-	hdev->send = hci_uart_send_frame;
-	hdev->destruct = hci_uart_destruct;
+	hdev->send  = hci_uart_send_frame;
 	hdev->parent = hu->tty->dev;
-
-	hdev->owner = THIS_MODULE;
-
-	if (!reset)
-		set_bit(HCI_QUIRK_NO_RESET, &hdev->quirks);
 
 	if (test_bit(HCI_UART_RAW_DEVICE, &hu->hdev_flags))
 		set_bit(HCI_QUIRK_RAW_DEVICE, &hdev->quirks);
+
+	if (!test_bit(HCI_UART_RESET_ON_INIT, &hu->hdev_flags))
+		set_bit(HCI_QUIRK_NO_RESET, &hdev->quirks);
+
+	if (test_bit(HCI_UART_CREATE_AMP, &hu->hdev_flags))
+		hdev->dev_type = HCI_AMP;
+	else
+		hdev->dev_type = HCI_BREDR;
 
 	if (hci_register_dev(hdev) < 0) {
 		BT_ERR("Can't register HCI device");
@@ -459,8 +447,8 @@ static int hci_uart_set_proto(struct hci_uart *hu, int id)
  *
  * Return Value:    Command dependent
  */
-static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file *file,
-			      unsigned int cmd, unsigned long arg)
+static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file * file,
+					unsigned int cmd, unsigned long arg)
 {
 	struct hci_uart *hu = (void *)tty->disc_data;
 	int err = 0;
@@ -473,12 +461,9 @@ static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file *file,
 
 	switch (cmd) {
 	case HCIUARTSETPROTO:
-		BT_DBG("SETPROTO %lu hu %p", arg, hu);
 		if (!test_and_set_bit(HCI_UART_PROTO_SET, &hu->flags)) {
-			BT_DBG("called hci_uart_set_proto");
 			err = hci_uart_set_proto(hu, arg);
 			if (err) {
-				BT_DBG("error set proto");
 				clear_bit(HCI_UART_PROTO_SET, &hu->flags);
 				return err;
 			}
@@ -487,7 +472,6 @@ static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file *file,
 		break;
 
 	case HCIUARTGETPROTO:
-		BT_DBG("GETPROTO");
 		if (test_bit(HCI_UART_PROTO_SET, &hu->flags))
 			return hu->proto->id;
 		return -EUNATCH;
@@ -518,19 +502,19 @@ static int hci_uart_tty_ioctl(struct tty_struct *tty, struct file *file,
  * We don't provide read/write/poll interface for user space.
  */
 static ssize_t hci_uart_tty_read(struct tty_struct *tty, struct file *file,
-				 unsigned char __user *buf, size_t nr)
+					unsigned char __user *buf, size_t nr)
 {
 	return 0;
 }
 
 static ssize_t hci_uart_tty_write(struct tty_struct *tty, struct file *file,
-				  const unsigned char *data, size_t count)
+					const unsigned char *data, size_t count)
 {
 	return 0;
 }
 
 static unsigned int hci_uart_tty_poll(struct tty_struct *tty,
-				      struct file *filp, poll_table * wait)
+					struct file *filp, poll_table *wait)
 {
 	return 0;
 }
@@ -540,27 +524,28 @@ static int __init hci_uart_init(void)
 	static struct tty_ldisc_ops hci_uart_ldisc;
 	int err;
 
-	BT_INFO("HCI SAT UART driver ver %s", VERSION);
+	BT_INFO("HCI UART driver ver %s", VERSION);
 
 	/* Register the tty discipline */
 
-	memset(&hci_uart_ldisc, 0, sizeof(hci_uart_ldisc));
-	hci_uart_ldisc.magic = TTY_LDISC_MAGIC;
-	hci_uart_ldisc.name = "n_hci";
-	hci_uart_ldisc.open = hci_uart_tty_open;
-	hci_uart_ldisc.close = hci_uart_tty_close;
-	hci_uart_ldisc.read = hci_uart_tty_read;
-	hci_uart_ldisc.write = hci_uart_tty_write;
-	hci_uart_ldisc.ioctl = hci_uart_tty_ioctl;
-	hci_uart_ldisc.poll = hci_uart_tty_poll;
-	hci_uart_ldisc.receive_buf = hci_uart_tty_receive;
-	hci_uart_ldisc.write_wakeup = hci_uart_tty_wakeup;
-	hci_uart_ldisc.owner = THIS_MODULE;
+	memset(&hci_uart_ldisc, 0, sizeof (hci_uart_ldisc));
+	hci_uart_ldisc.magic		= TTY_LDISC_MAGIC;
+	hci_uart_ldisc.name		= "n_hci";
+	hci_uart_ldisc.open		= hci_uart_tty_open;
+	hci_uart_ldisc.close		= hci_uart_tty_close;
+	hci_uart_ldisc.read		= hci_uart_tty_read;
+	hci_uart_ldisc.write		= hci_uart_tty_write;
+	hci_uart_ldisc.ioctl		= hci_uart_tty_ioctl;
+	hci_uart_ldisc.poll		= hci_uart_tty_poll;
+	hci_uart_ldisc.receive_buf	= hci_uart_tty_receive;
+	hci_uart_ldisc.write_wakeup	= hci_uart_tty_wakeup;
+	hci_uart_ldisc.owner		= THIS_MODULE;
 
 	if ((err = tty_register_ldisc(N_HCI, &hci_uart_ldisc))) {
 		BT_ERR("HCI line discipline registration failed. (%d)", err);
 		return err;
 	}
+
 #ifdef CONFIG_BT_HCIUART_H4
 	h4_init();
 #endif
@@ -572,9 +557,6 @@ static int __init hci_uart_init(void)
 #endif
 #ifdef CONFIG_BT_HCIUART_ATH3K
 	ath_init();
-#endif
-#ifdef CONFIG_BT_HCIUART_BRCM
-	brcm_init();
 #endif
 
 	return 0;
@@ -596,9 +578,6 @@ static void __exit hci_uart_exit(void)
 #ifdef CONFIG_BT_HCIUART_ATH3K
 	ath_deinit();
 #endif
-#ifdef CONFIG_BT_HCIUART_BRCM
-	brcm_deinit();
-#endif
 
 	/* Release tty registration of line discipline */
 	if ((err = tty_unregister_ldisc(N_HCI)))
@@ -607,9 +586,6 @@ static void __exit hci_uart_exit(void)
 
 module_init(hci_uart_init);
 module_exit(hci_uart_exit);
-
-module_param(reset, bool, 0644);
-MODULE_PARM_DESC(reset, "Send HCI reset command on initialization");
 
 MODULE_AUTHOR("Marcel Holtmann <marcel@holtmann.org>");
 MODULE_DESCRIPTION("Bluetooth HCI UART driver ver " VERSION);
