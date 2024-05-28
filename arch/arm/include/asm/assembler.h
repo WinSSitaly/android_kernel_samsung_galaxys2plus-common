@@ -23,6 +23,8 @@
 #include <asm/ptrace.h>
 #include <asm/domain.h>
 
+#define IOMEM(x)	(x)
+
 /*
  * Endian independent macros for shifting bytes within registers.
  */
@@ -190,6 +192,17 @@
 #define ALT_UP(instr...) instr
 #define ALT_UP_B(label) b label
 #endif
+
+/*
+ * Instruction barrier
+ */
+	.macro	instr_sync
+#if __LINUX_ARM_ARCH__ >= 7
+	isb
+#elif __LINUX_ARM_ARCH__ == 6
+	mcr	p15, 0, r0, c7, c5, 4
+#endif
+	.endm
 
 /*
  * SMP data memory barrier

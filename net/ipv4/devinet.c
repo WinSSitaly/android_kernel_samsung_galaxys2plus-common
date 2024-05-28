@@ -27,7 +27,6 @@
 
 
 #include <asm/uaccess.h>
-#include <asm/system.h>
 #include <linux/bitops.h>
 #include <linux/capability.h>
 #include <linux/module.h>
@@ -59,7 +58,6 @@
 
 #include <net/arp.h>
 #include <net/ip.h>
-#include <net/tcp.h>
 #include <net/route.h>
 #include <net/ip_fib.h>
 #include <net/rtnetlink.h>
@@ -292,7 +290,7 @@ static void inetdev_destroy(struct in_device *in_dev)
 		inet_free_ifa(ifa);
 	}
 
-	rcu_assign_pointer(dev->ip_ptr, NULL);
+	RCU_INIT_POINTER(dev->ip_ptr, NULL);
 
 	devinet_sysctl_unregister(in_dev);
 	neigh_parms_release(&arp_tbl, in_dev->arp_parms);
@@ -326,9 +324,6 @@ static void __inet_del_ifa(struct in_device *in_dev, struct in_ifaddr **ifap,
 	int do_promote = IN_DEV_PROMOTE_SECONDARIES(in_dev);
 
 	ASSERT_RTNL();
-
-	if (in_dev->dead)
-		goto no_promotions;
 
 	/* 1. Deleting primary ifaddr forces deletion all secondaries
 	 * unless alias promotion is set
@@ -376,7 +371,6 @@ static void __inet_del_ifa(struct in_device *in_dev, struct in_ifaddr **ifap,
 			fib_del_ifaddr(ifa, ifa1);
 	}
 
-no_promotions:
 	/* 2. Unlink it */
 
 	*ifap = ifa1->ifa_next;
@@ -740,7 +734,6 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 	case SIOCSIFBRDADDR:	/* Set the broadcast address */
 	case SIOCSIFDSTADDR:	/* Set the destination address */
 	case SIOCSIFNETMASK: 	/* Set the netmask for the interface */
-	case SIOCKILLADDR:	/* Nuke all sockets on this address */
 		ret = -EACCES;
 		if (!capable(CAP_NET_ADMIN))
 			goto out;
@@ -792,8 +785,7 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 	}
 
 	ret = -EADDRNOTAVAIL;
-	if (!ifa && cmd != SIOCSIFADDR && cmd != SIOCSIFFLAGS
-	    && cmd != SIOCKILLADDR)
+	if (!ifa && cmd != SIOCSIFADDR && cmd != SIOCSIFFLAGS)
 		goto done;
 
 	switch (cmd) {
@@ -918,9 +910,6 @@ int devinet_ioctl(struct net *net, unsigned int cmd, void __user *arg)
 			}
 			inet_insert_ifa(ifa);
 		}
-		break;
-	case SIOCKILLADDR:	/* Nuke all connections on this address */
-		ret = tcp_nuke_addr(net, (struct sockaddr *) sin);
 		break;
 	}
 done:
@@ -1089,6 +1078,7 @@ __be32 inet_confirm_addr(struct in_device *in_dev,
 
 	return addr;
 }
+EXPORT_SYMBOL(inet_confirm_addr);
 
 /*
  *	Device notifier
@@ -1185,7 +1175,7 @@ static int inetdev_event(struct notifier_block *this, unsigned long event,
 	switch (event) {
 	case NETDEV_REGISTER:
 		printk(KERN_DEBUG "inetdev_event: bug\n");
-		rcu_assign_pointer(dev->ip_ptr, NULL);
+		RCU_INIT_POINTER(dev->ip_ptr, NULL);
 		break;
 	case NETDEV_UP:
 		if (!inetdev_valid_mtu(dev->mtu))
